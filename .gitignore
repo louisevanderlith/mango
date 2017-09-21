@@ -1,5 +1,6 @@
 # Binaries for programs and plugins
 *.exe
+*.exe*
 *.dll
 *.so
 *.dylib
@@ -12,3 +13,13 @@
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
+
+bin/
+
+# Swagger files
+swagger/
+swagger.zip
+lastupdate.tmp
+
+.vscode/
+node_modules/

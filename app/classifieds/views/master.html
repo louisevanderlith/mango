@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="generator" content="Bootply" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Buy and Sell goods in a scam free environment.">
+  <meta name="author" content="Louise van der Lith">
+
+  <title>Lithning Classifieds</title>
+  {{ template "styles.html" . }}
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="box">
+      <div class="row row-offcanvas row-offcanvas-left">
+        {{ template "sidebar.html" . }}
+
+        <div class="column col-sm-10 col-xs-11" id="main">
+          {{ template "navigation.html" . }}
+
+          <div class="padding">
+            <div class="full col-sm-9">
+              {{.LayoutContent}}
+
+              <hr>
+              <div class="row" id="footer">
+                <div class="col-sm-4">
+                  <a href="#">Twitter</a> <small class="text-muted">|</small> <a href="#">Facebook</a> <small class="text-muted">|</small>
+                  <a href="#">Google+</a>
+                </div>
+                <div class="col-sm-4">
+                  <small>
+                    <a href="http://bootply.com/96266" target="ext">Original Template from @Bootply</a>
+                  </small>
+                </div>
+                <div class="col-sm-4">
+                  <p>
+                    <a href="#" class="pull-right">©Copyright 2013</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  {{ template "footer.html" . }}
+</body>
+
+</html>
