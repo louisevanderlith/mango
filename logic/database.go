@@ -10,6 +10,8 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+
+	"github.com/louisevanderlith/mango/db/comms"
 )
 
 func init() {
@@ -21,13 +23,13 @@ func BuildDatabase(instanceKey string) {
 	dbPath, err := getConnectionString(instanceKey, "Communication.DB")
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	} else {
 		driverName := "postgres"
 		err := orm.RegisterDataBase(name, driverName, dbPath)
 
 		if err != nil {
-			log.Fatal("Please ensure that you have created your Database.")
+			log.Panic("Please ensure that you have created your Database.")
 		} else {
 			orm.RunSyncdb(name, false, false)
 		}
@@ -36,7 +38,7 @@ func BuildDatabase(instanceKey string) {
 
 func registerModels() {
 	orm.RegisterModel(
-		new(Message))
+		new(comms.Message))
 }
 
 func getConnectionString(appKey string, databaseName string) (string, error) {
@@ -48,18 +50,18 @@ func getConnectionString(appKey string, databaseName string) (string, error) {
 	defer resp.Body.Close()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	} else {
 		contents, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		jsonErr := json.Unmarshal(contents, &result)
 
 		if jsonErr != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		if result == "" {

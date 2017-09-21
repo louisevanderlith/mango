@@ -2,7 +2,6 @@ package logic
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 )
 
@@ -32,16 +31,6 @@ func loadSettings() {
 	err := json.Unmarshal(content, &settings)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
-}
-
-func getFileContent(configPath string) []byte {
-	dat, err := ioutil.ReadFile(configPath)
-
-	if err != nil {
-		panic(err)
-	}
-
-	return dat
 }

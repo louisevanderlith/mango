@@ -1,6 +1,6 @@
 package things
 
 type Manufacturer struct {
-	db.Record
+	Record
 	Name string
 }

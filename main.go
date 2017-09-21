@@ -17,7 +17,8 @@ func main() {
 		URL:         "http://localhost:80",
 		Type:        "application"}
 
-	key, err := logic.Register()
+	discURL := "http://localhost:123"
+	key, err := logic.Register(srv, discURL)
 
 	if err != nil {
 		log.Panic(err)
@@ -37,6 +38,6 @@ func setupHost() {
 	err := http.ListenAndServe(":80", nil)
 
 	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+		log.Panic("ListenAndServe: ", err)
 	}
 }

@@ -1,7 +1,7 @@
 package things
 
 type Category struct {
-	db.Record
-	Name string
+	Record
+	Name        string
 	Description string
 }

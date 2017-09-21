@@ -1,6 +1,6 @@
 package artifact
 
 type Upload struct{
-	db.Record
+	Record
 	Advert *Advert `orm:"rel(fk)"`
 }

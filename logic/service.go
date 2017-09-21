@@ -38,29 +38,30 @@ func init() {
 }
 
 // Register is used to register an application with the router service
-func Register(service Service) (string, error) {
+func Register(service Service, discoveryURL string) (string, error) {
 	result := ""
 	buff := new(bytes.Buffer)
 	json.NewEncoder(buff).Encode(service)
 
-	resp, err := http.Post(config.Discovery, "application/json", buff)
+	resp, err := http.Post(discoveryURL, "application/json", buff)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	} else {
 		defer resp.Body.Close()
 
 		contents, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		var data struct{ AppID string }
-		err := json.Unmarshal(contents, &data)
+		jerr := json.Unmarshal(contents, &data)
 
-		if err != nil {
-			log.Fatal(err)
+		if jerr != nil {
+			log.Panic(jerr)
+			err = jerr
 		}
 
 		result = data.AppID

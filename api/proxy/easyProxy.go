@@ -61,7 +61,7 @@ func getMessage(body io.ReadCloser) (Message, error) {
 	err := decoder.Decode(&message)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	return message, err
@@ -96,13 +96,13 @@ func forwardPOST(target string, message Message) (string, error) {
 	defer resp.Body.Close()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	} else {
 
 		contents, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		result = string(contents)
@@ -119,13 +119,13 @@ func forwardGET(target string, message Message) (string, error) {
 	defer resp.Body.Close()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	} else {
 
 		contents, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		result = string(contents)
@@ -143,12 +143,12 @@ func getTargetURL(appKey string, rawTarget string) (string, error) {
 	defer resp.Body.Close()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	} else {
 		contents, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		result = string(contents)

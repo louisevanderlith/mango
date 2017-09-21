@@ -3,10 +3,10 @@ package logic
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/mango/db/comms"
 	gomail "gopkg.in/gomail.v2"
 )
 
@@ -41,13 +41,13 @@ func sendEmail(body string) error {
 	err := d.DialAndSend(gm)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	return err
 }
 
-func buildMessage(m Message) string {
+func buildMessage(m comms.Message) string {
 	result := ""
 
 	result += fmt.Sprintf("Name: %s <br/>", m.Name)
@@ -58,12 +58,12 @@ func buildMessage(m Message) string {
 	return result
 }
 
-func saveMessageLog(m Message) error {
+func saveMessageLog(m comms.Message) error {
 	o := orm.NewOrm()
 	_, err := o.Insert(&m)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Panic(err)
 	}
 
 	return err

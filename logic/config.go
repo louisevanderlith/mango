@@ -1,9 +1,11 @@
 package logic
 
-import "io/ioutil"
-import "strings"
-import "strconv"
-import "fmt"
+import (
+	"fmt"
+	"io/ioutil"
+	"strconv"
+	"strings"
+)
 
 type Config struct {
 	Host           string
@@ -15,8 +17,9 @@ type Config struct {
 
 func (c *Config) LoadConfig(configPath string) {
 	content := getFileContent(configPath)
+	contentLines := strings.Split(string(content), "\r\n")
 
-	for _, val := range content {
+	for _, val := range contentLines {
 		parts := strings.Split(val, "=")
 		confKey := parts[0]
 		confVal := strings.Trim(parts[1], " ")
@@ -45,14 +48,12 @@ func parse(value string) int {
 	return i
 }
 
-func getFileContent(configPath string) []string {
+func getFileContent(configPath string) []byte {
 	dat, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
 		panic(err)
 	}
 
-	lines := strings.Split(string(dat), "\r\n")
-
-	return lines
+	return dat
 }
