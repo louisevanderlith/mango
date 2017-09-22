@@ -1,18 +1,9 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
-	"log"
-	"net/http"
-
-	_ "github.com/louisevanderlith/mango/api/comms/routers"
-	"github.com/louisevanderlith/mango/logic"
-	"github.com/louisevanderlith/mango/db/comms"
+	_ "github.com/louisevanderlith/mango/api/secure/routers"
 
 	"github.com/astaxie/beego"
-	_ "github.com/lib/pq"
 )
 
 var instanceKey string
@@ -22,7 +13,7 @@ func main() {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
-
+	
 	// Register with router
 	srv := logic.Service{
 		Environment: beego.BConfig.RunMode,
@@ -31,14 +22,13 @@ func main() {
 		Type:        "service"
 	}
 
-	discURL := beego.AppConfig.String("discovery")
-	key, err := logic.Register(discURL)
+	key, err := logic.Register()
 
 	if err != nil{
 		log.Panic(err)
 	} else {
 		instanceKey = key
-		comms.NewDatabase(instanceKey, discURL)
+		logic.BuildDatabase(instanceKey)
 		beego.Run()
 	}
 }

@@ -1,6 +1,9 @@
 package logic
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestParse(t *testing.T) {
 	input := "123"
@@ -14,7 +17,7 @@ func TestParse(t *testing.T) {
 }
 
 func TestGetFileContent_MustGetLines(t *testing.T) {
-	content := getFileContent("../app.conf")
+	content := getFileContent("../api/proxy/app.conf")
 
 	if len(content) <= 0 {
 		t.Error("No Config file read")
@@ -22,7 +25,8 @@ func TestGetFileContent_MustGetLines(t *testing.T) {
 }
 
 func TestGetFileContent_MustHaveValue(t *testing.T) {
-	content := getFileContent("../app.conf")
+	contentbytes := getFileContent("../api/proxy/app.conf")
+	content := strings.Split(string(contentbytes), "\r\n")
 
 	for _, val := range content {
 		t.Log(val)
@@ -35,7 +39,7 @@ func TestGetFileContent_MustHaveValue(t *testing.T) {
 
 func TestConfigLoad(t *testing.T) {
 	config := new(Config)
-	config.LoadConfig("../app.conf")
+	config.LoadConfig("../api/proxy/app.conf")
 
 	t.Log(config)
 

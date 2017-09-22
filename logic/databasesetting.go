@@ -21,12 +21,12 @@ var settings *Settings
 
 func init() {
 	if settings == nil {
-		loadSettings()
+		loadSettings("../api/router/conf/database.json")
 	}
 }
 
-func loadSettings() {
-	content := getFileContent("./conf/database.json")
+func loadSettings(dbConfPath string) {
+	content := getFileContent(dbConfPath)
 
 	err := json.Unmarshal(content, &settings)
 

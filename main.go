@@ -24,7 +24,6 @@ func main() {
 		log.Panic(err)
 	} else {
 		instanceKey = key
-
 		setupHost()
 	}
 }

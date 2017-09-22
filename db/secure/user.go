@@ -2,20 +2,30 @@ package secure
 
 import (
 	"errors"
+	"fmt"
+	"log"
 	"time"
 
 	"github.com/astaxie/beego/orm"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // User database model
 type User struct {
 	Record
-	Profile       *Profile `orm:"rel(one)"`
-	Email         string   `orm:"size(128)"`
-	ContactNumber string   `orm:"size(20)"`
-	Password      string
+	Name          string `orm:"size(75)"`
+	Verified      bool
+	Email         string `orm:"size(128)"`
+	ContactNumber string `orm:"size(20)"`
+	Password      []byte
 	LoginDate     time.Time     `orm:"type(date)"`
 	LoginTraces   []*LoginTrace `orm:"reverse(many)"`
+}
+
+var cost int
+
+func init() {
+	cost = 10
 }
 
 // CreateUser will create a new user
@@ -30,7 +40,8 @@ func CreateUser(user User) error {
 		err = errors.New("Contact Number is invalid")
 	}
 
-	if err == nil && !user.exists() {
+	if err == nil && !exists(user) {
+		securePassword(&user)
 		o := orm.NewOrm()
 		_, err = o.Insert(&user)
 	} else {
@@ -40,10 +51,74 @@ func CreateUser(user User) error {
 	return err
 }
 
-func (user *User) exists() bool {
+// Login will attempt to authenticate a user
+func Login(identifier string, password []byte) bool {
+	var result bool
+
+	if identifier != "" && len(password) > 0 {
+		user := getUser(identifier)
+
+		if user != nil {
+			err := bcrypt.CompareHashAndPassword(user.Password, password)
+
+			if result = err != nil; result {
+				log.Panic(err)
+			}
+		}
+	}
+
+	return result
+}
+
+func securePassword(user *User) {
+	hashedPwd, err := bcrypt.GenerateFromPassword(user.Password, cost)
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	user.Password = hashedPwd
+}
+
+func getUserByID(userID int64) *User {
+	o := orm.NewOrm()
+	user := new(User)
+	user.ID = userID
+
+	err := o.Read(&user)
+
+	if err == orm.ErrNoRows || err == orm.ErrMissPK {
+		msg := fmt.Sprintf("Couldn't find user with ID %v", userID)
+		log.Panic(msg)
+	}
+
+	return user
+}
+
+func getUser(identifier string) *User {
+	var result User
 	o := orm.NewOrm()
 
-	result := o.QueryTable("user").Filter("Email", "ContactNumber").Exist()
+	cond := orm.NewCondition()
+	filter := cond.Or("Email", identifier).Or("ContactNumber", identifier)
+
+	err := o.QueryTable("user").SetCond(filter).One(&result)
+
+	if err == orm.ErrNoRows {
+		msg := fmt.Sprintf("Couldn't find user with identifier %s", identifier)
+		log.Panic(msg)
+	}
+
+	return &result
+}
+
+func exists(user User) bool {
+	o := orm.NewOrm()
+
+	cond := orm.NewCondition()
+	filter := cond.Or("Email", user.Email).Or("ContactNumber", user.ContactNumber)
+
+	result := o.QueryTable("user").SetCond(filter).Exist()
 
 	return result
 }

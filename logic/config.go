@@ -3,6 +3,7 @@ package logic
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -42,7 +43,7 @@ func parse(value string) int {
 	i, err := strconv.Atoi(value)
 
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	return i
@@ -52,7 +53,7 @@ func getFileContent(configPath string) []byte {
 	dat, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
 	return dat

@@ -8,19 +8,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-
-	"github.com/louisevanderlith/mango/db/comms"
 )
 
-func init() {
-	registerModels()
-}
+func BuildDatabase(regModels func(), instanceKey, dbName, discoveryURL string) {
+	regModels()
 
-func BuildDatabase(instanceKey string) {
 	name := "default"
-	dbPath, err := getConnectionString(instanceKey, "Communication.DB")
+	dbPath, err := getConnectionString(instanceKey, dbName, discoveryURL)
 
 	if err != nil {
 		log.Panic(err)
@@ -36,16 +31,11 @@ func BuildDatabase(instanceKey string) {
 	}
 }
 
-func registerModels() {
-	orm.RegisterModel(
-		new(comms.Message))
-}
-
-func getConnectionString(appKey string, databaseName string) (string, error) {
+func getConnectionString(instanceKey string, dbName string, discoveryURL string) (string, error) {
 	var result string
 	var err error
 
-	discoveryRoute := fmt.Sprintf("%s%s/%s", beego.AppConfig.String("discovery"), appKey, databaseName)
+	discoveryRoute := fmt.Sprintf("%s%s/%s", discoveryURL, instanceKey, dbName)
 	resp, err := http.Get(discoveryRoute)
 	defer resp.Body.Close()
 
@@ -65,7 +55,7 @@ func getConnectionString(appKey string, databaseName string) (string, error) {
 		}
 
 		if result == "" {
-			msg := fmt.Sprintf("Couldn't find a application for %s", databaseName)
+			msg := fmt.Sprintf("Couldn't find a application for %s", dbName)
 			err = errors.New(msg)
 		}
 	}
