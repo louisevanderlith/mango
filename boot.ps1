@@ -8,14 +8,14 @@ for ($i = 0; $i -lt $apis.Count; $i++){
     $apiPath = $apis[$i]
     $cmd = "cd ..\$apiPath; bee run -downdoc=true -gendoc=true;"
 
-    start powershell $cmd
+    Start-Process powershell $cmd
 }
 
 # Start Proxy
-start powershell "cd ..\proxy; go build; .\proxy.exe"
+Start-Process powershell "cd ..\proxy; go build; .\proxy.exe"
 
 # Start GULP
-start powershell gulp
+Start-Process powershell gulp
 
 # Start the classifieds application
 bee run

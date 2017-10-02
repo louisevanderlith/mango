@@ -12,16 +12,17 @@ For($i=0; $i -lt $appPaths.Count; $i++){
         $appName= $folder.name
         Write-Host 'Attempting to build' $appName -ForegroundColor "green"
 
+        $outPath = $runPath + "\bin\" + $appName
+        $exeName = $outPath + '\' + $appName
+
+        if($goos -eq 'windows'){
+            $exeName += '.exe'
+        }
+
         if($appName -ne 'www'){
             Set-Location $folder.FullName
 
             if(Test-Path (".\main.go")){
-                $outPath = $runPath + "\bin\" + $appName
-                $exeName = $outPath + '\' + $appName
-
-                if($goos -eq 'windows'){
-                    $exeName += '.exe'
-                }
 
                 go build -o $exeName
 
@@ -41,11 +42,22 @@ For($i=0; $i -lt $appPaths.Count; $i++){
                 Write-Host 'No main.go found in' $appName -ForegroundColor "red"
             }
         }
+        else {
+            # build the subdomain and website application
+            Set-Location $runPath
+
+            go build -o $exeName
+
+            $webSource = $folder.FullName + '\*'
+            $webTarget = $outPath + '\web\'
+
+            Copy-Item -Path $webSource -Destination $webTarget
+
+            # TODO
+            # run gulp
+            # copy contents of www application (after gulp)
+        }
     }
 
     Set-Location $runPath
 }
-
-# build the subdomain and website application
-# copy contents of www application
-#TODO
