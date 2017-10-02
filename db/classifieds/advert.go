@@ -2,8 +2,6 @@ package classifieds
 
 import (
 	"time"
-
-	"github.com/louisevanderlith/classifiedcore/db"
 )
 
 type Advert struct {
