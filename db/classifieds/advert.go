@@ -3,7 +3,7 @@ package classifieds
 import (
 	"time"
 
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/classifiedcore/db"
 )
 
 type Advert struct {

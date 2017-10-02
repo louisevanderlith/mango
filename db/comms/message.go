@@ -41,7 +41,7 @@ func sendEmail(body string) error {
 
 	gm := gomail.NewMessage()
 	gm.SetHeader("From", smtpUser)
-	gm.SetHeader("To", "louisevanderlith@gmail.com")
+	gm.SetHeader("To", "abc@gmail.com")
 	gm.SetHeader("Subject", "Contact Us - avosaweb")
 	gm.SetBody("text/html", body)
 
