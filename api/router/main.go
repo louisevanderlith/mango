@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "github.com/louisevanderlith/callrouter/routers"
+	_ "github.com/louisevanderlith/mango/api/router/routers"
 
 	"github.com/astaxie/beego"
 )

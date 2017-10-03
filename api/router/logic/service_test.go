@@ -3,15 +3,17 @@ package logic
 import (
 	"testing"
 
+	"github.com/louisevanderlith/mango/util/enums"
+
 	uuid "github.com/nu7hatch/gouuid"
 )
 
 func dummyService(name string) Service {
 	return Service{
-		Environment: "dev",
+		Environment: enums.DEV,
 		Name:        name,
 		URL:         "http://127.0.01/" + name,
-		Type:        "service"}
+		Type:        enums.API}
 }
 
 func TestAddService_ShouldCreateUUID(t *testing.T) {
@@ -25,11 +27,11 @@ func TestAddService_ShouldCreateUUID(t *testing.T) {
 }
 
 func TestGetService_AllowedCaller_ForDatabase_IsService(t *testing.T) {
-	expect := "service"
-	result := getService("Communication.DB", "dev", expect)
+	expect := enums.API
+	result := getService("Communication.DB", enums.DEV, expect)
 
 	if result.AllowedCaller != expect {
-		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller)
+		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller.String())
 	}
 }
 
@@ -38,45 +40,45 @@ func TestGetService_AllowedCaller_ForService_IsProxy(t *testing.T) {
 
 	AddService(service)
 
-	expect := "proxy"
-	result := getService("Test.Service", "dev", expect)
+	expect := enums.PROXY
+	result := getService("Test.Service", enums.DEV, expect)
 
 	if result.AllowedCaller != expect {
-		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller)
+		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller.String())
 	}
 }
 
 func TestGetService_AllowedCaller_ForProxy_IsApplication(t *testing.T) {
 	proxy := dummyService("Test.Proxy")
-	proxy.Type = "proxy"
+	proxy.Type = enums.PROXY
 
 	AddService(proxy)
 
-	expect := "application"
-	result := getService("Test.Proxy", "dev", expect)
+	expect := enums.APP
+	result := getService("Test.Proxy", enums.DEV, expect)
 
 	if result.AllowedCaller != expect {
-		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller)
+		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller.String())
 	}
 }
 
 func TestGetService_AllowedCaller_ForApplication_IsAll(t *testing.T) {
 	app := dummyService("Test.App")
-	app.Type = "application"
+	app.Type = enums.APP
 
 	AddService(app)
 
-	result := getService("Test.App", "dev", "BLAH BLAH")
-	expect := "*"
+	result := getService("Test.App", enums.DEV, app.Type)
+	expect := enums.ANY
 
 	if result.AllowedCaller != expect {
-		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller)
+		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller.String())
 	}
 }
 
 func TestGetServicePath_SameEnv_ShouldFindService(t *testing.T) {
 	requestor := dummyService("Test.Main")
-	requestor.Type = "proxy"
+	requestor.Type = enums.PROXY
 	requestorID := AddService(requestor)
 
 	api := dummyService("Test.Api")
@@ -91,11 +93,11 @@ func TestGetServicePath_SameEnv_ShouldFindService(t *testing.T) {
 
 func TestGetServicePath_DiffEnv_ShouldHaveError(t *testing.T) {
 	requestor := dummyService("Test.Main")
-	requestor.Type = "proxy"
+	requestor.Type = enums.PROXY
 	requestorID := AddService(requestor)
 
 	api := dummyService("Test.Api")
-	api.Environment = "uat"
+	api.Environment = enums.UAT
 	AddService(api)
 
 	_, err := GetServicePath("Test.Api", requestorID)

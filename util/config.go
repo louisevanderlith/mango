@@ -1,9 +1,12 @@
-package logic
+package util
 
 import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -17,7 +20,7 @@ type Config struct {
 }
 
 func (c *Config) LoadConfig(configPath string) {
-	content := getFileContent(configPath)
+	content := GetFileContent(configPath)
 	contentLines := strings.Split(string(content), "\r\n")
 
 	for _, val := range contentLines {
@@ -49,7 +52,7 @@ func parse(value string) int {
 	return i
 }
 
-func getFileContent(configPath string) []byte {
+func GetFileContent(configPath string) []byte {
 	dat, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
@@ -57,4 +60,23 @@ func getFileContent(configPath string) []byte {
 	}
 
 	return dat
+}
+
+func FindFilePath(fileName string) string {
+	var result string
+	wp := getWorkingPath() + "/conf"
+
+	result = filepath.Join(wp, filepath.FromSlash(path.Clean("/"+fileName)))
+
+	return result
+}
+
+func getWorkingPath() string {
+	ex, err := os.Getwd()
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return filepath.Dir(ex)
 }

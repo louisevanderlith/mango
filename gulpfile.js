@@ -1,6 +1,6 @@
 
-const glob = require('glob');
 const gulp = require('gulp');
+const glob = require('glob');
 const rollup = require('gulp-better-rollup');
 const uglify = require('rollup-plugin-uglify');
 const babel = require('rollup-plugin-babel');

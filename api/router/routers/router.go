@@ -8,7 +8,7 @@
 package routers
 
 import (
-	"github.com/louisevanderlith/callrouter/controllers"
+	"github.com/louisevanderlith/mango/api/router/controllers"
 
 	"github.com/astaxie/beego"
 )

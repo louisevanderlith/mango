@@ -30,7 +30,23 @@ func init() {
 
 // CreateUser will create a new user
 func CreateUser(user User) error {
+	err := validateUser(user)
+
+	if err == nil && !exists(user) {
+		securePassword(&user)
+		o := orm.NewOrm()
+		_, err = o.Insert(&user)
+	}
+
+	return err
+}
+
+func validateUser(user User) error {
 	var err error
+
+	if user.Name == "" {
+		err = errors.New("Name is invalid")
+	}
 
 	if user.Email == "" {
 		err = errors.New("Email is invalid")
@@ -40,12 +56,8 @@ func CreateUser(user User) error {
 		err = errors.New("Contact Number is invalid")
 	}
 
-	if err == nil && !exists(user) {
-		securePassword(&user)
-		o := orm.NewOrm()
-		_, err = o.Insert(&user)
-	} else {
-		err = errors.New("Unable to create user. Email and Contact Number is not unique")
+	if len(user.Password) < 6 {
+		err = errors.New("Password must be atleast 6 characters")
 	}
 
 	return err
@@ -121,4 +133,16 @@ func exists(user User) bool {
 	result := o.QueryTable("user").SetCond(filter).Exist()
 
 	return result
+}
+
+func dropUser(user User) error {
+	o := orm.NewOrm()
+
+	_, err := o.Delete(&user)
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return err
 }

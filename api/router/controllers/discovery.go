@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/callrouter/models"
+	"github.com/louisevanderlith/mango/api/router/logic"
 )
 
 type DiscoveryController struct {
@@ -18,10 +18,10 @@ type DiscoveryController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *DiscoveryController) Post() {
-	var service models.Service
+	var service logic.Service
 	json.Unmarshal(req.Ctx.Input.RequestBody, &service)
 
-	appID := models.AddService(service)
+	appID := logic.AddService(service)
 
 	req.Data["json"] = map[string]string{"AppID": appID}
 	req.ServeJSON()
@@ -39,7 +39,7 @@ func (req *DiscoveryController) Get() {
 	serviceName := req.Ctx.Input.Param(":serviceName")
 
 	if appID != "" && serviceName != "" {
-		url, err := models.GetServicePath(serviceName, appID)
+		url, err := logic.GetServicePath(serviceName, appID)
 
 		if err != nil {
 			req.Data["json"] = err.Error()

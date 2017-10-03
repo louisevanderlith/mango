@@ -9,8 +9,9 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
+
+	"github.com/louisevanderlith/mango/util/enums"
 
 	uuid "github.com/nu7hatch/gouuid"
 )
@@ -27,9 +28,9 @@ type Service struct {
 	URL           string
 	Version       int
 	Requests      int
-	Environment   string
-	AllowedCaller string
-	Type          string
+	Environment   enums.Environment
+	AllowedCaller enums.ServiceType
+	Type          enums.ServiceType
 }
 
 func init() {
@@ -121,31 +122,31 @@ func GetServicePath(serviceName string, appID string) (string, error) {
 	return result, err
 }
 
-func getAllowedCaller(serviceType string) string {
-	var result string
+func getAllowedCaller(serviceType enums.ServiceType) enums.ServiceType {
+	var result enums.ServiceType
 
 	switch serviceType {
-	case "database":
-		result = "service"
-	case "service":
-		result = "proxy"
-	case "proxy":
-		result = "application"
-	case "application":
-		result = "*"
+	case enums.DB:
+		result = enums.API
+	case enums.API:
+		result = enums.PROXY
+	case enums.PROXY:
+		result = enums.APP
+	case enums.APP:
+		result = enums.ANY
 	}
 
 	return result
 }
 
-func getService(serviceName string, environment string, callerType string) *Service {
+func getService(serviceName string, environment enums.Environment, callerType enums.ServiceType) *Service {
 	var result *Service
 	serviceItems := serviceMap[serviceName]
 
 	if serviceItems != nil {
 		for _, val := range serviceItems {
 			correctEnv := val.Environment == environment
-			isAllowed := val.AllowedCaller == "*" || val.AllowedCaller == callerType
+			isAllowed := val.AllowedCaller == enums.ANY || val.AllowedCaller == callerType
 
 			if correctEnv && isAllowed {
 				result = val
@@ -173,13 +174,15 @@ func getRequestingService(appID string) *Service {
 }
 
 func registerDatabases() {
+	settings := loadSettings()
+
 	for _, val := range *settings {
 		for _, envVal := range val.Environments {
 			db := Service{
-				Environment: strings.ToLower(envVal.Name),
+				Environment: enums.GetEnvironment(envVal.Name),
 				Name:        val.Name,
 				URL:         envVal.Value,
-				Type:        "database"}
+				Type:        enums.DB}
 
 			AddService(db)
 		}

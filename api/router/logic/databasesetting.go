@@ -3,6 +3,8 @@ package logic
 import (
 	"encoding/json"
 	"log"
+
+	"github.com/louisevanderlith/mango/util"
 )
 
 type ConnectionString struct {
@@ -17,20 +19,16 @@ type DatabaseSetting struct {
 
 type Settings []DatabaseSetting
 
-var settings *Settings
+func loadSettings() *Settings {
+	dbConfPath := util.FindFilePath("database.json")
+	content := util.GetFileContent(dbConfPath)
 
-func init() {
-	if settings == nil {
-		loadSettings("../api/router/conf/database.json")
-	}
-}
-
-func loadSettings(dbConfPath string) {
-	content := getFileContent(dbConfPath)
-
+	var settings *Settings
 	err := json.Unmarshal(content, &settings)
 
 	if err != nil {
 		log.Panic(err)
 	}
+
+	return settings
 }

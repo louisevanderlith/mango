@@ -32,5 +32,22 @@
                 "Value": "host=localhost port=5432 user=postgres password=sa dbname=comms sslmode=disable"
             }
         ]
+    },
+    {
+        "Name": "Secure.DB",
+        "Environments": [
+            {
+                "Name": "LIVE",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comms sslmode=disable"
+            },
+            {
+                "Name": "UAT",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comms sslmode=disable"
+            },
+            {
+                "Name": "DEV",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comms sslmode=disable"
+            }
+        ]
     }
 ]
