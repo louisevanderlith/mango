@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
 	"log"
-	"net/http"
+
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 
 	_ "github.com/louisevanderlith/mango/api/comms/routers"
-	"github.com/louisevanderlith/mango/logic"
 	"github.com/louisevanderlith/mango/db/comms"
 
 	"github.com/astaxie/beego"
@@ -24,17 +22,16 @@ func main() {
 	}
 
 	// Register with router
-	srv := logic.Service{
-		Environment: beego.BConfig.RunMode,
+	srv := util.Service{
+		Environment: enums.GetEnvironment(beego.BConfig.RunMode),
 		Name:        beego.BConfig.AppName,
 		URL:         "http://localhost:" + beego.AppConfig.String("httpport"),
-		Type:        "service"
-	}
+		Type:        enums.API}
 
 	discURL := beego.AppConfig.String("discovery")
-	key, err := logic.Register(discURL)
+	key, err := util.Register(srv, discURL)
 
-	if err != nil{
+	if err != nil {
 		log.Panic(err)
 	} else {
 		instanceKey = key

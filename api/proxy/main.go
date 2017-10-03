@@ -1,35 +1,31 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
 	"log"
-	"net/http"
 
-	"github.com/louisevanderlith/mango/logic"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 var (
-	config *logic.Config
+	config *util.Config
 )
 
 func init() {
-	config = new(logic.Config)
+	config = new(util.Config)
 	config.LoadConfig("./app.conf")
 }
 
 func main() {
 	// Register with router
-	srv := logic.Service{
-		Environment: config.Environment,
+	srv := util.Service{
+		Environment: enums.GetEnvironment(config.Environment),
 		Name:        "Proxy.API",
 		URL:         config.Host,
-		Type:        "proxy"
-	}
+		Type:        enums.PROXY}
 
-	key, err := logic.Register()
-	
+	key, err := util.Register(srv, config.Discovery)
+
 	if err != nil {
 		log.Panic(err)
 	} else {

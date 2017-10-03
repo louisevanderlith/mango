@@ -1,78 +1,30 @@
 package logic
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	uuid "github.com/nu7hatch/gouuid"
 )
 
+type Services []*util.Service
+
 var (
 	serviceMap map[string]Services
 )
-
-type Services []*Service
-
-type Service struct {
-	ID            string
-	Name          string
-	URL           string
-	Version       int
-	Requests      int
-	Environment   enums.Environment
-	AllowedCaller enums.ServiceType
-	Type          enums.ServiceType
-}
 
 func init() {
 	serviceMap = make(map[string]Services)
 	registerDatabases()
 }
 
-// Register is used to register an application with the router service
-func Register(service Service, discoveryURL string) (string, error) {
-	result := ""
-	buff := new(bytes.Buffer)
-	json.NewEncoder(buff).Encode(service)
-
-	resp, err := http.Post(discoveryURL, "application/json", buff)
-
-	if err != nil {
-		log.Panic(err)
-	} else {
-		defer resp.Body.Close()
-
-		contents, err := ioutil.ReadAll(resp.Body)
-
-		if err != nil {
-			log.Panic(err)
-		}
-
-		var data struct{ AppID string }
-		jerr := json.Unmarshal(contents, &data)
-
-		if jerr != nil {
-			log.Panic(jerr)
-			err = jerr
-		}
-
-		result = data.AppID
-	}
-
-	return result, err
-}
-
 // AddService registers a new service and returns a key for that entry
-func AddService(service Service) string {
+func AddService(service util.Service) string {
 	var result string
 	items := serviceMap[service.Name]
 	duplicate := false
@@ -139,8 +91,8 @@ func getAllowedCaller(serviceType enums.ServiceType) enums.ServiceType {
 	return result
 }
 
-func getService(serviceName string, environment enums.Environment, callerType enums.ServiceType) *Service {
-	var result *Service
+func getService(serviceName string, environment enums.Environment, callerType enums.ServiceType) *util.Service {
+	var result *util.Service
 	serviceItems := serviceMap[serviceName]
 
 	if serviceItems != nil {
@@ -158,8 +110,8 @@ func getService(serviceName string, environment enums.Environment, callerType en
 	return result
 }
 
-func getRequestingService(appID string) *Service {
-	var result *Service
+func getRequestingService(appID string) *util.Service {
+	var result *util.Service
 
 	for _, serviceItems := range serviceMap {
 		for _, val := range serviceItems {
@@ -178,7 +130,7 @@ func registerDatabases() {
 
 	for _, val := range *settings {
 		for _, envVal := range val.Environments {
-			db := Service{
+			db := util.Service{
 				Environment: enums.GetEnvironment(envVal.Name),
 				Name:        val.Name,
 				URL:         envVal.Value,

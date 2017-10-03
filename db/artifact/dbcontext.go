@@ -2,12 +2,12 @@ package artifact
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/logic"
+	"github.com/louisevanderlith/mango/util"
 )
 
 func NewDatabase(instanceKey, discoveryURL string) {
 	dbName := "Artifact.DB"
-	logic.BuildDatabase(registerModels, instanceKey, dbName, discoveryURL)
+	util.BuildDatabase(registerModels, instanceKey, dbName, discoveryURL)
 }
 
 func registerModels() {

@@ -17,6 +17,7 @@ type Config struct {
 	MaxWaiting     int
 	Discovery      string
 	Key            string
+	Environment    string
 }
 
 func (c *Config) LoadConfig(configPath string) {
@@ -38,6 +39,8 @@ func (c *Config) LoadConfig(configPath string) {
 			c.MaxWaiting = parse(confVal)
 		case "discovery":
 			c.Discovery = confVal
+		case "environment":
+			c.Environment = confVal
 		}
 	}
 }

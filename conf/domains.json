@@ -1,0 +1,18 @@
+[
+    {
+        "Name": "Communication.API",
+        "Address": "comms.local.co.za"
+    },
+    {
+        "Name": "Security.API",
+        "Address": "secure.local.co.za"
+    },
+    {
+        "Name": "Classifieds.APP",
+        "Address": "classifieds.local.co.za"
+    },
+    {
+        "Name": "Shop.APP",
+        "Address": "shop.local.co.za"
+    }
+]

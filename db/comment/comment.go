@@ -2,9 +2,8 @@ package comment
 
 type Comment struct {
 	Record
-	User      *User `orm:"null;rel(one)"`
+	UserID    int64 `orm:"null"`
 	UpVotes   int
 	DownVotes int
-	Adverts   []*Advert `orm:"reverse(many)"`
-	Profile   *Profile  `orm:"rel(fk)"`
+	ItemID    int64 `orm:"null"`
 }

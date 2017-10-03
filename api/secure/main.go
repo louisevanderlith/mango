@@ -1,7 +1,12 @@
 package main
 
 import (
+	"log"
+
 	_ "github.com/louisevanderlith/mango/api/secure/routers"
+	"github.com/louisevanderlith/mango/db/secure"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
 )
@@ -13,22 +18,22 @@ func main() {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
-	
+
 	// Register with router
-	srv := logic.Service{
-		Environment: beego.BConfig.RunMode,
+	srv := util.Service{
+		Environment: enums.GetEnvironment(beego.BConfig.RunMode),
 		Name:        beego.BConfig.AppName,
 		URL:         "http://localhost:" + beego.AppConfig.String("httpport"),
-		Type:        "service"
-	}
+		Type:        enums.API}
 
-	key, err := logic.Register()
+	discURL := beego.AppConfig.String("discovery")
+	key, err := util.Register(srv, discURL)
 
-	if err != nil{
+	if err != nil {
 		log.Panic(err)
 	} else {
 		instanceKey = key
-		logic.BuildDatabase(instanceKey)
+		secure.NewDatabase(instanceKey, discURL)
 		beego.Run()
 	}
 }

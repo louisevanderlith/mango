@@ -1,6 +1,10 @@
 package artifact
 
-type Upload struct{
+type Upload struct {
 	Record
-	Advert *Advert `orm:"rel(fk)"`
+	ItemID   int64
+	Name     string
+	MimeType string
+	Path     string
+	Size     int64
 }

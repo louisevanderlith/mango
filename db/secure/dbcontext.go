@@ -2,12 +2,12 @@ package secure
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/logic"
+	"github.com/louisevanderlith/mango/util"
 )
 
 func NewDatabase(instanceKey, discoveryURL string) {
 	dbName := "Secure.DB"
-	logic.BuildDatabase(registerModels, instanceKey, dbName, discoveryURL)
+	util.BuildDatabase(registerModels, instanceKey, dbName, discoveryURL)
 }
 
 func registerModels() {

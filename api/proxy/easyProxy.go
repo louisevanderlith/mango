@@ -133,31 +133,3 @@ func forwardGET(target string, message Message) (string, error) {
 
 	return result, err
 }
-
-func getTargetURL(appKey string, rawTarget string) (string, error) {
-	var result string
-	var err error
-
-	discoveryRoute := fmt.Sprintf("%s%s/%s", config.Discovery, appKey, rawTarget)
-	resp, err := http.Get(discoveryRoute)
-	defer resp.Body.Close()
-
-	if err != nil {
-		log.Panic(err)
-	} else {
-		contents, err := ioutil.ReadAll(resp.Body)
-
-		if err != nil {
-			log.Panic(err)
-		}
-
-		result = string(contents)
-
-		if result == "" {
-			msg := fmt.Sprintf("Couldn't find a application for %s", rawTarget)
-			err = errors.New(msg)
-		}
-	}
-
-	return result, err
-}

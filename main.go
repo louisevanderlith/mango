@@ -3,27 +3,34 @@ package main
 import (
 	"log"
 	"net/http"
+	"net/http/httputil"
+	"net/url"
 
-	"github.com/louisevanderlith/mango/logic"
+	"github.com/astaxie/beego"
+
+	"github.com/louisevanderlith/mango/db/secure"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 var instanceKey string
 
 func main() {
 	// Register with router
-	srv := logic.Service{
-		Environment: "dev",
-		Name:        "Website.APP",
-		URL:         "http://localhost:80",
-		Type:        "application"}
+	srv := util.Service{
+		Environment: enums.GetEnvironment(beego.AppConfig.String("runmode")),
+		Name:        beego.AppConfig.String("appname"),
+		URL:         "http://localhost:" + beego.AppConfig.String("httpport"),
+		Type:        enums.PROXY}
 
-	discURL := "http://localhost:123"
-	key, err := logic.Register(srv, discURL)
+	discURL := beego.AppConfig.String("discovery")
+	key, err := util.Register(srv, discURL)
 
 	if err != nil {
 		log.Panic(err)
 	} else {
 		instanceKey = key
+		secure.NewDatabase(instanceKey, discURL)
 		setupHost()
 	}
 }
@@ -33,10 +40,36 @@ func setupHost() {
 	http.Handle("/web/", http.StripPrefix("/web/", fs))
 	http.Handle("/", fs)
 
+	registerSubdomains()
+
 	log.Println("Listening...")
-	err := http.ListenAndServe(":80", nil)
+	err := http.ListenAndServe(beego.AppConfig.String("httpport"), nil)
 
 	if err != nil {
 		log.Panic("ListenAndServe: ", err)
+	}
+}
+
+func registerSubdomains() {
+	domains := loadSettings(discURL string)
+
+	for _, v := range domains {
+		rawURL := util.GetServiceURL(instanceKey, v.Name, discURL)
+
+		vshost, err := url.Parse(rawURL)
+		if err != nil {
+			panic(err)
+		}
+
+		proxy := httputil.NewSingleHostReverseProxy(vhost)
+		http.HandleFunc(v.Address, domainHandler(proxy))
+	}
+}
+
+func domainHandler(p *httputil.ReverseProxy) func(http.ResponseWriter, *http.Request) {
+	log.Print("PROXY doing it's stuff. More logging to come")
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		p.ServeHTTP(w, r)
 	}
 }
