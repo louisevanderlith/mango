@@ -9,10 +9,10 @@ import (
 
 type DomainSetting struct {
 	Address string
-	Name      string
+	Name    string
 }
 
-type Settings *[]DomainSetting
+type Settings []DomainSetting
 
 func loadSettings() *Settings {
 	dbConfPath := util.FindFilePath("domains.json")

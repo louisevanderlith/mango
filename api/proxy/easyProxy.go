@@ -9,6 +9,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/louisevanderlith/mango/util"
 )
 
 type Message struct {
@@ -71,7 +73,7 @@ func forwardRequest(message Message) (string, error) {
 	var data string
 	var err error
 
-	target, err := getTargetURL(message.OriginID, message.Target)
+	target, err := util.GetServiceURL(message.OriginID, message.Target, config.Discovery)
 
 	if err == nil {
 		if message.Action == "GET" {

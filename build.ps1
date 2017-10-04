@@ -51,7 +51,7 @@ For($i=0; $i -lt $appPaths.Count; $i++){
             $webSource = $folder.FullName + '\*'
             $webTarget = $outPath + '\web\'
 
-            Copy-Item -Path $webSource -Destination $webTarget
+            Copy-Item -Path $webSource -Destination $webTarget -Force
 
             # TODO
             # run gulp

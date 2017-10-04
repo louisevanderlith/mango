@@ -23,7 +23,6 @@ func main() {
 	srv := util.Service{
 		Environment: enums.GetEnvironment(beego.BConfig.RunMode),
 		Name:        beego.BConfig.AppName,
-		URL:         "http://localhost:" + beego.AppConfig.String("httpport"),
 		Type:        enums.API}
 
 	discURL := beego.AppConfig.String("discovery")

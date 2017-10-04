@@ -17,13 +17,12 @@ var instanceKey string
 func main() {
 	// Register with router
 	srv := util.Service{
-		Environment: beego.AppConfig.String("runmode"),
+		Environment: enums.GetEnvironment(beego.AppConfig.String("runmode")),
 		Name:        beego.AppConfig.String("appname"),
-		URL:         "http://localhost:" + beego.AppConfig.String("httpport"),
 		Type:        enums.APP}
 
 	discURL := beego.AppConfig.String("discovery")
-	key, err := util.Register(discURL)
+	key, err := util.Register(srv, discURL)
 
 	if err != nil {
 		log.Panic(err)

@@ -2,9 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/api/router/logic"
+	"github.com/louisevanderlith/mango/util"
 )
 
 type DiscoveryController struct {
@@ -18,9 +20,11 @@ type DiscoveryController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *DiscoveryController) Post() {
-	var service logic.Service
+	var service util.Service
 	json.Unmarshal(req.Ctx.Input.RequestBody, &service)
 
+	service.URL = req.Ctx.Request.Referer()
+	log.Print(service.URL)
 	appID := logic.AddService(service)
 
 	req.Data["json"] = map[string]string{"AppID": appID}

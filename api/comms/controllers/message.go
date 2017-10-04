@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/logic"
+	"github.com/louisevanderlith/mango/db/comms"
 )
 
 // Operations about Messages
@@ -19,10 +19,10 @@ type MessageController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *MessageController) Post() {
-	var message logic.Message
+	var message comms.Message
 	json.Unmarshal(req.Ctx.Input.RequestBody, &message)
 
-	err := logic.SendMessage(message)
+	err := comms.SendMessage(message)
 
 	if err != nil {
 		req.Data["json"] = map[string]string{"Error": err.Error()}

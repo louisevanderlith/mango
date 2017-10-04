@@ -20,7 +20,6 @@ func main() {
 	srv := util.Service{
 		Environment: enums.GetEnvironment(beego.AppConfig.String("runmode")),
 		Name:        beego.AppConfig.String("appname"),
-		URL:         "http://localhost:" + beego.AppConfig.String("httpport"),
 		Type:        enums.PROXY}
 
 	discURL := beego.AppConfig.String("discovery")
@@ -31,16 +30,16 @@ func main() {
 	} else {
 		instanceKey = key
 		secure.NewDatabase(instanceKey, discURL)
-		setupHost()
+		setupHost(discURL)
 	}
 }
 
-func setupHost() {
+func setupHost(discURL string) {
 	fs := http.FileServer(http.Dir("web"))
 	http.Handle("/web/", http.StripPrefix("/web/", fs))
 	http.Handle("/", fs)
 
-	registerSubdomains()
+	registerSubdomains(discURL)
 
 	log.Println("Listening...")
 	err := http.ListenAndServe(beego.AppConfig.String("httpport"), nil)
@@ -50,18 +49,18 @@ func setupHost() {
 	}
 }
 
-func registerSubdomains() {
-	domains := loadSettings(discURL string)
+func registerSubdomains(discURL string) {
+	domains := loadSettings()
 
-	for _, v := range domains {
-		rawURL := util.GetServiceURL(instanceKey, v.Name, discURL)
+	for _, v := range *domains {
+		rawURL, err := util.GetServiceURL(instanceKey, v.Name, discURL)
 
 		vshost, err := url.Parse(rawURL)
 		if err != nil {
 			panic(err)
 		}
 
-		proxy := httputil.NewSingleHostReverseProxy(vhost)
+		proxy := httputil.NewSingleHostReverseProxy(vshost)
 		http.HandleFunc(v.Address, domainHandler(proxy))
 	}
 }

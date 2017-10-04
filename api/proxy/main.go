@@ -21,7 +21,6 @@ func main() {
 	srv := util.Service{
 		Environment: enums.GetEnvironment(config.Environment),
 		Name:        "Proxy.API",
-		URL:         config.Host,
 		Type:        enums.PROXY}
 
 	key, err := util.Register(srv, config.Discovery)

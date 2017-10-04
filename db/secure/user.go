@@ -20,6 +20,7 @@ type User struct {
 	Password      []byte
 	LoginDate     time.Time     `orm:"type(date)"`
 	LoginTraces   []*LoginTrace `orm:"reverse(many)"`
+	Roles         []*Role       `orm:"reverse(many)"`
 }
 
 var cost int
@@ -64,22 +65,37 @@ func validateUser(user User) error {
 }
 
 // Login will attempt to authenticate a user
-func Login(identifier string, password []byte) bool {
-	var result bool
+func Login(identifier string, password []byte, ip string, location string) (bool, int64) {
+	var passed bool
+	var userID int64
 
 	if identifier != "" && len(password) > 0 {
 		user := getUser(identifier)
 
 		if user != nil {
 			err := bcrypt.CompareHashAndPassword(user.Password, password)
+			passed = err == nil
 
-			if result = err != nil; result {
+			if !passed {
+				log.Panic(err)
+			}
+
+			trace := LoginTrace{
+				Allowed:  passed,
+				Location: location,
+				IP:       ip,
+				User:     user}
+
+			err = createLoginTrace(trace)
+			userID = user.ID
+
+			if err != nil {
 				log.Panic(err)
 			}
 		}
 	}
 
-	return result
+	return passed, userID
 }
 
 func securePassword(user *User) {
