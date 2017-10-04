@@ -7,19 +7,19 @@ import (
 type Login struct {
 	Identifier string
 	Password   string
-	IP string
-	Location string
+	IP         string
+	Location   string
 }
 
-func AttemptLogin(l Login) (string, error) string{
+func AttemptLogin(l Login) string {
 	var token string
 	loggedIn, userID := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
 
 	if loggedIn {
 		session := UserSession{
-				IP = l.IP,
-				Location = l.Location,
-				UserID = userID		}
+			IP:       l.IP,
+			Location: l.Location,
+			UserID:   userID}
 
 		token = Set(&session)
 	}

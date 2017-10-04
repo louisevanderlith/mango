@@ -14,6 +14,7 @@ type LoginController struct {
 
 func (req *LoginController) Get() {
 	// returns the login form
+	req.TplName = "login.html"
 }
 
 // @Title Login
@@ -25,12 +26,12 @@ func (req *LoginController) Get() {
 func (req *LoginController) Post() {
 	// failed logins should redirect to the login page
 	var login logic.Login
-	json.Unmarshal(o.Ctx.Input.RequestBody, &login)
+	json.Unmarshal(req.Ctx.Input.RequestBody, &login)
 
 	token := logic.AttemptLogin(login)
 
-	o.Data["json"] = token
-	o.ServeJSON()
+	req.Data["json"] = token
+	req.ServeJSON()
 }
 
 // @Title Logout
@@ -45,6 +46,6 @@ func (req *LoginController) Logout() {
 		logic.Delete(token)
 	}
 
-	u.Data["json"] = "Logout Success"
-	u.ServeJSON()
+	req.Data["json"] = "Logout Success"
+	req.ServeJSON()
 }

@@ -9,7 +9,7 @@ type RegisterController struct {
 }
 
 func (req *RegisterController) Get() {
-	// Returns the Registration Page
+	req.TplName = "register.html"
 }
 
 func (req *RegisterController) Post() {
