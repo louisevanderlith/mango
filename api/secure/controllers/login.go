@@ -13,7 +13,6 @@ type LoginController struct {
 }
 
 func (req *LoginController) Get() {
-	// returns the login form
 	req.TplName = "login.html"
 }
 
@@ -32,6 +31,8 @@ func (req *LoginController) Post() {
 
 	req.Data["json"] = token
 	req.ServeJSON()
+
+	// redirect to ReturnURL with token as querystring
 }
 
 // @Title Logout

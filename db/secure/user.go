@@ -13,11 +13,11 @@ import (
 // User database model
 type User struct {
 	Record
-	Name          string `orm:"size(75)"`
-	Verified      bool
-	Email         string `orm:"size(128)"`
-	ContactNumber string `orm:"size(20)"`
-	Password      []byte
+	Name          string        `orm:"size(75)"`
+	Verified      bool          `orm:"default(false)"`
+	Email         string        `orm:"size(128)"`
+	ContactNumber string        `orm:"size(20)"`
+	Password      []byte        `orm:"type(blob)"`
 	LoginDate     time.Time     `orm:"type(date)"`
 	LoginTraces   []*LoginTrace `orm:"reverse(many)"`
 	Roles         []*Role       `orm:"reverse(many)"`

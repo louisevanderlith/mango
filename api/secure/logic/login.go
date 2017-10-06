@@ -9,6 +9,7 @@ type Login struct {
 	Password   string
 	IP         string
 	Location   string
+	ReturnURL  string
 }
 
 func AttemptLogin(l Login) string {

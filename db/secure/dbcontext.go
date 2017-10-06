@@ -11,5 +11,5 @@ func NewDatabase(instanceKey, discoveryURL string) {
 }
 
 func registerModels() {
-	orm.RegisterModel(new(User), new(LoginTrace))
+	orm.RegisterModel(new(User), new(LoginTrace), new(Role))
 }
