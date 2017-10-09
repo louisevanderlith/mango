@@ -48,6 +48,17 @@ For($i=0; $i -lt $appPaths.Count; $i++){
 
             go build -o $exeName
 
+            if(Test-Path (".\conf")){
+                $source = ".\conf\*"
+                $target = $outPath + '\conf\'
+
+                if(!(Test-Path -path $target)){
+                    New-Item $target -Type Directory
+                }
+
+                Copy-Item -Path $source -Destination $target
+            }
+
             $webSource = $folder.FullName + '\*'
             $webTarget = $outPath + '\web\'
 

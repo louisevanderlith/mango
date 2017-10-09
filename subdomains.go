@@ -52,6 +52,7 @@ func registerSubdomains(discURL string) {
 
 			subdomains[v.Address] = domainMux
 		} else {
+			log.Printf("Skipping %s", v.Name)
 			log.Print(err)
 		}
 	}

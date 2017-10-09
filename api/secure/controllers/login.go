@@ -29,10 +29,14 @@ func (req *LoginController) Post() {
 
 	token := logic.AttemptLogin(login)
 
-	req.Data["json"] = token
-	req.ServeJSON()
+	if token == "" {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = "Login Failed"
+	} else {
+		req.Data["json"] = token
+	}
 
-	// redirect to ReturnURL with token as querystring
+	req.ServeJSON()
 }
 
 // @Title Logout
@@ -45,8 +49,11 @@ func (req *LoginController) Logout() {
 
 	if len(token) == 16 {
 		logic.Delete(token)
+		req.Data["json"] = "Logout Success"
+	} else {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = "Invalid Token"
 	}
 
-	req.Data["json"] = "Logout Success"
 	req.ServeJSON()
 }
