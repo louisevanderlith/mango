@@ -50,7 +50,7 @@ func sendEmail(body string) error {
 	err := d.DialAndSend(gm)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	return err
@@ -72,7 +72,7 @@ func saveMessageLog(m Message) error {
 	_, err := o.Insert(&m)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	return err

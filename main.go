@@ -6,15 +6,11 @@ import (
 
 	"github.com/astaxie/beego"
 
-	"github.com/louisevanderlith/mango/db/secure"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-var (
-	instanceKey string
-	subdomains  Subdomains
-)
+var instanceKey string
 
 func main() {
 	// Register with router
@@ -24,24 +20,24 @@ func main() {
 		Type:        enums.PROXY}
 
 	discURL := beego.AppConfig.String("discovery")
-	key, err := util.Register(srv, discURL)
+	port := beego.AppConfig.String("httpport")
+	key, err := util.Register(srv, discURL, port)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	} else {
 		instanceKey = key
-		secure.NewDatabase(instanceKey, discURL)
-		setupHost(discURL)
+		setupHost(discURL, port)
 	}
 }
 
-func setupHost(discURL string) {
+func setupHost(discURL, port string) {
 	registerSubdomains(discURL)
 
 	log.Println("Listening...")
-	err := http.ListenAndServe(beego.AppConfig.String("httpport"), subdomains)
+	err := http.ListenAndServe(":"+port, subdomains)
 
 	if err != nil {
-		log.Panic("ListenAndServe: ", err)
+		log.Print("ListenAndServe: ", err)
 	}
 }

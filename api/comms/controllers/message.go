@@ -25,6 +25,7 @@ func (req *MessageController) Post() {
 	err := comms.SendMessage(message)
 
 	if err != nil {
+		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = map[string]string{"Error": err.Error()}
 	} else {
 		req.Data["json"] = map[string]string{"Data": "Message has been sent."}

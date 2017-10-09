@@ -22,7 +22,7 @@ func loadSettings() *Settings {
 	err := json.Unmarshal(content, &settings)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	return settings

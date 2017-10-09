@@ -12,6 +12,12 @@ import (
 
 type Subdomains map[string]http.Handler
 
+var subdomains Subdomains
+
+func init() {
+	subdomains = make(Subdomains)
+}
+
 func (subdomains Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	domainParts := strings.Split(r.Host, ".")
 	mux := subdomains[domainParts[0]]
@@ -31,18 +37,23 @@ func registerSubdomains(discURL string) {
 
 	for _, v := range *domains {
 		rawURL, err := util.GetServiceURL(instanceKey, v.Name, discURL)
-		vshost, err := url.Parse(rawURL)
 
-		if err != nil {
-			panic(err)
+		if rawURL != "" && err == nil {
+			vshost, err := url.Parse(rawURL)
+
+			if err != nil {
+				log.Print(err)
+			}
+
+			proxy := httputil.NewSingleHostReverseProxy(vshost)
+
+			domainMux := http.NewServeMux()
+			domainMux.HandleFunc("/", domainHandler(proxy))
+
+			subdomains[v.Address] = domainMux
+		} else {
+			log.Print(err)
 		}
-
-		proxy := httputil.NewSingleHostReverseProxy(vshost)
-
-		domainMux := http.NewServeMux()
-		domainMux.HandleFunc("/", domainHandler(proxy))
-
-		subdomains[v.Address] = domainMux
 	}
 }
 

@@ -13,13 +13,13 @@ func BuildDatabase(regModels func(), instanceKey, dbName, discoveryURL string) {
 	dbPath, err := GetServiceURL(instanceKey, dbName, discoveryURL)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	} else {
 		driverName := "postgres"
 		err := orm.RegisterDataBase(name, driverName, dbPath)
 
 		if err != nil {
-			log.Panic("Please ensure that you have created your Database.")
+			log.Print("Please ensure that you have created your Database.")
 		} else {
 			orm.RunSyncdb(name, false, false)
 		}

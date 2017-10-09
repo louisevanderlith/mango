@@ -8,6 +8,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/louisevanderlith/mango/util/enums"
 )
@@ -23,30 +25,35 @@ type Service struct {
 	Type          enums.ServiceType
 }
 
+var publicIP string
+
 // Register is used to register an application with the router service
-func Register(service Service, discoveryURL string) (string, error) {
+func Register(service Service, discoveryURL string, port string) (string, error) {
 	result := ""
+
+	service.URL = getPublicIP(port, service.Environment)
+
 	buff := new(bytes.Buffer)
 	json.NewEncoder(buff).Encode(service)
 
 	resp, err := http.Post(discoveryURL, "application/json", buff)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	} else {
 		defer resp.Body.Close()
 
 		contents, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			log.Panic(err)
+			log.Print(err)
 		}
 
 		var data struct{ AppID string }
 		jerr := json.Unmarshal(contents, &data)
 
 		if jerr != nil {
-			log.Panic(jerr)
+			log.Print(jerr)
 			err = jerr
 		}
 
@@ -58,33 +65,61 @@ func Register(service Service, discoveryURL string) (string, error) {
 
 func GetServiceURL(instanceKey string, serviceName string, discoveryURL string) (string, error) {
 	var result string
-	var err error
+	var finalError error
 
 	discoveryRoute := fmt.Sprintf("%s%s/%s", discoveryURL, instanceKey, serviceName)
 	resp, err := http.Get(discoveryRoute)
-	defer resp.Body.Close()
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	} else {
+		defer resp.Body.Close()
 		contents, err := ioutil.ReadAll(resp.Body)
 
 		if err != nil {
-			log.Panic(err)
+			log.Print(err)
 		}
 
-		jsonErr := json.Unmarshal(contents, &result)
+		var rawURL string
+		err = json.Unmarshal(contents, &rawURL)
 
-		if jsonErr != nil {
-			log.Panic(err)
+		if err != nil {
+			log.Print(err)
 		}
 
-		if result == "" {
-			msg := fmt.Sprintf("Couldn't find a application for %s", serviceName)
-			err = errors.New(msg)
+		if resp.StatusCode != 200 {
+			finalError = errors.New(rawURL)
+		} else {
+			cleanURL, _ := url.Parse(rawURL)
+			result = cleanURL.String()
 		}
 	}
 
-	log.Print(result)
-	return result, err
+	return result, finalError
+}
+
+func getPublicIP(port string, env enums.Environment) string {
+
+	if env == enums.DEV {
+		publicIP = "localhost"
+	}
+
+	if publicIP == "" {
+		resp, err := http.Get("http://myexternalip.com/raw")
+
+		if err != nil {
+			log.Print(err)
+		}
+
+		defer resp.Body.Close()
+
+		ip, err := ioutil.ReadAll(resp.Body)
+		publicIP = strings.Replace(string(ip), "\n", "", -1)
+
+		if err != nil {
+			log.Print(err)
+		}
+	}
+
+	return fmt.Sprintf("http://%s:%s/", publicIP, port)
 }

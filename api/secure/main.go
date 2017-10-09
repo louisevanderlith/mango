@@ -26,10 +26,11 @@ func main() {
 		Type:        enums.API}
 
 	discURL := beego.AppConfig.String("discovery")
-	key, err := util.Register(srv, discURL)
+	port := beego.AppConfig.String("httpport")
+	key, err := util.Register(srv, discURL, port)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	} else {
 		instanceKey = key
 		secure.NewDatabase(instanceKey, discURL)

@@ -19,7 +19,7 @@ func createLoginTrace(l LoginTrace) error {
 	_, err := o.Insert(&l)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	return err

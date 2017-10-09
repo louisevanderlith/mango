@@ -77,7 +77,7 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 			passed = err == nil
 
 			if !passed {
-				log.Panic(err)
+				log.Print(err)
 			}
 
 			trace := LoginTrace{
@@ -90,7 +90,7 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 			userID = user.ID
 
 			if err != nil {
-				log.Panic(err)
+				log.Print(err)
 			}
 		}
 	}
@@ -102,7 +102,7 @@ func securePassword(user *User) {
 	hashedPwd, err := bcrypt.GenerateFromPassword(user.Password, cost)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	user.Password = hashedPwd
@@ -117,7 +117,7 @@ func getUserByID(userID int64) *User {
 
 	if err == orm.ErrNoRows || err == orm.ErrMissPK {
 		msg := fmt.Sprintf("Couldn't find user with ID %v", userID)
-		log.Panic(msg)
+		log.Print(msg)
 	}
 
 	return user
@@ -134,7 +134,7 @@ func getUser(identifier string) *User {
 
 	if err == orm.ErrNoRows {
 		msg := fmt.Sprintf("Couldn't find user with identifier %s", identifier)
-		log.Panic(msg)
+		log.Print(msg)
 	}
 
 	return &result
@@ -157,7 +157,7 @@ func dropUser(user User) error {
 	_, err := o.Delete(&user)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	return err

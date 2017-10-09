@@ -49,7 +49,7 @@ func parse(value string) int {
 	i, err := strconv.Atoi(value)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	return i
@@ -59,7 +59,7 @@ func GetFileContent(configPath string) []byte {
 	dat, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	return dat
@@ -78,7 +78,7 @@ func getWorkingPath() string {
 	ex, err := os.Getwd()
 
 	if err != nil {
-		log.Panic(err)
+		log.Print(err)
 	}
 
 	return ex

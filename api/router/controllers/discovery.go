@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/api/router/logic"
@@ -23,8 +22,6 @@ func (req *DiscoveryController) Post() {
 	var service util.Service
 	json.Unmarshal(req.Ctx.Input.RequestBody, &service)
 
-	service.URL = req.Ctx.Request.Referer()
-	log.Print(service.URL)
 	appID := logic.AddService(service)
 
 	req.Data["json"] = map[string]string{"AppID": appID}
@@ -46,6 +43,7 @@ func (req *DiscoveryController) Get() {
 		url, err := logic.GetServicePath(serviceName, appID)
 
 		if err != nil {
+			req.Ctx.Output.SetStatus(500)
 			req.Data["json"] = err.Error()
 		} else {
 			req.Data["json"] = url
