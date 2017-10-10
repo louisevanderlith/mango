@@ -1,12 +1,8 @@
 package main
 
 import (
-	"log"
-
+	_ "github.com/louisevanderlith/mango/app/logbook/routers"
 	"github.com/astaxie/beego"
-	_ "github.com/louisevanderlith/mango/app/shop/routers"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
 )
 
 var instanceKey string
@@ -29,3 +25,4 @@ func main() {
 		beego.Run()
 	}
 }
+

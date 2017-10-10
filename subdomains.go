@@ -70,7 +70,6 @@ func defaultMuxSetup() {
 
 func domainHandler(p *httputil.ReverseProxy) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Print("PROXY Activated...")
 		p.ServeHTTP(w, r)
 	}
 }

@@ -1,5 +1,13 @@
 [
     {
+        "Name": "Artifact.API",
+        "Address": "artifact"
+    },
+    {
+        "Name": "Comment.API",
+        "Address": "comment"
+    },
+    {
         "Name": "Communication.API",
         "Address": "comms"
     },
@@ -8,8 +16,20 @@
         "Address": "secure"
     },
     {
+        "Name": "Things.API",
+        "Address": "things"
+    },
+    {
+        "Name": "Admin.APP",
+        "Address": "admin"
+    },
+    {
         "Name": "Classifieds.APP",
         "Address": "classifieds"
+    },
+    {
+        "Name": "Logbook.APP",
+        "Address": "logbook"
     },
     {
         "Name": "Shop.APP",
