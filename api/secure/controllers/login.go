@@ -12,6 +12,10 @@ type LoginController struct {
 	beego.Controller
 }
 
+// @Title Login
+// @Description Gets the form a user must fill in to login
+// @Success 200 {string} string
+// @router / [get]
 func (req *LoginController) Get() {
 	req.TplName = "login.html"
 }

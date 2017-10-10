@@ -8,7 +8,7 @@ func TestCreateUser_MustHaveError(t *testing.T) {
 	input := User{
 		ContactNumber: "",
 		Email:         "",
-		Password:      []byte("pass")}
+		Password:      "pass"}
 
 	err := CreateUser(input)
 
@@ -21,7 +21,7 @@ func TestCreateUser_PasswordLength_MustHaveError(t *testing.T) {
 	input := User{
 		ContactNumber: "0123457894",
 		Email:         "testing@mail.com",
-		Password:      []byte("short")}
+		Password:      "short"}
 
 	err := CreateUser(input)
 
@@ -32,7 +32,7 @@ func TestCreateUser_PasswordLength_MustHaveError(t *testing.T) {
 
 func TestSecurePassword_NoError(t *testing.T) {
 	input := User{
-		Password: []byte("password")}
+		Password: "password"}
 
 	securePassword(&input)
 
@@ -46,11 +46,11 @@ func TestLoginUser_Email_NoError(t *testing.T) {
 	input := User{
 		ContactNumber: "0123456789",
 		Email:         "test@mail.com",
-		Password:      []byte(pwd)}
+		Password:      pwd}
 
 	CreateUser(input)
 
-	loginPass := Login(input.Email, input.Password)
+	loginPass := Login(input.Email, []byte(input.Password)
 
 	if !loginPass {
 		t.Error("Couldn't Login")
@@ -64,11 +64,11 @@ func TestLoginUser_Contact_NoError(t *testing.T) {
 	input := User{
 		ContactNumber: "0123456789",
 		Email:         "test@mail.com",
-		Password:      []byte(pwd)}
+		Password:      pwd}
 
 	CreateUser(input)
 
-	loginPass := Login(input.ContactNumber, input.Password)
+	loginPass := Login(input.ContactNumber, []byte(input.Password)
 
 	if !loginPass {
 		t.Error("Couldn't Login")

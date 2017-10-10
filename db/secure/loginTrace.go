@@ -4,10 +4,11 @@ import (
 	"log"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/mango/util"
 )
 
 type LoginTrace struct {
-	Record
+	util.Record
 	Location string `orm:"null;size(128)"`
 	IP       string `orm:"null;size(50)"`
 	Allowed  bool   `orm:"default(true)"`

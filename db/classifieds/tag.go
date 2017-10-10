@@ -1,7 +1,9 @@
 package classifieds
 
+import "github.com/louisevanderlith/mango/util"
+
 type Tag struct {
-	Record
+	util.Record
 	Description string
-	Adverts      []*Advert `orm:"reverse(many)"`
+	Adverts     []*Advert `orm:"reverse(many)"`
 }

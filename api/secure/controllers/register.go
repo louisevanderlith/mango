@@ -5,28 +5,32 @@ import (
 	"fmt"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/db/secure"
+	"github.com/louisevanderlith/mango/api/secure/logic"
 )
 
 type RegisterController struct {
 	beego.Controller
 }
 
+// @Title Register
+// @Description Gets the form a user must fill in to register
+// @Success 200 {string} string
+// @router / [get]
 func (req *RegisterController) Get() {
 	req.TplName = "register.html"
 }
 
 // @Title Register
 // @Description Registers a new user
-// @Param	body		body 	secure.User	true		"body for message content"
+// @Param	body		body 	logic.Registration		true		"body for message content"
 // @Success 200 {string} string
 // @Failure 403 body is empty
 // @router / [post]
 func (req *RegisterController) Post() {
-	var user secure.User
+	var user logic.Registration
 	json.Unmarshal(req.Ctx.Input.RequestBody, &user)
 
-	err := secure.CreateUser(user)
+	err := logic.SaveRegistration(user)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

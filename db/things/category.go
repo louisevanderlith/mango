@@ -1,7 +1,9 @@
 package things
 
+import "github.com/louisevanderlith/mango/util"
+
 type Category struct {
-	Record
+	util.Record
 	Name        string
 	Description string
 }

@@ -1,7 +1,9 @@
 package comment
 
+import "github.com/louisevanderlith/mango/util"
+
 type Comment struct {
-	Record
+	util.Record
 	UserID    int64 `orm:"null"`
 	UpVotes   int
 	DownVotes int

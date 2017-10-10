@@ -1,6 +1,8 @@
 package things
 
+import "github.com/louisevanderlith/mango/util"
+
 type Manufacturer struct {
-	Record
+	util.Record
 	Name string
 }

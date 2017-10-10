@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/louisevanderlith/mango/util/enums"
@@ -90,8 +89,7 @@ func GetServiceURL(instanceKey string, serviceName string, discoveryURL string) 
 		if resp.StatusCode != 200 {
 			finalError = errors.New(rawURL)
 		} else {
-			cleanURL, _ := url.Parse(rawURL)
-			result = cleanURL.String()
+			result = rawURL
 		}
 	}
 

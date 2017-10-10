@@ -2,10 +2,12 @@ package classifieds
 
 import (
 	"time"
+
+	"github.com/louisevanderlith/mango/util"
 )
 
 type Advert struct {
-	Record
+	util.Record
 	UserID     int64
 	DateListed time.Time `orm:"type(datetime)"`
 	Price      int

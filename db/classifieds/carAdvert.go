@@ -1,9 +1,13 @@
 package classifieds
 
-import "time"
+import (
+	"time"
+
+	"github.com/louisevanderlith/mango/util"
+)
 
 type CarAdvert struct {
-	Record
+	util.Record
 	Make          string    `orm:"size(50)"`
 	Model         string    `orm:"size(50)"`
 	Info          string    `orm:"size(128)"`

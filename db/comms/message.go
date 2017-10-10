@@ -6,11 +6,12 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/mango/util"
 	gomail "gopkg.in/gomail.v2"
 )
 
 type Message struct {
-	Record
+	util.Record
 	Name  string `orm:"size(50)"`
 	Email string `orm:"size(128)"`
 	Phone string `orm:"size(15)"`

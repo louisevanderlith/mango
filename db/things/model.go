@@ -1,7 +1,9 @@
 package things
 
+import "github.com/louisevanderlith/mango/util"
+
 type Model struct {
-	Record
+	util.Record
 	ManufacturerID *Manufacturer
-	Name string
+	Name           string
 }

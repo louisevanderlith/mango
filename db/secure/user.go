@@ -7,18 +7,19 @@ import (
 	"time"
 
 	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/mango/util"
 	"golang.org/x/crypto/bcrypt"
 )
 
 // User database model
 type User struct {
-	Record
-	Name          string        `orm:"size(75)"`
-	Verified      bool          `orm:"default(false)"`
-	Email         string        `orm:"size(128)"`
-	ContactNumber string        `orm:"size(20)"`
-	Password      []byte        `orm:"type(blob)"`
-	LoginDate     time.Time     `orm:"type(date)"`
+	util.Record
+	Name          string `orm:"size(75)"`
+	Verified      bool   `orm:"default(false)"`
+	Email         string `orm:"size(128)"`
+	ContactNumber string `orm:"size(20)"`
+	Password      string
+	LoginDate     time.Time     `orm:"auto_now_add;type(datetime)"`
 	LoginTraces   []*LoginTrace `orm:"reverse(many)"`
 	Roles         []*Role       `orm:"reverse(many)"`
 }
@@ -35,8 +36,13 @@ func CreateUser(user User) error {
 
 	if err == nil && !exists(user) {
 		securePassword(&user)
+
 		o := orm.NewOrm()
 		_, err = o.Insert(&user)
+
+		if err == nil {
+			addUserRole(user)
+		}
 	}
 
 	return err
@@ -73,7 +79,7 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 		user := getUser(identifier)
 
 		if user != nil {
-			err := bcrypt.CompareHashAndPassword(user.Password, password)
+			err := bcrypt.CompareHashAndPassword([]byte(user.Password), password)
 			passed = err == nil
 
 			if !passed {
@@ -99,13 +105,13 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 }
 
 func securePassword(user *User) {
-	hashedPwd, err := bcrypt.GenerateFromPassword(user.Password, cost)
+	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(user.Password), cost)
 
 	if err != nil {
 		log.Print(err)
 	}
 
-	user.Password = hashedPwd
+	user.Password = string(hashedPwd)
 }
 
 func getUserByID(userID int64) *User {

@@ -1,5 +1,22 @@
 [
     {
+        "Name": "Artifact.DB",
+        "Environments": [
+            {
+                "Name": "LIVE",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=artifact sslmode=disable"
+            },
+            {
+                "Name": "UAT",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=artifact sslmode=disable"
+            },
+            {
+                "Name": "DEV",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=artifact sslmode=disable"
+            }
+        ]
+    },
+    {
         "Name": "Classifieds.DB",
         "Environments": [
             {
@@ -13,6 +30,23 @@
             {
                 "Name": "DEV",
                 "Value": "host=localhost port=5432 user=postgres password=sa dbname=classifieds sslmode=disable"
+            }
+        ]
+    },
+    {
+        "Name": "Comment.DB",
+        "Environments": [
+            {
+                "Name": "LIVE",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comment sslmode=disable"
+            },
+            {
+                "Name": "UAT",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comment sslmode=disable"
+            },
+            {
+                "Name": "DEV",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comment sslmode=disable"
             }
         ]
     },
@@ -38,15 +72,32 @@
         "Environments": [
             {
                 "Name": "LIVE",
-                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comms sslmode=disable"
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=secure sslmode=disable"
             },
             {
                 "Name": "UAT",
-                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comms sslmode=disable"
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=secure sslmode=disable"
             },
             {
                 "Name": "DEV",
-                "Value": "host=localhost port=5432 user=postgres password=sa dbname=comms sslmode=disable"
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=secure sslmode=disable"
+            }
+        ]
+    },
+    {
+        "Name": "Things.DB",
+        "Environments": [
+            {
+                "Name": "LIVE",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=things sslmode=disable"
+            },
+            {
+                "Name": "UAT",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=things sslmode=disable"
+            },
+            {
+                "Name": "DEV",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=things sslmode=disable"
             }
         ]
     }

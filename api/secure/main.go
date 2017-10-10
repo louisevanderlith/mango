@@ -9,6 +9,7 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
+	_ "github.com/lib/pq"
 )
 
 var instanceKey string

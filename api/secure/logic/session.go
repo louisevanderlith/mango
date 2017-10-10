@@ -55,7 +55,7 @@ func Delete(token string) {
 func exists(token string) bool {
 	item := sessionStore[token]
 
-	return item.UserID != 0
+	return item != nil && item.UserID != 0
 }
 
 func expired(session *UserSession, token string) bool {
