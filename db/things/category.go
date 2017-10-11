@@ -3,7 +3,7 @@ package things
 import "github.com/louisevanderlith/mango/util"
 
 type Category struct {
-	util.Record
+	util.BaseRecord
 	Name        string
 	Description string
 }

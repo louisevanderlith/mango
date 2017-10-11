@@ -1,7 +1,9 @@
 package controllers
 
+import "github.com/louisevanderlith/mango/util"
+
 type HomeController struct {
-	BaseController
+	util.BaseController
 }
 
 func (c *HomeController) Get() {

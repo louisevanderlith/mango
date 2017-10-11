@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Login or Register to gain access to avosa's services">
+    <meta name="author" content="avosa Software">
+    <link rel="icon" href="favicon.png" type="image/x-icon">
+
+    <meta property="og:title" content="avosa Security" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="http://avosa.co.za/img/icon.png" />
+    <meta property="og:url" content="http://secure.avosa.co.za" />
+    <meta property="og:description" content="Login or Register to gain access to avosa's services" />
+
+    <title>avosa Security</title>
+    {{ template "styles.html" . }}
+</head>
+
+<body>
+    {{.LayoutContent}} 
+    
+    {{ template "scripts.html" . }}
+</body>
+
+</html>

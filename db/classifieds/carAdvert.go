@@ -7,7 +7,7 @@ import (
 )
 
 type CarAdvert struct {
-	util.Record
+	util.BaseRecord
 	Make          string    `orm:"size(50)"`
 	Model         string    `orm:"size(50)"`
 	Info          string    `orm:"size(128)"`

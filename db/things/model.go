@@ -3,7 +3,7 @@ package things
 import "github.com/louisevanderlith/mango/util"
 
 type Model struct {
-	util.Record
+	util.BaseRecord
 	ManufacturerID *Manufacturer
 	Name           string
 }

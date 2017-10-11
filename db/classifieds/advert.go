@@ -7,7 +7,7 @@ import (
 )
 
 type Advert struct {
-	util.Record
+	util.BaseRecord
 	UserID     int64
 	DateListed time.Time `orm:"type(datetime)"`
 	Price      int

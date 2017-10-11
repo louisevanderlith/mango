@@ -8,7 +8,7 @@ import (
 )
 
 type LoginTrace struct {
-	util.Record
+	util.BaseRecord
 	Location string `orm:"null;size(128)"`
 	IP       string `orm:"null;size(50)"`
 	Allowed  bool   `orm:"default(true)"`

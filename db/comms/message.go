@@ -11,7 +11,7 @@ import (
 )
 
 type Message struct {
-	util.Record
+	util.BaseRecord
 	Name  string `orm:"size(50)"`
 	Email string `orm:"size(128)"`
 	Phone string `orm:"size(15)"`

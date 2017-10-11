@@ -13,7 +13,7 @@ import (
 
 // User database model
 type User struct {
-	util.Record
+	util.BaseRecord
 	Name          string `orm:"size(75)"`
 	Verified      bool   `orm:"default(false)"`
 	Email         string `orm:"size(128)"`

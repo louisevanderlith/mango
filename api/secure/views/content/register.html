@@ -1,0 +1,20 @@
+<!--Registration page must follow the styling of avosa.co.za
+Should contain the following fields
+    Name          maxlength(75)
+    Email (with regex validation -- copy this from avosa.co.za)        
+	ContactNumber (with regex validation -- copy this from avosa.co.za)
+    Password      
+    Repeat Password
+-->
+<h1>Registration Form</h1>
+<div>
+    <input id="txtName" type="text" maxlength="75" placeholder="Name" />
+    <input id="txtEmail" type="email" placeholder="Email" />
+    <input id="txtContact" type="tel" placeholder="Contact Number" />
+    <input id="txtPassword" type="password" placeholder="Password" />
+    <input id="txtConfirmPass" type="password" placeholder="Confirm Password" />
+    <input id="btnRegister" type="button" onclick="submitRegister()" value="Register" />
+</div>
+<ul id="messages">
+
+</ul>

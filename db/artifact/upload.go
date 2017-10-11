@@ -3,7 +3,7 @@ package artifact
 import "github.com/louisevanderlith/mango/util"
 
 type Upload struct {
-	util.Record
+	util.BaseRecord
 	ItemID   int64
 	Name     string
 	MimeType string

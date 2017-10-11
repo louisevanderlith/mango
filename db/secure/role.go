@@ -9,7 +9,7 @@ import (
 )
 
 type Role struct {
-	util.Record
+	util.BaseRecord
 	User        *User          `orm:"rel(fk)"`
 	Description enums.RoleType `orm:"type(int)"`
 }

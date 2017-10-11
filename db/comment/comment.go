@@ -3,7 +3,7 @@ package comment
 import "github.com/louisevanderlith/mango/util"
 
 type Comment struct {
-	util.Record
+	util.BaseRecord
 	UserID    int64 `orm:"null"`
 	UpVotes   int
 	DownVotes int
