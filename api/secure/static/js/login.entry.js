@@ -3,14 +3,21 @@ var form = {
     password: $('#txtPassword')
 };
 
-var returnUrl = '';
+var returnURL = '';
 var location = '';
 var ip = '';
 
 $(document).ready(() => {
-    returnUrl = getParameterByName('returnURL');
-    getLocation();
-    getIP();
+    var avoToken = localStorage.getItem('avotoken');
+    returnURL = document.referrer;//getParameterByName('returnURL');
+    console.log(returnURL);
+
+    if (!avoToken) {
+        getLocation();
+        getIP();
+    } else {
+        afterLogin(avoToken);
+    }
 });
 
 function submitLogin() {
@@ -21,7 +28,7 @@ function submitLogin() {
         Password: form.password.val(),
         IP: 'localhost',
         Location: location,
-        ReturnURL: returnUrl
+        ReturnURL: returnURL
     };
 }
 
@@ -38,7 +45,8 @@ function postMessage(obj) {
         }),
         cache: false,
         success: function (result) {
-            //this shouldn't happen
+            localStorage.setItem('avotoken', result);
+            afterLogin(result);
         },
         error: function (err) {
             console.log(err);
@@ -83,4 +91,16 @@ function getIP() {
     $.getJSON('//jsonip.com/?callback=?', function (data) {
         ip = data.ip;
     });
+}
+
+function afterLogin(token) {
+    var finalURL = 'http://www.localhost/';
+
+    // redirect user
+    if (returnURL) {
+        finalURL = returnURL;
+    }
+
+    finalURL += ('?avotoken=' + token);
+    window.location.replace(finalURL);
 }

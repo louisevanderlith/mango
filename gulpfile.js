@@ -7,27 +7,31 @@ const babel = require('rollup-plugin-babel');
 const path = require('path');
 const cleanCSS = require('gulp-clean-css');
 const concatCSS = require('gulp-concat-css');
+const fs = require('fs');
 
-var entryPoints = [];
+function getEntryPoints(appPath) {
+    var taskNames = [];
+    var workingDirectory = path.join(appPath, 'static/js/*.entry.js');
 
-function getEntryPoints() {
-    var entryPoints = glob.sync('static/js/*.entry.js')
+    var entryPoints = glob.sync(workingDirectory)
         .map((componentDir) => {
             return path.basename(componentDir);
         });
 
     entryPoints.forEach((name) => {
-        console.log(`Assembling task for ${name}`);
-        const entry = `./static/js/${name}`;
-
-        createTask(name, entry);
-        createWatch(name, entry);
+        const entry = path.join(appPath, `static/js/${name}`);
+        const tskName = createTask(name, entry, appPath);
+        
+        gulp.watch(entry, [tskName]);
+        taskNames.push(tskName);
     });
+
+    return taskNames;
 }
 
-function createTask(name, entry) {
-    const taskName = getTaskName(name);
-    const dest = "./static/dist/js";
+function createTask(name, entry, appPath) {
+    const taskName = getTaskName(name, appPath);
+    const dest = path.join(appPath, "static/dist/js");
     const rollOptions = getRollupOptions(entry, name);
 
     gulp.task(taskName, () => {
@@ -35,6 +39,8 @@ function createTask(name, entry) {
             .pipe(rollup(rollOptions, 'iife'))
             .pipe(gulp.dest(dest))
     });
+
+    return taskName;
 }
 
 function getRollupOptions(entry, name) {
@@ -58,18 +64,26 @@ function getRollupOptions(entry, name) {
     };
 }
 
-function createWatch(name, entry) {
-    gulp.watch(entry, [getTaskName(name)]);
-}
-
 function getTasks() {
-    getEntryPoints();
+    var rollupTasks = [];
+    const appFolders = ['./app/', './api/'];
 
-    var rollupTasks = entryPoints.map((name) => {
-        return getTaskName(name);
-    });
+    for (let i = 0; i < appFolders.length; i++) {
+        const currFolder = appFolders[i];
 
-    var otherTasks = ['css-clean'];
+        glob.sync(currFolder + '*').forEach((filePath) => {
+            const staticPath = path.join(filePath, 'static');
+            var appTasks = [];
+
+            if (fs.existsSync(staticPath)) {
+                appTasks = getEntryPoints(filePath);
+            }
+
+            rollupTasks = rollupTasks.concat(appTasks);
+        });
+    }
+
+    var otherTasks = [];//['css-clean'];
 
     for (let i = 0; i < otherTasks.length; i++) {
         rollupTasks.push(otherTasks[i]);
@@ -78,10 +92,11 @@ function getTasks() {
     return rollupTasks;
 }
 
-function getTaskName(name) {
+function getTaskName(name, appPath) {
+    const appName = appPath.replace('./', '').replace('/', '.');
     const cleanName = name.replace('.entry.js', '');
 
-    return `roll-${cleanName}`;
+    return `${appName}-roll-${cleanName}`;
 }
 
 gulp.task('css-clean', () => {
@@ -91,6 +106,6 @@ gulp.task('css-clean', () => {
         .pipe(gulp.dest('static/dist/css'))
 });
 
-gulp.watch('static/css/*.css', ['css-clean'])
+//gulp.watch('static/css/*.css', ['css-clean']);
 
 gulp.task('default', getTasks());

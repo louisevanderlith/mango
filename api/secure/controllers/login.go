@@ -34,11 +34,11 @@ func (req *LoginController) Post() {
 	if token == "" {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = "Login Failed"
-
-		req.ServeJSON()
 	} else {
 		req.Data["json"] = token
 	}
+
+	req.ServeJSON()
 }
 
 // @Title Logout
