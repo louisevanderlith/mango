@@ -25,7 +25,7 @@ func Insert(obj interface{}) (int64, error) {
 	return o.Insert(obj)
 }
 
-func Read(obj *interface{}) error {
+func Read(obj interface{}) error {
 	readColumns := getReadColumns(obj)
 
 	o := orm.NewOrm()

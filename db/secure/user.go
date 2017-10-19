@@ -172,23 +172,19 @@ func dropUser(user User) error {
 }
 
 func (obj *User) Insert() (int64, error) {
-
+	return db.Insert(obj)
 }
 
 func (obj *User) Read() error {
-	readColumns := db.GetReadColumns(obj)
-
-	o := orm.NewOrm()
-
-	err := o.Read(obj, readColumns)
-
-	return err
+	return db.Read(*obj)
 }
 
 func (obj *User) Update() (int64, error) {
-
+	return db.Update(obj)
 }
 
 func (obj *User) Delete() error {
+	_, err := db.Delete(obj)
 
+	return err
 }

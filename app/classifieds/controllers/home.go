@@ -1,9 +1,17 @@
 package controllers
 
 import "github.com/louisevanderlith/mango/util"
+import "github.com/louisevanderlith/mango/util/enums"
 
 type HomeController struct {
 	util.BaseController
+}
+
+func init() {
+	auths := make(map[string]enums.RoleType)
+	auths["GET"] = enums.User
+
+	util.ProtectMethods(auths)
 }
 
 func (c *HomeController) Get() {

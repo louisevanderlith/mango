@@ -26,6 +26,10 @@ func (this *BaseController) Prepare() {
 	}
 }
 
+func ProtectMethods(auths map[string]enums.RoleType) {
+	authFunctions = auths
+}
+
 func (this *BaseController) Setup(name string) {
 	this.TplName = "content/" + name + ".html"
 
@@ -36,7 +40,7 @@ func (this *BaseController) Setup(name string) {
 }
 
 func userAllowed(ctrl *BaseController) bool {
-	result := false
+	result := true
 	method := ctrl.Ctx.Request.Method
 	authFunc, hasKey := authFunctions[method]
 

@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/api/secure/logic"
+	"github.com/louisevanderlith/mango/util"
 )
 
 type RegisterController struct {
-	beego.Controller
+	util.BaseController
 }
 
 // @Title Register
@@ -17,7 +17,7 @@ type RegisterController struct {
 // @Success 200 {string} string
 // @router / [get]
 func (req *RegisterController) Get() {
-	req.TplName = "register.html"
+	req.Setup("register")
 }
 
 // @Title Register

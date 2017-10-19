@@ -1,7 +1,12 @@
 package main
 
 import (
+	"log"
+
 	_ "github.com/louisevanderlith/mango/api/artifact/routers"
+	"github.com/louisevanderlith/mango/db/artifact"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
 	_ "github.com/lib/pq"
@@ -14,7 +19,7 @@ func main() {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
-	
+
 	// Register with router
 	srv := util.Service{
 		Environment: enums.GetEnvironment(beego.BConfig.RunMode),

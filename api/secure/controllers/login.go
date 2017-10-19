@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/louisevanderlith/mango/api/secure/logic"
+	"github.com/louisevanderlith/mango/util"
 )
 
 type LoginController struct {
@@ -15,7 +16,7 @@ type LoginController struct {
 // @Success 200 {string} string
 // @router / [get]
 func (req *LoginController) Get() {
-	req.TplName = "login.html"
+	req.Setup("login")
 }
 
 // @Title Login
