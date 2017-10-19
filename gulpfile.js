@@ -20,8 +20,8 @@ function getEntryPoints(appPath) {
 
     entryPoints.forEach((name) => {
         const entry = path.join(appPath, `static/js/${name}`);
-        const tskName = createTask(name, entry, appPath);
-        
+        const tskName = createJSTask(name, entry, appPath);
+
         gulp.watch(entry, [tskName]);
         taskNames.push(tskName);
     });
@@ -29,8 +29,8 @@ function getEntryPoints(appPath) {
     return taskNames;
 }
 
-function createTask(name, entry, appPath) {
-    const taskName = getTaskName(name, appPath);
+function createJSTask(name, entry, appPath) {
+    const taskName = getJSTaskName(name, appPath);
     const dest = path.join(appPath, "static/dist/js");
     const rollOptions = getRollupOptions(entry, name);
 
@@ -39,6 +39,24 @@ function createTask(name, entry, appPath) {
             .pipe(rollup(rollOptions, 'iife'))
             .pipe(gulp.dest(dest))
     });
+
+    return taskName;
+}
+
+function createCSSTask(appPath) {
+    const name = getNameFromPath(appPath);
+    const taskName = `${name}-css`;
+    const fullPath = path.join(appPath, 'static/css/*.css');
+    const destPath = path.join(appPath, 'static/dist/css');
+
+    gulp.task(taskName, () => {
+        gulp.src(fullPath)
+            .pipe(concatCSS('bundle.css'))
+            .pipe(cleanCSS())
+            .pipe(gulp.dest(destPath))
+    });
+
+    gulp.watch(fullPath, [taskName]);
 
     return taskName;
 }
@@ -77,35 +95,27 @@ function getTasks() {
 
             if (fs.existsSync(staticPath)) {
                 appTasks = getEntryPoints(filePath);
+                var cssTask = createCSSTask(filePath);
+
+                appTasks.push(cssTask);
             }
 
             rollupTasks = rollupTasks.concat(appTasks);
         });
     }
 
-    var otherTasks = [];//['css-clean'];
-
-    for (let i = 0; i < otherTasks.length; i++) {
-        rollupTasks.push(otherTasks[i]);
-    }
-
     return rollupTasks;
 }
 
-function getTaskName(name, appPath) {
-    const appName = appPath.replace('./', '').replace('/', '.');
+function getJSTaskName(name, appPath) {
+    const appName = getNameFromPath(appPath);
     const cleanName = name.replace('.entry.js', '');
 
     return `${appName}-roll-${cleanName}`;
 }
 
-gulp.task('css-clean', () => {
-    return gulp.src('static/css/*.css')
-        .pipe(concatCSS('bundle.css'))
-        .pipe(cleanCSS())
-        .pipe(gulp.dest('static/dist/css'))
-});
-
-//gulp.watch('static/css/*.css', ['css-clean']);
+function getNameFromPath(appPath){
+    return appPath.replace('./', '').replace('/', '.');
+}
 
 gulp.task('default', getTasks());

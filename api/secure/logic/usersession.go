@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type UserSession struct {
@@ -13,6 +15,7 @@ type UserSession struct {
 	UserID    int64
 	IP        string
 	Location  string
+	Roles     []enums.RoleType
 }
 
 var (

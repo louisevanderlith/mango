@@ -15,6 +15,7 @@
 .glide/
 
 bin/
+dist/
 
 # Swagger files
 swagger/

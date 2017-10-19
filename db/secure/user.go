@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/louisevanderlith/mango/db"
+
 	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/mango/util"
 	"golang.org/x/crypto/bcrypt"
@@ -167,4 +169,26 @@ func dropUser(user User) error {
 	}
 
 	return err
+}
+
+func (obj *User) Insert() (int64, error) {
+
+}
+
+func (obj *User) Read() error {
+	readColumns := db.GetReadColumns(obj)
+
+	o := orm.NewOrm()
+
+	err := o.Read(obj, readColumns)
+
+	return err
+}
+
+func (obj *User) Update() (int64, error) {
+
+}
+
+func (obj *User) Delete() error {
+
 }

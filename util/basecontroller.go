@@ -1,8 +1,8 @@
 package util
 
 import (
-	"github.com/louisevanderlith/mango/util/enums"
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type BaseController struct {
@@ -13,15 +13,17 @@ type BaseController struct {
 
 var authFunctions map[string]enums.RoleType
 
-func init(){
+func init() {
 	authFunctions = make(map[string]enums.RoleType)
 }
 
 // Prepare is a virtual function called by beego before each Controller function
-func (this *BaseController)Prepare(){
+func (this *BaseController) Prepare() {
 	this.Layout = "master.html"
 
-	userAllowed :=  this.Ctx.
+	if !userAllowed(this) {
+		this.CustomAbort(401, "You don't have permission to access this content.")
+	}
 }
 
 func (this *BaseController) Setup(name string) {
@@ -34,13 +36,35 @@ func (this *BaseController) Setup(name string) {
 }
 
 func userAllowed(ctrl *BaseController) bool {
+	result := false
 	method := ctrl.Ctx.Request.Method
 	authFunc, hasKey := authFunctions[method]
 
 	if hasKey {
 		userSession := ctrl.Ctx.Request.Header.Get("avotoken")
-		role := 
+		roles := getUserRoles(userSession)
 
+		result = hasRole(roles, authFunc)
 	}
 
+	return result
+}
+
+func getUserRoles(token string) []enums.RoleType {
+	var result []enums.RoleType
+
+	return result
+}
+
+func hasRole(roles []enums.RoleType, funcRole enums.RoleType) bool {
+	result := false
+
+	for _, val := range roles {
+		if val == funcRole {
+			result = true
+			break
+		}
+	}
+
+	return result
 }
