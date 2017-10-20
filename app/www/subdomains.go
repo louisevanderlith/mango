@@ -62,7 +62,7 @@ func defaultMuxSetup() {
 	fs := http.FileServer(http.Dir("web"))
 
 	defaultMux := http.NewServeMux()
-	defaultMux.Handle("/web/", http.StripPrefix("/web/", fs))
+	defaultMux.Handle("/static/", http.StripPrefix("/static/", fs))
 	defaultMux.Handle("/", fs)
 
 	subdomains["www"] = defaultMux
