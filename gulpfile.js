@@ -76,8 +76,8 @@ function getRollupOptions(entry, name) {
         plugins: [
             babel({
                 exclude: 'node_modules/**'
-            }),
-            uglify()
+            })/*,
+            uglify()*/
         ]
     };
 }

@@ -1,47 +1,33 @@
-<!--Login page must follow styling of avosa.co.za.
-Should contain the following:
-1. Field to enter email/contact number
-2. Field to enter password
-3. Login button
-4. Register button
-5. Avosa logo-->
-<h1>Login Form</h1>
-<div>
-    <input id="txtIdentity" type="text" placeholder="Email or Contact Number"/>
-    <input id="txtPassword" type="password" placeholder="Password" />
-    <input id="btnLogin" type="button" value="Login" onclick="submitLogin()" />
-    <a href="/register">Register</a>
-</div>
-<ul id="messages">
-
-</div>
 <section id="Login">
     <div class="container">
         <h2 class="text-center blue">Login</h2>
         <hr class="star-primary">
         <div class="row">
             <div class="col-md-8 mx-auto">
-                <form name="LoginForm" id="loginForm" novalidate>
+                <form id="frmLogin" role="form" data-toggle="validator">
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
-                            <label>E-mail address</label>
-                            <input class="form-control" id="E-mail address" type="text" placeholder="E-mail address" required data-validation-required-message="Please enter your E-mail address.">
-                            <p class="help-block text-danger"></p>
+                            <label for="txtIdentity">E-mail Address/Contact Number</label>
+                            <input class="form-control" id="txtIdentity" type="text" minlength="8" placeholder="E-mail address OR Contact Number" required
+                                data-validation-required-message="Please enter your E-mail address/Contact Number." data-error="Input is invalid">
+                            <p class="help-block with-errors text-danger"></p>
                         </div>
                     </div>
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls">
-                            <label>Password</label>
-                            <input class="form-control" id="password" type="password" placeholder="Password" required data-validation-required-message="Please enter your password">
-                            <p class="help-block text-danger"></p>
+                            <label for="txtPassword">Password</label>
+                            <input class="form-control" id="txtPassword" type="password" placeholder="Password" required data-validation-required-message="Please enter your password"
+                                data-error="Password is Invalid">
+                            <p class="help-block with-errors text-danger"></p>
                         </div>
                     </div>
                     <br>
-                    <div id="success"></div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-success btn-lg" id="LoginButton">Login</button>
+                        <button type="button" class="btn btn-success btn-lg" id="btnLogin">Login</button>
+                        <button type="button" class="btn btn-info btn-lg" id="btnRegister">Register</button>
                     </div>
                 </form>
+                <div id="success"></div>
             </div>
         </div>
     </div>

@@ -1,59 +1,102 @@
-var form = {
+import FormState from './formState.js';
+
+class LoginForm {
+    constructor() {
+        console.log('LOGIN FORM INSTANCE');
+
+
+        $(document).ready(() => {
+            console.log('DOCUMENT IS READY!!')
+            fs = new FormState(form.loginButton);
+            fs.submitDisabled(true);
+
+            var avoToken = localStorage.getItem('avotoken');
+            returnURL = document.referrer;//getParameterByName('returnURL');
+
+            if (!avoToken) {
+                registerEvents();
+                getLocation();
+                getIP();
+            } else {
+                afterLogin(avoToken);
+            }
+        });
+    }
+}
+
+export let lgnForm = new LoginForm();
+
+const form = {
+    id: $('#frmLogin'),
     identity: $('#txtIdentity'),
-    password: $('#txtPassword')
+    password: $('#txtPassword'),
+    loginButton: $('#btnLogin'),
+    registerButton: $('#btnRegister')
 };
 
+var fs = {};
 var returnURL = '';
 var location = '';
 var ip = '';
 
-$(document).ready(() => {
-    var avoToken = localStorage.getItem('avotoken');
-    returnURL = document.referrer;//getParameterByName('returnURL');
-    console.log(returnURL);
 
-    if (!avoToken) {
-        getLocation();
-        getIP();
-    } else {
-        afterLogin(avoToken);
-    }
-});
+function registerEvents() {
+    form.loginButton.on('click', tryLogin);
+    form.registerButton.on('click', gotoRegister);
 
-function submitLogin() {
-    $('#btnLogin').prop('disabled', true);
-
-    var obj = {
-        Identifier: form.identity.val(),
-        Password: form.password.val(),
-        IP: 'localhost',
-        Location: location,
-        ReturnURL: returnURL
-    };
+    let validForm = form.id.validator();
+    validForm.on('invalid.bs.validator', fs.onValidate);
+    validForm.on('valid.bs.validator', fs.onValidate);
 }
 
-function postMessage(obj) {
+function tryLogin(e) {
+    form.id.validator('validate');
+
+    if (fs.isFormValid()) {
+        submitLogin();
+    }
+}
+
+function gotoRegister() {
+    window.location.replace('/v1/register');
+}
+
+function submitLogin() {
+    fs.submitDisabled(true);
+
     $.ajax({
-        url: "/login",
+        url: "/v1/login",
         type: "POST",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
-            "Body": message,
-            "Email": email,
-            "Name": name,
-            "Phone": phone
+            Identifier: form.identity.val(),
+            Password: form.password.val(),
+            IP: ip,
+            Location: location,
+            ReturnURL: returnURL
         }),
         cache: false,
         success: function (result) {
             localStorage.setItem('avotoken', result);
             afterLogin(result);
+
+            //clear all fields
+            form.id.trigger("reset");
         },
         error: function (err) {
-            console.log(err);
+            console.error(err);
+            // Fail message
+            $('#success').html("<div class='alert alert-danger'>");
+            $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+                .append("</button>");
+            $('#success > .alert-danger').append($("<strong>").text("Sorry, it seems something went wrong. Please try again."));
+            $('#success > .alert-danger').append('</div>');
+            //clear all fields
+            form.id.trigger("reset");
         },
         complete: function () {
             setTimeout(function () {
-                $('#btnLogin').prop('disabled', false);
+                fs.submitDisabled(false);
             }, 1000);
         }
     });
@@ -94,12 +137,7 @@ function getIP() {
 }
 
 function afterLogin(token) {
-    var finalURL = 'http://www.localhost/';
-
-    // redirect user
-    if (returnURL) {
-        finalURL = returnURL;
-    }
+    let finalURL = returnURL || 'http://www.localhost/';
 
     finalURL += ('?avotoken=' + token);
     window.location.replace(finalURL);

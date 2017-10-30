@@ -59,7 +59,7 @@ func registerSubdomains(discURL string) {
 }
 
 func defaultMuxSetup() {
-	fs := http.FileServer(http.Dir("web"))
+	fs := http.FileServer(http.Dir("static"))
 
 	defaultMux := http.NewServeMux()
 	defaultMux.Handle("/static/", http.StripPrefix("/static/", fs))

@@ -8,7 +8,7 @@ var form = {
 };
 
 $(document).ready(() => {
-  $('#frmRegister').validator().on('submit', submitRegister)
+  $('#frmRegister').validator().on('submit', submitRegister);
 });
 
 function getValidation() {
@@ -34,12 +34,10 @@ function submitRegister(e) {
 
   if (!e.isDefaultPrevented()) {
 
-    $this = form.registerButton;
-    $this.prop("disabled", true); // Disable submit button until AJAX call is complete to prevent duplicate messages
-    submitRegister();
+    form.registerButton.prop("disabled", true);
 
     $.ajax({
-      url: "/Register",
+      url: "/v1/register",
       type: "POST",
       contentType: "application/json; charset=utf-8",
       data: JSON.stringify({
@@ -60,10 +58,10 @@ function submitRegister(e) {
         $('#success > .alert-success')
           .append('</div>');
         //clear all fields
-        form.id.trigger("reset");
+        $('#frmRegister').trigger("reset");
       },
       error: function (err) {
-        console.log(err);
+        console.error(err);
         // Fail message
         $('#success').html("<div class='alert alert-danger'>");
         $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
@@ -71,7 +69,7 @@ function submitRegister(e) {
         $('#success > .alert-danger').append($("<strong>").text("Sorry, it seems something went wrong. Please try again."));
         $('#success > .alert-danger').append('</div>');
         //clear all fields
-        form.id.trigger("reset");
+        $('#frmRegister').trigger("reset");
       },
       complete: function () {
         setTimeout(function () {
