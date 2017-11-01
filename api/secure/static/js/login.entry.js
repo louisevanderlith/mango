@@ -18,7 +18,7 @@ $(document).ready(() => {
     fs.submitDisabled(true);
 
     var avoToken = localStorage.getItem('avotoken');
-    returnURL = document.referrer;//getParameterByName('returnURL');
+    returnURL = document.referrer;
 
     if (!avoToken) {
         registerEvents();

@@ -1,38 +1,52 @@
 [
     {
         "Name": "Artifact.API",
-        "Address": "artifact"
+        "Address": "artifact",
+        "Type": "Subdomain"
     },
     {
         "Name": "Comment.API",
-        "Address": "comment"
+        "Address": "comment",
+        "Type": "Subdomain"
     },
     {
         "Name": "Communication.API",
-        "Address": "comms"
+        "Address": "comms",
+        "Type": "Subdomain"
     },
     {
         "Name": "Security.API",
-        "Address": "secure"
+        "Address": "secure",
+        "Type": "Subdomain"
     },
     {
         "Name": "Things.API",
-        "Address": "things"
+        "Address": "things",
+        "Type": "Subdomain"
     },
     {
         "Name": "Admin.APP",
-        "Address": "admin"
+        "Address": "admin",
+        "Type": "Subdomain"
     },
     {
         "Name": "Classifieds.APP",
-        "Address": "classifieds"
+        "Address": "classifieds",
+        "Type": "Subdomain"
     },
     {
         "Name": "Logbook.APP",
-        "Address": "logbook"
+        "Address": "logbook",
+        "Type": "Subdomain"
     },
     {
         "Name": "Shop.APP",
-        "Address": "shop"
+        "Address": "shop",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Random",
+        "Address": "www.random.co.za",
+        "Type": "Website"
     }
 ]
