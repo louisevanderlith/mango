@@ -1,31 +1,5 @@
 import FormState from './formState.js';
 
-class LoginForm {
-    constructor() {
-        console.log('LOGIN FORM INSTANCE');
-
-
-        $(document).ready(() => {
-            console.log('DOCUMENT IS READY!!')
-            fs = new FormState(form.loginButton);
-            fs.submitDisabled(true);
-
-            var avoToken = localStorage.getItem('avotoken');
-            returnURL = document.referrer;//getParameterByName('returnURL');
-
-            if (!avoToken) {
-                registerEvents();
-                getLocation();
-                getIP();
-            } else {
-                afterLogin(avoToken);
-            }
-        });
-    }
-}
-
-export let lgnForm = new LoginForm();
-
 const form = {
     id: $('#frmLogin'),
     identity: $('#txtIdentity'),
@@ -39,6 +13,21 @@ var returnURL = '';
 var location = '';
 var ip = '';
 
+$(document).ready(() => {
+    fs = new FormState(form.loginButton);
+    fs.submitDisabled(true);
+
+    var avoToken = localStorage.getItem('avotoken');
+    returnURL = document.referrer;//getParameterByName('returnURL');
+
+    if (!avoToken) {
+        registerEvents();
+        getLocation();
+        getIP();
+    } else {
+        afterLogin(avoToken);
+    }
+});
 
 function registerEvents() {
     form.loginButton.on('click', tryLogin);
@@ -62,44 +51,44 @@ function gotoRegister() {
 }
 
 function submitLogin() {
-    fs.submitDisabled(true);
+        fs.submitDisabled(true);
 
-    $.ajax({
-        url: "/v1/login",
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({
-            Identifier: form.identity.val(),
-            Password: form.password.val(),
-            IP: ip,
-            Location: location,
-            ReturnURL: returnURL
-        }),
-        cache: false,
-        success: function (result) {
-            localStorage.setItem('avotoken', result);
-            afterLogin(result);
+        $.ajax({
+            url: "/v1/login",
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Identifier: form.identity.val(),
+                Password: form.password.val(),
+                IP: ip,
+                Location: location,
+                ReturnURL: returnURL
+            }),
+            cache: false,
+            success: function (result) {
+                localStorage.setItem('avotoken', result);
+                afterLogin(result);
 
-            //clear all fields
-            form.id.trigger("reset");
-        },
-        error: function (err) {
-            console.error(err);
-            // Fail message
-            $('#success').html("<div class='alert alert-danger'>");
-            $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                .append("</button>");
-            $('#success > .alert-danger').append($("<strong>").text("Sorry, it seems something went wrong. Please try again."));
-            $('#success > .alert-danger').append('</div>');
-            //clear all fields
-            form.id.trigger("reset");
-        },
-        complete: function () {
-            setTimeout(function () {
-                fs.submitDisabled(false);
-            }, 1000);
-        }
-    });
+                //clear all fields
+                form.id.trigger("reset");
+            },
+            error: function (err) {
+                console.error(err);
+                // Fail message
+                $('#success').html("<div class='alert alert-danger'>");
+                $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+                    .append("</button>");
+                $('#success > .alert-danger').append($("<strong>").text("Sorry, it seems something went wrong. Please try again."));
+                $('#success > .alert-danger').append('</div>');
+                //clear all fields
+                form.id.trigger("reset");
+            },
+            complete: function () {
+                setTimeout(function () {
+                    fs.submitDisabled(false);
+                }, 1000);
+            }
+        });
 }
 
 function getParameterByName(name, url) {
