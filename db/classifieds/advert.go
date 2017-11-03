@@ -15,3 +15,21 @@ type Advert struct {
 	Tags       []*Tag `orm:"rel(m2m)"`
 	Location   string `orm:"size(128)"`
 }
+
+func (obj *Advert) Insert() (int64, error) {
+	return db.Insert(obj)
+}
+
+func (obj *Advert) Read() error {
+	return db.Read(*obj)
+}
+
+func (obj *Advert) Update() (int64, error) {
+	return db.Update(obj)
+}
+
+func (obj *Advert) Delete() error {
+	_, err := db.Delete(obj)
+
+	return err
+}

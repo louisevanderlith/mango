@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/mango/db"
 	"github.com/louisevanderlith/mango/util"
 	gomail "gopkg.in/gomail.v2"
 )
@@ -28,8 +28,7 @@ func SendMessage(m Message) error {
 		m.Sent = false
 		m.Error = sendErr.Error()
 	}*/
-
-	err := saveMessageLog(m)
+	_, err := &m.Insert()
 
 	return err
 }
@@ -68,13 +67,20 @@ func buildMessage(m Message) string {
 	return result
 }
 
-func saveMessageLog(m Message) error {
-	o := orm.NewOrm()
-	_, err := o.Insert(&m)
+func (obj *Message) Insert() (int64, error) {
+	return db.Insert(obj)
+}
 
-	if err != nil {
-		log.Print(err)
-	}
+func (obj *Message) Read() error {
+	return db.Read(*obj)
+}
+
+func (obj *Message) Update() (int64, error) {
+	return db.Update(obj)
+}
+
+func (obj *Message) Delete() error {
+	_, err := db.Delete(obj)
 
 	return err
 }

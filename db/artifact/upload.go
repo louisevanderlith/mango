@@ -10,3 +10,21 @@ type Upload struct {
 	Path     string
 	Size     int64
 }
+
+func (obj *Upload) Insert() (int64, error) {
+	return db.Insert(obj)
+}
+
+func (obj *Upload) Read() error {
+	return db.Read(*obj)
+}
+
+func (obj *Upload) Update() (int64, error) {
+	return db.Update(obj)
+}
+
+func (obj *Upload) Delete() error {
+	_, err := db.Delete(obj)
+
+	return err
+}
