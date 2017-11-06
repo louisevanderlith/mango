@@ -1,6 +1,9 @@
 package artifact
 
-import "github.com/louisevanderlith/mango/util"
+import (
+	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/mango/util"
+)
 
 type Upload struct {
 	util.BaseRecord
@@ -17,6 +20,10 @@ func (obj *Upload) Insert() (int64, error) {
 
 func (obj *Upload) Read() error {
 	return db.Read(*obj)
+}
+
+func (obj *Upload) ReadAll() (*[]Upload, error) {
+	return db.ReadAll(obj)
 }
 
 func (obj *Upload) Update() (int64, error) {

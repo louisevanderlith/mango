@@ -6,11 +6,11 @@ import (
 	"github.com/astaxie/beego/orm"
 )
 
-func BuildDatabase(regModels func(), instanceKey, dbName, discoveryURL string) {
+func BuildDatabase(regModels func(), dbName string) {
 	regModels()
 
 	name := "default"
-	dbPath, err := GetServiceURL(instanceKey, dbName, discoveryURL)
+	dbPath, err := GetServiceURL(dbName)
 
 	if err != nil {
 		log.Print(err)

@@ -20,7 +20,7 @@ func main() {
 
 	discURL := beego.AppConfig.String("discovery")
 	port := beego.AppConfig.String("httpport")
-	key, err := util.Register(srv, discURL, port)
+	key, err := srv.Register(discURL, port)
 
 	if err != nil {
 		log.Print(err)

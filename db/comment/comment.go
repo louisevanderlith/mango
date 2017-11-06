@@ -18,6 +18,10 @@ func (obj *Comment) Read() error {
 	return db.Read(*obj)
 }
 
+func (obj *Comment) ReadAll() (*[]Comment, error) {
+	return db.ReadAll(obj)
+}
+
 func (obj *Comment) Update() (int64, error) {
 	return db.Update(obj)
 }

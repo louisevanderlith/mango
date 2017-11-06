@@ -16,6 +16,10 @@ func (obj *Tag) Read() error {
 	return db.Read(*obj)
 }
 
+func (obj *Tag) ReadAll() (*[]Tag, error) {
+	return db.ReadAll(obj)
+}
+
 func (obj *Tag) Update() (int64, error) {
 	return db.Update(obj)
 }

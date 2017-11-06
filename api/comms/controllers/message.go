@@ -7,7 +7,6 @@ import (
 	"github.com/louisevanderlith/mango/db/comms"
 )
 
-// Operations about Messages
 type MessageController struct {
 	beego.Controller
 }
@@ -29,6 +28,23 @@ func (req *MessageController) Post() {
 		req.Data["json"] = map[string]string{"Error": err.Error()}
 	} else {
 		req.Data["json"] = map[string]string{"Data": "Message has been sent."}
+	}
+
+	req.ServeJSON()
+}
+
+// @Title GetMessages
+// @Description Gets all Messages
+// @Success 200 {string} string
+// @router / [get]
+func (req *MessageController) Get() {
+	result, err := comms.ReadAll()
+
+	if err != nil {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = map[string]string{"Error": err.Error()}
+	} else {
+		req.Data["json"] = map[string]string{"Data": result}
 	}
 
 	req.ServeJSON()

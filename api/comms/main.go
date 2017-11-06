@@ -13,8 +13,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var instanceKey string
-
 func main() {
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
@@ -29,13 +27,12 @@ func main() {
 
 	discURL := beego.AppConfig.String("discovery")
 	port := beego.AppConfig.String("httpport")
-	key, err := util.Register(srv, discURL, port)
+	_, err := srv.Register(discURL, port)
 
 	if err != nil {
 		log.Print(err)
 	} else {
-		instanceKey = key
-		comms.NewDatabase(instanceKey, discURL)
+		comms.NewDatabase()
 		beego.Run()
 	}
 }

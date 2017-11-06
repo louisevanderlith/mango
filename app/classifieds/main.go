@@ -12,8 +12,6 @@ import (
 	"github.com/louisevanderlith/mango/util"
 )
 
-var instanceKey string
-
 func main() {
 	// Register with router
 	srv := util.Service{
@@ -23,13 +21,12 @@ func main() {
 
 	discURL := beego.AppConfig.String("discovery")
 	port := beego.AppConfig.String("httpport")
-	key, err := util.Register(srv, discURL, port)
+	_, err := srv.Register(discURL, port)
 
 	if err != nil {
 		log.Print(err)
 	} else {
-		instanceKey = key
-		classifieds.NewDatabase(instanceKey, discURL)
+		classifieds.NewDatabase()
 		beego.Run()
 	}
 }

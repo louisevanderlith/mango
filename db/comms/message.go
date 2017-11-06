@@ -75,6 +75,10 @@ func (obj *Message) Read() error {
 	return db.Read(*obj)
 }
 
+func (obj *Message) ReadAll() (*[]Message, error) {
+	return db.ReadAll(obj)
+}
+
 func (obj *Message) Update() (int64, error) {
 	return db.Update(obj)
 }

@@ -25,6 +25,10 @@ func (obj *CarAdvert) Read() error {
 	return db.Read(*obj)
 }
 
+func (obj *CarAdvert) ReadAll() (*[]CarAdvert, error) {
+	return db.ReadAll(obj)
+}
+
 func (obj *CarAdvert) Update() (int64, error) {
 	return db.Update(obj)
 }

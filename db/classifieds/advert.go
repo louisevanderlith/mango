@@ -24,6 +24,10 @@ func (obj *Advert) Read() error {
 	return db.Read(*obj)
 }
 
+func (obj *Advert) ReadAll() (*[]Advert, error) {
+	return db.ReadAll(obj)
+}
+
 func (obj *Advert) Update() (int64, error) {
 	return db.Update(obj)
 }

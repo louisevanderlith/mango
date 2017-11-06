@@ -9,6 +9,7 @@ import (
 type DBSet interface {
 	Insert() (int64, error)
 	Read() error
+	ReadlAll(*[]interface, error)
 	Update() (int64, error)
 	Delete() error
 }
@@ -35,16 +36,21 @@ func Read(obj interface{}) error {
 	return err
 }
 
+func ReadAll(obj interface{}) (*[]interface{}, error) {
+	var result []interface{}
+
+	o := orm.NewOrm()
+	qs := o.QueryTable(obj).Filter("Deleted", false)
+
+	_, err := qs.All(&result)
+
+	return result, err
+}
+
 func Update(obj interface{}) (int64, error) {
 	o := orm.NewOrm()
 
 	return o.Update(obj)
-}
-
-func Delete(obj interface{}) (int64, error) {
-	o := orm.NewOrm()
-
-	return o.Delete(obj)
 }
 
 func getReadColumns(obj interface{}) []string {

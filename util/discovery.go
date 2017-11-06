@@ -24,85 +24,133 @@ type Service struct {
 	Type          enums.ServiceType
 }
 
-var publicIP string
+var (
+	_publicIP    string
+	_instanceKey string
+	_serviceKeys map[string]string
+)
+
+func init() {
+	_serviceKeys = make(map[string]string)
+}
 
 // Register is used to register an application with the router service
-func Register(service Service, discoveryURL string, port string) (string, error) {
-	result := ""
+func (service Service) Register(discoveryURL string, port string) (string, error) {
+	_serviceKeys["Router.API"] = discoveryURL
 
 	service.URL = getPublicIP(port, service.Environment)
 
-	buff := new(bytes.Buffer)
-	json.NewEncoder(buff).Encode(service)
+	contents, _ := POSTMessage("Router.API", "discovery", service)
 
-	resp, err := http.Post(discoveryURL, "application/json", buff)
+	var data struct{ AppID string }
+	jerr := json.Unmarshal(contents, &data)
 
-	if err != nil {
-		log.Print(err)
-	} else {
-		defer resp.Body.Close()
-
-		contents, err := ioutil.ReadAll(resp.Body)
-
-		if err != nil {
-			log.Print(err)
-		}
-
-		var data struct{ AppID string }
-		jerr := json.Unmarshal(contents, &data)
-
-		if jerr != nil {
-			log.Print(jerr)
-			err = jerr
-		}
-
-		result = data.AppID
+	if jerr != nil {
+		log.Print(jerr)
 	}
 
-	return result, err
+	_instanceKey = data.AppID
+
+	return _instanceKey, jerr
 }
 
-func GetServiceURL(instanceKey string, serviceName string, discoveryURL string) (string, error) {
+func GetServiceURL(serviceName string) (string, error) {
 	var result string
 	var finalError error
 
-	discoveryRoute := fmt.Sprintf("%s%s/%s", discoveryURL, instanceKey, serviceName)
-	resp, err := http.Get(discoveryRoute)
+	cacheService, ok := _serviceKeys[serviceName]
 
-	if err != nil {
-		log.Print(err)
+	if ok {
+		result = cacheService
 	} else {
-		defer resp.Body.Close()
-		contents, err := ioutil.ReadAll(resp.Body)
 
-		if err != nil {
-			log.Print(err)
-		}
+		contents, statusCode := GETMessage("Router.API", "discovery", _instanceKey, serviceName)
 
 		var rawURL string
-		err = json.Unmarshal(contents, &rawURL)
+		err := json.Unmarshal(contents, &rawURL)
 
 		if err != nil {
 			log.Print(err)
 		}
 
-		if resp.StatusCode != 200 {
+		if statusCode != 200 {
 			finalError = errors.New(rawURL)
 		} else {
 			result = rawURL
+			_serviceKeys[serviceName] = rawURL
 		}
 	}
 
 	return result, finalError
 }
 
+func GETMessage(serviceName string, controller string, params ...string) ([]byte, int) {
+	var result []byte
+	var statusCode int
+	url, err := GetServiceURL(serviceName)
+
+	if err == nil {
+		fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))
+		resp, err := http.Get(fullURL)
+
+		if err != nil {
+			log.Print(err)
+		} else {
+			defer resp.Body.Close()
+			statusCode = resp.StatusCode
+			contents, err := ioutil.ReadAll(resp.Body)
+
+			if err != nil {
+				log.Print(err)
+			}
+
+			result = contents
+		}
+	} else {
+		log.Print(err)
+	}
+
+	return result, statusCode
+}
+
+func POSTMessage(serviceName string, action string, obj interface{}) ([]byte, int) {
+	var result []byte
+	var statusCode int
+	url, err := GetServiceURL(serviceName)
+
+	if err == nil {
+		fullURL := fmt.Sprintf("%sv1/%s", url, action)
+
+		buff := new(bytes.Buffer)
+		json.NewEncoder(buff).Encode(obj)
+
+		resp, err := http.Post(fullURL, "application/json", buff)
+
+		if err != nil {
+			log.Print(err)
+		} else {
+			defer resp.Body.Close()
+			statusCode = resp.StatusCode
+			contents, err := ioutil.ReadAll(resp.Body)
+
+			if err != nil {
+				log.Print(err)
+			}
+
+			result = contents
+		}
+	}
+
+	return result, statusCode
+}
+
 func getPublicIP(port string, env enums.Environment) string {
 
 	if env == enums.DEV {
-		publicIP = "localhost"
+		_publicIP = "localhost"
 	}
 
-	if publicIP == "" {
+	if _publicIP == "" {
 		resp, err := http.Get("http://myexternalip.com/raw")
 
 		if err != nil {
@@ -112,12 +160,12 @@ func getPublicIP(port string, env enums.Environment) string {
 		defer resp.Body.Close()
 
 		ip, err := ioutil.ReadAll(resp.Body)
-		publicIP = strings.Replace(string(ip), "\n", "", -1)
+		_publicIP = strings.Replace(string(ip), "\n", "", -1)
 
 		if err != nil {
 			log.Print(err)
 		}
 	}
 
-	return fmt.Sprintf("http://%s:%s/", publicIP, port)
+	return fmt.Sprintf("http://%s:%s/", _publicIP, port)
 }

@@ -5,9 +5,9 @@ import (
 	"github.com/louisevanderlith/mango/util"
 )
 
-func NewDatabase(instanceKey, discoveryURL string) {
+func NewDatabase() {
 	dbName := "Secure.DB"
-	util.BuildDatabase(registerModels, instanceKey, dbName, discoveryURL)
+	util.BuildDatabase(registerModels, dbName)
 }
 
 func registerModels() {
