@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/db"
 )
 
 type Advert struct {
@@ -21,11 +22,13 @@ func (obj *Advert) Insert() (int64, error) {
 }
 
 func (obj *Advert) Read() error {
-	return db.Read(*obj)
+	return db.Read(obj)
 }
 
-func (obj *Advert) ReadAll() (*[]Advert, error) {
-	return db.ReadAll(obj)
+func (obj *Advert) ReadAll() ([]Advert, error) {
+	var data []Advert
+	_, err := db.ReadAll(obj, data)
+	return data, err
 }
 
 func (obj *Advert) Update() (int64, error) {
@@ -33,7 +36,8 @@ func (obj *Advert) Update() (int64, error) {
 }
 
 func (obj *Advert) Delete() error {
-	_, err := db.Delete(obj)
+	obj.Deleted = true
+	_, err := db.Update(obj)
 
 	return err
 }

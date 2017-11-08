@@ -6,7 +6,7 @@ import (
 )
 
 func NewDatabase() {
-	dbName := "Comms.DB"
+	dbName := "Communication.DB"
 	util.BuildDatabase(registerModels, dbName)
 }
 

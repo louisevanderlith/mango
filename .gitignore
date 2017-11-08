@@ -22,5 +22,6 @@ swagger/
 swagger.zip
 lastupdate.tmp
 
+.idea/
 .vscode/
 node_modules/

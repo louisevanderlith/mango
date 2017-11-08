@@ -17,7 +17,7 @@ func TestParse(t *testing.T) {
 }
 
 func TestGetFileContent_MustGetLines(t *testing.T) {
-	content := getFileContent("../api/proxy/app.conf")
+	content := GetFileContent("../api/proxy/app.conf")
 
 	if len(content) <= 0 {
 		t.Error("No Config file read")
@@ -25,7 +25,7 @@ func TestGetFileContent_MustGetLines(t *testing.T) {
 }
 
 func TestGetFileContent_MustHaveValue(t *testing.T) {
-	contentbytes := getFileContent("../api/proxy/app.conf")
+	contentbytes := GetFileContent("../api/proxy/app.conf")
 	content := strings.Split(string(contentbytes), "\r\n")
 
 	for _, val := range content {

@@ -1,6 +1,9 @@
 package comment
 
-import "github.com/louisevanderlith/mango/util"
+import (
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/db"
+)
 
 type Comment struct {
 	util.BaseRecord
@@ -15,11 +18,14 @@ func (obj *Comment) Insert() (int64, error) {
 }
 
 func (obj *Comment) Read() error {
-	return db.Read(*obj)
+	return db.Read(obj)
 }
 
-func (obj *Comment) ReadAll() (*[]Comment, error) {
-	return db.ReadAll(obj)
+func (obj *Comment) ReadAll() ([]Comment, error) {
+	var data []Comment
+	_, err := db.ReadAll(obj, data)
+
+	return data, err
 }
 
 func (obj *Comment) Update() (int64, error) {
@@ -27,7 +33,8 @@ func (obj *Comment) Update() (int64, error) {
 }
 
 func (obj *Comment) Delete() error {
-	_, err := db.Delete(obj)
+	obj.Deleted = true
+	_, err := db.Update(obj)
 
 	return err
 }

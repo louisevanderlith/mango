@@ -21,7 +21,7 @@ func (req *MessageController) Post() {
 	var message comms.Message
 	json.Unmarshal(req.Ctx.Input.RequestBody, &message)
 
-	err := comms.SendMessage(message)
+	err := message.SendMessage()
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
@@ -38,13 +38,14 @@ func (req *MessageController) Post() {
 // @Success 200 {string} string
 // @router / [get]
 func (req *MessageController) Get() {
-	result, err := comms.ReadAll()
+	msg := comms.Message{}
+	result, err := msg.ReadAll()
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = map[string]string{"Error": err.Error()}
 	} else {
-		req.Data["json"] = map[string]string{"Data": result}
+		req.Data["json"] = map[string]interface{}{"Data": result}
 	}
 
 	req.ServeJSON()

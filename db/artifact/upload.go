@@ -19,11 +19,13 @@ func (obj *Upload) Insert() (int64, error) {
 }
 
 func (obj *Upload) Read() error {
-	return db.Read(*obj)
+	return db.Read(obj)
 }
 
-func (obj *Upload) ReadAll() (*[]Upload, error) {
-	return db.ReadAll(obj)
+func (obj *Upload) ReadAll() ([]Upload, error) {
+	var data []Upload
+	_, err := db.ReadAll(obj, data)
+	return data, err
 }
 
 func (obj *Upload) Update() (int64, error) {
@@ -31,7 +33,8 @@ func (obj *Upload) Update() (int64, error) {
 }
 
 func (obj *Upload) Delete() error {
-	_, err := db.Delete(obj)
+	obj.Deleted = true
+	_, err := db.Update(obj)
 
 	return err
 }

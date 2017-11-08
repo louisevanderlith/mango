@@ -30,13 +30,13 @@ func ProtectMethods(auths map[string]enums.RoleType) {
 	authFunctions = auths
 }
 
-func (this *BaseController) Setup(name string) {
-	this.TplName = "content/" + name + ".html"
+func (ctrl *BaseController) Setup(name string) {
+	ctrl.TplName = "content/" + name + ".html"
 
 	// By default we want to include scripts
 	// Set this to false in your controller, when scripts aren't needed
-	this.Data["HasScript"] = true
-	this.Data["ScriptName"] = name + ".entry.js"
+	ctrl.Data["HasScript"] = true
+	ctrl.Data["ScriptName"] = name + ".entry.js"
 }
 
 func userAllowed(ctrl *BaseController) bool {

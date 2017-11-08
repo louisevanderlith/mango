@@ -184,7 +184,8 @@ func (obj *User) Update() (int64, error) {
 }
 
 func (obj *User) Delete() error {
-	_, err := db.Delete(obj)
+	obj.Deleted = true
+	_, err := db.Update(obj)
 
 	return err
 }

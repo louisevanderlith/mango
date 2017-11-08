@@ -17,7 +17,7 @@ func main() {
 	srv := util.Service{
 		Environment: enums.GetEnvironment(beego.AppConfig.String("runmode")),
 		Name:        beego.AppConfig.String("appname"),
-		Type:        enums.PROXY}
+		Type:        enums.APP}
 
 	discURL := beego.AppConfig.String("discovery")
 	port := beego.AppConfig.String("httpport")

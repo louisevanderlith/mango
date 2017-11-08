@@ -81,8 +81,6 @@ func getAllowedCaller(serviceType enums.ServiceType) enums.ServiceType {
 	case enums.DB:
 		result = enums.API
 	case enums.API:
-		result = enums.PROXY
-	case enums.PROXY:
 		result = enums.APP
 	case enums.APP:
 		result = enums.ANY

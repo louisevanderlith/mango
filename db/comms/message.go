@@ -7,7 +7,8 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/db"
 	"github.com/louisevanderlith/mango/util"
-	gomail "gopkg.in/gomail.v2"
+	"gopkg.in/gomail.v2"
+	"github.com/astaxie/beego/orm"
 )
 
 type Message struct {
@@ -20,7 +21,7 @@ type Message struct {
 	Error string `orm:"null;size(2048)"`
 }
 
-func SendMessage(m Message) error {
+func (m Message) SendMessage() error {
 	//body := buildMessage(m)
 	//sendErr := sendEmail(body)
 
@@ -28,7 +29,7 @@ func SendMessage(m Message) error {
 		m.Sent = false
 		m.Error = sendErr.Error()
 	}*/
-	_, err := &m.Insert()
+	_, err := m.Insert()
 
 	return err
 }
@@ -75,8 +76,14 @@ func (obj *Message) Read() error {
 	return db.Read(*obj)
 }
 
-func (obj *Message) ReadAll() (*[]Message, error) {
-	return db.ReadAll(obj)
+func (obj *Message) ReadAll() ([]*Message, error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable("message").Filter("Deleted", false)
+
+	var result []*Message
+	_, err := qs.All(&result)
+
+	return result, err
 }
 
 func (obj *Message) Update() (int64, error) {
@@ -84,7 +91,8 @@ func (obj *Message) Update() (int64, error) {
 }
 
 func (obj *Message) Delete() error {
-	_, err := db.Delete(obj)
+	obj.Deleted = true
+	_, err := db.Update(obj)
 
 	return err
 }

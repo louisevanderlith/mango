@@ -2,14 +2,14 @@ package logic
 
 import (
 	"testing"
-
+"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	uuid "github.com/nu7hatch/gouuid"
 )
 
-func dummyService(name string) Service {
-	return Service{
+func dummyService(name string) util.Service {
+	return util.Service{
 		Environment: enums.DEV,
 		Name:        name,
 		URL:         "http://127.0.01/" + name,
@@ -35,33 +35,6 @@ func TestGetService_AllowedCaller_ForDatabase_IsService(t *testing.T) {
 	}
 }
 
-func TestGetService_AllowedCaller_ForService_IsProxy(t *testing.T) {
-	service := dummyService("Test.Service")
-
-	AddService(service)
-
-	expect := enums.PROXY
-	result := getService("Test.Service", enums.DEV, expect)
-
-	if result.AllowedCaller != expect {
-		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller.String())
-	}
-}
-
-func TestGetService_AllowedCaller_ForProxy_IsApplication(t *testing.T) {
-	proxy := dummyService("Test.Proxy")
-	proxy.Type = enums.PROXY
-
-	AddService(proxy)
-
-	expect := enums.APP
-	result := getService("Test.Proxy", enums.DEV, expect)
-
-	if result.AllowedCaller != expect {
-		t.Errorf("Allowed Caller is not %s, instead got %s", expect, result.AllowedCaller.String())
-	}
-}
-
 func TestGetService_AllowedCaller_ForApplication_IsAll(t *testing.T) {
 	app := dummyService("Test.App")
 	app.Type = enums.APP
@@ -78,7 +51,7 @@ func TestGetService_AllowedCaller_ForApplication_IsAll(t *testing.T) {
 
 func TestGetServicePath_SameEnv_ShouldFindService(t *testing.T) {
 	requestor := dummyService("Test.Main")
-	requestor.Type = enums.PROXY
+	requestor.Type = enums.APP
 	requestorID := AddService(requestor)
 
 	api := dummyService("Test.Api")
@@ -93,7 +66,7 @@ func TestGetServicePath_SameEnv_ShouldFindService(t *testing.T) {
 
 func TestGetServicePath_DiffEnv_ShouldHaveError(t *testing.T) {
 	requestor := dummyService("Test.Main")
-	requestor.Type = enums.PROXY
+	requestor.Type = enums.APP
 	requestorID := AddService(requestor)
 
 	api := dummyService("Test.Api")
