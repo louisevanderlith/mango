@@ -21,13 +21,6 @@ func (obj *Comment) Read() error {
 	return db.Read(obj)
 }
 
-func (obj *Comment) ReadAll() ([]Comment, error) {
-	var data []Comment
-	_, err := db.ReadAll(obj, data)
-
-	return data, err
-}
-
 func (obj *Comment) Update() (int64, error) {
 	return db.Update(obj)
 }

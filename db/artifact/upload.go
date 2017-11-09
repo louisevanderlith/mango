@@ -22,12 +22,6 @@ func (obj *Upload) Read() error {
 	return db.Read(obj)
 }
 
-func (obj *Upload) ReadAll() ([]Upload, error) {
-	var data []Upload
-	_, err := db.ReadAll(obj, data)
-	return data, err
-}
-
 func (obj *Upload) Update() (int64, error) {
 	return db.Update(obj)
 }

@@ -3,14 +3,17 @@ $(document).ready(() => {
 });
 
 function verifyLogin(){
-    var avoToken = getParameterByName('avotoken');
     var hasToken = localStorage.getItem('avotoken') != null;
 
-    if(!hasToken && avoToken) {
-        localStorage.setItem('avotoken', avoToken);
-    } else {
-        let loginURL = 'http://secure.localhost/v1/login';
-        window.location.replace(loginURL);
+    if(!hasToken){
+        var avoToken = getParameterByName('avotoken');
+
+        if(avoToken){
+            localStorage.setItem('avotoken', avoToken);
+        } else {
+            let loginURL = 'http://secure.localhost/v1/login';
+            window.location.replace(loginURL);
+        }
     }
 }
 

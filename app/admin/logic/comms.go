@@ -18,23 +18,22 @@ func GetCommsMessages() ([]CommsObject, error) {
 	var result []CommsObject
 	var finalError error
 	contents, statusCode := util.GETMessage("Communication.API", "message")
+	data := util.MarshalToMap(contents)
 
-	if statusCode == 0 {
-		if statusCode != 200 {
-			var dataErr string
-			err := json.Unmarshal(contents, &dataErr)
+	if statusCode != 200 {
+		var dataErr string
+		err := json.Unmarshal(*data["Error"], &dataErr)
 
-			if err != nil {
-				log.Print(err)
-			}
+		if err != nil {
+			log.Print(err)
+		}
 
-			finalError = errors.New(dataErr)
-		} else {
-			err := json.Unmarshal(contents, &result)
+		finalError = errors.New(dataErr)
+	} else {
+		err := json.Unmarshal(*data["Data"], &result)
 
-			if err != nil {
-				log.Print(err)
-			}
+		if err != nil {
+			log.Print(err)
 		}
 	}
 

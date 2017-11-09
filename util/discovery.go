@@ -107,7 +107,8 @@ func GETMessage(serviceName string, controller string, params ...string) ([]byte
 			result = contents
 		}
 	} else {
-		log.Print(err)
+		statusCode = 500
+		result = []byte(err.Error())
 	}
 
 	return result, statusCode
@@ -139,9 +140,23 @@ func POSTMessage(serviceName string, action string, obj interface{}) ([]byte, in
 
 			result = contents
 		}
+	} else {
+		statusCode = 500
+		result = []byte(err.Error())
 	}
 
 	return result, statusCode
+}
+
+func MarshalToMap(content []byte) map[string]*json.RawMessage{
+	var objmap map[string]*json.RawMessage
+	err := json.Unmarshal(content, &objmap)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	return objmap
 }
 
 func getPublicIP(port string, env enums.Environment) string {

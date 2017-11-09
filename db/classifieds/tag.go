@@ -19,12 +19,6 @@ func (obj *Tag) Read() error {
 	return db.Read(obj)
 }
 
-func (obj *Tag) ReadAll() ([]Tag, error) {
-	var data []Tag
-	_, err := db.ReadAll(obj, data)
-	return data, err
-}
-
 func (obj *Tag) Update() (int64, error) {
 	return db.Update(obj)
 }
