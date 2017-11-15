@@ -85,7 +85,7 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 			passed = err == nil
 
 			if !passed {
-				log.Print(err)
+				log.Printf("Login: ", err)
 			}
 
 			trace := LoginTrace{
@@ -98,7 +98,7 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 			userID = user.ID
 
 			if err != nil {
-				log.Print(err)
+				log.Printf("Login: ",err)
 			}
 		}
 	}
@@ -110,7 +110,7 @@ func securePassword(user *User) {
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(user.Password), cost)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("securePassword: ", err)
 	}
 
 	user.Password = string(hashedPwd)
@@ -165,7 +165,7 @@ func dropUser(user User) error {
 	_, err := o.Delete(&user)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("dropUser: ", err)
 	}
 
 	return err

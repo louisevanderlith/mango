@@ -23,6 +23,6 @@ func addUserRole(user User) {
 	_, err := o.Insert(&role)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("addUserRole: ", err)
 	}
 }

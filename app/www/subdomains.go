@@ -42,7 +42,7 @@ func registerSubdomains() {
 			vshost, err := url.Parse(rawURL)
 
 			if err != nil {
-				log.Print(err)
+				log.Printf("registerSubdomains: ", err)
 			}
 
 			proxy := httputil.NewSingleHostReverseProxy(vshost)
@@ -53,7 +53,7 @@ func registerSubdomains() {
 			subdomains[v.Address] = domainMux
 		} else {
 			log.Printf("Skipping %s", v.Name)
-			log.Print(err)
+			log.Printf("registerSubdomains: ", err)
 		}
 	}
 }
@@ -64,6 +64,10 @@ func defaultMuxSetup() {
 	defaultMux := http.NewServeMux()
 	defaultMux.Handle("/static/", http.StripPrefix("/static/", fs))
 	defaultMux.Handle("/", fs)
+
+	// for certbot SSL
+	sslfs := http.FileServer(http.FileSystem(http.Dir("/tmp/letsencrypt/")))
+	defaultMux.Handle("/.well-known/acme-challenge/", sslfs)
 
 	subdomains["www"] = defaultMux
 }

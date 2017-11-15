@@ -27,7 +27,7 @@ func loadSettings() *Settings {
 	err := json.Unmarshal(content, &settings)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("loadSettings: ", err)
 	}
 
 	return settings

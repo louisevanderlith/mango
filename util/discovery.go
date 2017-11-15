@@ -32,7 +32,7 @@ var (
 
 func init() {
 	_serviceKeys = make(map[string]string)
-	_serviceKeys["Router.API"] = "http://router.avosa.co.za/"
+	_serviceKeys["Router.API"] = "https://router.avosa.co.za/" //"http://localhost:8080/"
 }
 
 // Register is used to register an application with the router service
@@ -45,7 +45,7 @@ func (service Service) Register(port string) (string, error) {
 	jerr := json.Unmarshal(contents, &data)
 
 	if jerr != nil {
-		log.Print(jerr)
+		log.Printf("json.Unmarshal: ", jerr)
 	}
 
 	_instanceKey = data.AppID
@@ -68,7 +68,7 @@ func GetServiceURL(serviceName string) (string, error) {
 		err := json.Unmarshal(contents, &rawURL)
 
 		if err != nil {
-			log.Print(err)
+			log.Printf("json.Unmarshal: ", err)
 		}
 
 		if statusCode != 200 {
@@ -92,14 +92,14 @@ func GETMessage(serviceName string, controller string, params ...string) ([]byte
 		resp, err := http.Get(fullURL)
 
 		if err != nil {
-			log.Print(err)
+			log.Printf("http.Get: ", err)
 		} else {
 			defer resp.Body.Close()
 			statusCode = resp.StatusCode
 			contents, err := ioutil.ReadAll(resp.Body)
 
 			if err != nil {
-				log.Print(err)
+				log.Printf("ioutil.ReadAll: ", err)
 			}
 
 			result = contents
@@ -126,14 +126,14 @@ func POSTMessage(serviceName string, action string, obj interface{}) ([]byte, in
 		resp, err := http.Post(fullURL, "application/json", buff)
 
 		if err != nil {
-			log.Print(err)
+			log.Printf("http.Post: ", err)
 		} else {
 			defer resp.Body.Close()
 			statusCode = resp.StatusCode
 			contents, err := ioutil.ReadAll(resp.Body)
 
 			if err != nil {
-				log.Print(err)
+				log.Printf("ioutil.ReadAll: ", err)
 			}
 
 			result = contents
@@ -151,7 +151,7 @@ func MarshalToMap(content []byte) map[string]*json.RawMessage{
 	err := json.Unmarshal(content, &objmap)
 
 	if err != nil {
-		log.Println(err)
+		log.Printf("MarshalToMap: ", err)
 	}
 
 	return objmap
@@ -167,7 +167,7 @@ func getPublicIP(port string, env enums.Environment) string {
 		resp, err := http.Get("http://myexternalip.com/raw")
 
 		if err != nil {
-			log.Print(err)
+			log.Printf("getPublicIP: ", err)
 		}
 
 		defer resp.Body.Close()
@@ -176,7 +176,7 @@ func getPublicIP(port string, env enums.Environment) string {
 		_publicIP = strings.Replace(string(ip), "\n", "", -1)
 
 		if err != nil {
-			log.Print(err)
+			log.Printf("getPublicIP: ", err)
 		}
 	}
 

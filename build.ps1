@@ -1,6 +1,5 @@
 function doBuild() {
-    $goarch = 'amd64'
-    $goos = 'windows'
+    $goos = 'linux'
     
     # All applications must be build to a central folder (./bin)
     $runPath = (Resolve-Path .\).Path
@@ -23,7 +22,9 @@ function doBuild() {
             Set-Location $folder.FullName
     
             if (Test-Path (".\main.go")) {
-    
+
+                $env:GOARCH = 'amd64'
+                $env:GOOS = $goos
                 go build -o $exeName
     
                 copyFolder $outPath "conf"

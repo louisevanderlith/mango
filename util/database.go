@@ -13,7 +13,7 @@ func BuildDatabase(regModels func(), dbName string) {
 	dbPath, err := GetServiceURL(dbName)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("BuildDatabase: ", err)
 	} else {
 		driverName := "postgres"
 		err := orm.RegisterDataBase(name, driverName, dbPath)

@@ -55,7 +55,7 @@ func sendEmail(body, name, to string) error {
 	err := d.DialAndSend(gm)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("sendMail: ", err)
 	}
 
 	return err

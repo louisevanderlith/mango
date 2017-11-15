@@ -78,7 +78,7 @@ func generateToken() string {
 	_, err := rand.Read(b)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("generateToken: ", err)
 	}
 
 	result := fmt.Sprintf("%X", b)

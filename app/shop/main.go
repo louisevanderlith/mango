@@ -20,7 +20,7 @@ func main() {
 	_, err := srv.Register( port)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("Register: ", err)
 	} else {
 		beego.Run()
 	}

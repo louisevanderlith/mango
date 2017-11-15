@@ -8,6 +8,8 @@ import (
 
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
+	"golang.org/x/net/http2"
+	"fmt"
 )
 
 func main() {
@@ -17,23 +19,43 @@ func main() {
 		Name:        beego.AppConfig.String("appname"),
 		Type:        enums.APP}
 
-	port := beego.AppConfig.String("httpport")
-	_, err := srv.Register(port)
+	httpsPort := beego.AppConfig.String("httpsport")
+
+	_, err := srv.Register(httpsPort)
 
 	if err != nil {
-		log.Print(err)
+		log.Printf("Register: ", err)
 	} else {
-		setupHost(port)
+		httpPort := beego.AppConfig.String("httpport")
+		setupHost(httpPort, httpsPort)
 	}
 }
 
-func setupHost(port string) {
+func setupHost(httpPort, httpsPort string) {
 	registerSubdomains()
 
+	var srv http.Server
+	srv.Addr = ":" + httpsPort
+	srv.Handler = subdomains
+
+	cerr := http2.ConfigureServer(&srv, nil)
+
+	if cerr != nil {
+		log.Printf("ConfigureServer: ", cerr)
+	}
+
 	log.Println("Listening...")
-	err := http.ListenAndServe(":"+port, subdomains)
+
+	go srv.ListenAndServeTLS("host.cert", "host.key")
+
+	err := http.ListenAndServe(":" + httpPort, http.HandlerFunc(redirectTLS))
 
 	if err != nil {
 		log.Print("ListenAndServe: ", err)
 	}
+}
+
+func redirectTLS(w http.ResponseWriter, r *http.Request) {
+	moveURL := fmt.Sprintf("https://%s%s", r.Host, r.RequestURI)
+	http.Redirect(w, r, moveURL, http.StatusTemporaryRedirect)
 }

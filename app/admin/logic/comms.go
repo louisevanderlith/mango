@@ -25,7 +25,7 @@ func GetCommsMessages() ([]CommsObject, error) {
 		err := json.Unmarshal(*data["Error"], &dataErr)
 
 		if err != nil {
-			log.Print(err)
+			log.Printf("GetCommsMessages: ", err)
 		}
 
 		finalError = errors.New(dataErr)
@@ -33,7 +33,7 @@ func GetCommsMessages() ([]CommsObject, error) {
 		err := json.Unmarshal(*data["Data"], &result)
 
 		if err != nil {
-			log.Print(err)
+			log.Printf("GetCommsMessages: ", err)
 		}
 	}
 
