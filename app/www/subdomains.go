@@ -30,7 +30,7 @@ func (subdomains Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	mux.ServeHTTP(w, r)
 }
 
-func registerSubdomains(discURL string) {
+func registerSubdomains() {
 	defaultMuxSetup()
 
 	domains := loadSettings()

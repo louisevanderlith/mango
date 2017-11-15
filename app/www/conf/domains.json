@@ -15,6 +15,11 @@
         "Type": "Subdomain"
     },
     {
+        "Name": "Router.API",
+        "Address": "router",
+        "Type": "Subdomain"
+    },
+    {
         "Name": "Security.API",
         "Address": "secure",
         "Type": "Subdomain"

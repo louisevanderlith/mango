@@ -32,12 +32,11 @@ var (
 
 func init() {
 	_serviceKeys = make(map[string]string)
+	_serviceKeys["Router.API"] = "http://router.avosa.co.za/"
 }
 
 // Register is used to register an application with the router service
-func (service Service) Register(discoveryURL string, port string) (string, error) {
-	_serviceKeys["Router.API"] = discoveryURL
-
+func (service Service) Register(port string) (string, error) {
 	service.URL = getPublicIP(port, service.Environment)
 
 	contents, _ := POSTMessage("Router.API", "discovery", service)
@@ -63,7 +62,6 @@ func GetServiceURL(serviceName string) (string, error) {
 	if ok {
 		result = cacheService
 	} else {
-
 		contents, statusCode := GETMessage("Router.API", "discovery", _instanceKey, serviceName)
 
 		var rawURL string

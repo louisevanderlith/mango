@@ -21,6 +21,10 @@ func (req *MessageController) Post() {
 	var message comms.Message
 	json.Unmarshal(req.Ctx.Input.RequestBody, &message)
 
+	if message.To == ""{
+		message.To = beego.AppConfig.String("defaultEmail")
+	}
+
 	err := message.SendMessage()
 
 	if err != nil {

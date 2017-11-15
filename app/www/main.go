@@ -10,8 +10,6 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-var instanceKey string
-
 func main() {
 	// Register with router
 	srv := util.Service{
@@ -19,20 +17,18 @@ func main() {
 		Name:        beego.AppConfig.String("appname"),
 		Type:        enums.APP}
 
-	discURL := beego.AppConfig.String("discovery")
 	port := beego.AppConfig.String("httpport")
-	key, err := srv.Register(discURL, port)
+	_, err := srv.Register(port)
 
 	if err != nil {
 		log.Print(err)
 	} else {
-		instanceKey = key
-		setupHost(discURL, port)
+		setupHost(port)
 	}
 }
 
-func setupHost(discURL, port string) {
-	registerSubdomains(discURL)
+func setupHost(port string) {
+	registerSubdomains()
 
 	log.Println("Listening...")
 	err := http.ListenAndServe(":"+port, subdomains)

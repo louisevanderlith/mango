@@ -17,24 +17,28 @@ type Message struct {
 	Email string `orm:"size(128)"`
 	Phone string `orm:"size(15)"`
 	Body  string `orm:"size(1024)"`
+	To string `orm:"null;size(128)"`
 	Sent  bool   `orm:"default(false)"`
 	Error string `orm:"null;size(2048)"`
 }
 
 func (m Message) SendMessage() error {
-	//body := buildMessage(m)
-	//sendErr := sendEmail(body)
+	if beego.BConfig.RunMode == "dev" {
+		body := buildMessage(m)
+		sendErr := sendEmail(body, m.Name, m.To)
 
-	/*if sendErr != nil {
-		m.Sent = false
-		m.Error = sendErr.Error()
-	}*/
+		if sendErr != nil {
+			m.Sent = false
+			m.Error = sendErr.Error()
+		}
+	}
+
 	_, err := m.Insert()
 
 	return err
 }
 
-func sendEmail(body string) error {
+func sendEmail(body, name, to string) error {
 	smtpUser := beego.AppConfig.String("smtpUsername")
 	smtpPass := beego.AppConfig.String("smtpPassword")
 	smtpAddress := beego.AppConfig.String("smtpAddress")
@@ -42,8 +46,8 @@ func sendEmail(body string) error {
 
 	gm := gomail.NewMessage()
 	gm.SetHeader("From", smtpUser)
-	gm.SetHeader("To", "abc@gmail.com")
-	gm.SetHeader("Subject", "Contact Us - avosaweb")
+	gm.SetHeader("To", to	)
+	gm.SetHeader("Subject", "Contact Us - " + name)
 	gm.SetBody("text/html", body)
 
 	d := gomail.NewDialer(smtpAddress, smtpPort, smtpUser, smtpPass)

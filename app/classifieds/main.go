@@ -19,9 +19,8 @@ func main() {
 		Name:        beego.AppConfig.String("appname"),
 		Type:        enums.APP}
 
-	discURL := beego.AppConfig.String("discovery")
 	port := beego.AppConfig.String("httpport")
-	_, err := srv.Register(discURL, port)
+	_, err := srv.Register(port)
 
 	if err != nil {
 		log.Print(err)
