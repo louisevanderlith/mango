@@ -10,7 +10,7 @@ import (
 
 func dummyService(name string) util.Service {
 	return util.Service{
-		Environment: enums.DEV,
+		Environment: enums.LIVE,
 		Name:        name,
 		URL:         "http://127.0.01/" + name,
 		Type:        enums.API}

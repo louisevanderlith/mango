@@ -71,7 +71,7 @@ function getRollupOptions(entry, name) {
         },
         external: ['jquery'],
         paths: {
-            jquery: 'http://code.jquery.com/jquery-3.2.1.min.js'
+            jquery: 'https://code.jquery.com/jquery-3.2.1.min.js'
         },
         plugins: [
             babel({

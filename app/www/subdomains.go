@@ -20,9 +20,9 @@ func init() {
 
 func (subdomains Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	domainParts := strings.Split(r.Host, ".")
-	mux := subdomains[domainParts[0]]
+	mux, ok := subdomains[domainParts[0]]
 
-	if mux == nil {
+	if !ok || strings.Contains(r.URL.String(), "well-known") {
 		// if the subdomain is not found, render default www website
 		mux = subdomains["www"]
 	}

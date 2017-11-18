@@ -67,7 +67,7 @@ func GetFileContent(configPath string) []byte {
 
 func FindFilePath(fileName string) string {
 	var result string
-	wp := getWorkingPath() + "\\conf"
+	wp := getWorkingPath() + "/conf"
 
 	result = filepath.Join(wp, filepath.FromSlash(path.Clean("/"+fileName)))
 
