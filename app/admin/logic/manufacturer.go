@@ -1,24 +1,21 @@
 package logic
 
 import (
-	"github.com/louisevanderlith/mango/util"
 	"encoding/json"
 	"log"
+	"github.com/louisevanderlith/mango/util"
 	"errors"
 )
 
-type CommsObject struct {
-	ID    int64
-	Name  string
-	Email string
-	Phone string
-	Body  string
+type Manufacturer struct {
+	ID   int64
+	Name string
 }
 
-func GetCommsMessages() ([]CommsObject, error) {
-	var result []CommsObject
+func GetManufacturers() ([]Manufacturer, error){
+	var result []Manufacturer
 	var finalError error
-	contents, statusCode := util.GETMessage("Communication.API", "message", "")
+	contents, statusCode := util.GETMessage("Things.API", "message", "")
 	data := util.MarshalToMap(contents)
 
 	if statusCode != 200 {

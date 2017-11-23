@@ -1,7 +1,6 @@
 package util
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -25,21 +24,21 @@ type Service struct {
 }
 
 var (
-	_publicIP    string
-	_instanceKey string
-	_serviceKeys map[string]string
+	publicIP    string
+	instanceKey string
+	serviceKeys map[string]string
 )
 
 func init() {
-	_serviceKeys = make(map[string]string)
-	_serviceKeys["Router.API"] = "https://router.avosa.co.za/" //"http://localhost:8080/"
+	serviceKeys = make(map[string]string)
+	serviceKeys["Router.API"] = "https://router.avosa.co.za/" //"http://localhost:8080/"
 }
 
 // Register is used to register an application with the router service
 func (service Service) Register(port string) (string, error) {
 	service.URL = getPublicIP(port, service.Environment)
 
-	contents, _ := POSTMessage("Router.API", "discovery", service)
+	contents, _ := POSTMessage("Router.API", "discovery", "", service)
 
 	var data struct{ AppID string }
 	jerr := json.Unmarshal(contents, &data)
@@ -48,21 +47,21 @@ func (service Service) Register(port string) (string, error) {
 		log.Printf("json.Unmarshal: ", jerr)
 	}
 
-	_instanceKey = data.AppID
+	instanceKey = data.AppID
 
-	return _instanceKey, jerr
+	return instanceKey, jerr
 }
 
 func GetServiceURL(serviceName string) (string, error) {
 	var result string
 	var finalError error
 
-	cacheService, ok := _serviceKeys[serviceName]
+	cacheService, ok := serviceKeys[serviceName]
 
 	if ok {
 		result = cacheService
 	} else {
-		contents, statusCode := GETMessage("Router.API", "discovery", _instanceKey, serviceName)
+		contents, statusCode := GETMessage("Router.API", "discovery", "", instanceKey, serviceName)
 
 		var rawURL string
 		err := json.Unmarshal(contents, &rawURL)
@@ -75,95 +74,20 @@ func GetServiceURL(serviceName string) (string, error) {
 			finalError = errors.New(rawURL)
 		} else {
 			result = rawURL
-			_serviceKeys[serviceName] = rawURL
+			serviceKeys[serviceName] = rawURL
 		}
 	}
 
 	return result, finalError
 }
 
-func GETMessage(serviceName string, controller string, params ...string) ([]byte, int) {
-	var result []byte
-	var statusCode int
-	url, err := GetServiceURL(serviceName)
-
-	if err == nil {
-		fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))
-		resp, err := http.Get(fullURL)
-
-		if err != nil {
-			log.Printf("http.Get: ", err)
-		} else {
-			defer resp.Body.Close()
-			statusCode = resp.StatusCode
-			contents, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				log.Printf("ioutil.ReadAll: ", err)
-			}
-
-			result = contents
-		}
-	} else {
-		statusCode = 500
-		result = []byte(err.Error())
-	}
-
-	return result, statusCode
-}
-
-func POSTMessage(serviceName string, action string, obj interface{}) ([]byte, int) {
-	var result []byte
-	var statusCode int
-	url, err := GetServiceURL(serviceName)
-
-	if err == nil {
-		fullURL := fmt.Sprintf("%sv1/%s", url, action)
-
-		buff := new(bytes.Buffer)
-		json.NewEncoder(buff).Encode(obj)
-
-		resp, err := http.Post(fullURL, "application/json", buff)
-
-		if err != nil {
-			log.Printf("http.Post: ", err)
-		} else {
-			defer resp.Body.Close()
-			statusCode = resp.StatusCode
-			contents, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				log.Printf("ioutil.ReadAll: ", err)
-			}
-
-			result = contents
-		}
-	} else {
-		statusCode = 500
-		result = []byte(err.Error())
-	}
-
-	return result, statusCode
-}
-
-func MarshalToMap(content []byte) map[string]*json.RawMessage{
-	var objmap map[string]*json.RawMessage
-	err := json.Unmarshal(content, &objmap)
-
-	if err != nil {
-		log.Printf("MarshalToMap: ", err)
-	}
-
-	return objmap
-}
-
 func getPublicIP(port string, env enums.Environment) string {
 
 	if env == enums.DEV {
-		_publicIP = "localhost"
+		publicIP = "localhost"
 	}
 
-	if _publicIP == "" {
+	if publicIP == "" {
 		resp, err := http.Get("http://myexternalip.com/raw")
 
 		if err != nil {
@@ -173,12 +97,12 @@ func getPublicIP(port string, env enums.Environment) string {
 		defer resp.Body.Close()
 
 		ip, err := ioutil.ReadAll(resp.Body)
-		_publicIP = strings.Replace(string(ip), "\n", "", -1)
+		publicIP = strings.Replace(string(ip), "\n", "", -1)
 
 		if err != nil {
 			log.Printf("getPublicIP: ", err)
 		}
 	}
 
-	return fmt.Sprintf("http://%s:%s/", _publicIP, port)
+	return fmt.Sprintf("http://%s:%s/", publicIP, port)
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type CommsController struct {
-	util.BaseController
+	util.UIController
 }
 
 func (c *CommsController) Get() {

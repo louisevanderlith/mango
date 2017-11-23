@@ -4,7 +4,7 @@ import "github.com/louisevanderlith/mango/util"
 import "github.com/louisevanderlith/mango/util/enums"
 
 type HomeController struct {
-	util.BaseController
+	util.UIController
 }
 
 func init() {

@@ -11,15 +11,16 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/mango/util"
 	"golang.org/x/crypto/bcrypt"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 // User database model
 type User struct {
 	util.BaseRecord
-	Name          string `orm:"size(75)"`
-	Verified      bool   `orm:"default(false)"`
-	Email         string `orm:"size(128)"`
-	ContactNumber string `orm:"size(20)"`
+	Name          string        `orm:"size(75)"`
+	Verified      bool          `orm:"default(false)"`
+	Email         string        `orm:"size(128)"`
+	ContactNumber string        `orm:"size(20)"`
 	Password      string
 	LoginDate     time.Time     `orm:"auto_now_add;type(datetime)"`
 	LoginTraces   []*LoginTrace `orm:"reverse(many)"`
@@ -43,7 +44,11 @@ func CreateUser(user User) error {
 		_, err = o.Insert(&user)
 
 		if err == nil {
-			addUserRole(user)
+			role := Role{
+				User:        &user,
+				Description: enums.User}
+
+			_, err = role.Insert()
 		}
 	}
 
@@ -73,9 +78,10 @@ func validateUser(user User) error {
 }
 
 // Login will attempt to authenticate a user
-func Login(identifier string, password []byte, ip string, location string) (bool, int64) {
+func Login(identifier string, password []byte, ip string, location string) (bool, int64, []enums.RoleType) {
 	var passed bool
 	var userID int64
+	var roles []enums.RoleType
 
 	if identifier != "" && len(password) > 0 {
 		user := getUser(identifier)
@@ -86,6 +92,9 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 
 			if !passed {
 				log.Printf("Login: ", err)
+			} else {
+				user.LoadRoles()
+				roles = GetRolesTypes(user.Roles)
 			}
 
 			trace := LoginTrace{
@@ -94,16 +103,16 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 				IP:       ip,
 				User:     user}
 
-			err = createLoginTrace(trace)
+			_, err = trace.Insert()
 			userID = user.ID
 
 			if err != nil {
-				log.Printf("Login: ",err)
+				log.Printf("Login: ", err)
 			}
 		}
 	}
 
-	return passed, userID
+	return passed, userID, roles
 }
 
 func securePassword(user *User) {
@@ -114,21 +123,6 @@ func securePassword(user *User) {
 	}
 
 	user.Password = string(hashedPwd)
-}
-
-func getUserByID(userID int64) *User {
-	o := orm.NewOrm()
-	user := new(User)
-	user.ID = userID
-
-	err := o.Read(&user)
-
-	if err == orm.ErrNoRows || err == orm.ErrMissPK {
-		msg := fmt.Sprintf("Couldn't find user with ID %v", userID)
-		log.Print(msg)
-	}
-
-	return user
 }
 
 func getUser(identifier string) *User {
@@ -157,18 +151,6 @@ func exists(user User) bool {
 	result := o.QueryTable("user").SetCond(filter).Exist()
 
 	return result
-}
-
-func dropUser(user User) error {
-	o := orm.NewOrm()
-
-	_, err := o.Delete(&user)
-
-	if err != nil {
-		log.Printf("dropUser: ", err)
-	}
-
-	return err
 }
 
 func (obj *User) Insert() (int64, error) {

@@ -8,7 +8,7 @@ import (
 )
 
 type LoginController struct {
-	util.BaseController
+	util.UIController
 }
 
 // @Title Login

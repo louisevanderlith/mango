@@ -14,13 +14,14 @@ type Login struct {
 
 func AttemptLogin(l Login) string {
 	var token string
-	loggedIn, userID := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
+	loggedIn, userID, roles := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
 
 	if loggedIn {
 		session := UserSession{
 			IP:       l.IP,
 			Location: l.Location,
-			UserID:   userID}
+			UserID:   userID,
+			Roles:    roles}
 
 		token = Set(&session)
 	}

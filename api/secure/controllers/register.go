@@ -9,7 +9,7 @@ import (
 )
 
 type RegisterController struct {
-	util.BaseController
+	util.UIController
 }
 
 // @Title Register

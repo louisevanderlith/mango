@@ -5,7 +5,7 @@ import (
 )
 
 type MainController struct {
-	util.BaseController
+	util.UIController
 }
 
 func (c *MainController) Get() {

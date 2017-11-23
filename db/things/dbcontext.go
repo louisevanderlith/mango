@@ -11,5 +11,5 @@ func NewDatabase() {
 }
 
 func registerModels() {
-	orm.RegisterModel(new(Category), new(Manufacturer), new(Model))
+	orm.RegisterModel(new(Category), new(SubCategory), new(Manufacturer), new(Model))
 }

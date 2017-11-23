@@ -1,6 +1,8 @@
 package enums
 
-import "strings"
+import (
+	"strings"
+)
 
 type RoleType int
 

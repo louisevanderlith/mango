@@ -1,11 +1,10 @@
 package secure
 
 import (
-	"log"
-
-	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/db"
+	"github.com/astaxie/beego/orm"
 )
 
 type Role struct {
@@ -14,15 +13,27 @@ type Role struct {
 	Description enums.RoleType `orm:"type(int)"`
 }
 
-func addUserRole(user User) {
-	role := Role{
-		User:        &user,
-		Description: enums.User}
+func (obj *Role) Insert() (int64, error) {
+	return db.Insert(obj)
+}
 
+func (obj *Role) Read() error {
+	return db.Read(*obj)
+}
+
+func (obj *User) LoadRoles() error{
 	o := orm.NewOrm()
-	_, err := o.Insert(&role)
+	_, err := o.LoadRelated(&obj, "role")
 
-	if err != nil {
-		log.Printf("addUserRole: ", err)
+	return err
+}
+
+func GetRolesTypes(roles []*Role) []enums.RoleType{
+	var result []enums.RoleType
+
+	for _, v := range roles {
+		result = append(result, v.Description)
 	}
+
+	return result
 }

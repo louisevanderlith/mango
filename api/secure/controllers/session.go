@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/util"
 )
 
 type SessionController struct {
-	beego.Controller
+	util.SecureController
 }
 
 // @Title Get User Info
@@ -14,5 +14,4 @@ type SessionController struct {
 // @router / [get]
 func Get() {
 	// return the user's roles
-	
 }

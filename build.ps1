@@ -1,5 +1,5 @@
 function doBuild() {
-    $goos = 'linux'
+    $goos = 'windows'
     
     # All applications must be build to a central folder (./bin)
     $runPath = (Resolve-Path .\).Path

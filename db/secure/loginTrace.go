@@ -1,10 +1,8 @@
 package secure
 
 import (
-	"log"
-
-	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/db"
 )
 
 type LoginTrace struct {
@@ -15,13 +13,6 @@ type LoginTrace struct {
 	User     *User  `orm:"rel(fk)"`
 }
 
-func createLoginTrace(l LoginTrace) error {
-	o := orm.NewOrm()
-	_, err := o.Insert(&l)
-
-	if err != nil {
-		log.Printf("createLoginTrace: ", err)
-	}
-
-	return err
+func (obj *LoginTrace) Insert() (int64, error) {
+	return db.Insert(obj)
 }
