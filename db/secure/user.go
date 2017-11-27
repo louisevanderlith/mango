@@ -9,14 +9,13 @@ import (
 	"github.com/louisevanderlith/mango/db"
 
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/util"
 	"golang.org/x/crypto/bcrypt"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
 // User database model
 type User struct {
-	util.BaseRecord
+	db.Record
 	Name          string        `orm:"size(75)"`
 	Verified      bool          `orm:"default(false)"`
 	Email         string        `orm:"size(128)"`
@@ -48,7 +47,7 @@ func CreateUser(user User) error {
 				User:        &user,
 				Description: enums.User}
 
-			_, err = role.Insert()
+			_, err = Ctx.Role.Create(role)
 		}
 	}
 
@@ -103,7 +102,7 @@ func Login(identifier string, password []byte, ip string, location string) (bool
 				IP:       ip,
 				User:     user}
 
-			_, err = trace.Insert()
+			_, err = Ctx.LoginTrace.Create(trace)
 			userID = user.ID
 
 			if err != nil {
@@ -151,23 +150,4 @@ func exists(user User) bool {
 	result := o.QueryTable("user").SetCond(filter).Exist()
 
 	return result
-}
-
-func (obj *User) Insert() (int64, error) {
-	return db.Insert(obj)
-}
-
-func (obj *User) Read() error {
-	return db.Read(*obj)
-}
-
-func (obj *User) Update() (int64, error) {
-	return db.Update(obj)
-}
-
-func (obj *User) Delete() error {
-	obj.Deleted = true
-	_, err := db.Update(obj)
-
-	return err
 }

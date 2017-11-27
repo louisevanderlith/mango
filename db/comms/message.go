@@ -6,13 +6,12 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/db"
-	"github.com/louisevanderlith/mango/util"
 	"gopkg.in/gomail.v2"
-	"github.com/astaxie/beego/orm"
+	"reflect"
 )
 
 type Message struct {
-	util.BaseRecord
+	db.Record
 	Name  string `orm:"size(50)"`
 	Email string `orm:"size(128)"`
 	Phone string `orm:"size(15)"`
@@ -33,7 +32,7 @@ func (m Message) SendMessage() error {
 		}
 	}
 
-	_, err := m.Insert()
+	_, err := Ctx.Message.Create(m)
 
 	return err
 }
@@ -70,33 +69,4 @@ func buildMessage(m Message) string {
 	result += fmt.Sprintf("Message: %s <br/>", m.Body)
 
 	return result
-}
-
-func (obj *Message) Insert() (int64, error) {
-	return db.Insert(obj)
-}
-
-func (obj *Message) Read() error {
-	return db.Read(*obj)
-}
-
-func (obj *Message) ReadAll() ([]*Message, error) {
-	o := orm.NewOrm()
-	qs := o.QueryTable("message").Filter("Deleted", false)
-
-	var result []*Message
-	_, err := qs.All(&result)
-
-	return result, err
-}
-
-func (obj *Message) Update() (int64, error) {
-	return db.Update(obj)
-}
-
-func (obj *Message) Delete() error {
-	obj.Deleted = true
-	_, err := db.Update(obj)
-
-	return err
 }

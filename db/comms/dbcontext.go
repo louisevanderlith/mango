@@ -2,14 +2,26 @@ package comms
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/db"
 )
+
+type CommsContext struct {
+	Message *db.Set
+}
+
+var Ctx *CommsContext
 
 func NewDatabase() {
 	dbName := "Communication.DB"
-	util.BuildDatabase(registerModels, dbName)
+
+	registerModels()
+	db.SyncDatabase(dbName)
+
+	Ctx = &CommsContext{
+		Message: db.NewSet(Message{}),
+	}
 }
 
 func registerModels() {
-	orm.RegisterModel(new(Message))
+	orm.RegisterModel(&Message{})
 }

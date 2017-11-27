@@ -2,12 +2,24 @@ package artifact
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/db"
 )
+
+type ArtifactContext struct {
+	Upload *db.Set
+}
+
+var Ctx *ArtifactContext
 
 func NewDatabase() {
 	dbName := "Artifact.DB"
-	util.BuildDatabase(registerModels, dbName)
+
+	registerModels()
+	db.SyncDatabase(dbName)
+
+	Ctx = &ArtifactContext{
+		Upload: db.NewSet(Upload{}),
+	}
 }
 
 func registerModels() {

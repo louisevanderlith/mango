@@ -2,12 +2,24 @@ package comment
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/db"
 )
+
+type CommentContext struct {
+	Comment *db.Set
+}
+
+var Ctx *CommentContext
 
 func NewDatabase() {
 	dbName := "Comment.DB"
-	util.BuildDatabase(registerModels, dbName)
+
+	registerModels()
+	db.SyncDatabase(dbName)
+
+	Ctx = &CommentContext{
+		Comment: db.NewSet(Comment{}),
+	}
 }
 
 func registerModels() {

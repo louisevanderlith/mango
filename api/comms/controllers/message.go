@@ -5,6 +5,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/db/comms"
+	"github.com/louisevanderlith/mango/db"
 )
 
 type MessageController struct {
@@ -43,7 +44,10 @@ func (req *MessageController) Post() {
 // @router / [get]
 func (req *MessageController) Get() {
 	msg := comms.Message{}
-	result, err := msg.ReadAll()
+	//var result []*comms.Message
+	var result []*db.IRecord
+	//result = make([]*comms.Message)
+	err := comms.Ctx.Message.Read(msg, &result)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

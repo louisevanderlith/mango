@@ -1,16 +1,14 @@
-package util
+package db
 
 import (
 	"log"
-
 	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/mango/util"
 )
 
-func BuildDatabase(regModels func(), dbName string) {
-	regModels()
-
+func SyncDatabase(dbName string) {
 	name := "default"
-	dbPath, err := GetServiceURL(dbName)
+	dbPath, err := util.GetServiceURL(dbName)
 
 	if err != nil {
 		log.Printf("BuildDatabase: ", err)
