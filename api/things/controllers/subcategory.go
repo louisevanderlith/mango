@@ -10,9 +10,9 @@ type SubCategoryController struct{
 }
 
 func (req *SubCategoryController) Get(){
+	var results []*things.SubCategory
 	scat := things.SubCategory{}
-	var results []things.SubCategory
-	err := things.Ctx.SubCategory.Read(scat, results)
+	err := things.Ctx.SubCategory.Read(scat, &results)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

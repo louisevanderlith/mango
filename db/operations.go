@@ -45,7 +45,7 @@ func readAll(filter interface{}, container interface{}) error {
 	}
 
 	qt.Filter("deleted", false)
-	_, err := qt.All(&container)
+	_, err := qt.All(container)
 
 	return err
 }

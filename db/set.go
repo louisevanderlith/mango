@@ -43,12 +43,14 @@ func (set *Set) ReadOne(filter IRecord) (IRecord, error) {
 	return filter, err
 }
 
-func (set *Set) Read(filter IRecord, container *[]*IRecord) error {
+func (set *Set) Read(filter IRecord, container interface{}) error {
 	err := readAll(filter, container)
 
 	if err == nil {
-		for _, v := range *container {
-			item := *v
+		records := reflect.ValueOf(container).Elem()
+		for i := 0; i < records.Len(); i++ {
+			item := records.Index(i).Interface().(IRecord)
+
 			_, ok := set.items[item.GetID()]
 
 			if !ok {

@@ -7,7 +7,6 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/db"
 	"gopkg.in/gomail.v2"
-	"reflect"
 )
 
 type Message struct {

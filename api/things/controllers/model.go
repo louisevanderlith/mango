@@ -10,9 +10,9 @@ type ModelController struct{
 }
 
 func (req *ModelController) Get(){
+	var results []*things.Model
 	mdl := things.Model{}
-	var results []things.Model
-	err := things.Ctx.Model.Read(mdl, results)
+	err := things.Ctx.Model.Read(mdl, &results)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
