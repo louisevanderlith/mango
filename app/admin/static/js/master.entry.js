@@ -10,10 +10,7 @@ function verifyLogin(){
 
         if(avoToken){
             localStorage.setItem('avotoken', avoToken);
-        }/* else {
-            let loginURL = 'https://secure.localhost/v1/login';
-            window.location.replace(loginURL);
-        }*/
+        }
     }
 }
 

@@ -17,16 +17,11 @@ $(document).ready(() => {
     fs = new FormState(form.loginButton);
     fs.submitDisabled(true);
 
-    var avoToken = localStorage.getItem('avotoken');
     returnURL = document.referrer;
 
-    if (!avoToken) {
-        registerEvents();
-        getLocation();
-        getIP();
-    } else {
-        afterLogin(avoToken);
-    }
+    registerEvents();
+    getLocation();
+    getIP();
 });
 
 function registerEvents() {
@@ -51,44 +46,43 @@ function gotoRegister() {
 }
 
 function submitLogin() {
-        fs.submitDisabled(true);
+    fs.submitDisabled(true);
 
-        $.ajax({
-            url: "/v1/login",
-            type: "POST",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Identifier: form.identity.val(),
-                Password: form.password.val(),
-                IP: ip,
-                Location: location,
-                ReturnURL: returnURL
-            }),
-            cache: false,
-            success: function (result) {
-                localStorage.setItem('avotoken', result);
-                afterLogin(result);
+    $.ajax({
+        url: "/v1/login",
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            Identifier: form.identity.val(),
+            Password: form.password.val(),
+            IP: ip,
+            Location: location,
+            ReturnURL: returnURL
+        }),
+        cache: false,
+        success: function () {
+            //clear all fields
+            form.id.trigger("reset");
 
-                //clear all fields
-                form.id.trigger("reset");
-            },
-            error: function (err) {
-                console.error(err);
-                // Fail message
-                $('#success').html("<div class='alert alert-danger'>");
-                $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                    .append("</button>");
-                $('#success > .alert-danger').append($("<strong>").text("Sorry, it seems something went wrong. Please try again."));
-                $('#success > .alert-danger').append('</div>');
-                //clear all fields
-                form.id.trigger("reset");
-            },
-            complete: function () {
-                setTimeout(function () {
-                    fs.submitDisabled(false);
-                }, 1000);
-            }
-        });
+            afterLogin();
+        },
+        error: function (err) {
+            console.error(err);
+            // Fail message
+            $('#success').html("<div class='alert alert-danger'>");
+            $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+                .append("</button>");
+            $('#success > .alert-danger').append($("<strong>").text("Sorry, it seems something went wrong. Please try again."));
+            $('#success > .alert-danger').append('</div>');
+            //clear all fields
+            form.id.trigger("reset");
+        },
+        complete: function () {
+            setTimeout(function () {
+                fs.submitDisabled(false);
+            }, 1000);
+        }
+    });
 }
 
 function getLocation() {
@@ -107,9 +101,7 @@ function getIP() {
     });
 }
 
-function afterLogin(token) {
+function afterLogin() {
     let finalURL = returnURL || 'http://www.localhost/';
-
-    finalURL += ('?avotoken=' + token);
     window.location.replace(finalURL);
 }

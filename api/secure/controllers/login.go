@@ -5,6 +5,7 @@ import (
 
 	"github.com/louisevanderlith/mango/api/secure/logic"
 	"github.com/louisevanderlith/mango/util"
+	"net/http"
 )
 
 type LoginController struct {
@@ -16,7 +17,12 @@ type LoginController struct {
 // @Success 200 {string} string
 // @router / [get]
 func (req *LoginController) Get() {
-	req.Setup("login")
+	if req.GetAvoToken() == "" {
+		req.Setup("login")
+	} else {
+		ref := req.Ctx.Request.Referer()
+		req.Redirect(ref, http.StatusTemporaryRedirect)
+	}
 }
 
 // @Title Login
@@ -36,7 +42,8 @@ func (req *LoginController) Post() {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = "Login Failed"
 	} else {
-		req.Data["json"] = token
+		req.SetAvoToken(token)
+		req.Data["json"] = "Login Success"
 	}
 
 	req.ServeJSON()
@@ -44,13 +51,13 @@ func (req *LoginController) Post() {
 
 // @Title Logout
 // @Description Logs out current logged in user session
-// @Param	token		header 	string	true		"The session token"
 // @Success 200 {string} logout success
 // @router /logout [get]
 func (req *LoginController) Logout() {
-	token := req.GetString("token")
+	token := req.GetAvoToken()
 
 	if len(token) == 16 {
+		req.ExpireAvoToken()
 		logic.Delete(token)
 		req.Data["json"] = "Logout Success"
 	} else {

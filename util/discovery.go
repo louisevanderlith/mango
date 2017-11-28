@@ -34,6 +34,10 @@ func init() {
 	serviceKeys["Router.API"] = "https://router.avosa.co.za/" //"http://localhost:8080/"
 }
 
+func GetInstanceKey() string {
+	return instanceKey
+}
+
 // Register is used to register an application with the router service
 func (service Service) Register(port string) (string, error) {
 	service.URL = getPublicIP(port, service.Environment)

@@ -18,4 +18,5 @@ func (ctrl *UIController) Setup(name string) {
 	// Set this to false in your controller, when scripts aren't needed
 	ctrl.Data["HasScript"] = true
 	ctrl.Data["ScriptName"] = name + ".entry.js"
+	ctrl.Data["InstanceKey"] = GetInstanceKey()
 }
