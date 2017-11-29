@@ -61,9 +61,6 @@ function submitLogin() {
         }),
         cache: false,
         success: function () {
-            //clear all fields
-            form.id.trigger("reset");
-
             afterLogin();
         },
         error: function (err) {

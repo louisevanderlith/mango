@@ -19,15 +19,53 @@ func init() {
 }
 
 func (subdomains Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	domainParts := strings.Split(r.Host, ".")
-	mux, ok := subdomains[domainParts[0]]
+	result := subdomains["www"]
 
-	if !ok || strings.Contains(r.URL.String(), "well-known") {
-		// if the subdomain is not found, render default www website
-		mux = subdomains["www"]
+	// CertBot requires tests on well-known for SSL Certs
+	if !strings.Contains(r.URL.String(), "well-known") {
+		domainParts := strings.Split(r.Host, ".")
+
+		result = getMux(subdomains, domainParts)
 	}
 
-	mux.ServeHTTP(w, r)
+	result.ServeHTTP(w, r)
+}
+
+func getMux(subdomains Subdomains, domainParts []string) http.Handler {
+	result := subdomains["www"]
+
+	webMux, webOK := websiteMux(subdomains, domainParts)
+
+	if webOK {
+		result = webMux
+	} else {
+		subMux, subOk := subdomainMux(subdomains, domainParts)
+
+		if subOk {
+			result = subMux
+		}
+	}
+
+	return result
+}
+
+func subdomainMux(subdomains Subdomains, domainParts []string) (http.Handler, bool) {
+	result, ok := subdomains[domainParts[0]]
+
+	return result, ok
+}
+
+func websiteMux(subdomains Subdomains, domainParts []string) (http.Handler, bool) {
+	hostParts := remove(domainParts, 0)
+	host := strings.Join(hostParts, ".")
+
+	result, ok := subdomains[host]
+
+	return result, ok
+}
+
+func remove(slice []string, s int) []string {
+	return append(slice[:s], slice[s+1:]...)
 }
 
 func registerSubdomains() {

@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/util"
 )
 
 // Operations about Users
 type UserController struct {
-	beego.Controller
+	util.SecureController
 }
 
 // @Title CreateUser

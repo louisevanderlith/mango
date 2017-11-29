@@ -1,5 +1,10 @@
 package util
 
+import (
+	"net/http"
+	"fmt"
+)
+
 type UIController struct {
 	SecureController
 	HasScript  bool
@@ -8,6 +13,16 @@ type UIController struct {
 
 func (ctrl *UIController) Prepare() {
 	ctrl.SecureController.Prepare()
+
+	if ctrl.Ctx.Output.Status == 401 {
+		securityURL, err := GetServiceURL("Security.API")
+
+		if err == nil {
+			loginURL := fmt.Sprintf("%s/v1/login", securityURL)
+			ctrl.Redirect(loginURL, http.StatusTemporaryRedirect)
+		}
+	}
+
 	ctrl.Layout = "master.html"
 }
 

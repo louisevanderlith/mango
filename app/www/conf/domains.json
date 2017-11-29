@@ -50,8 +50,8 @@
         "Type": "Subdomain"
     },
     {
-        "Name": "Random",
-        "Address": "www.random.co.za",
+        "Name": "Random.WEB",
+        "Address": "random.co.za",
         "Type": "Website"
     }
 ]

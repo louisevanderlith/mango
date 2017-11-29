@@ -44,7 +44,7 @@ function doBuild() {
 function copyFolder($outPath, $folder){
     if (Test-Path (".\" + $folder)) {
         $source = ".\" + $folder
-        $target = $outPath + '\' + $folder
+        $target = $outPath + '\'
 
         Copy-Item -Path $source -Destination $target -Recurse -Force
     }

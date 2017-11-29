@@ -5,11 +5,21 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 // Operations about Users
 type UserController struct {
-	beego.Controller
+	util.SecureController
+}
+
+func init(){
+	auths := make(map[string]enums.RoleType)
+	auths["GET"] = enums.User
+	auths["POST"] = enums.User
+
+	util.ProtectMethods(auths)
 }
 
 // @Title CreateUser

@@ -9,7 +9,7 @@ import (
 )
 
 type DiscoveryController struct {
-	beego.Controller
+	util.SecureController
 }
 
 // @Title RegisterAPI

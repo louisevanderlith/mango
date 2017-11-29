@@ -5,10 +5,19 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/db/comms"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type MessageController struct {
-	beego.Controller
+	util.SecureController
+}
+
+func init(){
+	auths := make(map[string]enums.RoleType)
+	auths["GET"] = enums.Admin
+
+	util.ProtectMethods(auths)
 }
 
 // @Title SendMessage
@@ -42,15 +51,18 @@ func (req *MessageController) Post() {
 // @Success 200 {string} string
 // @router / [get]
 func (req *MessageController) Get() {
-	var result []*comms.Message
-	msg := comms.Message{}
-	err := comms.Ctx.Message.Read(msg, &result)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]interface{}{"Data": result}
+	if req.Ctx.Output.Status != 401 {
+		var result []*comms.Message
+		msg := comms.Message{}
+		err := comms.Ctx.Message.Read(msg, &result)
+
+		if err != nil {
+			req.Ctx.Output.SetStatus(500)
+			req.Data["json"] = map[string]string{"Error": err.Error()}
+		} else {
+			req.Data["json"] = map[string]interface{}{"Data": result}
+		}
 	}
 
 	req.ServeJSON()
