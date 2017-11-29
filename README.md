@@ -68,7 +68,7 @@ We require 1(one) instance of www running for every environment we have.
   Classifieds will act as the central platform for advertising products and services.
 - ### Logbook
   Logbook is an application that will be built to provide added value to the Classifieds application.
-- ###Shop
+- ### Shop
   This application is our central e-commerce platform.
 - ### WWW
   See the description for www above.
