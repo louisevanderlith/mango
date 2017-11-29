@@ -8,7 +8,7 @@ type HomeController struct {
 }
 
 func init() {
-	auths := make(map[string]enums.RoleType)
+	auths := make(util.ActionAuth)
 	auths["GET"] = enums.User
 
 	util.ProtectMethods(auths)

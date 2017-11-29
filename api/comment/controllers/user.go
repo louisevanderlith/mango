@@ -15,7 +15,7 @@ type UserController struct {
 }
 
 func init(){
-	auths := make(map[string]enums.RoleType)
+	auths := make(util.ActionAuth)
 	auths["GET"] = enums.User
 	auths["POST"] = enums.User
 

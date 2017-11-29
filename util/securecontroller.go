@@ -9,10 +9,12 @@ type SecureController struct {
 	beego.Controller
 }
 
-var authFunctions map[string]enums.RoleType
+type ActionAuth map[string]enums.RoleType
+
+var authFunctions ActionAuth
 
 func init() {
-	authFunctions = make(map[string]enums.RoleType)
+	authFunctions = make(ActionAuth)
 }
 
 func (ctrl *SecureController) Prepare() {
@@ -34,7 +36,7 @@ func (ctrl *SecureController) SetAvoToken(token string) {
 	ctrl.Ctx.SetCookie("avotoken", token, 600, "/", "avosa.co.za", true, true)
 }
 
-func ProtectMethods(auths map[string]enums.RoleType) {
+func ProtectMethods(auths ActionAuth) {
 	authFunctions = auths
 }
 

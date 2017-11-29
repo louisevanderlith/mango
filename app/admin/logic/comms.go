@@ -18,7 +18,7 @@ type CommsObject struct {
 func GetCommsMessages() ([]CommsObject, error) {
 	var result []CommsObject
 	var finalError error
-	contents, statusCode := util.GETMessage("Communication.API", "message", "")
+	contents, statusCode := util.GETMessage("Communication.API", "message")
 	data := util.MarshalToMap(contents)
 
 	if statusCode != 200 {

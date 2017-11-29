@@ -56,11 +56,11 @@ func hasRole(token string, funcRole enums.RoleType) bool {
 	return result
 }
 
-func loadRoles(token string) ([]enums.RoleType, error) {
+func loadRoles() ([]enums.RoleType, error) {
 	var result []enums.RoleType
 	var finalError error
 
-	contents, statusCode := GETMessage("Secure.API", "session", token)
+	contents, statusCode := GETMessage("Secure.API", "session")
 	data := MarshalToMap(contents)
 
 	if statusCode != 200 {

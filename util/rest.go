@@ -10,7 +10,7 @@ import (
 	"bytes"
 )
 
-func GETMessage(serviceName, controller, token string, params ...string) ([]byte, int) {
+func GETMessage(serviceName, controller string, params ...string) ([]byte, int) {
 	var result []byte
 	var statusCode int
 	url, err := GetServiceURL(serviceName)
@@ -20,10 +20,6 @@ func GETMessage(serviceName, controller, token string, params ...string) ([]byte
 
 		client := &http.Client{}
 		req, _ := http.NewRequest("GET", fullURL, nil)
-
-		if token != ""{
-			req.Header.Set("avotoken", token)
-		}
 
 		resp, err := client.Do(req)
 
@@ -48,7 +44,7 @@ func GETMessage(serviceName, controller, token string, params ...string) ([]byte
 	return result, statusCode
 }
 
-func POSTMessage(serviceName, action, token string, obj interface{}) ([]byte, int) {
+func POSTMessage(serviceName, action string, obj interface{}) ([]byte, int) {
 	var result []byte
 	var statusCode int
 	url, err := GetServiceURL(serviceName)
@@ -62,10 +58,6 @@ func POSTMessage(serviceName, action, token string, obj interface{}) ([]byte, in
 		client := &http.Client{}
 		req, _ := http.NewRequest("POST", fullURL, buff)
 		req.Header.Set("Content-Type", "application/json")
-
-		if token != ""{
-			req.Header.Set("avotoken", token)
-		}
 
 		resp, err := client.Do(req)
 

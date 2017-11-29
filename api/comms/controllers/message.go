@@ -14,7 +14,7 @@ type MessageController struct {
 }
 
 func init(){
-	auths := make(map[string]enums.RoleType)
+	auths := make(util.ActionAuth)
 	auths["GET"] = enums.Admin
 
 	util.ProtectMethods(auths)

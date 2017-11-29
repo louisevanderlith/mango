@@ -42,7 +42,7 @@ func GetInstanceKey() string {
 func (service Service) Register(port string) (string, error) {
 	service.URL = getPublicIP(port, service.Environment)
 
-	contents, _ := POSTMessage("Router.API", "discovery", "", service)
+	contents, _ := POSTMessage("Router.API", "discovery", service)
 
 	var data struct{ AppID string }
 	jerr := json.Unmarshal(contents, &data)
@@ -65,7 +65,7 @@ func GetServiceURL(serviceName string) (string, error) {
 	if ok {
 		result = cacheService
 	} else {
-		contents, statusCode := GETMessage("Router.API", "discovery", "", instanceKey, serviceName)
+		contents, statusCode := GETMessage("Router.API", "discovery", instanceKey, serviceName)
 
 		var rawURL string
 		err := json.Unmarshal(contents, &rawURL)
