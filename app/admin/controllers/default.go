@@ -5,7 +5,7 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-type MainController struct {
+type DefaultController struct {
 	util.UIController
 }
 
@@ -16,6 +16,6 @@ func init() {
 	util.ProtectMethods(auths)
 }
 
-func (c *MainController) Get() {
-	c.Setup("main")
+func (c *DefaultController) Get() {
+	c.Setup("default")
 }

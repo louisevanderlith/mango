@@ -30,7 +30,3 @@ func (c *ManufacturerController) Get(){
 		c.Data["data"] = data
 	}
 }
-
-func (c *ManufacturerController) Post() {
-
-}

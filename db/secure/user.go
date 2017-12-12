@@ -2,7 +2,6 @@ package secure
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -11,6 +10,9 @@ import (
 	"github.com/astaxie/beego/orm"
 	"golang.org/x/crypto/bcrypt"
 	"github.com/louisevanderlith/mango/util/enums"
+	"strings"
+	"strconv"
+	"github.com/louisevanderlith/mango/util"
 )
 
 // User database model
@@ -32,55 +34,43 @@ func init() {
 	cost = 10
 }
 
-// CreateUser will create a new user
-func CreateUser(user User) error {
-	err := validateUser(user)
-
-	if err == nil && !exists(user) {
-		securePassword(&user)
-
-		o := orm.NewOrm()
-		_, err = o.Insert(&user)
-
-		if err == nil {
-			role := Role{
-				User:        &user,
-				Description: enums.User}
-
-			_, err = Ctx.Role.Create(role)
-		}
-	}
-
-	return err
-}
-
-func validateUser(user User) error {
-	var err error
-
-	if user.Name == "" {
-		err = errors.New("Name is invalid")
-	}
-
-	if user.Email == "" {
-		err = errors.New("Email is invalid")
-	}
-
-	if user.ContactNumber == "" {
-		err = errors.New("Contact Number is invalid")
-	}
+func (user User) Validate() (bool, error) {
+	var issues []string
 
 	if len(user.Password) < 6 {
-		err = errors.New("Password must be atleast 6 characters")
+		issues = append(issues, "Password must be atleast 6 characters.")
 	}
 
-	return err
+	valid, common := util.ValidateStruct(user)
+
+	if !valid {
+		issues = append(issues, common.Error())
+	}
+
+	isValid := len(issues) < 1
+	finErr := errors.New(strings.Join(issues, "\r\n"))
+
+	return isValid, finErr
+}
+
+func (user User) Exists() (bool, error) {
+	cond := orm.NewCondition()
+	filter := cond.Or("Email", user.Email).Or("ContactNumber", user.ContactNumber)
+
+	o := orm.NewOrm()
+	result := o.QueryTable("user").SetCond(filter).Exist()
+
+	var err error
+
+	if !result {
+		err = errors.New("User already exists.")
+	}
+
+	return result, err
 }
 
 // Login will attempt to authenticate a user
-func Login(identifier string, password []byte, ip string, location string) (bool, int64, []enums.RoleType) {
-	var passed bool
-	var userID int64
-	var roles []enums.RoleType
+func Login(identifier string, password []byte, ip string, location string) (passed bool, userID int64, roles []enums.RoleType) {
 
 	if identifier != "" && len(password) > 0 {
 		user := getUser(identifier)
@@ -124,30 +114,33 @@ func securePassword(user *User) {
 	user.Password = string(hashedPwd)
 }
 
-func getUser(identifier string) *User {
+func correctIdentifier(identifier string) User {
 	var result User
-	o := orm.NewOrm()
 
-	cond := orm.NewCondition()
-	filter := cond.Or("Email", identifier).Or("ContactNumber", identifier)
-
-	err := o.QueryTable("user").SetCond(filter).One(&result)
-
-	if err == orm.ErrNoRows {
-		msg := fmt.Sprintf("Couldn't find user with identifier %s", identifier)
-		log.Print(msg)
+	if identifier != "" {
+		if _, err := strconv.ParseInt(identifier, 10, 64); err == nil {
+			result = User{
+				ContactNumber: identifier,
+			}
+		} else {
+			result = User{
+				Email: identifier,
+			}
+		}
 	}
 
-	return &result
+	return result
 }
 
-func exists(user User) bool {
-	o := orm.NewOrm()
+func getUser(identifier string) *User {
+	var result *User
 
-	cond := orm.NewCondition()
-	filter := cond.Or("Email", user.Email).Or("ContactNumber", user.ContactNumber)
+	filter := correctIdentifier(identifier)
+	record, err := Ctx.User.ReadOne(filter)
 
-	result := o.QueryTable("user").SetCond(filter).Exist()
+	if record != nil && err == nil {
+		result = record.(*User)
+	}
 
 	return result
 }

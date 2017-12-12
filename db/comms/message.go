@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/db"
 	"gopkg.in/gomail.v2"
+	"github.com/louisevanderlith/mango/util"
 )
 
 type Message struct {
@@ -18,6 +19,10 @@ type Message struct {
 	To string `orm:"null;size(128)"`
 	Sent  bool   `orm:"default(false)"`
 	Error string `orm:"null;size(2048)"`
+}
+
+func (o Message) Validate() (bool, error) {
+	return util.ValidateStruct(o)
 }
 
 func (m Message) SendMessage() error {

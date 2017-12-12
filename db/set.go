@@ -20,12 +20,21 @@ func NewSet(t IRecord) *Set {
 func (set *Set) Create(item IRecord) (id int64, err error) {
 	if reflect.TypeOf(item) == set.t {
 
-		id, err = insert(item)
+		var valid bool
+		valid, err = item.Validate()
 
-		set.items[id] = item
+		if valid {
+			var exists bool
+			exists, err = item.Exists()
+
+			if !exists {
+				id, err = insert(item)
+				set.items[id] = item
+			}
+		}
 	}
 
-	return
+	return id, err
 }
 
 func (set *Set) ReadOne(filter IRecord) (IRecord, error) {
@@ -77,7 +86,6 @@ func (set *Set) Delete(item IRecord) {
 	memItem, ok := set.items[id]
 
 	if ok {
-		memItem = memItem.Disable()
-		update(memItem)
+		update(memItem.Disable())
 	}
 }

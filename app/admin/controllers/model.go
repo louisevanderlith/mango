@@ -30,7 +30,3 @@ func (c *ModelController) Get() {
 		c.Data["data"] = data
 	}
 }
-
-func (c *ModelController) Post() {
-
-}

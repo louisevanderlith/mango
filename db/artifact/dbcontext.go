@@ -5,11 +5,11 @@ import (
 	"github.com/louisevanderlith/mango/db"
 )
 
-type ArtifactContext struct {
+type Context struct {
 	Upload *db.Set
 }
 
-var Ctx *ArtifactContext
+var Ctx *Context
 
 func NewDatabase() {
 	dbName := "Artifact.DB"
@@ -17,7 +17,7 @@ func NewDatabase() {
 	registerModels()
 	db.SyncDatabase(dbName)
 
-	Ctx = &ArtifactContext{
+	Ctx = &Context{
 		Upload: db.NewSet(Upload{}),
 	}
 }

@@ -7,6 +7,8 @@ type IRecord interface {
 	IsDeleted() bool
 	GetCreateDate() time.Time
 	Disable() Record
+	Validate() (bool, error)
+	Exists() (bool, error)
 }
 
 type Record struct {
@@ -31,4 +33,8 @@ func (r Record) Disable() Record {
 	r.Deleted = true
 
 	return r
+}
+
+func (r Record) Exists() (bool, error) {
+	return false, nil
 }

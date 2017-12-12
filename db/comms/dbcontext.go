@@ -5,11 +5,11 @@ import (
 	"github.com/louisevanderlith/mango/db"
 )
 
-type CommsContext struct {
+type Context struct {
 	Message *db.Set
 }
 
-var Ctx *CommsContext
+var Ctx *Context
 
 func NewDatabase() {
 	dbName := "Communication.DB"
@@ -17,7 +17,7 @@ func NewDatabase() {
 	registerModels()
 	db.SyncDatabase(dbName)
 
-	Ctx = &CommsContext{
+	Ctx = &Context{
 		Message: db.NewSet(Message{}),
 	}
 }

@@ -30,7 +30,3 @@ func (c *SubCategoryController) Get() {
 		c.Data["data"] = data
 	}
 }
-
-func (c *SubCategoryController) Post() {
-
-}

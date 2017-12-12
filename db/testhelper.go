@@ -7,7 +7,7 @@ type testContext struct {
 }
 
 type testTable struct {
-	*Record
+	Record
 	Name string
 	Age int
 }
@@ -16,7 +16,7 @@ var testCtx *testContext
 
 func newTestTable() testTable {
 	return testTable{
-		Record: &Record{
+		Record: Record{
 			ID: 0,
 			Deleted: false,
 			CreateDate: time.Now(),
@@ -28,4 +28,8 @@ func init(){
 	testCtx = &testContext{
 		TableA: NewSet(testTable{}),
 	}
+}
+
+func (t testTable) Validate() (bool, error) {
+	return true, nil
 }

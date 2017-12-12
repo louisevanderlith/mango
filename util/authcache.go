@@ -29,7 +29,7 @@ func getUserRoles(token string) []enums.RoleType {
 	if ok {
 		result = auth.Roles
 	} else {
-		roles, err := loadRoles(token)
+		roles, err := loadRoles()
 
 		if err != nil {
 			result = roles

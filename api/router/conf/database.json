@@ -100,5 +100,22 @@
                 "Value": "host=localhost port=5432 user=postgres password=sa dbname=things sslmode=disable"
             }
         ]
+    },
+    {
+        "Name": "Folio.DB",
+        "Environments": [
+            {
+                "Name": "LIVE",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=folio sslmode=disable"
+            },
+            {
+                "Name": "UAT",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=folio sslmode=disable"
+            },
+            {
+                "Name": "DEV",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=folio sslmode=disable"
+            }
+        ]
     }
 ]

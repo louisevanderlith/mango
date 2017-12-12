@@ -5,14 +5,14 @@ import (
 	"github.com/louisevanderlith/mango/db"
 )
 
-type ThingsContext struct {
+type Context struct {
 	Category *db.Set
 	Manufacturer *db.Set
 	Model *db.Set
 	SubCategory *db.Set
 }
 
-var Ctx *ThingsContext
+var Ctx *Context
 
 func NewDatabase() {
 	dbName := "Things.DB"
@@ -20,7 +20,7 @@ func NewDatabase() {
 	registerModels()
 	db.SyncDatabase(dbName)
 
-	Ctx = &ThingsContext{
+	Ctx = &Context{
 		Category: db.NewSet(Category{}),
 		Manufacturer: db.NewSet(Manufacturer{}),
 		Model: db.NewSet(Model{}),

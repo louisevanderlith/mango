@@ -15,6 +15,11 @@
         "Type": "Subdomain"
     },
     {
+        "Name": "Folio.API",
+        "Address": "folio",
+        "Type": "Subdomain"
+    },
+    {
         "Name": "Router.API",
         "Address": "router",
         "Type": "Subdomain"

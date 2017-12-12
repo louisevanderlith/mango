@@ -5,13 +5,13 @@ import (
 	"github.com/louisevanderlith/mango/db"
 )
 
-type ClassifiedsContext struct {
-	Advert *db.Set
+type Context struct {
+	Advert    *db.Set
 	CarAdvert *db.Set
-	Tag *db.Set
+	Tag       *db.Set
 }
 
-var Ctx *ClassifiedsContext
+var Ctx *Context
 
 func NewDatabase() {
 	dbName := "Classifieds.DB"
@@ -19,10 +19,10 @@ func NewDatabase() {
 	registerModels()
 	db.SyncDatabase(dbName)
 
-	Ctx = &ClassifiedsContext{
-		Advert: db.NewSet(Advert{}),
+	Ctx = &Context{
+		Advert:    db.NewSet(Advert{}),
 		CarAdvert: db.NewSet(CarAdvert{}),
-		Tag: db.NewSet(Tag{}),
+		Tag:       db.NewSet(Tag{}),
 	}
 }
 

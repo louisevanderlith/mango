@@ -4,6 +4,7 @@ import (
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/db/things"
 	"github.com/louisevanderlith/mango/util/enums"
+	"encoding/json"
 )
 
 type CategoryController struct {
@@ -27,6 +28,22 @@ func (req *CategoryController) Get() {
 		req.Data["json"] = map[string]string{"Error": err.Error()}
 	} else {
 		req.Data["json"] = map[string]interface{}{"Data": results}
+	}
+
+	req.ServeJSON()
+}
+
+func (req *CategoryController) Post() {
+	var obj things.Category
+	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
+
+	_, err := things.Ctx.Category.Create(obj)
+
+	if err != nil {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = map[string]string{"Error": err.Error()}
+	} else {
+		req.Data["json"] = map[string]string{"Data": "Save Successful."}
 	}
 
 	req.ServeJSON()

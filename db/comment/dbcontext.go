@@ -5,11 +5,11 @@ import (
 	"github.com/louisevanderlith/mango/db"
 )
 
-type CommentContext struct {
+type Context struct {
 	Comment *db.Set
 }
 
-var Ctx *CommentContext
+var Ctx *Context
 
 func NewDatabase() {
 	dbName := "Comment.DB"
@@ -17,7 +17,7 @@ func NewDatabase() {
 	registerModels()
 	db.SyncDatabase(dbName)
 
-	Ctx = &CommentContext{
+	Ctx = &Context{
 		Comment: db.NewSet(Comment{}),
 	}
 }

@@ -44,13 +44,13 @@ func GETMessage(serviceName, controller string, params ...string) ([]byte, int) 
 	return result, statusCode
 }
 
-func POSTMessage(serviceName, action string, obj interface{}) ([]byte, int) {
+func POSTMessage(serviceName, controller string, obj interface{}) ([]byte, int) {
 	var result []byte
 	var statusCode int
 	url, err := GetServiceURL(serviceName)
 
 	if err == nil {
-		fullURL := fmt.Sprintf("%sv1/%s", url, action)
+		fullURL := fmt.Sprintf("%sv1/%s", url, controller)
 
 		buff := new(bytes.Buffer)
 		json.NewEncoder(buff).Encode(obj)

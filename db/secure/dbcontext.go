@@ -5,13 +5,13 @@ import (
 	"github.com/louisevanderlith/mango/db"
 )
 
-type SecureContext struct {
+type Context struct {
 	LoginTrace *db.Set
-	Role *db.Set
-	User *db.Set
+	Role       *db.Set
+	User       *db.Set
 }
 
-var Ctx *SecureContext
+var Ctx *Context
 
 func NewDatabase() {
 	dbName := "Secure.DB"
@@ -19,10 +19,10 @@ func NewDatabase() {
 	registerModels()
 	db.SyncDatabase(dbName)
 
-	Ctx = &SecureContext{
+	Ctx = &Context{
 		LoginTrace: db.NewSet(LoginTrace{}),
-		Role: db.NewSet(Role{}),
-		User: db.NewSet(User{}),
+		Role:       db.NewSet(Role{}),
+		User:       db.NewSet(User{}),
 	}
 }
 
