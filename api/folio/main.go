@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	_ "github.com/louisevanderlith/mango/api/artifact/routers"
+	_ "github.com/louisevanderlith/mango/api/folio/routers"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
