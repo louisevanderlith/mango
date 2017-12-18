@@ -25,6 +25,11 @@ func init() {
 				&controllers.RegisterController{},
 			),
 		),
+		beego.NSNamespace("/session",
+			beego.NSInclude(
+				&controllers.SessionController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

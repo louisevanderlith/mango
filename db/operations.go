@@ -5,15 +5,15 @@ import (
 	"reflect"
 	"github.com/astaxie/beego"
 	"strings"
+	"fmt"
+	"time"
 )
 
 var (
-	rules       []func(interface{}) bool
 	persistData bool
 )
 
 func init() {
-	rules = getRules()
 	persistData = beego.BConfig.RunMode != "dev"
 }
 
@@ -23,12 +23,15 @@ func insert(obj interface{}) (int64, error) {
 	return o.Insert(obj)
 }
 
-func read(obj interface{}) error {
+func read(obj interface{}, related ...string) error {
 	readColumns := getReadColumns(obj)
 
 	o := orm.NewOrm()
-
 	err := o.Read(obj, readColumns...)
+
+	for _, v := range related {
+		o.LoadRelated(obj, v)
+	}
 
 	return err
 }
@@ -41,10 +44,11 @@ func readAll(filter interface{}, container interface{}) error {
 	qt := o.QueryTable(tableName)
 
 	for k, v := range readColumns {
-		qt.Filter(k, v)
+		fmt.Println(k, v)
+		qt = qt.Filter(strings.ToLower(k), v)
 	}
 
-	qt.Filter("deleted", false)
+	qt = qt.Filter("deleted", false)
 	_, err := qt.All(container)
 
 	return err
@@ -124,39 +128,49 @@ func getFilterValues(filter interface{}) map[string]interface{} {
 	return result
 }
 
-func isFieldSet(field interface{}) bool {
-	result := true
+func isFieldSet(field interface{}) (result bool){
+	val := reflect.ValueOf(field)
 
-	for _, v := range rules {
-		if v(field) {
-			result = false
-			break
-		}
+	switch val.Kind() {
+	case reflect.Int:
+		iField := field.(int)
+		result = intRule(iField)
+	case reflect.Int64:
+		i64Field := field.(int64)
+		result = int64Rule(i64Field)
+	case reflect.String:
+		strField := field.(string)
+		result = strRule(strField)
+	case reflect.Struct:
+	case reflect.Slice:
+		result = true
+	case reflect.Bool:
+		result = boolRule(field)
+	default:
+		result = nilRule(field)
 	}
 
-	return result
+	if tField, ok := field.(time.Time); ok{
+		result = tField.IsZero()
+	}
+
+	return !result
 }
 
-func getRules() []func(interface{}) bool {
-	rules := []func(interface{}) bool{
-		nilRule,
-		strRule,
-		intRule,
-		boolRule}
-
-	return rules
+func nilRule(val interface{}) bool {
+	return val == nil
 }
 
 func strRule(val interface{}) bool {
 	return val == ""
 }
 
-func intRule(val interface{}) bool {
-	return val == 0
+func intRule(val int) bool {
+	return val < 1
 }
 
-func nilRule(val interface{}) bool {
-	return val == nil
+func int64Rule(val int64) bool {
+	return val < 1
 }
 
 func boolRule(val interface{}) bool {

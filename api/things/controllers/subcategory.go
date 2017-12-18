@@ -37,7 +37,7 @@ func (req *SubCategoryController) Post() {
 	var obj things.SubCategory
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
 
-	_, err := things.Ctx.SubCategory.Create(obj)
+	_, err := things.Ctx.SubCategory.Create(&obj)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

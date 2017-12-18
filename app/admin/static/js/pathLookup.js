@@ -31,6 +31,16 @@ export default {
             serviceURL = await doLookup(serviceName);
         }
 
-        return serviceURL
+        return serviceURL;
+    },
+    buildPath: async function (serviceName, controller, params) {
+        let url = await this.getServiceURL(serviceName);
+        let result = url + "/" + controller;
+
+        for (let i = 0; i < params.length; i++) {
+            result += "/" + params[i];
+        }
+
+        return result;
     }
 }

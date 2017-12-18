@@ -31,7 +31,7 @@ func SaveRegistration(r Registration) error {
 			Description: enums.User,
 		}
 
-		_, err = secure.Ctx.User.Create(user)
+		_, err = secure.Ctx.User.Create(&user)
 	} else {
 		err = errors.New("Passwords don't match")
 	}

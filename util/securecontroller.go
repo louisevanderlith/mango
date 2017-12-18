@@ -3,6 +3,7 @@ package util
 import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/util/enums"
+	"net/http"
 )
 
 type SecureController struct {
@@ -19,13 +20,13 @@ func init() {
 
 func (ctrl *SecureController) Prepare() {
 	if !userAllowed(ctrl) {
-		ctrl.Ctx.Output.SetStatus(401)
+		ctrl.Ctx.Output.SetStatus(http.StatusUnauthorized)
 		ctrl.Data["json"] = map[string]string{"Error": "User not authorized to access this content."}
 	}
 }
 
 func (ctrl *SecureController) GetAvoToken() string {
-	return ctrl.Ctx.GetCookie("avotoken");
+	return ctrl.Ctx.GetCookie("avotoken")
 }
 
 func (ctrl *SecureController) ExpireAvoToken() {
@@ -47,7 +48,6 @@ func userAllowed(ctrl *SecureController) bool {
 
 	if hasKey {
 		userSession := ctrl.GetAvoToken()
-
 		result = hasRole(userSession, authFunc)
 	}
 

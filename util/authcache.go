@@ -60,7 +60,7 @@ func loadRoles() ([]enums.RoleType, error) {
 	var result []enums.RoleType
 	var finalError error
 
-	contents, statusCode := GETMessage("Secure.API", "session")
+	contents, statusCode := GETMessage("Security.API", "session")
 	data := MarshalToMap(contents)
 
 	if statusCode != 200 {

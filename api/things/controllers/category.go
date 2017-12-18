@@ -37,7 +37,7 @@ func (req *CategoryController) Post() {
 	var obj things.Category
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
 
-	_, err := things.Ctx.Category.Create(obj)
+	_, err := things.Ctx.Category.Create(&obj)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

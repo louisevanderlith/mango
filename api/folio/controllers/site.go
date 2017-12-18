@@ -4,7 +4,6 @@ import (
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 	"github.com/louisevanderlith/mango/db/folio"
-	"strconv"
 	"encoding/json"
 )
 
@@ -29,7 +28,7 @@ func (req *SiteController) Post() {
 	var site folio.Profile
 	json.Unmarshal(req.Ctx.Input.RequestBody, &site)
 
-	_, err := folio.Ctx.Profile.Create(site)
+	_, err := folio.Ctx.Profile.Create(&site)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
@@ -43,22 +42,16 @@ func (req *SiteController) Post() {
 
 // @Title GetSite
 // @Description Gets customer website/profile
-// @Param	siteID			path	int 	true		"customer website ID"
+// @Param	siteName			path	string 	true		"customer website name"
 // @Success 200 {string} string
-// @router /:siteID [get]
+// @router /:siteName [get]
 func (req *SiteController) Get() {
 	if req.Ctx.Output.Status != 401 {
-		appID, err := strconv.ParseInt(req.Ctx.Input.Param(":appID"), 10, 64)
-		var result []*folio.Profile
+		siteName := req.Ctx.Input.Param(":siteName")
 		msg := folio.Profile{}
+		msg.Title = siteName
 
-		if err == nil {
-			msg.ID = appID
-		} else {
-			msg.ID = 1 // avosa website
-		}
-
-		err = folio.Ctx.Profile.Read(msg, &result)
+		result, err := folio.Ctx.Profile.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections")
 
 		if err != nil {
 			req.Ctx.Output.SetStatus(500)

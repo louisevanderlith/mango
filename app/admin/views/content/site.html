@@ -1,4 +1,3 @@
-<!-- Example DataTables Card-->
 <div class="card mb-3">
     <div class="card-header">
         <i class="fa fa-table"></i> Sites
@@ -11,6 +10,7 @@
                     <th>ID</th>
                     <th>Title</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tfoot>
@@ -18,6 +18,7 @@
                     <th>ID</th>
                     <th>Title</th>
                     <th>Description</th>
+                    <th>Actions</th>
                 </tr>
                 </tfoot>
                 <tbody>
@@ -26,6 +27,7 @@
                     <td>{{$val.ID}}</td>
                     <td>{{$val.Title}}</td>
                     <td>{{$val.Description}}</td>
+                    <td><a class="btn btn-primary btn-block" href="javascript:edit({{$val.ID}})">Edit</a></td>
                 </tr>
                 {{end}}
                 </tbody>
@@ -33,4 +35,28 @@
         </div>
     </div>
     <div class="card-footer small text-muted">Updated a while ago.</div>
+</div>
+<div class="container" id="pnlEdit">
+    <div class="card card-register mx-auto mt-5">
+        <div class="card-header">Edit website details</div>
+        <div class="card-body">
+            <form id="frmSite" role="form" data-toggle="validator">
+                <div class="control-group">
+                    <div class="form-group floating-label-form-group controls">
+                        <label for="txtIdentity">E-mail Address/Contact Number</label>
+                        <input class="form-control" id="txtIdentity" type="text" minlength="8"
+                               placeholder="E-mail address/Contact Number" required
+                               data-validation-required-message="Please enter your E-mail address/Contact Number."
+                               data-error="Input is invalid">
+                        <p class="help-block with-errors text-danger"></p>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group">
+                    <button type="button" class="btn btn-success btn-lg" id="btnSave">Save</button>
+                </div>
+            </form>
+            <div id="success"></div>
+        </div>
+    </div>
 </div>

@@ -37,9 +37,9 @@ func (set *Set) Create(item IRecord) (id int64, err error) {
 	return id, err
 }
 
-func (set *Set) ReadOne(filter IRecord) (IRecord, error) {
+func (set *Set) ReadOne(filter IRecord, related ...string) (IRecord, error) {
 
-	err := read(filter)
+	err := read(filter, related...)
 
 	if err == nil {
 		_, ok := set.items[filter.GetID()]

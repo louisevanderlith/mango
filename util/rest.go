@@ -44,9 +44,7 @@ func GETMessage(serviceName, controller string, params ...string) ([]byte, int) 
 	return result, statusCode
 }
 
-func POSTMessage(serviceName, controller string, obj interface{}) ([]byte, int) {
-	var result []byte
-	var statusCode int
+func POSTMessage(serviceName, controller string, obj interface{}) (result []byte, statusCode int) {
 	url, err := GetServiceURL(serviceName)
 
 	if err == nil {

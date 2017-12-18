@@ -120,6 +120,11 @@ func getTypeValidator(fieldType reflect.Kind) IValidation {
 		result = StringValidation{}
 	case reflect.Struct:
 		result = StructValidation{}
+	case reflect.Ptr:
+		result = PointerValidation{}
+	default:
+		fmt.Println(fieldType)
+		result = PointerValidation{}
 	}
 
 	return result
@@ -129,6 +134,7 @@ type StringValidation struct{}
 type IntValidation struct{}
 type Int64Validation struct{}
 type StructValidation struct{}
+type PointerValidation struct{}
 
 func (o StringValidation) Valid(obj interface{}, meta tagMeta) (bool, []string) {
 	var issues []string
@@ -139,7 +145,7 @@ func (o StringValidation) Valid(obj interface{}, meta tagMeta) (bool, []string) 
 			issues = append(issues, getEmptyMessage(meta.PropName))
 		}
 
-		if len(val) > meta.Size {
+		if meta.Size > 0 && len(val) > meta.Size {
 			issues = append(issues, getShortMessage(meta.PropName, meta.Size))
 		}
 	} else {
@@ -195,4 +201,8 @@ func (o StructValidation) Valid(obj interface{}, meta tagMeta) (bool, []string) 
 	isValid := len(issues) < 1
 
 	return isValid, issues
+}
+
+func (o PointerValidation) Valid(obj interface{}, meta tagMeta) (bool, []string) {
+	return true, nil
 }

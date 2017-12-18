@@ -1,5 +1,10 @@
 [
     {
+        "Name": "WWW.APP",
+        "Address": "www",
+        "Type": "Subdomain"
+    },
+    {
         "Name": "Artifact.API",
         "Address": "artifact",
         "Type": "Subdomain"

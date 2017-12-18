@@ -40,7 +40,7 @@ func Set(session *UserSession) string {
 func Get(token string) *UserSession {
 	var result *UserSession
 
-	if len(token) == 16 && exists(token) {
+	if tokenValid(token) {
 		result = sessionStore[token]
 
 		if !expired(result, token) {
@@ -51,8 +51,24 @@ func Get(token string) *UserSession {
 	return result
 }
 
+func GetRoles(token string) []enums.RoleType{
+	var result []enums.RoleType
+
+	session := Get(token)
+
+	if session != nil {
+		result = session.Roles
+	}
+
+	return result
+}
+
 func Delete(token string) {
 	delete(sessionStore, token)
+}
+
+func tokenValid(token string) bool {
+	return len(token) == 16 && exists(token)
 }
 
 func exists(token string) bool {

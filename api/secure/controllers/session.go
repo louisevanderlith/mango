@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/api/secure/logic"
 )
 
 type SessionController struct {
@@ -12,6 +13,17 @@ type SessionController struct {
 // @Description Gets the form a user must fill in to login
 // @Success 200 {string} string
 // @router / [get]
-func Get() {
+func (req *SessionController) Get() {
 	// return the user's roles
+	token := req.GetAvoToken()
+	roles := logic.GetRoles(token)
+
+	if len(roles) > 0 {
+		req.Data["json"] = map[string]interface{}{"Data": roles}
+	} else {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = map[string]string{"Error": "No Roles Found"}
+	}
+
+	req.ServeJSON()
 }

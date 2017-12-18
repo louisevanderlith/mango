@@ -3,6 +3,7 @@ package util
 import (
 	"net/http"
 	"fmt"
+	"net/url"
 )
 
 type UIController struct {
@@ -18,7 +19,10 @@ func (ctrl *UIController) Prepare() {
 		securityURL, err := GetServiceURL("Security.API")
 
 		if err == nil {
-			loginURL := fmt.Sprintf("%s/v1/login", securityURL)
+			req := ctrl.Ctx.Request
+			moveURL := fmt.Sprintf("%s://%s%s", ctrl.Ctx.Input.Scheme(), req.Host, req.RequestURI)
+			loginURL := fmt.Sprintf("%s/v1/login?return=%s", securityURL, url.QueryEscape(moveURL))
+
 			ctrl.Redirect(loginURL, http.StatusTemporaryRedirect)
 		}
 	}

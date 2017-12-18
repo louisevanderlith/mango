@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/louisevanderlith/mango/util"
+	"github.com/astaxie/beego"
 )
 
 type Subdomains map[string]http.Handler
@@ -69,7 +70,7 @@ func remove(slice []string, s int) []string {
 }
 
 func registerSubdomains() {
-	defaultMuxSetup()
+	sslMuxSetup()
 
 	domains := loadSettings()
 
@@ -96,18 +97,13 @@ func registerSubdomains() {
 	}
 }
 
-func defaultMuxSetup() {
-	fs := http.FileServer(http.Dir("static"))
+func sslMuxSetup() {
+	sslMux := http.NewServeMux()
+	certPath := beego.AppConfig.String("certpath")
+	fs := http.FileServer(http.FileSystem(http.Dir(certPath)))
+	sslMux.Handle("/.well-known/acme-challenge/", fs)
 
-	defaultMux := http.NewServeMux()
-	defaultMux.Handle("/static/", http.StripPrefix("/static/", fs))
-	defaultMux.Handle("/", fs)
-
-	// for certbot SSL
-	sslfs := http.FileServer(http.FileSystem(http.Dir("/tmp/letsencrypt/")))
-	defaultMux.Handle("/.well-known/acme-challenge/", sslfs)
-
-	subdomains["www"] = defaultMux
+	subdomains["ssl"] = sslMux
 }
 
 func domainHandler(p *httputil.ReverseProxy) func(http.ResponseWriter, *http.Request) {

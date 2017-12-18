@@ -35,8 +35,11 @@ func (req *LoginController) Post() {
 	// failed logins should redirect to the login page
 	var login logic.Login
 	json.Unmarshal(req.Ctx.Input.RequestBody, &login)
+	token := req.GetAvoToken()
 
-	token := logic.AttemptLogin(login)
+	if len(token) < 16 {
+		token = logic.AttemptLogin(login)
+	}
 
 	if token == "" {
 		req.Ctx.Output.SetStatus(500)

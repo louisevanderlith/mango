@@ -19,7 +19,7 @@ func SyncDatabase(dbName string) {
 		if err != nil {
 			log.Print("Please ensure that you have created your Database.")
 		} else {
-			orm.RunSyncdb(name, false, false)
+			orm.RunSyncdb(name, false, true)
 		}
 	}
 }

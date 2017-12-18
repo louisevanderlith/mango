@@ -36,7 +36,7 @@ func (m Message) SendMessage() error {
 		}
 	}
 
-	_, err := Ctx.Message.Create(m)
+	_, err := Ctx.Message.Create(&m)
 
 	return err
 }

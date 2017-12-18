@@ -9,7 +9,6 @@ const form = {
 };
 
 var fs = {};
-var returnURL = '';
 var location = '';
 var ip = '';
 
@@ -17,7 +16,7 @@ $(document).ready(() => {
     fs = new FormState(form.loginButton);
     fs.submitDisabled(true);
 
-    returnURL = document.referrer;
+    localStorage.setItem('return', getParameterByName("return"));
 
     registerEvents();
     getLocation();
@@ -57,7 +56,7 @@ function submitLogin() {
             Password: form.password.val(),
             IP: ip,
             Location: location,
-            ReturnURL: returnURL
+            ReturnURL: localStorage.getItem('return')
         }),
         cache: false,
         success: function () {
@@ -99,6 +98,23 @@ function getIP() {
 }
 
 function afterLogin() {
-    let finalURL = returnURL || 'http://www.localhost/';
+    let finalURL = localStorage.getItem('return') || 'https://avosa.co.za';
     window.location.replace(finalURL);
+}
+
+function getParameterByName(name, url) {
+    if (!url)
+        url = window.location.href;
+
+    name = name.replace(/[\[\]]/g, "\\$&");
+
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+
+    if (!results)
+        return null;
+
+    if (!results[2])
+        return '';
+
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }

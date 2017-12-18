@@ -13,7 +13,7 @@ type IRecord interface {
 
 type Record struct {
 	ID         int64     `orm:"column(id);auto;pk"`
-	CreateDate time.Time `orm:"auto_now_add;type(datetime)"`
+	CreateDate time.Time `orm:"auto_now_add;type(time)"`
 	Deleted    bool      `orm:"default(false)"`
 }
 

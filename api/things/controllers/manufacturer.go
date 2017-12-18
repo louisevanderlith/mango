@@ -37,7 +37,7 @@ func (req *ManufacturerController) Post() {
 	var obj things.Manufacturer
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
 
-	_, err := things.Ctx.Manufacturer.Create(obj)
+	_, err := things.Ctx.Manufacturer.Create(&obj)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

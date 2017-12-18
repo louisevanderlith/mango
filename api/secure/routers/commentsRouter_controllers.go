@@ -47,4 +47,12 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/secure/controllers:SessionController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/secure/controllers:SessionController"],
+		beego.ControllerComments{
+			Method: "Get",
+			Router: `/`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 }

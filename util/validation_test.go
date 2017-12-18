@@ -71,3 +71,40 @@ func TestValidateStruct_SimpleObject_IntRequired(t *testing.T) {
 		t.Error("Expecting error 'Age is required'")
 	}
 }
+
+func TestValidateStruct_ChildStruct_ChildValid(t *testing.T) {
+	type child struct{
+		Age int `orm:"null"`
+	}
+	obj := struct{
+		Name string `orm:"null"`
+		Child *child
+	} {
+		Name: "ABC",
+		Child: &child{Age: 24 },
+	}
+
+	valid, err := ValidateStruct(obj)
+
+	if !valid {
+		t.Error("Expecting obj to be valid", err)
+	}
+}
+
+func TestValidateStruct_ChildStruct_EmptyChildValid(t *testing.T) {
+	type child struct{
+		Age int `orm:"null"`
+	}
+	obj := struct{
+		Name string `orm:"null"`
+		Child *child
+	} {
+		Name: "ABC",
+	}
+
+	valid, err := ValidateStruct(obj)
+
+	if !valid {
+		t.Error("Expecting obj to be valid", err)
+	}
+}

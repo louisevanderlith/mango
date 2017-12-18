@@ -82,7 +82,6 @@ func Login(identifier string, password []byte, ip string, location string) (pass
 			if !passed {
 				log.Printf("Login: ", err)
 			} else {
-				user.LoadRoles()
 				roles = GetRolesTypes(user.Roles)
 			}
 
@@ -92,7 +91,7 @@ func Login(identifier string, password []byte, ip string, location string) (pass
 				IP:       ip,
 				User:     user}
 
-			_, err = Ctx.LoginTrace.Create(trace)
+			_, err = Ctx.LoginTrace.Create(&trace)
 			userID = user.ID
 
 			if err != nil {
@@ -136,7 +135,7 @@ func getUser(identifier string) *User {
 	var result *User
 
 	filter := correctIdentifier(identifier)
-	record, err := Ctx.User.ReadOne(filter)
+	record, err := Ctx.User.ReadOne(&filter, "Roles")
 
 	if record != nil && err == nil {
 		result = record.(*User)

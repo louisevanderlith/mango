@@ -37,7 +37,7 @@ func (req *ModelController) Post() {
 	var obj things.Model
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
 
-	_, err := things.Ctx.Model.Create(obj)
+	_, err := things.Ctx.Model.Create(&obj)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
