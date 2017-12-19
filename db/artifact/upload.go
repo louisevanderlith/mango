@@ -10,8 +10,8 @@ type Upload struct {
 	ItemID   int64
 	Name     string `orm:"size(50)"`
 	MimeType string `orm:"size(30)"`
-	Path     string `orm:"size(255)"`
 	Size     int64
+	BLOB     *Blob  `orm:"rel(fk)"`
 }
 
 func (o Upload) Validate() (bool, error) {

@@ -63,7 +63,6 @@ function submitLogin() {
             afterLogin();
         },
         error: function (err) {
-            console.error(err);
             // Fail message
             $('#success').html("<div class='alert alert-danger'>");
             $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")

@@ -23,7 +23,7 @@ type User struct {
 	Email         string        `orm:"size(128)"`
 	ContactNumber string        `orm:"size(20)"`
 	Password      string
-	LoginDate     time.Time     `orm:"auto_now_add;type(datetime)"`
+	LoginDate     time.Time     `orm:"auto_now_add"`
 	LoginTraces   []*LoginTrace `orm:"reverse(many)"`
 	Roles         []*Role       `orm:"reverse(many)"`
 }
