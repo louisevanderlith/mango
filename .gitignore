@@ -25,3 +25,5 @@ lastupdate.tmp
 .idea/
 .vscode/
 node_modules/
+
+testData/

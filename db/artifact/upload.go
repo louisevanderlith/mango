@@ -10,7 +10,7 @@ type Upload struct {
 	ItemID   int64
 	Name     string `orm:"size(50)"`
 	MimeType string `orm:"size(30)"`
-	Size     int64
+	Size     int
 	BLOB     *Blob  `orm:"rel(fk)"`
 }
 

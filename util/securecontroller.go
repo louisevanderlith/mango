@@ -37,6 +37,20 @@ func (ctrl *SecureController) SetAvoToken(token string) {
 	ctrl.Ctx.SetCookie("avotoken", token, 600, "/", "avosa.co.za", true, true)
 }
 
+func (ctrl *SecureController) ServeBinary(data []byte, filename string) {
+	output := ctrl.Ctx.Output
+
+	output.Header("Content-Description", "File Transfer")
+	output.Header("Content-Type", "application/octet-stream")
+	output.Header("Content-Disposition", "attachment; filename="+filename)
+	output.Header("Content-Transfer-Encoding", "binary")
+	output.Header("Expires", "0")
+	output.Header("Cache-Control", "must-revalidate")
+	output.Header("Pragma", "public")
+
+	output.Body(data)
+}
+
 func ProtectMethods(auths ActionAuth) {
 	authFunctions = auths
 }
