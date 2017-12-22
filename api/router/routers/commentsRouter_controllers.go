@@ -18,7 +18,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/router/controllers:DiscoveryController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/router/controllers:DiscoveryController"],
 		beego.ControllerComments{
 			Method: "Get",
-			Router: `/:appID/:serviceName`,
+			Router: `/:appID/:serviceName/:clean`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})

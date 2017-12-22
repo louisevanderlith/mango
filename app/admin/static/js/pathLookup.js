@@ -5,7 +5,7 @@ let pastNames = {
 async function getRouterPath(serviceName) {
     const routerURL = await this.getServiceURL("Router.API");
 
-    return `${routerURL}${instanceKey}/${serviceName}`;
+    return `${routerURL}${instanceKey}/${serviceName}/true`;
 }
 
 function doLookup(serviceName) {
@@ -35,7 +35,7 @@ export default {
     },
     buildPath: async function (serviceName, controller, params) {
         let url = await this.getServiceURL(serviceName);
-        let result = url + "/" + controller;
+        let result = url + controller;
 
         for (let i = 0; i < params.length; i++) {
             result += "/" + params[i];

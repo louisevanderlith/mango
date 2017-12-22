@@ -20,9 +20,8 @@ func SaveFile(file multipart.File, header *multipart.FileHeader) (err error) {
 	_, err = io.Copy(dst, file)
 
 	if err == nil {
-		blob := artifact.Blob{
-			Data: b.Bytes(),
-		}
+		blob := new(artifact.Blob)
+		blob.SetData(b.Bytes())
 
 		targetType := enums.GetOptimizeType("logo")
 		err = blob.OptimizeFor(targetType)
@@ -30,7 +29,7 @@ func SaveFile(file multipart.File, header *multipart.FileHeader) (err error) {
 
 		if err == nil {
 			upload := artifact.Upload{
-				BLOB:     &blob,
+				BLOB:     blob,
 				Size:     b.Len(),
 				Name:     header.Filename,
 				ItemID:   0,
@@ -80,7 +79,7 @@ func GetFileOnly(id int64) (result []byte, filename string, err error) {
 	upload, err := getBLOB(id)
 
 	if err == nil {
-		result = upload.BLOB.Data
+		result = upload.BLOB.GetData()
 		filename = upload.Name
 	}
 

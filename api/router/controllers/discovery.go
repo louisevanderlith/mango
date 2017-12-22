@@ -5,6 +5,7 @@ import (
 
 	"github.com/louisevanderlith/mango/api/router/logic"
 	"github.com/louisevanderlith/mango/util"
+	"strconv"
 )
 
 type DiscoveryController struct {
@@ -31,15 +32,21 @@ func (req *DiscoveryController) Post() {
 // @Description Gets the recommended service
 // @Param	appID			path	string 	true		"the application requesting a service"
 // @Param	serviceName		path 	string	true		"the name of the service you want to get"
+// @Param	clean			path 	bool	false		"clean will return a user friendly URL and not the application's actual URL"
 // @Success 200 {string} util.Service.URL
 // @Failure 403 :serviceName or :appID is empty
-// @router /:appID/:serviceName [get]
+// @router /:appID/:serviceName/:clean [get]
 func (req *DiscoveryController) Get() {
 	appID := req.Ctx.Input.Param(":appID")
 	serviceName := req.Ctx.Input.Param(":serviceName")
+	clean, cleanErr := strconv.ParseBool(req.Ctx.Input.Param(":clean"))
+
+	if cleanErr != nil {
+		clean = false
+	}
 
 	if appID != "" && serviceName != "" {
-		url, err := logic.GetServicePath(serviceName, appID)
+		url, err := logic.GetServicePath(serviceName, appID, clean)
 
 		if err != nil {
 			req.Ctx.Output.SetStatus(500)

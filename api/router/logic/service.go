@@ -10,6 +10,7 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 
 	uuid "github.com/nu7hatch/gouuid"
+	"strings"
 )
 
 type Services []*util.Service
@@ -52,26 +53,48 @@ func AddService(service util.Service) string {
 }
 
 // GetServicePath will return the correct URL for a requested service.
-func GetServicePath(serviceName string, appID string) (string, error) {
+func GetServicePath(serviceName string, appID string, clean bool) (string, error) {
 	var result string
 	var err error
 	requestingApp := getRequestingService(appID)
 
 	if requestingApp != nil {
-		service := getService(serviceName, requestingApp.Environment, requestingApp.Type)
+		if !clean {
+			service := getService(serviceName, requestingApp.Environment, requestingApp.Type)
 
-		if service != nil {
-			result = service.URL
-			service.Requests++
+			if service != nil {
+				result = service.URL
+			} else {
+				msg := fmt.Sprintf("%s wasn't found for the requesting application", serviceName)
+				err = errors.New(msg)
+			}
 		} else {
-			msg := fmt.Sprintf("%s wasn't found for the requesting application", serviceName)
-			err = errors.New(msg)
+			keyName := strings.Split(serviceName, ".")[0]
+			cleanHost := getCleanHost(requestingApp.Environment)
+
+			result = strings.ToLower(keyName) + cleanHost
 		}
 	} else {
 		err = errors.New("Couldn't find an application with the given appID")
 	}
 
 	return result, err
+}
+
+func getCleanHost(env enums.Environment) string {
+	var result string
+	switch env {
+	case enums.LIVE:
+		result = ".avosa.co.za/"
+	case enums.UAT:
+		result = ".???.co.za/"
+	case enums.DEV:
+		result = ".localhost/"
+	default:
+		result = ".localhost/"
+	}
+
+	return result
 }
 
 func getAllowedCaller(serviceType enums.ServiceType) enums.ServiceType {

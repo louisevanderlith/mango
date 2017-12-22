@@ -9,6 +9,7 @@ import (
 
 	"github.com/louisevanderlith/mango/util"
 	"github.com/astaxie/beego"
+	"fmt"
 )
 
 type Subdomains map[string]http.Handler
@@ -25,7 +26,6 @@ func (subdomains Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// CertBot requires tests on well-known for SSL Certs
 	if !strings.Contains(r.URL.String(), "well-known") {
 		domainParts := strings.Split(r.Host, ".")
-
 		result = getMux(subdomains, domainParts)
 	}
 
@@ -36,12 +36,10 @@ func getMux(subdomains Subdomains, domainParts []string) http.Handler {
 	result := subdomains["www"]
 
 	webMux, webOK := websiteMux(subdomains, domainParts)
-
 	if webOK {
 		result = webMux
 	} else {
 		subMux, subOk := subdomainMux(subdomains, domainParts)
-
 		if subOk {
 			result = subMux
 		}
@@ -57,16 +55,12 @@ func subdomainMux(subdomains Subdomains, domainParts []string) (http.Handler, bo
 }
 
 func websiteMux(subdomains Subdomains, domainParts []string) (http.Handler, bool) {
-	hostParts := remove(domainParts, 0)
+	hostParts := domainParts[1:]
 	host := strings.Join(hostParts, ".")
 
 	result, ok := subdomains[host]
 
 	return result, ok
-}
-
-func remove(slice []string, s int) []string {
-	return append(slice[:s], slice[s+1:]...)
 }
 
 func registerSubdomains() {
@@ -81,7 +75,7 @@ func registerSubdomains() {
 			vshost, err := url.Parse(rawURL)
 
 			if err != nil {
-				log.Printf("registerSubdomains: ", err)
+				log.Printf("registerSubdomains: %s", err)
 			}
 
 			proxy := httputil.NewSingleHostReverseProxy(vshost)
@@ -90,9 +84,9 @@ func registerSubdomains() {
 			domainMux.HandleFunc("/", domainHandler(proxy))
 
 			subdomains[v.Address] = domainMux
+			log.Print(v.Name, " ", v.Address, " ", rawURL)
 		} else {
-			log.Printf("Skipping %s", v.Name)
-			log.Printf("registerSubdomains: ", err)
+			log.Printf("registerSubdomains: %s", err)
 		}
 	}
 }

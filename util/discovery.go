@@ -18,7 +18,6 @@ type Service struct {
 	Name          string
 	URL           string
 	Version       int
-	Requests      int
 	Environment   enums.Environment
 	AllowedCaller enums.ServiceType
 	Type          enums.ServiceType

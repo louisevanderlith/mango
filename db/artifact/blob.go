@@ -11,7 +11,7 @@ import (
 
 type Blob struct {
 	db.Record
-	Data []byte
+	Data string
 }
 
 type optmizer map[enums.OptimizeType]func(data image.Image) []byte
@@ -27,18 +27,26 @@ func (o Blob) Validate() (bool, error) {
 }
 
 func (o *Blob) OptimizeFor(oType enums.OptimizeType) error {
-	reader := bytes.NewReader(o.Data)
+	reader := bytes.NewReader(o.GetData())
 	decoded, err := imaging.Decode(reader)
 
 	if err == nil {
 		opt, hasOpt := optimizers[oType]
 
 		if hasOpt {
-			o.Data = opt(decoded)
+			o.SetData(opt(decoded))
 		}
 	}
 
 	return err
+}
+
+func (o *Blob) GetData() []byte {
+	return []byte(o.Data)
+}
+
+func (o *Blob)SetData(blob []byte) {
+	o.Data = string(blob)
 }
 
 func getOptimizers() optmizer {
