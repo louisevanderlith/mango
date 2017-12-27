@@ -17,6 +17,7 @@ $(document).ready(() => {
     fs.submitDisabled(true);
 
     registerEvents();
+    startCarousel();
 });
 
 function registerEvents() {
@@ -27,6 +28,8 @@ function registerEvents() {
     let validForm = form.id.validator();
     validForm.on('invalid.bs.validator', fs.onValidate);
     validForm.on('valid.bs.validator', fs.onValidate);
+
+    $(document).on('keyup', pressEnter);
 }
 
 function trySend() {
@@ -35,6 +38,14 @@ function trySend() {
     if (fs.isFormValid()) {
         submitSend();
     }
+}
+
+function pressEnter(e) {
+    if (e.key !== 'Enter')
+        return;
+
+    trySend();
+    e.preventDefault();
 }
 
 function submitSend() {
@@ -91,6 +102,29 @@ function submitSend() {
 function tabClick(e) {
     e.preventDefault();
     $(this).tab("show");
+}
+
+function startCarousel() {
+    let idx = 0;
+
+    if (carouselImages.length === 1) {
+        showNext(idx);
+    } else {
+        setInterval(() => {
+            idx = showNext(idx)
+        }, 3000); // 3 seconds
+    }
+}
+
+function showNext(idx) {
+    const mastHeader = $('header.masthead');
+    const header = $(mastHeader[0]);
+    const image = carouselImages[idx];
+
+    header.css('background-image', `url("${image}")`);
+
+    const carouselLimit = carouselImages.length - 1;
+    return idx === carouselLimit ? 0 : (idx + 1);
 }
 
 $('#name').focus(function () {
