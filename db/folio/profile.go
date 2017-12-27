@@ -11,7 +11,6 @@ type Profile struct {
 	Description    string        `orm:"size(512)"`
 	ContactEmail   string        `orm:"size(128)"`
 	ContactPhone   string        `orm:"size(20)"`
-	GTagID         string        `orm:"null;size(25)"`
 	URL            string        `orm:"size(128)"`
 	ImageURL       string        `orm:"size(85)"`
 	StyleSheet     string        `orm:"size(50)"`

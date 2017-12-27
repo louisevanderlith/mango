@@ -9,7 +9,6 @@ import (
 
 	"github.com/louisevanderlith/mango/util"
 	"github.com/astaxie/beego"
-	"fmt"
 )
 
 type Subdomains map[string]http.Handler
