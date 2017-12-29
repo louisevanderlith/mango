@@ -21,7 +21,7 @@ func (ctrl *UIController) Prepare() {
 		if err == nil {
 			req := ctrl.Ctx.Request
 			moveURL := fmt.Sprintf("%s://%s%s", ctrl.Ctx.Input.Scheme(), req.Host, req.RequestURI)
-			loginURL := fmt.Sprintf("%s/v1/login?return=%s", securityURL, url.QueryEscape(moveURL))
+			loginURL := fmt.Sprintf("%sv1/login?return=%s", securityURL, url.QueryEscape(moveURL))
 
 			ctrl.Redirect(loginURL, http.StatusTemporaryRedirect)
 		}

@@ -29,6 +29,7 @@ function doBuild() {
     
                 copyFolder $outPath "conf"
                 copyFolder $outPath "static"
+                copyFolder $outPath "views"
             }
             else {
                 Write-Host 'No main.go found in' $appName -ForegroundColor "red"

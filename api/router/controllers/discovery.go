@@ -58,3 +58,28 @@ func (req *DiscoveryController) Get() {
 
 	req.ServeJSON()
 }
+
+// @Title GetDirtyService
+// @Description Gets the recommended service
+// @Param	appID			path	string 	true		"the application requesting a service"
+// @Param	serviceName		path 	string	true		"the name of the service you want to get"
+// @Success 200 {string} util.Service.URL
+// @Failure 403 :serviceName or :appID is empty
+// @router /:appID/:serviceName [get]
+func (req *DiscoveryController) GetDirty() {
+	appID := req.Ctx.Input.Param(":appID")
+	serviceName := req.Ctx.Input.Param(":serviceName")
+
+	if appID != "" && serviceName != "" {
+		url, err := logic.GetServicePath(serviceName, appID, false)
+
+		if err != nil {
+			req.Ctx.Output.SetStatus(500)
+			req.Data["json"] = err.Error()
+		} else {
+			req.Data["json"] = url
+		}
+	}
+
+	req.ServeJSON()
+}
