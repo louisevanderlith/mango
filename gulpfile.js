@@ -1,4 +1,3 @@
-
 const gulp = require('gulp');
 const glob = require('glob');
 const rollup = require('gulp-better-rollup');
@@ -8,6 +7,7 @@ const path = require('path');
 const cleanCSS = require('gulp-clean-css');
 const concatCSS = require('gulp-concat-css');
 const fs = require('fs');
+const ugh = require('uglify-es').minify;
 
 function getEntryPoints(appPath) {
     var taskNames = [];
@@ -37,7 +37,10 @@ function createJSTask(name, entry, appPath) {
     gulp.task(taskName, () => {
         gulp.src(entry)
             .pipe(rollup(rollOptions, 'iife'))
-            .pipe(gulp.dest(dest))
+            .on('error', (err) => {
+                console.error("Entry: %s, Task: %s. Details: %s", entry, taskName, err);
+            })
+            .pipe(gulp.dest(dest));
     });
 
     return taskName;
@@ -77,7 +80,7 @@ function getRollupOptions(entry, name) {
             babel({
                 exclude: 'node_modules/**'
             }),
-            uglify()
+            uglify({}, ugh)
         ]
     };
 }
@@ -114,7 +117,7 @@ function getJSTaskName(name, appPath) {
     return `${appName}-roll-${cleanName}`;
 }
 
-function getNameFromPath(appPath){
+function getNameFromPath(appPath) {
     return appPath.replace('./', '').replace('/', '.');
 }
 

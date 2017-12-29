@@ -8,7 +8,6 @@ const form = {
     description: $('#txtDescription'),
     email: $('txtEmail'),
     phone: $('#txtPhone'),
-    gtag: $('#txtGTag'),
     url: $('#txtURL'),
     imageURL: $('#txtImage'),
     styleSheet: $('#txtStylesheet'),
@@ -64,10 +63,10 @@ function fillForm(data){
     form.description.val(data.Description);
     form.email.val(data.ContactEmail);
     form.phone.val(data.ContactPhone);
-    form.gtag.val(data.GTagID);
     form.url.val(data.URL);
     form.imageURL.val(data.ImageURL);
     form.styleSheet.val(data.StyleSheet);
+
     setList(form.socialLinks, data.SocialLinks);
     setList(form.portfolio, data.PortfolioItems);
     setList(form.aboutSections, data.AboutSections);
@@ -94,7 +93,6 @@ function submitSite() {
             Description: form.description.val(),
             ContactEmail: form.email.val(),
             ContactPhone: form.phone.val(),
-            GTagID: form.gtag.val(),
             URL: form.url.val(),
             ImageURL: form.imageURL.val(),
             StyleSheet: form.styleSheet.val(),
@@ -145,12 +143,12 @@ function getList(elem){
 
 function setList(elem, data){
     const dataLen = data.length;
-    let items = '';
+    let items = [];
 
     for(let i = 0; i < dataLen; i++){
         let row = `<span class="list-group-item">${data[i]}</span>`;
         items.push(row);
     }
 
-    elem.html(items);
+    elem.html(items.join(''));
 }

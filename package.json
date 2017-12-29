@@ -1,11 +1,11 @@
 {
-  "name": "classifieds",
+  "name": "mango",
   "version": "0.0.1",
   "description": "",
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/louisevanderlith/classifieds"
+    "url": "https://github.com/louisevanderlith/mango"
   },
   "author": "Louise van der Lith",
   "license": "UNLICENSED",
@@ -20,6 +20,7 @@
     "path": "^0.12.7",
     "rollup": "^0.45.2",
     "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-uglify": "^2.0.1"
+    "rollup-plugin-uglify": "^2.0.1",
+    "uglify-es": "^3.3.3"
   }
 }

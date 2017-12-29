@@ -23,7 +23,7 @@ $(document).ready(() => {
 function registerEvents() {
     form.sendButton.on('click', trySend);
 
-    $("a[data-toggle=\"tab\"]").on('click', tabClick);
+    $('a[data-toggle="tab"]').on('click', tabClick);
 
     let validForm = form.id.validator();
     validForm.on('invalid.bs.validator', fs.onValidate);
