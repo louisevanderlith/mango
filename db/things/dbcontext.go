@@ -6,10 +6,10 @@ import (
 )
 
 type Context struct {
-	Category *db.Set
+	Category     *db.Set
 	Manufacturer *db.Set
-	Model *db.Set
-	SubCategory *db.Set
+	Model        *db.Set
+	SubCategory  *db.Set
 }
 
 var Ctx *Context
@@ -21,10 +21,10 @@ func NewDatabase() {
 	db.SyncDatabase(dbName)
 
 	Ctx = &Context{
-		Category: db.NewSet(Category{}),
+		Category:     db.NewSet(Category{}),
 		Manufacturer: db.NewSet(Manufacturer{}),
-		Model: db.NewSet(Model{}),
-		SubCategory: db.NewSet(SubCategory{}),
+		Model:        db.NewSet(Model{}),
+		SubCategory:  db.NewSet(SubCategory{}),
 	}
 }
 

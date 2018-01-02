@@ -1,5 +1,5 @@
 import FormState from './formState.js';
-import config from './config.js';
+import lookup from './pathLookup.js';
 
 const form = {
     id: $('#frmContact'),
@@ -58,7 +58,7 @@ function submitSend() {
     }
 
     $.ajax({
-        url: config.CommsAPI,
+        url: lookup.buildPath('Comms.API', "message"),
         type: "POST",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({

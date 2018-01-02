@@ -31,7 +31,7 @@
     },
     {
         "Name": "Security.API",
-        "Address": "secure",
+        "Address": "security",
         "Type": "Subdomain"
     },
     {
@@ -58,10 +58,5 @@
         "Name": "Shop.APP",
         "Address": "shop",
         "Type": "Subdomain"
-    },
-    {
-        "Name": "Random.WEB",
-        "Address": "random.co.za",
-        "Type": "Website"
     }
 ]

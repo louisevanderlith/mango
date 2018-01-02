@@ -8,7 +8,7 @@ import (
 
 func SyncDatabase(dbName string) {
 	name := "default"
-	dbPath, err := util.GetServiceURL(dbName)
+	dbPath, err := util.GetServiceURL(dbName, false)
 
 	if err != nil {
 		log.Printf("BuildDatabase: ", err)

@@ -26,10 +26,12 @@ func SaveRegistration(r Registration) error {
 			Password:      r.Password,
 		}
 
-		user.Roles[0] = &secure.Role{
+		userRole := &secure.Role{
 			User:        &user,
 			Description: enums.User,
 		}
+
+		user.Roles = append(user.Roles, userRole)
 
 		_, err = secure.Ctx.User.Create(&user)
 	} else {

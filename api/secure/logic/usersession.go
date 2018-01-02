@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/astaxie/beego/context"
+	"github.com/astaxie/beego"
 )
 
 type UserSession struct {
@@ -18,9 +20,7 @@ type UserSession struct {
 	Roles     []enums.RoleType
 }
 
-var (
-	sessionStore map[string]*UserSession
-)
+var sessionStore map[string]*UserSession
 
 func init() {
 	sessionStore = make(map[string]*UserSession)
@@ -37,6 +37,14 @@ func Set(session *UserSession) string {
 	return token
 }
 
+func SetAvoToken(ctx *context.Context, token string) {
+	if beego.BConfig.RunMode == "dev" {
+		ctx.SetCookie("avotoken", token)
+	} else {
+		ctx.SetCookie("avotoken", token, 600, "/", "avosa.co.za", true, true)
+	}
+}
+
 func Get(token string) *UserSession {
 	var result *UserSession
 
@@ -51,7 +59,11 @@ func Get(token string) *UserSession {
 	return result
 }
 
-func GetRoles(token string) []enums.RoleType{
+func GetAvoToken(ctx *context.Context) string {
+	return ctx.GetCookie("avotoken")
+}
+
+func GetRoles(token string) []enums.RoleType {
 	var result []enums.RoleType
 
 	session := Get(token)
@@ -63,7 +75,8 @@ func GetRoles(token string) []enums.RoleType{
 	return result
 }
 
-func Delete(token string) {
+func ExpireAvoToken(ctx *context.Context, token string) {
+	ctx.SetCookie("avotoken", "expired", 0)
 	delete(sessionStore, token)
 }
 
@@ -83,7 +96,7 @@ func expired(session *UserSession, token string) bool {
 	expired := expiresIn <= 0
 
 	if expired {
-		Delete(token)
+		delete(sessionStore, token)
 	}
 
 	return expired

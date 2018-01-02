@@ -11,6 +11,7 @@ import (
 
 	"github.com/louisevanderlith/mango/util/enums"
 	"github.com/astaxie/beego"
+	"strconv"
 )
 
 type Service struct {
@@ -23,19 +24,24 @@ type Service struct {
 	Type          enums.ServiceType
 }
 
+type k struct {
+	Name  string
+	Clean bool
+}
+
 var (
 	publicIP    string
 	instanceKey string
-	serviceKeys map[string]string
+	serviceKeys map[k]string
 )
 
 func init() {
-	serviceKeys = make(map[string]string)
+	serviceKeys = make(map[k]string)
 
 	if beego.AppConfig.String("runmode") == "dev" {
-		serviceKeys["Router.API"] = "http://localhost:8080/"
+		serviceKeys[k{"Router.API", false}] = "http://localhost:8080/"
 	} else {
-		serviceKeys["Router.API"] = "https://router.avosa.co.za/"
+		serviceKeys[k{"Router.API", false}] = "https://router.avosa.co.za/"
 	}
 }
 
@@ -61,16 +67,16 @@ func (service Service) Register(port string) (string, error) {
 	return instanceKey, jerr
 }
 
-func GetServiceURL(serviceName string) (string, error) {
+func GetServiceURL(serviceName string, cleanURL bool) (string, error) {
 	var result string
 	var finalError error
 
-	cacheService, ok := serviceKeys[serviceName]
+	cacheService, ok := serviceKeys[k{serviceName, cleanURL}]
 
 	if ok {
 		result = cacheService
 	} else {
-		contents, statusCode := GETMessage("Router.API", "discovery", instanceKey, serviceName)
+		contents, statusCode := GETMessage("Router.API", "discovery", instanceKey, serviceName, strconv.FormatBool(cleanURL))
 
 		var rawURL string
 		err := json.Unmarshal(contents, &rawURL)
@@ -83,7 +89,7 @@ func GetServiceURL(serviceName string) (string, error) {
 			finalError = errors.New(rawURL)
 		} else {
 			result = rawURL
-			serviceKeys[serviceName] = rawURL
+			serviceKeys[k{serviceName, cleanURL}] = rawURL
 		}
 	}
 

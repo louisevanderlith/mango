@@ -30,9 +30,19 @@ function registerEvents() {
     let validForm = form.id.validator();
     validForm.on('invalid.bs.validator', fs.onValidate);
     validForm.on('valid.bs.validator', fs.onValidate);
+
+    $(document).on('keyup', pressEnter);
 }
 
-function tryLogin(e) {
+function pressEnter(e) {
+    if (e.key !== 'Enter')
+        return;
+
+    tryLogin();
+    e.preventDefault();
+}
+
+function tryLogin() {
     form.id.validator('validate');
 
     if (fs.isFormValid()) {

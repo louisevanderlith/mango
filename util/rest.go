@@ -13,7 +13,7 @@ import (
 func GETMessage(serviceName, controller string, params ...string) ([]byte, int) {
 	var result []byte
 	var statusCode int
-	url, err := GetServiceURL(serviceName)
+	url, err := GetServiceURL(serviceName, false)
 
 	if err == nil {
 		fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))
@@ -45,7 +45,7 @@ func GETMessage(serviceName, controller string, params ...string) ([]byte, int) 
 }
 
 func POSTMessage(serviceName, controller string, obj interface{}) (result []byte, statusCode int) {
-	url, err := GetServiceURL(serviceName)
+	url, err := GetServiceURL(serviceName, false)
 
 	if err == nil {
 		fullURL := fmt.Sprintf("%sv1/%s", url, controller)

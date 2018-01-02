@@ -57,5 +57,5 @@ func setupHost(httpPort, httpsPort string) {
 
 func redirectTLS(w http.ResponseWriter, r *http.Request) {
 	moveURL := fmt.Sprintf("https://%s%s", r.Host, r.RequestURI)
-	http.Redirect(w, r, moveURL, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, moveURL, http.StatusPermanentRedirect)
 }

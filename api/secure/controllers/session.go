@@ -15,7 +15,7 @@ type SessionController struct {
 // @router / [get]
 func (req *SessionController) Get() {
 	// return the user's roles
-	token := req.GetAvoToken()
+	token := logic.GetAvoToken(req.Ctx)
 	roles := logic.GetRoles(token)
 
 	if len(roles) > 0 {

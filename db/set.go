@@ -18,8 +18,8 @@ func NewSet(t IRecord) *Set {
 }
 
 func (set *Set) Create(item IRecord) (id int64, err error) {
-	if reflect.TypeOf(item) == set.t {
-
+	t := reflect.TypeOf(item)
+	if t == set.t {
 		var valid bool
 		valid, err = item.Validate()
 

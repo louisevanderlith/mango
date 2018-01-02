@@ -17,7 +17,7 @@ type LoginController struct {
 // @Success 200 {string} string
 // @router / [get]
 func (req *LoginController) Get() {
-	if req.GetAvoToken() == "" {
+	if logic.GetAvoToken(req.Ctx) == "" {
 		req.Setup("login")
 	} else {
 		ref := req.Ctx.Request.Referer()
@@ -35,7 +35,7 @@ func (req *LoginController) Post() {
 	// failed logins should redirect to the login page
 	var login logic.Login
 	json.Unmarshal(req.Ctx.Input.RequestBody, &login)
-	token := req.GetAvoToken()
+	token := logic.GetAvoToken(req.Ctx)
 
 	if len(token) < 16 {
 		token = logic.AttemptLogin(login)
@@ -45,7 +45,7 @@ func (req *LoginController) Post() {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = "Login Failed"
 	} else {
-		req.SetAvoToken(token)
+		logic.SetAvoToken(req.Ctx, token)
 		req.Data["json"] = "Login Success"
 	}
 
@@ -57,11 +57,10 @@ func (req *LoginController) Post() {
 // @Success 200 {string} logout success
 // @router /logout [get]
 func (req *LoginController) Logout() {
-	token := req.GetAvoToken()
+	token := logic.GetAvoToken(req.Ctx)
 
 	if len(token) == 16 {
-		req.ExpireAvoToken()
-		logic.Delete(token)
+		logic.ExpireAvoToken(req.Ctx, token)
 		req.Data["json"] = "Logout Success"
 	} else {
 		req.Ctx.Output.SetStatus(500)

@@ -16,7 +16,7 @@ func (ctrl *UIController) Prepare() {
 	ctrl.SecureController.Prepare()
 
 	if ctrl.Ctx.Output.Status == 401 {
-		securityURL, err := GetServiceURL("Security.API")
+		securityURL, err := GetServiceURL("Security.API", true)
 
 		if err == nil {
 			req := ctrl.Ctx.Request

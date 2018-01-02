@@ -5,15 +5,18 @@
 <!-- Plugin JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 
-<!-- Contact Form JavaScript -->
-<script src="static/dist/js/index.entry.js"></script>
+{{ if .HasScript }}
+<script type="text/javascript" src="/static/dist/js/{{.ScriptName}}"></script>
+{{ end }}
 
 <!-- Custom scripts for this template -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
 <script src="js/freelancer.min.js"></script>
 <!-- Global Site Tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106538847-1"></script>
 <script type="text/javascript">
     instanceKey = {{.InstanceKey}}
-    carouselImages = ['../../img/homebanner.png'];
+            carouselImages = ['../../img/homebanner.png'];
 </script>

@@ -15,9 +15,7 @@ import (
 
 type Services []*util.Service
 
-var (
-	serviceMap map[string]Services
-)
+var	serviceMap map[string]Services
 
 func init() {
 	serviceMap = make(map[string]Services)
@@ -72,7 +70,7 @@ func GetServicePath(serviceName string, appID string, clean bool) (string, error
 			keyName := strings.Split(serviceName, ".")[0]
 			cleanHost := getCleanHost(requestingApp.Environment)
 
-			result = strings.ToLower(keyName) + cleanHost
+			result = "https://" + strings.ToLower(keyName) + cleanHost
 		}
 	} else {
 		err = errors.New("Couldn't find an application with the given appID")

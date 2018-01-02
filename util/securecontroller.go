@@ -4,6 +4,9 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/util/enums"
 	"net/http"
+	"encoding/json"
+	"log"
+	"errors"
 )
 
 type SecureController struct {
@@ -23,18 +26,6 @@ func (ctrl *SecureController) Prepare() {
 		ctrl.Ctx.Output.SetStatus(http.StatusUnauthorized)
 		ctrl.Data["json"] = map[string]string{"Error": "User not authorized to access this content."}
 	}
-}
-
-func (ctrl *SecureController) GetAvoToken() string {
-	return ctrl.Ctx.GetCookie("avotoken")
-}
-
-func (ctrl *SecureController) ExpireAvoToken() {
-	ctrl.Ctx.SetCookie("avotoken", "expired", 0)
-}
-
-func (ctrl *SecureController) SetAvoToken(token string) {
-	ctrl.Ctx.SetCookie("avotoken", token, 600, "/", "avosa.co.za", true, true)
 }
 
 func (ctrl *SecureController) ServeBinary(data []byte, filename string) {
@@ -61,9 +52,51 @@ func userAllowed(ctrl *SecureController) bool {
 	authFunc, hasKey := authFunctions[method]
 
 	if hasKey {
-		userSession := ctrl.GetAvoToken()
-		result = hasRole(userSession, authFunc)
+		result = hasRole(authFunc)
 	}
 
 	return result
+}
+
+func hasRole(funcRole enums.RoleType) bool {
+	result := false
+	roles, err := loadRoles()
+
+	if err == nil {
+		for _, val := range roles {
+			if val <= funcRole {
+				result = true
+				break
+			}
+		}
+	}
+
+	return result
+}
+
+func loadRoles() ([]enums.RoleType, error) {
+	var result []enums.RoleType
+	var finalError error
+
+	contents, statusCode := GETMessage("Security.API", "session")
+	data := MarshalToMap(contents)
+
+	if statusCode != 200 {
+		var dataErr string
+		err := json.Unmarshal(*data["Error"], &dataErr)
+
+		if err != nil {
+			log.Printf("loadRoles: ", err)
+		}
+
+		finalError = errors.New(dataErr)
+	} else {
+		err := json.Unmarshal(*data["Data"], &result)
+
+		if err != nil {
+			log.Printf("loadRoles: ", err)
+		}
+	}
+
+	return result, finalError
 }
