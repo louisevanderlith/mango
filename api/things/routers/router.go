@@ -50,7 +50,7 @@ func setupMapping() {
 
 	control.AddControllerMap("/category", uploadMap)
 	control.AddControllerMap("/manufacturer", uploadMap)
-	control.AddControllerMap("model", uploadMap)
+	control.AddControllerMap("/model", uploadMap)
 	control.AddControllerMap("/subcategory", uploadMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)

@@ -10,6 +10,10 @@ type CategoryController struct {
 	control.APIController
 }
 
+// @Title GetCategory
+// @Description Gets all Categories
+// @Success 200 {string} string
+// @router / [get]
 func (req *CategoryController) Get() {
 	var results []*things.Category
 	cat := things.Category{}

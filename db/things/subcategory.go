@@ -5,13 +5,13 @@ import (
 	"github.com/louisevanderlith/mango/util"
 )
 
-type SubCategory struct {
+type Subcategory struct {
 	db.Record
 	Category    *Category `orm:"rel(fk)"`
 	Name        string    `orm:"size(50)"`
 	Description string    `orm:"size(255)"`
 }
 
-func (o SubCategory) Validate() (bool, error) {
+func (o Subcategory) Validate() (bool, error) {
 	return util.ValidateStruct(o)
 }

@@ -16,6 +16,7 @@ func init() {
 	beego.Router("/manufacturer", &controllers.ManufacturerController{})
 	beego.Router("/model", &controllers.ModelController{})
 	beego.Router("/subcategory", &controllers.SubCategoryController{})
+	beego.Router("/site", &controllers.SiteController{})
 }
 
 func setupMapping() {
@@ -29,6 +30,7 @@ func setupMapping() {
 	control.AddControllerMap("/manufacturer", uploadMap)
 	control.AddControllerMap("/model", uploadMap)
 	control.AddControllerMap("/subcategory", uploadMap)
+	control.AddControllerMap("/site", uploadMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterUI)
 }

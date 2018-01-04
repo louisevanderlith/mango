@@ -32,12 +32,33 @@ func (req *SiteController) Post() {
 	req.ServeJSON()
 }
 
+// @Title GetSites
+// @Description Gets all sites
+// @Success 200 {string} string
+// @router /:siteName [get]
+func (req *SiteController) Get() {
+	if req.Ctx.Output.Status != 401 {
+		var results []*folio.Profile
+		prof := folio.Profile{}
+		err := folio.Ctx.Profile.Read(prof, &results)
+
+		if err != nil {
+			req.Ctx.Output.SetStatus(500)
+			req.Data["json"] = map[string]string{"Error": err.Error()}
+		} else {
+			req.Data["json"] = map[string]interface{}{"Data": results}
+		}
+	}
+
+	req.ServeJSON()
+}
+
 // @Title GetSite
 // @Description Gets customer website/profile
 // @Param	siteName			path	string 	true		"customer website name"
 // @Success 200 {string} string
 // @router /:siteName [get]
-func (req *SiteController) Get() {
+func (req *SiteController) GetOne() {
 	if req.Ctx.Output.Status != 401 {
 		siteName := req.Ctx.Input.Param(":siteName")
 		msg := folio.Profile{}

@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"github.com/astaxie/beego"
 	"strings"
-	"fmt"
 	"time"
 )
 
@@ -40,11 +39,9 @@ func readAll(filter interface{}, container interface{}) error {
 	readColumns := getFilterValues(filter)
 
 	o := orm.NewOrm()
-	tableName := getTableName(filter)
-	qt := o.QueryTable(tableName)
+	qt := o.QueryTable(filter)
 
 	for k, v := range readColumns {
-		fmt.Println(k, v)
 		qt = qt.Filter(strings.ToLower(k), v)
 	}
 
@@ -58,16 +55,6 @@ func update(obj interface{}) (int64, error) {
 	o := orm.NewOrm()
 
 	return o.Update(obj)
-}
-
-func getTableName(obj interface{}) string {
-	t := reflect.TypeOf(obj)
-
-	for t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
-
-	return strings.ToLower(t.Name())
 }
 
 func getReadColumns(obj interface{}) []string {
@@ -128,7 +115,7 @@ func getFilterValues(filter interface{}) map[string]interface{} {
 	return result
 }
 
-func isFieldSet(field interface{}) (result bool){
+func isFieldSet(field interface{}) (result bool) {
 	val := reflect.ValueOf(field)
 
 	switch val.Kind() {
@@ -150,7 +137,7 @@ func isFieldSet(field interface{}) (result bool){
 		result = nilRule(field)
 	}
 
-	if tField, ok := field.(time.Time); ok{
+	if tField, ok := field.(time.Time); ok {
 		result = tField.IsZero()
 	}
 

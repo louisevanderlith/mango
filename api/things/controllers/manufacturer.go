@@ -10,6 +10,10 @@ type ManufacturerController struct {
 	control.APIController
 }
 
+// @Title GetManufacturer
+// @Description Gets all Manufacturers
+// @Success 200 {string} string
+// @router / [get]
 func (req *ManufacturerController) Get() {
 	var results []*things.Manufacturer
 	man := things.Manufacturer{}

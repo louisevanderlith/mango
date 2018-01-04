@@ -10,10 +10,14 @@ type SubCategoryController struct {
 	control.APIController
 }
 
+// @Title GetSubCategory
+// @Description Gets all Sub-Categories
+// @Success 200 {string} string
+// @router / [get]
 func (req *SubCategoryController) Get() {
-	var results []*things.SubCategory
-	scat := things.SubCategory{}
-	err := things.Ctx.SubCategory.Read(scat, &results)
+	var results []*things.Subcategory
+	scat := things.Subcategory{}
+	err := things.Ctx.SubCategory.Read(&scat, &results)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
@@ -26,7 +30,7 @@ func (req *SubCategoryController) Get() {
 }
 
 func (req *SubCategoryController) Post() {
-	var obj things.SubCategory
+	var obj things.Subcategory
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
 
 	_, err := things.Ctx.SubCategory.Create(&obj)

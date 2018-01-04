@@ -8,8 +8,8 @@ import (
 )
 
 type BasicSite struct {
-	ID int64
-	Title string
+	ID          int64
+	Title       string
 	Description string
 }
 

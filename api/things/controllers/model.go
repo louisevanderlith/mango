@@ -10,6 +10,10 @@ type ModelController struct {
 	control.APIController
 }
 
+// @Title GetModel
+// @Description Gets all Models
+// @Success 200 {string} string
+// @router / [get]
 func (req *ModelController) Get() {
 	var results []*things.Model
 	mdl := things.Model{}

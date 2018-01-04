@@ -9,7 +9,7 @@ type Category struct {
 	db.Record
 	Name          string         `orm:"size(50)"`
 	Description   string         `orm:"size(255)"`
-	SubCategories []*SubCategory `orm:"reverse(many)"`
+	SubCategories []*Subcategory `orm:"reverse(many)"`
 }
 
 func (o Category) Validate() (bool, error) {

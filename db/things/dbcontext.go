@@ -24,10 +24,10 @@ func NewDatabase() {
 		Category:     db.NewSet(Category{}),
 		Manufacturer: db.NewSet(Manufacturer{}),
 		Model:        db.NewSet(Model{}),
-		SubCategory:  db.NewSet(SubCategory{}),
+		SubCategory:  db.NewSet(Subcategory{}),
 	}
 }
 
 func registerModels() {
-	orm.RegisterModel(new(Category), new(SubCategory), new(Manufacturer), new(Model))
+	orm.RegisterModel(new(Category), new(Subcategory), new(Manufacturer), new(Model))
 }
