@@ -2,6 +2,10 @@ package logic
 
 import (
 	"github.com/louisevanderlith/mango/db/secure"
+	"github.com/astaxie/beego/context"
+	"encoding/json"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/nu7hatch/gouuid"
 )
 
 type Login struct {
@@ -9,22 +13,34 @@ type Login struct {
 	Password   string
 	IP         string
 	Location   string
-	ReturnURL  string
 }
 
-func AttemptLogin(l Login) string {
-	var token string
-	loggedIn, userID, roles := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
+func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err error) {
+	u4, _ := uuid.NewV4()
+	sessionID = u4.String()
 
-	if loggedIn {
-		session := UserSession{
-			IP:       l.IP,
-			Location: l.Location,
-			UserID:   userID,
-			Roles:    roles}
+	if util.HasAvo(sessionID){
+		passed = true
+	} else {
+		var l Login
+		err = json.Unmarshal(ctx.Input.RequestBody, &l)
 
-		token = Set(&session)
+		if err == nil {
+			loggedIn, userID, roles := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
+
+			if loggedIn {
+				passed = true
+
+				session := util.Cookies{
+					UserID:   userID,
+					IP:       l.IP,
+					Location: l.Location,
+					Roles:    roles}
+
+				util.CreateAvo(ctx, session, sessionID)
+			}
+		}
 	}
 
-	return token
+	return passed, sessionID, err
 }

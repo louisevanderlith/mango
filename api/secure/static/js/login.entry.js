@@ -69,8 +69,8 @@ function submitLogin() {
             ReturnURL: localStorage.getItem('return')
         }),
         cache: false,
-        success: function () {
-            afterLogin();
+        success: function (sessionID) {
+            afterLogin(sessionID);
         },
         error: function (err) {
             // Fail message
@@ -106,8 +106,9 @@ function getIP() {
     });
 }
 
-function afterLogin() {
+function afterLogin(sessionID) {
     let finalURL = localStorage.getItem('return') || 'https://avosa.co.za';
+    finalURL += "?token=" + sessionID
     window.location.replace(finalURL);
 }
 

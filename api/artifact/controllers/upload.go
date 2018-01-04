@@ -1,22 +1,14 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
 	"github.com/louisevanderlith/mango/api/artifact/logic"
 	"strconv"
 	"github.com/louisevanderlith/mango/db/artifact"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type UploadController struct {
-	util.SecureController
-}
-
-func init() {
-	auths := util.ActionAuth{}
-	auths["POST"] = enums.Admin
-
-	util.ProtectMethods(auths)
+	control.APIController
 }
 
 // @Title GetUploads

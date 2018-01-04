@@ -1,13 +1,13 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type DefaultController struct {
-	util.UIController
+	control.UIController
 }
 
 func (c *DefaultController) Get() {
-	c.Setup("main")
+	c.Setup("default")
 }

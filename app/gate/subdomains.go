@@ -22,6 +22,8 @@ func init() {
 func (subdomains Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	result := subdomains["www"]
 
+	handleSession(r.URL, w)
+
 	// CertBot requires tests on well-known for SSL Certs
 	if !strings.Contains(r.URL.String(), "well-known") {
 		domainParts := strings.Split(r.Host, ".")
@@ -29,6 +31,36 @@ func (subdomains Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result.ServeHTTP(w, r)
+}
+
+func handleSession(url *url.URL, w http.ResponseWriter) {
+	if strings.Contains(url.String(), "?token=") {
+		sessionID := url.Query().Get("token")
+		url.Path = removeToken(url.String())
+
+		if sessionID != "" {
+			cookie := http.Cookie{
+				Name:     "avosession",
+				Path:     "/",
+				Value:    sessionID,
+				HttpOnly: true,
+				MaxAge:   0,
+			}
+
+			http.SetCookie(w, &cookie)
+		}
+	}
+}
+
+func removeToken(url string) string {
+	var result string
+	idx := strings.LastIndex(url, "?token")
+
+	if idx != -1 {
+		result = url[:idx]
+	}
+
+	return result
 }
 
 func getMux(subdomains Subdomains, domainParts []string) http.Handler {

@@ -1,28 +1,55 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/louisevanderlith/mango/api/secure/logic"
 	"github.com/louisevanderlith/mango/util"
 	"net/http"
+	"strings"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type LoginController struct {
-	util.UIController
+	control.UIController
 }
 
-// @Title Login
+// @Title GetLogin
 // @Description Gets the form a user must fill in to login
+// @Param	query	query	string	true	"return URL"
 // @Success 200 {string} string
 // @router / [get]
 func (req *LoginController) Get() {
-	if logic.GetAvoToken(req.Ctx) == "" {
+	sessionID := req.Ctx.GetCookie("beegosessionID")
+	hasAvo := util.HasAvo(sessionID)
+
+	if !hasAvo {
 		req.Setup("login")
 	} else {
-		ref := req.Ctx.Request.Referer()
-		req.Redirect(ref, http.StatusTemporaryRedirect)
+		ret := req.Ctx.Input.Query("return")
+
+		if ret != "" && strings.HasPrefix(ret, "http") {
+			req.Redirect(ret, http.StatusTemporaryRedirect)
+		}
 	}
+}
+
+// @Title GetCookie
+// @Description Gets the currently logged in user's cookie
+// @Param	path	path	string	true	"return URL"
+// @Success 200 {string} string
+// @router /avo/:sessionID [get]
+func (req *LoginController) GetCookie() {
+	sessionID := req.Ctx.Input.Param(":sessionID")
+	hasAvo := util.HasAvo(sessionID)
+
+	if !hasAvo {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = map[string]string{"Error": "No data found."}
+	} else {
+		data := util.FindAvo(sessionID)
+		req.Data["json"] = map[string]interface{}{"Data": data}
+	}
+
+	req.ServeJSON()
 }
 
 // @Title Login
@@ -32,21 +59,16 @@ func (req *LoginController) Get() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *LoginController) Post() {
-	// failed logins should redirect to the login page
-	var login logic.Login
-	json.Unmarshal(req.Ctx.Input.RequestBody, &login)
-	token := logic.GetAvoToken(req.Ctx)
+	loggedIn, sessionID, err := logic.AttemptLogin(req.Ctx)
 
-	if len(token) < 16 {
-		token = logic.AttemptLogin(login)
-	}
-
-	if token == "" {
+	if err != nil {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = "Login Error " + err.Error()
+	} else if !loggedIn {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = "Login Failed"
 	} else {
-		logic.SetAvoToken(req.Ctx, token)
-		req.Data["json"] = "Login Success"
+		req.Data["json"] = sessionID
 	}
 
 	req.ServeJSON()
@@ -57,15 +79,9 @@ func (req *LoginController) Post() {
 // @Success 200 {string} logout success
 // @router /logout [get]
 func (req *LoginController) Logout() {
-	token := logic.GetAvoToken(req.Ctx)
+	sessionID := req.Ctx.GetCookie("beegosessionID")
+	util.DestroyAvo(sessionID)
 
-	if len(token) == 16 {
-		logic.ExpireAvoToken(req.Ctx, token)
-		req.Data["json"] = "Logout Success"
-	} else {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = "Invalid Token"
-	}
-
+	req.Data["json"] = "Logout Success"
 	req.ServeJSON()
 }

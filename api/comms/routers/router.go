@@ -12,15 +12,12 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
+	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 func init() {
-	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
-		AllowAllOrigins: true,
-		AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
-		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
-	}))
+	setupMapping()
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/message",
@@ -28,4 +25,20 @@ func init() {
 				&controllers.MessageController{})))
 
 	beego.AddNamespace(ns)
+}
+
+func setupMapping() {
+	uploadMap := make(control.MethodMap)
+	uploadMap["GET"] = enums.Admin
+
+	control.AddControllerMap("/message", uploadMap)
+
+	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+
+	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
+		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
+	}))
 }

@@ -11,9 +11,13 @@ import (
 	"github.com/louisevanderlith/mango/api/secure/controllers"
 
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/util/control"
+	"github.com/astaxie/beego/plugins/cors"
 )
 
 func init() {
+	setupMapping()
+
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/login",
 			beego.NSInclude(
@@ -25,11 +29,22 @@ func init() {
 				&controllers.RegisterController{},
 			),
 		),
-		beego.NSNamespace("/session",
-			beego.NSInclude(
-				&controllers.SessionController{},
-			),
-		),
 	)
 	beego.AddNamespace(ns)
+}
+
+func setupMapping() {
+	uploadMap := make(control.MethodMap)
+
+	control.AddControllerMap("/login", uploadMap)
+	control.AddControllerMap("/register", uploadMap)
+
+	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+
+	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
+		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
+	}))
 }

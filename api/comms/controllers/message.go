@@ -5,19 +5,11 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/db/comms"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type MessageController struct {
-	util.SecureController
-}
-
-func init(){
-	auths := make(util.ActionAuth)
-	auths["GET"] = enums.Admin
-
-	util.ProtectMethods(auths)
+	control.APIController
 }
 
 // @Title SendMessage
@@ -30,7 +22,7 @@ func (req *MessageController) Post() {
 	var message comms.Message
 	json.Unmarshal(req.Ctx.Input.RequestBody, &message)
 
-	if message.To == ""{
+	if message.To == "" {
 		message.To = beego.AppConfig.String("defaultEmail")
 	}
 

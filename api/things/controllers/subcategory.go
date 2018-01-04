@@ -1,24 +1,16 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/db/things"
-	"github.com/louisevanderlith/mango/util/enums"
 	"encoding/json"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
-type SubCategoryController struct{
-	util.SecureController
+type SubCategoryController struct {
+	control.APIController
 }
 
-func init(){
-	auths := make(util.ActionAuth)
-	auths["GET"] = enums.User
-
-	util.ProtectMethods(auths)
-}
-
-func (req *SubCategoryController) Get(){
+func (req *SubCategoryController) Get() {
 	var results []*things.SubCategory
 	scat := things.SubCategory{}
 	err := things.Ctx.SubCategory.Read(scat, &results)

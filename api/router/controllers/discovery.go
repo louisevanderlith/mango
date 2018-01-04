@@ -6,10 +6,11 @@ import (
 	"github.com/louisevanderlith/mango/api/router/logic"
 	"github.com/louisevanderlith/mango/util"
 	"strconv"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type DiscoveryController struct {
-	util.SecureController
+	control.APIController
 }
 
 // @Title RegisterAPI

@@ -1,21 +1,13 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/db/things"
-	"github.com/louisevanderlith/mango/util/enums"
 	"encoding/json"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type ModelController struct {
-	util.SecureController
-}
-
-func inti() {
-	auths := make(util.ActionAuth)
-	auths["GET"] = enums.User
-
-	util.ProtectMethods(auths)
+	control.APIController
 }
 
 func (req *ModelController) Get() {

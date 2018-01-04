@@ -5,11 +5,11 @@ import (
 	"fmt"
 
 	"github.com/louisevanderlith/mango/api/secure/logic"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type RegisterController struct {
-	util.UIController
+	control.UIController
 }
 
 // @Title Register

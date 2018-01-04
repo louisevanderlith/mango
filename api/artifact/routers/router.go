@@ -11,9 +11,14 @@ import (
 	"github.com/louisevanderlith/mango/api/artifact/controllers"
 
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/astaxie/beego/plugins/cors"
 )
 
 func init() {
+	setupMapping()
+
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/upload",
 			beego.NSInclude(
@@ -21,5 +26,22 @@ func init() {
 			),
 		),
 	)
+
 	beego.AddNamespace(ns)
+}
+
+func setupMapping() {
+	uploadMap := make(control.MethodMap)
+	uploadMap["POST"] = enums.Owner
+
+	control.AddControllerMap("/upload", uploadMap)
+
+	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+
+	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
+		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
+	}))
 }

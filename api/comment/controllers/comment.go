@@ -1,9 +1,9 @@
 package controllers
 
-import "github.com/louisevanderlith/mango/util"
+import (
+	"github.com/louisevanderlith/mango/util/control"
+)
 
 type CommentController struct {
-	util.SecureController
+	control.APIController
 }
-
-

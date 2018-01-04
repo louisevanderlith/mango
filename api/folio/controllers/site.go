@@ -1,21 +1,13 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
 	"github.com/louisevanderlith/mango/db/folio"
 	"encoding/json"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type SiteController struct {
-	util.SecureController
-}
-
-func init() {
-	auths := make(util.ActionAuth)
-	auths["POST"] = enums.Admin
-
-	util.ProtectMethods(auths)
+	control.APIController
 }
 
 // @Title Register Website

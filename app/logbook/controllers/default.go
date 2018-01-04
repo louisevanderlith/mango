@@ -1,19 +1,11 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type DefaultController struct {
-	util.UIController
-}
-
-func init() {
-	auths := make(util.ActionAuth)
-	auths["GET"] = enums.User
-
-	util.ProtectMethods(auths)
+	control.UIController
 }
 
 func (c *DefaultController) Get() {

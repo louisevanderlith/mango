@@ -1,21 +1,12 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
 	"github.com/louisevanderlith/mango/app/admin/logic"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
 type SiteController struct {
-	util.UIController
-}
-
-func init(){
-	auths := make(util.ActionAuth)
-	auths["GET"] = enums.Admin
-	auths["POST"] = enums.Admin
-
-	util.ProtectMethods(auths)
+	control.UIController
 }
 
 func (c *SiteController) Get() {
