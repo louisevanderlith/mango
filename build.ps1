@@ -25,7 +25,7 @@ function doBuild() {
 
                 $env:GOARCH = 'amd64'
                 $env:GOOS = $goos
-                go build -o $exeName
+                go build -i -o $exeName
     
                 copyFolder $outPath "conf"
                 copyFolder $outPath "static"

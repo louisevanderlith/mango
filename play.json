@@ -1,0 +1,13 @@
+{
+    "programs": [
+        {"path":"api/router", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"path":"api/secure", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"path":"api/things", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"path":"api/artifact", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"path":"api/comms", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"path":"api/folio", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"path":"app/www", "cmd": "bee run"},
+        {"path":"app/admin", "cmd": "bee run"},
+        {"path":"app/gate", "cmd": "go build; ./gate.exe"}
+    ]
+}

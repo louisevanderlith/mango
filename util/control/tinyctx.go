@@ -1,13 +1,14 @@
 package control
 
 import (
-	"github.com/astaxie/beego/context"
-	"strings"
-	"github.com/louisevanderlith/mango/util/enums"
 	"encoding/json"
-	"log"
-	"github.com/louisevanderlith/mango/util"
 	"errors"
+	"log"
+	"strings"
+
+	"github.com/astaxie/beego/context"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type tinyCtx struct {
@@ -88,7 +89,7 @@ func loadRoles(sessionID string) ([]enums.RoleType, error) {
 	var result util.Cookies
 	var finalError error
 
-	contents, statusCode := util.GETMessage("Security.API", "login", "avo", sessionID)
+	contents, statusCode := util.GETMessage("Secure.API", "login", "avo", sessionID)
 	data := util.MarshalToMap(contents)
 
 	if statusCode != 200 {

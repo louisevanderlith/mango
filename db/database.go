@@ -2,6 +2,7 @@ package db
 
 import (
 	"log"
+
 	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/mango/util"
 )
@@ -11,13 +12,13 @@ func SyncDatabase(dbName string) {
 	dbPath, err := util.GetServiceURL(dbName, false)
 
 	if err != nil {
-		log.Printf("BuildDatabase: ", err)
+		log.Println("BuildDatabase:", err)
 	} else {
 		driverName := "postgres"
 		err := orm.RegisterDataBase(name, driverName, dbPath)
 
 		if err != nil {
-			log.Print("Please ensure that you have created your Database.")
+			log.Println("Please ensure that you have created your Database.")
 		} else {
 			orm.RunSyncdb(name, false, false)
 		}

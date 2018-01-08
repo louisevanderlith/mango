@@ -1,14 +1,14 @@
 package control
 
 import (
-	"github.com/astaxie/beego/context"
-	"strings"
-	"github.com/louisevanderlith/mango/util/enums"
-	"log"
-	"net/http"
 	"fmt"
+	"net/http"
 	"net/url"
+	"strings"
+
+	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type MethodMap map[string]enums.RoleType
@@ -33,10 +33,9 @@ func FilterUI(ctx *context.Context) {
 	tinyCtx := newTinyCtx(ctx)
 
 	if !tinyCtx.allowed() {
-		securityURL, err := util.GetServiceURL("Security.API", true)
+		securityURL, err := util.GetServiceURL("Secure.API", true)
 
 		if err == nil {
-			log.Println("FilterUI:", err)
 			req := ctx.Request
 			moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
 			loginURL := fmt.Sprintf("%sv1/login?return=%s", securityURL, url.QueryEscape(moveURL))

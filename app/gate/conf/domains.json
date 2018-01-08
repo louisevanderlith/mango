@@ -30,8 +30,8 @@
         "Type": "Subdomain"
     },
     {
-        "Name": "Security.API",
-        "Address": "security",
+        "Name": "Secure.API",
+        "Address": "secure",
         "Type": "Subdomain"
     },
     {

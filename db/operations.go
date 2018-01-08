@@ -1,12 +1,12 @@
 package db
 
 import (
-	"github.com/astaxie/beego/orm"
 	"reflect"
-	"github.com/astaxie/beego"
 	"strings"
 	"time"
-	"log"
+
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 )
 
 var (

@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestgetFilterValues_Pointers(t *testing.T) {
+func TestGetFilterValues_Pointers(t *testing.T) {
 	input := testTableB{}
 	actual := getFilterValues(input)
 

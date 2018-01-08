@@ -6,8 +6,8 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/db"
-	"gopkg.in/gomail.v2"
 	"github.com/louisevanderlith/mango/util"
+	"gopkg.in/gomail.v2"
 )
 
 type Message struct {
@@ -16,13 +16,13 @@ type Message struct {
 	Email string `orm:"size(128)"`
 	Phone string `orm:"size(15)"`
 	Body  string `orm:"size(1024)"`
-	To string `orm:"null;size(128)"`
+	To    string `orm:"null;size(128)"`
 	Sent  bool   `orm:"default(false)"`
 	Error string `orm:"null;size(2048)"`
 }
 
-func (o Message) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+func (m Message) Validate() (bool, error) {
+	return util.ValidateStruct(m)
 }
 
 func (m Message) SendMessage() error {
@@ -49,8 +49,8 @@ func sendEmail(body, name, to string) error {
 
 	gm := gomail.NewMessage()
 	gm.SetHeader("From", smtpUser)
-	gm.SetHeader("To", to	)
-	gm.SetHeader("Subject", "Contact Us - " + name)
+	gm.SetHeader("To", to)
+	gm.SetHeader("Subject", "Contact Us - "+name)
 	gm.SetBody("text/html", body)
 
 	d := gomail.NewDialer(smtpAddress, smtpPort, smtpUser, smtpPass)
@@ -58,7 +58,7 @@ func sendEmail(body, name, to string) error {
 	err := d.DialAndSend(gm)
 
 	if err != nil {
-		log.Printf("sendMail: ", err)
+		log.Println("sendMail:", err)
 	}
 
 	return err
