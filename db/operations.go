@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"strings"
 	"time"
+	"log"
 )
 
 var (
@@ -128,8 +129,7 @@ func isFieldSet(field interface{}) (result bool) {
 	case reflect.String:
 		strField := field.(string)
 		result = strRule(strField)
-	case reflect.Struct:
-	case reflect.Slice:
+	case reflect.Ptr, reflect.Struct, reflect.Slice:
 		result = true
 	case reflect.Bool:
 		result = boolRule(field)

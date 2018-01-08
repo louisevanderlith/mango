@@ -7,8 +7,8 @@ import (
 
 type Model struct {
 	db.Record
-	Manufacturer *Manufacturer `orm:"rel(fk)"`
 	Name           string `orm:"size(50)"`
+	Manufacturer *Manufacturer `orm:"rel(fk)"`
 }
 
 func (o Model) Validate() (bool, error) {

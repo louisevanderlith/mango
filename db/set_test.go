@@ -15,7 +15,8 @@ func TestSet_Create(t *testing.T) {
 
 	testCtx.TableA.Create(row)
 
-	records, err := testCtx.TableA.Read(testTable{})
+	var records []*testTable
+	err := testCtx.TableA.Read(testTable{}, &records)
 
 	if err != nil {
 		t.Error(err)
@@ -38,7 +39,8 @@ func TestSet_Read(t *testing.T) {
 	rowb.Deleted = true
 	testCtx.TableA.Create(rowb)
 
-	records, err := testCtx.TableA.Read(testTable{})
+	var records []*testTable
+	err := testCtx.TableA.Read(testTable{}, &records)
 
 	if err != nil {
 		t.Error(err)
@@ -59,7 +61,7 @@ func TestSet_ReadOne_Nil(t *testing.T) {
 	row.Deleted = true
 	testCtx.TableA.Create(row)
 
-	record, err := testCtx.TableA.ReadOne(testTable{ Record: &Record{ID:55}})
+	record, err := testCtx.TableA.ReadOne(testTable{Record: Record{ID: 55}})
 
 	if err != nil {
 		t.Error(err)
@@ -76,7 +78,7 @@ func TestSet_ReadOne(t *testing.T) {
 	row.ID = 56
 	testCtx.TableA.Create(row)
 
-	record, err := testCtx.TableA.ReadOne(testTable{ Record: &Record{ID:56}})
+	record, err := testCtx.TableA.ReadOne(testTable{Record: Record{ID: 56}})
 
 	if err != nil {
 		t.Error(err)
@@ -97,7 +99,7 @@ func TestSet_Update(t *testing.T) {
 
 	testCtx.TableA.Update(row)
 
-	record, err := testCtx.TableA.ReadOne(testTable{ Record: &Record{ID:56}})
+	record, err := testCtx.TableA.ReadOne(testTable{Record: Record{ID: 56}})
 
 	if err != nil {
 		t.Error(err)
@@ -117,7 +119,7 @@ func TestSet_Delete(t *testing.T) {
 
 	testCtx.TableA.Create(row)
 
-	record, err := testCtx.TableA.ReadOne(testTable{ Record: &Record{ID:99}})
+	record, err := testCtx.TableA.ReadOne(testTable{Record: Record{ID: 99}})
 
 	if err != nil {
 		t.Error(err)
@@ -133,4 +135,3 @@ func TestSet_Delete(t *testing.T) {
 		t.Error("Record hasn't been set as Deleted")
 	}
 }
-

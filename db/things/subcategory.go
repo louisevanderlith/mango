@@ -7,9 +7,9 @@ import (
 
 type Subcategory struct {
 	db.Record
-	Category    *Category `orm:"rel(fk)"`
 	Name        string    `orm:"size(50)"`
 	Description string    `orm:"size(255)"`
+	Category    *Category `orm:"rel(fk)"`
 }
 
 func (o Subcategory) Validate() (bool, error) {

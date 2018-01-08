@@ -15,15 +15,15 @@ type SubCategoryController struct {
 // @Success 200 {string} string
 // @router / [get]
 func (req *SubCategoryController) Get() {
-	var results []*things.Subcategory
+	var result []*things.Subcategory
 	scat := things.Subcategory{}
-	err := things.Ctx.SubCategory.Read(&scat, &results)
+	err := things.Ctx.SubCategory.Read(&scat, &result)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = map[string]string{"Error": err.Error()}
 	} else {
-		req.Data["json"] = map[string]interface{}{"Data": results}
+		req.Data["json"] = map[string]interface{}{"Data": result}
 	}
 
 	req.ServeJSON()

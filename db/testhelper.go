@@ -12,6 +12,12 @@ type testTable struct {
 	Age int
 }
 
+type testTableB struct {
+	Record
+	Details string
+	Relation *testTable
+}
+
 var testCtx *testContext
 
 func newTestTable() testTable {
