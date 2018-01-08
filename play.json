@@ -1,13 +1,13 @@
 {
     "programs": [
-        {"path":"api/router", "cmd": "bee run -downdoc=true -gendoc=true"},
-        {"path":"api/secure", "cmd": "bee run -downdoc=true -gendoc=true"},
-        {"path":"api/things", "cmd": "bee run -downdoc=true -gendoc=true"},
-        {"path":"api/artifact", "cmd": "bee run -downdoc=true -gendoc=true"},
-        {"path":"api/comms", "cmd": "bee run -downdoc=true -gendoc=true"},
-        {"path":"api/folio", "cmd": "bee run -downdoc=true -gendoc=true"},
-        {"path":"app/www", "cmd": "bee run"},
-        {"path":"app/admin", "cmd": "bee run"},
-        {"path":"app/gate", "cmd": "go build; ./gate.exe"}
+        {"type": "api", "name":"router", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"type": "api", "name":"secure", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"type": "api", "name":"things", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"type": "api", "name":"artifact", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"type": "api", "name":"comms", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"type": "api", "name":"folio", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"type": "app", "name":"www", "cmd": "bee run"},
+        {"type": "app", "name":"admin", "cmd": "bee run"},
+        {"type": "app", "name":"gate", "cmd": "go build; ./gate.exe"}
     ]
 }
