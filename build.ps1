@@ -30,6 +30,9 @@ function doBuild() {
                 copyFolder $outPath "conf"
                 copyFolder $outPath "static"
                 copyFolder $outPath "views"
+
+                copyFile $outPath "host.key"
+                copyFile $outPath "host.cert"
             }
             else {
                 Write-Host 'No main.go found in' $appName -ForegroundColor "red"
@@ -48,6 +51,15 @@ function copyFolder($outPath, $folder){
         $target = $outPath + '\'
 
         Copy-Item -Path $source -Destination $target -Recurse -Force
+    }
+}
+
+function copyFile($outPath, $file){
+    if(Test-Path (".\" + $file)){
+        $source = ".\" + $file
+        $target = $outPath
+
+        Copy-Item $source $target
     }
 }
 
