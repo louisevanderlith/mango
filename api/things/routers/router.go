@@ -11,9 +11,9 @@ import (
 	"github.com/louisevanderlith/mango/api/things/controllers"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/plugins/cors"
 	"github.com/louisevanderlith/mango/util/control"
 	"github.com/louisevanderlith/mango/util/enums"
-	"github.com/astaxie/beego/plugins/cors"
 )
 
 func init() {

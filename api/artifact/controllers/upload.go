@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/api/artifact/logic"
 	"strconv"
+
+	"github.com/louisevanderlith/mango/api/artifact/logic"
 	"github.com/louisevanderlith/mango/db/artifact"
 	"github.com/louisevanderlith/mango/util/control"
 )
@@ -81,7 +82,7 @@ func (req *UploadController) GetFileBytes() {
 // @Description Upload a file
 // @Param    file        form     file    true        "File"
 // @Param	body		body 	artifact.Upload	true		"body for upload content"
-// @Success 200 {string} string
+// @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [post]
 func (req *UploadController) Post() {

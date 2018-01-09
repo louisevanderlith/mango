@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/api/secure/logic"
-	"github.com/louisevanderlith/mango/util"
 	"net/http"
 	"strings"
+
+	"github.com/louisevanderlith/mango/api/secure/logic"
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -12,7 +13,7 @@ type LoginController struct {
 	control.UIController
 }
 
-// @Title GetLogin
+// @Title GetLoginPage
 // @Description Gets the form a user must fill in to login
 // @Param	query	query	string	true	"return URL"
 // @Success 200 {string} string
@@ -35,7 +36,7 @@ func (req *LoginController) Get() {
 // @Title GetCookie
 // @Description Gets the currently logged in user's cookie
 // @Param	path	path	string	true	"return URL"
-// @Success 200 {string} string
+// @Success 200 {map[string]string} map[string]string
 // @router /avo/:sessionID [get]
 func (req *LoginController) GetCookie() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
@@ -76,7 +77,7 @@ func (req *LoginController) Post() {
 
 // @Title Logout
 // @Description Logs out current logged in user session
-// @Success 200 {string} logout success
+// @Success 200 {string} string
 // @router /logout [get]
 func (req *LoginController) Logout() {
 	sessionID := req.Ctx.GetCookie("beegosessionID")

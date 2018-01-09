@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/db/folio"
 	"encoding/json"
+
+	"github.com/louisevanderlith/mango/db/folio"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -10,10 +11,10 @@ type SiteController struct {
 	control.APIController
 }
 
-// @Title Register Website
+// @Title RegisterWebsite
 // @Description Register a Website
-// @Param	body		body 	models.Service	true		"body for service content"
-// @Success 200 {string} string
+// @Param	body		body 	folio.Profile	true		"body for service content"
+// @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [post]
 func (req *SiteController) Post() {
@@ -34,7 +35,7 @@ func (req *SiteController) Post() {
 
 // @Title GetSites
 // @Description Gets all sites
-// @Success 200 {string} string
+// @Success 200 {[]folio.Profile} []folio.Portfolio]
 // @router /:siteName [get]
 func (req *SiteController) Get() {
 	if req.Ctx.Output.Status != 401 {
@@ -56,7 +57,7 @@ func (req *SiteController) Get() {
 // @Title GetSite
 // @Description Gets customer website/profile
 // @Param	siteName			path	string 	true		"customer website name"
-// @Success 200 {string} string
+// @Success 200 {folio.Profile} folio.Profile
 // @router /:siteName [get]
 func (req *SiteController) GetOne() {
 	if req.Ctx.Output.Status != 401 {

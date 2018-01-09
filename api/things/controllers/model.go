@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/db/things"
 	"encoding/json"
+
+	"github.com/louisevanderlith/mango/db/things"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -12,7 +13,7 @@ type ModelController struct {
 
 // @Title GetModel
 // @Description Gets all Models
-// @Success 200 {string} string
+// @Success 200 {[]things.Model} []things.Model
 // @router / [get]
 func (req *ModelController) Get() {
 	var results []*things.Model
@@ -29,6 +30,12 @@ func (req *ModelController) Get() {
 	req.ServeJSON()
 }
 
+// @Title SaveModel
+// @Description Saves a new model
+// @Param	body		body 	things.Model	true		"body for model"
+// @Success 200 {map[string]string} map[string]string
+// @Failure 403 body is empty
+// @router / [post]
 func (req *ModelController) Post() {
 	var obj things.Model
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)

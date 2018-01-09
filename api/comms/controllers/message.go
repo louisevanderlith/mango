@@ -14,8 +14,8 @@ type MessageController struct {
 
 // @Title SendMessage
 // @Description Sends a Message
-// @Param	body		body 	logic.Message	true		"body for message content"
-// @Success 200 {string} string
+// @Param	body		body 	comms.Message	true		"body for message content"
+// @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [post]
 func (req *MessageController) Post() {
@@ -40,7 +40,7 @@ func (req *MessageController) Post() {
 
 // @Title GetMessages
 // @Description Gets all Messages
-// @Success 200 {string} string
+// @Success 200 {[]comms.Message]} []comms.Message]
 // @router / [get]
 func (req *MessageController) Get() {
 

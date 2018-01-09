@@ -12,7 +12,7 @@ type RegisterController struct {
 	control.UIController
 }
 
-// @Title Register
+// @Title GetRegisterPage
 // @Description Gets the form a user must fill in to register
 // @Success 200 {string} string
 // @router / [get]

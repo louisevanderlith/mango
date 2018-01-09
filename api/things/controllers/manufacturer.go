@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/db/things"
 	"encoding/json"
+
+	"github.com/louisevanderlith/mango/db/things"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -12,7 +13,7 @@ type ManufacturerController struct {
 
 // @Title GetManufacturer
 // @Description Gets all Manufacturers
-// @Success 200 {string} string
+// @Success 200 {[]things.Manufacturer} []things.Manufacturer
 // @router / [get]
 func (req *ManufacturerController) Get() {
 	var results []*things.Manufacturer
@@ -29,6 +30,12 @@ func (req *ManufacturerController) Get() {
 	req.ServeJSON()
 }
 
+// @Title SaveManufacturer
+// @Description Saves a new manufacturer
+// @Param	body		body 	things.Manufacturer	true		"body for manufacturer"
+// @Success 200 {map[string]string} map[string]string
+// @Failure 403 body is empty
+// @router / [post]
 func (req *ManufacturerController) Post() {
 	var obj things.Manufacturer
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
