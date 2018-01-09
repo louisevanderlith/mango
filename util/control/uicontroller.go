@@ -1,6 +1,7 @@
 package control
 
 import (
+	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/util"
 )
 
@@ -22,4 +23,5 @@ func (ctrl *UIController) Setup(name string) {
 	ctrl.Data["HasScript"] = true
 	ctrl.Data["ScriptName"] = name + ".entry.js"
 	ctrl.Data["InstanceKey"] = util.GetInstanceKey()
+	ctrl.Data["RunMode"] = beego.BConfig.RunMode
 }
