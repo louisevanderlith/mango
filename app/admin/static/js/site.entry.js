@@ -1,5 +1,6 @@
 import FormState from './formState.js';
-import lookup from './pathLookup';
+import * as lookup from './pathLookup';
+import { buildPath } from './pathLookup';
 
 const form = {
     panel: $('#pnlEdit'),
@@ -11,54 +12,63 @@ const form = {
     url: $('#txtURL'),
     imageURL: $('#txtImage'),
     styleSheet: $('#txtStylesheet'),
-    socialLinks: $('#socialLinks'),
-    portfolio: $('#portfolioItems'),
-    aboutSections: $('#aboutItems'),
-    saveButton: $('#btnSave')
+    socialLinks: $('#lstSocial'),
+    portfolio: $('#lstPortfolio'),
+    aboutSections: $('#lstAbout'),
+    saveButton: $('#btnSave'),
+    editButton: $('#btnEdit')
 };
 
 var fs = {};
 var currentID = 0;
 
 $(document).ready(() => {
-    form.panel.hide();
     fs = new FormState(form.saveButton);
     fs.submitDisabled(true);
+
+    form.panel.hide();
 
     registerEvents();
 });
 
 function registerEvents() {
     form.saveButton.on('click', trySave);
+    form.editButton.on('click', edit)
 
     let validForm = form.id.validator();
     validForm.on('invalid.bs.validator', fs.onValidate);
     validForm.on('valid.bs.validator', fs.onValidate);
 }
 
-function edit(id) {
-    currentID = id;
+function edit(e) {
+    currentID = $(e.target).attr('data-rowid');
 
-    $.ajax({
-        url: lookup.buildPath('Folio.API', "site", currentID),
-        type: "GET",
-        contentType: "application/json; charset=utf-8",
-        cache: false,
-        success: fillForm,
-        error: function (err) {
-            // Fail message
-            $('#success').html("<div class='alert alert-danger'>");
-            $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                .append("</button>");
-            $('#success > .alert-danger').append($("<strong>").text(err));
-            $('#success > .alert-danger').append('</div>');
+    if (currentID > 0) {
+        lookup.buildPath('Folio.API', "site", currentID).then((buildPath) => {
+            $.ajax({
+                url: buildPath,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                cache: false,
+                success: fillForm,
+                error: function (obj) {
+                    // Fail message
+                    $('#success').html("<div class='alert alert-danger'>");
+                    $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+                        .append("</button>");
+                    $('#success > .alert-danger').append($("<strong>").text(obj.Error));
+                    $('#success > .alert-danger').append('</div>');
 
-            form.panel.hide();
-        }
-    });
+                    form.panel.hide();
+                }
+            });
+        });
+    }
 }
 
-function fillForm(data){
+function fillForm(obj) {
+    const data = obj.Data;
+    
     form.title.val(data.Title);
     form.description.val(data.Description);
     form.email.val(data.ContactEmail);
@@ -70,6 +80,8 @@ function fillForm(data){
     setList(form.socialLinks, data.SocialLinks);
     setList(form.portfolio, data.PortfolioItems);
     setList(form.aboutSections, data.AboutSections);
+
+    form.panel.show();
 }
 
 function trySave() {
@@ -128,12 +140,12 @@ function submitSite() {
     });
 }
 
-function getList(elem){
+function getList(elem) {
     let result = [];
     const children = elem.children;
     const childLen = children.length;
 
-    for(let i = 0; i < childLen; i++){
+    for (let i = 0; i < childLen; i++) {
         let child = children[i];
         result.push(child.text);
     }
@@ -141,11 +153,11 @@ function getList(elem){
     return result;
 }
 
-function setList(elem, data){
+function setList(elem, data) {
     const dataLen = data.length;
     let items = [];
 
-    for(let i = 0; i < dataLen; i++){
+    for (let i = 0; i < dataLen; i++) {
         let row = `<span class="list-group-item">${data[i]}</span>`;
         items.push(row);
     }

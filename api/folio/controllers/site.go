@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"strconv"
 
 	"github.com/louisevanderlith/mango/db/folio"
 	"github.com/louisevanderlith/mango/util/control"
@@ -56,14 +57,19 @@ func (req *SiteController) Get() {
 
 // @Title GetSite
 // @Description Gets customer website/profile
-// @Param	siteName			path	string 	true		"customer website name"
+// @Param	site			path	string 	true		"customer website name OR ID"
 // @Success 200 {folio.Profile} folio.Profile
-// @router /:siteName [get]
+// @router /:site [get]
 func (req *SiteController) GetOne() {
 	if req.Ctx.Output.Status != 401 {
-		siteName := req.Ctx.Input.Param(":siteName")
+		siteParam := req.Ctx.Input.Param(":site")
 		msg := folio.Profile{}
-		msg.Title = siteName
+
+		if id, err := strconv.ParseInt(siteParam, 10, 32); err == nil {
+			msg.ID = id
+		} else {
+			msg.Title = siteParam
+		}
 
 		result, err := folio.Ctx.Profile.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections")
 

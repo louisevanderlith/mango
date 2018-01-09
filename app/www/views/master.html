@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    {{ if .RunMode != "dev"}}
+    {{ if eq .RunModeDEV "dev"}}
     <script>
         window.dataLayer = window.dataLayer || [];
 

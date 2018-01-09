@@ -26,7 +26,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:SiteController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:SiteController"],
 		beego.ControllerComments{
 			Method: "GetOne",
-			Router: `/:siteName`,
+			Router: `/:site`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
