@@ -1,6 +1,8 @@
 package db
 
 import (
+	"errors"
+	"fmt"
 	"reflect"
 )
 
@@ -19,7 +21,9 @@ func NewSet(t IRecord) *Set {
 
 func (set *Set) Create(item IRecord) (id int64, err error) {
 	t := reflect.TypeOf(item)
-	if t == set.t {
+	elem := t.Elem()
+
+	if elem == set.t {
 		var valid bool
 		valid, err = item.Validate()
 
@@ -32,6 +36,9 @@ func (set *Set) Create(item IRecord) (id int64, err error) {
 				set.items[id] = item
 			}
 		}
+	} else {
+		msg := fmt.Sprintf("%s is not of type %s", elem, set.t)
+		err = errors.New(msg)
 	}
 
 	return id, err

@@ -1,14 +1,14 @@
 package folio
 
 import (
-	"github.com/louisevanderlith/mango/db"
 	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/mango/db"
 )
 
 type Context struct {
-	About *db.Set
-	Portfolio *db.Set
-	Profile *db.Set
+	About      *db.Set
+	Portfolio  *db.Set
+	Profile    *db.Set
 	SocialLink *db.Set
 }
 
@@ -17,13 +17,13 @@ var Ctx *Context
 func NewDatabase() {
 	dbName := "Folio.DB"
 
-	registerModels();
+	registerModels()
 	db.SyncDatabase(dbName)
 
 	Ctx = &Context{
-		About: db.NewSet(About{}),
-		Portfolio: db.NewSet(Portfolio{}),
-		Profile: db.NewSet(Profile{}),
+		About:      db.NewSet(About{}),
+		Portfolio:  db.NewSet(Portfolio{}),
+		Profile:    db.NewSet(Profile{}),
 		SocialLink: db.NewSet(SocialLink{}),
 	}
 }

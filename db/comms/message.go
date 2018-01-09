@@ -26,7 +26,7 @@ func (m Message) Validate() (bool, error) {
 }
 
 func (m Message) SendMessage() error {
-	if beego.BConfig.RunMode == "dev" {
+	if beego.BConfig.RunMode != "dev" {
 		body := buildMessage(m)
 		sendErr := sendEmail(body, m.Name, m.To)
 

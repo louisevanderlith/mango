@@ -9,12 +9,12 @@ type testContext struct {
 type testTable struct {
 	Record
 	Name string
-	Age int
+	Age  int
 }
 
 type testTableB struct {
 	Record
-	Details string
+	Details  string
 	Relation *testTable
 }
 
@@ -23,14 +23,14 @@ var testCtx *testContext
 func newTestTable() testTable {
 	return testTable{
 		Record: Record{
-			ID: 0,
-			Deleted: false,
+			ID:         0,
+			Deleted:    false,
 			CreateDate: time.Now(),
 		},
 	}
 }
 
-func init(){
+func init() {
 	testCtx = &testContext{
 		TableA: NewSet(testTable{}),
 	}

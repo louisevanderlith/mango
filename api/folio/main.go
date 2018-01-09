@@ -28,7 +28,7 @@ func main() {
 	_, err := srv.Register(port)
 
 	if err != nil {
-		log.Printf("Register: ", err)
+		log.Print("Register: ", err)
 	} else {
 		folio.NewDatabase()
 		beego.Run()

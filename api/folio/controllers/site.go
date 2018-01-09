@@ -36,7 +36,7 @@ func (req *SiteController) Post() {
 // @Title GetSites
 // @Description Gets all sites
 // @Success 200 {[]folio.Profile} []folio.Portfolio]
-// @router /:siteName [get]
+// @router / [get]
 func (req *SiteController) Get() {
 	if req.Ctx.Output.Status != 401 {
 		var results []*folio.Profile

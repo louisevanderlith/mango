@@ -7,7 +7,7 @@ import (
 
 type Context struct {
 	Upload *db.Set
-	BLOB *db.Set
+	BLOB   *db.Set
 }
 
 var Ctx *Context
@@ -20,7 +20,7 @@ func NewDatabase() {
 
 	Ctx = &Context{
 		Upload: db.NewSet(Upload{}),
-		BLOB: db.NewSet(Blob{}),
+		BLOB:   db.NewSet(Blob{}),
 	}
 }
 

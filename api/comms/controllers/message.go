@@ -14,7 +14,7 @@ type MessageController struct {
 
 // @Title SendMessage
 // @Description Sends a Message
-// @Param	body		body 	comms.Message	true		"body for message content"
+// @Param	body	body	comms.Message	true	"body for message content"
 // @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [post]
