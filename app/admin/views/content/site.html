@@ -46,71 +46,74 @@
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="txtTitle">Title</label>
-                        <input type="text" id="txtTitle"/>
+                        <input class="form-control" type="text" id="txtTitle" placeholder="Title" required data-validation-required-message="Please enter the Title"/>
                         <p class="help-block with-errors text-danger"></p>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="txtDescription">Description</label>
-
+                        <textarea class="form-control" id="txtDescription" placeholder="Description" required data-validation-required-message="Please enter the Description" cols="40" rows="5"></textarea>
                         <p class="help-block with-errors text-danger"></p>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="txtEmail">Email Address</label>
-
+                        <input class="form-control" type="email" id="txtEmail" required data-validation-required-message="Please enter the email address."/>
                         <p class="help-block with-errors text-danger"></p>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="txtPhone">Contact Number</label>
-
+                        <input class="form-control" type="tel" id="txtPhone" minlength="9" maxlength="10" required data-validation-required-message="Please enter the phone number."/>
                         <p class="help-block with-errors text-danger"></p>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="txtURL">URL</label>
-
+                        <input class="form-control" type="url" id="txtURL" required data-validation-required-message="Please enter this site's URL"/> 
                         <p class="help-block with-errors text-danger"></p>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
-                        <label for="txtImage">Logo</label>
-
+                        <label for="uplImage">Logo</label>
+                        <input class="form-control" type="image" id="uplImage" required data-validation-required-message="Please provide an image." />
                         <p class="help-block with-errors text-danger"></p>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="txtStylesheet">Stylesheet Name</label>
-
+                        <input class="form-control" type="text" id="txtStylesheet" required data-validation-required-message="Please provide the stylesheet name." />
                         <p class="help-block with-errors text-danger"></p>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="lstSocial">Social Media Links</label>
-
-                        <p class="help-block with-errors text-danger"></p>
+                        <button type="button" class="btn btn-info btn-sm" id="btnAddSocial">Add Row</button>
+                        <ul id="lstSocial" class="list-group">
+                        </ul>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="lstPortfolio">Portfolio</label>
-
-                        <p class="help-block with-errors text-danger"></p>
+                        <button type="button" class="btn btn-info btn-sm" id="btnAddPortfolio">Add Row</button>
+                        <ul id="lstPortfolio" class="list-group">
+                        </ul>
                     </div>
                 </div>
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label for="lstAbout">About</label>
-
-                        <p class="help-block with-errors text-danger"></p>
+                        <button type="button" class="btn btn-info btn-sm" id="btnAddParagraph">Add Row</button>
+                        <ul id="lstAbout" class="list-group">
+                        </ul>
                     </div>
                 </div>
                 <br>
