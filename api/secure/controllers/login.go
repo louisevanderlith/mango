@@ -1,9 +1,6 @@
 package controllers
 
 import (
-	"net/http"
-	"strings"
-
 	"github.com/louisevanderlith/mango/api/secure/logic"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
@@ -15,30 +12,18 @@ type LoginController struct {
 
 // @Title GetLoginPage
 // @Description Gets the form a user must fill in to login
-// @Param	query	query	string	true	"return URL"
 // @Success 200 {string} string
 // @router / [get]
 func (req *LoginController) Get() {
-	sessionID := req.Ctx.GetCookie("beegosessionID")
-	hasAvo := util.HasAvo(sessionID)
-
-	if !hasAvo {
-		req.Setup("login")
-	} else {
-		ret := req.Ctx.Input.Query("return")
-
-		if ret != "" && strings.HasPrefix(ret, "http") {
-			req.Redirect(ret, http.StatusTemporaryRedirect)
-		}
-	}
+	req.Setup("login")
 }
 
-// @Title GetCookie
-// @Description Gets the currently logged in user's cookie
-// @Param	path	path	string	true	"return URL"
+// @Title GetAvo
+// @Description Gets the currently logged in user's avo
+// @Param	path	path	string	true	"sessionID"
 // @Success 200 {map[string]string} map[string]string
 // @router /avo/:sessionID [get]
-func (req *LoginController) GetCookie() {
+func (req *LoginController) GetAvo() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
 	hasAvo := util.HasAvo(sessionID)
 
@@ -77,10 +62,11 @@ func (req *LoginController) Post() {
 
 // @Title Logout
 // @Description Logs out current logged in user session
+// @Param	path	path	string	true	"sessionID"
 // @Success 200 {string} string
-// @router /logout [get]
+// @router /logout/:sessionID [get]
 func (req *LoginController) Logout() {
-	sessionID := req.Ctx.GetCookie("beegosessionID")
+	sessionID := req.Ctx.Input.Param(":sessionID")
 	util.DestroyAvo(sessionID)
 
 	req.Data["json"] = "Logout Success"

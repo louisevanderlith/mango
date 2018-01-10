@@ -25,7 +25,7 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/secure/controllers:LoginController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/secure/controllers:LoginController"],
 		beego.ControllerComments{
-			Method: "GetCookie",
+			Method: "GetAvo",
 			Router: `/avo/:sessionID`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
@@ -34,7 +34,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/secure/controllers:LoginController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/secure/controllers:LoginController"],
 		beego.ControllerComments{
 			Method: "Logout",
-			Router: `/logout`,
+			Router: `/logout/:sessionID`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
