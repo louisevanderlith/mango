@@ -25,7 +25,7 @@ func GetOptimizeType(name string) OptimizeType {
 	var result OptimizeType
 
 	for k, v := range optimizeTypes {
-		if strings.ToUpper(name) == v {
+		if strings.ToUpper(name) == strings.ToUpper(v) {
 			result = OptimizeType(k)
 			break
 		}
@@ -33,4 +33,3 @@ func GetOptimizeType(name string) OptimizeType {
 
 	return result
 }
-

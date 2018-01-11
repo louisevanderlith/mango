@@ -1,49 +1,68 @@
 package logic
 
 import (
-	"mime/multipart"
 	"bytes"
-	"bufio"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
+	"mime/multipart"
+
+	"github.com/louisevanderlith/mango/db"
 	"github.com/louisevanderlith/mango/db/artifact"
 	"github.com/louisevanderlith/mango/util/enums"
-	"fmt"
-	"errors"
-	"github.com/louisevanderlith/mango/db"
 )
 
-func SaveFile(file multipart.File, header *multipart.FileHeader) (err error) {
-	var b bytes.Buffer
-	dst := bufio.NewWriter(&b)
-	defer dst.Flush()
+type InfoHead struct {
+	For      string
+	ItemID   int64
+	ItemName string
+}
 
-	_, err = io.Copy(dst, file)
+func GetInfoHead(header string) InfoHead {
+	var result InfoHead
+	err := json.Unmarshal([]byte(header), &result)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return result
+}
+
+func SaveFile(file multipart.File, header *multipart.FileHeader, info InfoHead) (id int64, err error) {
+	var b bytes.Buffer
+	_, err = io.Copy(&b, file)
 
 	if err == nil {
 		blob := new(artifact.Blob)
 		blob.SetData(b.Bytes())
 
-		targetType := enums.GetOptimizeType("logo")
+		targetType := enums.GetOptimizeType(info.For)
 		err = blob.OptimizeFor(targetType)
-		fmt.Println(header.Header)
 
 		if err == nil {
 			upload := artifact.Upload{
 				BLOB:     blob,
-				Size:     b.Len(),
+				Size:     len(blob.Data),
 				Name:     header.Filename,
-				ItemID:   0,
+				ItemID:   info.ItemID,
+				ItemName: info.ItemName,
 				MimeType: "image/png",
 			}
 
-			artifact.Ctx.Upload.Create(&upload)
+			_, err = artifact.Ctx.BLOB.Create(blob)
+
+			if err == nil {
+				id, err = artifact.Ctx.Upload.Create(&upload)
+			}
 		}
 	}
 
-	return err
+	return id, err
 }
 
-func GetFile(id int64) (result artifact.Upload, err error) {
+func GetFile(id int64) (result *artifact.Upload, err error) {
 	if id > 0 {
 		filter := artifact.Upload{}
 		filter.ID = id
@@ -51,7 +70,7 @@ func GetFile(id int64) (result artifact.Upload, err error) {
 		var record db.IRecord
 		record, err = artifact.Ctx.Upload.ReadOne(&filter)
 
-		result = record.(artifact.Upload)
+		result = record.(*artifact.Upload)
 	} else {
 		err = errors.New("ID is invalid.")
 	}
@@ -59,7 +78,7 @@ func GetFile(id int64) (result artifact.Upload, err error) {
 	return result, err
 }
 
-func getBLOB(id int64) (result artifact.Upload, err error) {
+func getUpload(id int64) (result *artifact.Upload, err error) {
 	if id > 0 {
 		filter := artifact.Upload{}
 		filter.ID = id
@@ -67,7 +86,7 @@ func getBLOB(id int64) (result artifact.Upload, err error) {
 		var record db.IRecord
 		record, err = artifact.Ctx.Upload.ReadOne(&filter, "BLOB")
 
-		result = record.(artifact.Upload)
+		result = record.(*artifact.Upload)
 	} else {
 		err = errors.New("ID is invalid.")
 	}
@@ -76,7 +95,7 @@ func getBLOB(id int64) (result artifact.Upload, err error) {
 }
 
 func GetFileOnly(id int64) (result []byte, filename string, err error) {
-	upload, err := getBLOB(id)
+	upload, err := getUpload(id)
 
 	if err == nil {
 		result = upload.BLOB.GetData()

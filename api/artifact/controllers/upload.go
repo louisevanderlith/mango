@@ -86,18 +86,23 @@ func (req *UploadController) GetFileBytes() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *UploadController) Post() {
+	var id int64
+
+	info := req.GetString("info")
+	infoHead := logic.GetInfoHead(info)
+
 	file, header, err := req.GetFile("file")
 
-	if err != nil {
+	if err == nil {
 		defer file.Close()
-		err = logic.SaveFile(file, header)
+		id, err = logic.SaveFile(file, header, infoHead)
 	}
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = map[string]string{"Error": err.Error()}
 	} else {
-		req.Data["json"] = map[string]string{"Data": "File Saved"}
+		req.Data["json"] = map[string]interface{}{"Data": id}
 	}
 
 	req.ServeJSON()

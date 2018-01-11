@@ -1,17 +1,19 @@
 package artifact
 
 import (
-	"github.com/louisevanderlith/mango/db"
-	"github.com/disintegration/imaging"
-	"github.com/louisevanderlith/mango/util/enums"
-	"image"
-	"bytes"
 	"bufio"
+	"bytes"
+	"image"
+
+	"github.com/disintegration/imaging"
+	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
+// Blob - We have to manually change the 'DATA' column to 'bytea' as Beego doesn't support this type.
 type Blob struct {
 	db.Record
-	Data string
+	Data string `orm:"type(bytea)"`
 }
 
 type optmizer map[enums.OptimizeType]func(data image.Image) []byte
@@ -45,7 +47,7 @@ func (o *Blob) GetData() []byte {
 	return []byte(o.Data)
 }
 
-func (o *Blob)SetData(blob []byte) {
+func (o *Blob) SetData(blob []byte) {
 	o.Data = string(blob)
 }
 

@@ -2,10 +2,6 @@ let pastNames = {
     "Router.API": "https://router.localhost/v1/discovery/"
 };
 
-async function getServiceURL(serviceName) {
-    return pastNames[serviceName] || await doLookup(serviceName);
-}
-
 async function getRouterPath(serviceName) {
     const routerURL = await getServiceURL("Router.API");
 
@@ -15,7 +11,7 @@ async function getRouterPath(serviceName) {
 function doLookup(serviceName) {
     return new Promise(async (resolve) => {
         $.ajax({
-            url:  await getRouterPath(serviceName),
+            url: await getRouterPath(serviceName),
             type: "GET",
             contentType: "application/json; charset=utf-8",
             cache: true,
@@ -27,12 +23,18 @@ function doLookup(serviceName) {
     });
 }
 
+export async function getServiceURL(serviceName) {
+    return pastNames[serviceName] || await doLookup(serviceName);
+}
+
 export async function buildPath(serviceName, controller, params) {
     let url = await getServiceURL(serviceName);
     let result = `${url}v1/${controller}`;
 
-    for (let i = 0; i < params.length; i++) {
-        result += "/" + params[i];
+    if (params) {
+        for (let i = 0; i < params.length; i++) {
+            result += "/" + params[i];
+        }
     }
 
     return result;

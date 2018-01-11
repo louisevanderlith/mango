@@ -7,12 +7,12 @@ import (
 
 type Profile struct {
 	db.Record
-	Title          string        `orm:"size(128)"`
-	Description    string        `orm:"size(512)"`
-	ContactEmail   string        `orm:"size(128)"`
-	ContactPhone   string        `orm:"size(20)"`
-	URL            string        `orm:"size(128)"`
-	ImageURL       string        `orm:"size(85)"`
+	Title          string `orm:"size(128)"`
+	Description    string `orm:"size(512)"`
+	ContactEmail   string `orm:"size(128)"`
+	ContactPhone   string `orm:"size(20)"`
+	URL            string `orm:"size(128)"`
+	ImageID        int64
 	StyleSheet     string        `orm:"size(50)"`
 	SocialLinks    []*SocialLink `orm:"reverse(many)"`
 	PortfolioItems []*Portfolio  `orm:"reverse(many)"`
