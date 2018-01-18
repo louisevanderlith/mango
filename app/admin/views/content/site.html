@@ -1,129 +1,46 @@
-<div class="card mb-3">
-    <div class="card-header">
-        <i class="fa fa-table"></i> Sites
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Actions</th>
-                    </tr>
-                </tfoot>
-                <tbody>
-                    {{range $key, $val := .data}}
-                    <tr>
-                        <td>{{$val.ID}}</td>
-                        <td>{{$val.Title}}</td>
-                        <td>{{$val.Description}}</td>
-                        <td>
-                            <button type="button" class="btn btn-primary" id="btnEdit" data-rowID="{{$val.ID}}">Edit</button>
-                        </td>
-                    </tr>
-                    {{end}}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="card-footer small text-muted">Updated a while ago.</div>
-</div>
-<div class="container" id="pnlEdit">
-    <div class="card card-register mx-auto mt-5">
-        <div class="card-header">Edit website details</div>
-        <div class="card-body">
-            <form id="frmSite" role="form" data-toggle="validator">
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtTitle">Title</label>
-                        <input class="form-control" type="text" id="txtTitle" placeholder="Title" required data-validation-required-message="Please enter the Title"/>
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
+<div class="row">
+    <div class="col-12">
+        <h1>Sites</h1>
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-table"></i> Sites
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            {{range $key, $val := .data}}
+                            <tr>
+                                <td>{{$val.ID}}</td>
+                                <td>{{$val.Title}}</td>
+                                <td>{{$val.Description}}</td>
+                                <td>
+                                    <a href="/site/{{$val.ID}}" class="btn btn-primary">Edit</a>
+                                    <!--<button type="button" class="btn btn-primary" id="btnEdit" data-rowID="{{$val.ID}}" data-toggle="modal" data-target="pnlEdit">Edit</button>-->
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
                 </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtDescription">Description</label>
-                        <textarea class="form-control" id="txtDescription" placeholder="Description" required data-validation-required-message="Please enter the Description" cols="40" rows="5"></textarea>
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtEmail">Email Address</label>
-                        <input class="form-control" type="email" id="txtEmail" required data-validation-required-message="Please enter the email address."/>
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtPhone">Contact Number</label>
-                        <input class="form-control" type="tel" id="txtPhone" minlength="9" maxlength="10" required data-validation-required-message="Please enter the phone number."/>
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtURL">URL</label>
-                        <input class="form-control" type="url" id="txtURL" required data-validation-required-message="Please enter this site's URL"/> 
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="uplImage">Logo</label>
-                        <div id="imageHolder">
-                            <!-- Either display the image OR allow user to select image.-->
-                        </div>
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtStylesheet">Stylesheet Name</label>
-                        <input class="form-control" type="text" id="txtStylesheet" required data-validation-required-message="Please provide the stylesheet name." />
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="lstSocial">Social Media Links</label>
-                        <button type="button" class="btn btn-info btn-sm" id="btnAddSocial">Add Row</button>
-                        <ul id="lstSocial" class="list-group">
-                        </ul>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="lstPortfolio">Portfolio</label>
-                        <button type="button" class="btn btn-info btn-sm" id="btnAddPortfolio">Add Row</button>
-                        <ul id="lstPortfolio" class="list-group">
-                        </ul>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="lstAbout">About</label>
-                        <button type="button" class="btn btn-info btn-sm" id="btnAddParagraph">Add Row</button>
-                        <ul id="lstAbout" class="list-group">
-                        </ul>
-                    </div>
-                </div>
-                <br>
-                <div class="form-group">
-                    <button type="button" class="btn btn-success btn-lg" id="btnSave">Save</button>
-                </div>
-            </form>
-            <div id="success"></div>
+            </div>
+            <div class="card-footer small text-muted">Updated a while ago.</div>
         </div>
     </div>
 </div>

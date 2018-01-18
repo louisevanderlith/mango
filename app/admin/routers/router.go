@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"github.com/louisevanderlith/mango/app/admin/controllers"
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/app/admin/controllers"
 	"github.com/louisevanderlith/mango/util/control"
 	"github.com/louisevanderlith/mango/util/enums"
 )
@@ -17,6 +17,7 @@ func init() {
 	beego.Router("/model", &controllers.ModelController{})
 	beego.Router("/subcategory", &controllers.SubCategoryController{})
 	beego.Router("/site", &controllers.SiteController{})
+	beego.Router("/site/:id([0-9]+)", &controllers.SiteController{}, "get:GetEdit")
 }
 
 func setupMapping() {

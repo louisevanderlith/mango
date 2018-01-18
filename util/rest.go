@@ -1,13 +1,13 @@
 package util
 
 import (
-	"encoding/json"
-	"log"
-	"fmt"
-	"strings"
-	"net/http"
-	"io/ioutil"
 	"bytes"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strings"
 )
 
 func GETMessage(serviceName, controller string, params ...string) ([]byte, int) {
