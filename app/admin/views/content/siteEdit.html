@@ -50,10 +50,9 @@
                                 <div class="form-group floating-label-form-group controls">
                                     <label for="uplPortfolioImg{{.data.ImageID}}">Icon</label>
                                     <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Portfolio" data-id="{{.data.ImageID}}"
-                                        accept=".jpg, .jpeg, .png" id="uplPortfolioImg{{.data.ImageID}}" placeholder="Portfolio Image"
-                                        required data-validation-required-message="Please provide this item's image." />
-                                    <input {{if not .data.ImageURL}} hidden {{end}} type="image" id="uplPortfolioImg{{.data.ImageID}}" class="form-control" src="{{.data.ImageURL}}"
-                                        alt="portfolio image" />
+                                    accept=".jpg, .jpeg, .png" id="uplPortfolioImg{{.data.ImageID}}" placeholder="Portfolio Image"
+                                    required data-validation-required-message="Please provide this item's image." />
+                                    <input {{if not .data.ImageURL}} hidden {{end}} type="image" id="uplPortfolioImg{{.data.ImageID}}" class="img-thumbnail" src="{{.data.ImageURL}}" alt="portfolio image" />
                                     <p class="help-block with-errors text-danger"></p>
                                 </div>
                             </div>
@@ -112,8 +111,7 @@
                                         <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Portfolio" data-id="{{$key}}" accept=".jpg, .jpeg, .png"
                                             id="uplPortfolioImg{{$key}}" placeholder="Portfolio Image" required data-validation-required-message="Please provide this item's image."
                                         />
-                                        <input {{if not $val.ImageURL}} hidden {{end}}type="image" id="uplPortfolioImg{{$key}}" class="form-control" src="{{$val.ImageURL}}"
-                                            alt="portfolio image" />
+                                        <input {{if not $val.ImageURL}} hidden {{end}} type="image" id="uplPortfolioImg{{$key}}" class="" src="{{$val.ImageURL}}" alt="portfolio image" />
                                         <p class="help-block with-errors text-danger"></p>
                                     </div>
                                     <div class="form-group floating-label-form-group controls">
@@ -156,8 +154,8 @@
                 </div>
             </form>
             <div id="success"></div>
+            <a class="btn btn-secondary" href="/site">Back</a>
+            <button type="button" class="btn btn-primary" btnSave>Save</button>
         </div>
-        <a class="btn btn-secondary" href="/sites">Back</a>
-        <button type="button" class="btn btn-primary" btnSave>Save</button>
     </div>
 </div>

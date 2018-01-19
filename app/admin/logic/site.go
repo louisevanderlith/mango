@@ -101,19 +101,23 @@ func GetSite(siteID int64) (result BasicSite, finalErr error) {
 }
 
 func (obj *BasicSite) setImageURLs() {
+	if uploadURL == "" {
+		setUploadURL()
+	}
+
+	obj.ImageURL = uploadURL + strconv.FormatInt(obj.ImageID, 10)
+
+	for _, v := range obj.PortfolioItems {
+		v.ImageURL = uploadURL + strconv.FormatInt(v.ImageID, 10)
+	}
+}
+
+func setUploadURL() {
 	url, err := util.GetServiceURL("Artifact.API", true)
 
 	if err != nil {
 		log.Print("setImageURLs:", err)
 	}
 
-	if uploadURL == "" {
-		uploadURL = url + "/v1/upload/file/"
-	}
-
-	obj.ImageURL = url + strconv.FormatInt(obj.ImageID, 10)
-
-	for _, v := range obj.PortfolioItems {
-		v.ImageURL = url + strconv.FormatInt(v.ImageID, 10)
-	}
+	uploadURL = url + "v1/upload/file/"
 }

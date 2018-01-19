@@ -11,6 +11,8 @@ type Set struct {
 	items map[int64]IRecord
 }
 
+// NewSet creates an instance of a Set, which enables type checking and keeping track of records
+// # .NewSet(obj.Record{})
 func NewSet(t IRecord) *Set {
 	result := &Set{}
 	result.t = reflect.TypeOf(t)
@@ -19,6 +21,8 @@ func NewSet(t IRecord) *Set {
 	return result
 }
 
+// Create validates the model and then saves that record to the database.
+// # id, err := folio.Ctx.Profile.Create(&profile)
 func (set *Set) Create(item IRecord) (id int64, err error) {
 	t := reflect.TypeOf(item)
 	elem := t.Elem()
@@ -44,6 +48,10 @@ func (set *Set) Create(item IRecord) (id int64, err error) {
 	return id, err
 }
 
+// ReadOne reads a single record from the database
+// filter: An object that has the fields populated that you want to filter on (Filters will always be 'AND')
+// related: Relationships are lazy-loaded, to include nested items you must specify them.
+// # record, err := testCtx.Profile.ReadOne(Profile{ID: 56}, "User")
 func (set *Set) ReadOne(filter IRecord, related ...string) (IRecord, error) {
 
 	err := read(filter, related...)
@@ -59,6 +67,12 @@ func (set *Set) ReadOne(filter IRecord, related ...string) (IRecord, error) {
 	return filter, err
 }
 
+// Read reads all records that fit the filter provided
+// filter: An object that has the fields populated that you want to filter on (Filters will always be 'AND')
+// container: The result set will populate the container.
+// # var results []*artifact.Upload
+// # upl := artifact.Upload{Type: "JPEG"}
+// # err := artifact.Ctx.Upload.Read(upl, &results)
 func (set *Set) Read(filter IRecord, container interface{}) error {
 	err := readAll(filter, container)
 
@@ -78,6 +92,10 @@ func (set *Set) Read(filter IRecord, container interface{}) error {
 	return err
 }
 
+// Update saves the provided record to the database.
+// The record must exist in the database.
+// item: The record you want to update.
+// #  testCtx.TableA.Update(row)
 func (set *Set) Update(item IRecord) {
 	id := item.GetID()
 	_, ok := set.items[id]
@@ -88,6 +106,11 @@ func (set *Set) Update(item IRecord) {
 	}
 }
 
+// Delete will delete the record from the database.
+// This function currently only deletes a record based on the provided ID
+// item: The record containing the ID you want to delete.
+// # row := TableA{ID: 99}
+// # testCtx.TableA.Delete(row)
 func (set *Set) Delete(item IRecord) {
 	id := item.GetID()
 	memItem, ok := set.items[id]

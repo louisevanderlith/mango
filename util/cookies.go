@@ -29,8 +29,7 @@ func CreateAvo(ctx *context.Context, data Cookies, sessionID string) {
 }
 
 func FindAvo(sessionID string) Cookies {
-	var result Cookies
-	result, _ = jar[sessionID]
+	result := jar[sessionID]
 
 	return result
 }
