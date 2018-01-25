@@ -1,7 +1,7 @@
 package vin
 
 type Descriptor interface {
-	GetData() VDS
+	GetData(vin string) interface{}
 }
 
 type Manufacturer struct {

@@ -1,7 +1,6 @@
 package vin
 
 import (
-	"strconv"
 	"strings"
 )
 
@@ -91,26 +90,6 @@ func isBetween(char, start, end string) bool {
 	endWeight := getWeight(end)
 
 	return startWeight <= charWeight && endWeight >= charWeight
-}
-
-func getWeight(char string) int {
-	var result = 0
-
-	if num, err := strconv.Atoi(char); err == nil {
-		base := 26
-		if num == 0 {
-			result = 36
-		} else {
-			result = base + num
-		}
-	} else {
-		crune := []rune(char)[0]
-		num := int(crune)
-
-		result = num % 32
-	}
-
-	return result
 }
 
 func buildWorld() []Continent {
