@@ -3,15 +3,15 @@ package descriptors
 type Audi struct {
 }
 
-func (d Audi) GetData(vin string) interface{} {
-	return 0
+func (d Audi) GetData(vinNo string) string {
+	return ""
 }
 
-func groupsAudi(){
-	const audi := "Audi"
+func groupsAudi() {
+	const audi = "Audi"
 	descrip := Audi{}
 
-	groupl := NewWMIGroup("L")
+	group1 := NewWMIGroup("L")
 	group1.Add("FV", audi, PassengerCar, descrip)
 
 	groupt := NewWMIGroup("T")

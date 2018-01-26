@@ -3,12 +3,12 @@ package descriptors
 type LandRover struct {
 }
 
-func (d LandRover) GetData(vin string) interface{} {
-	return 0
+func (d LandRover) GetData(vinNo string) string {
+	return ""
 }
 
-func groupsLandRover(){
-	const landie := "Land Rover"
+func groupsLandRover() {
+	const landie = "Land Rover"
 	descrip := LandRover{}
 
 	groupa := NewWMIGroup("A")

@@ -3,8 +3,8 @@ package descriptors
 type Skoda struct {
 }
 
-func (d Skoda) GetData(vin string) interface{} {
-	return 0
+func (d Skoda) GetData(vinNo string) string {
+	return ""
 }
 
 func groupsSkoda() {

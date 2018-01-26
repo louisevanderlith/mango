@@ -1,18 +1,17 @@
 package descriptors
 
 type Ford struct {
-
 }
 
-func (d Ford) GetData(vin string) interface{
-	return 0
+func (d Ford) GetData(vinNo string) string {
+	return ""
 }
 
-func groupsFord(){
-	const ford := "Ford"
-	const lincoln := "Lincoln"
-	const mercury := "Mercury"
-	const mazda := "Mazda"
+func groupsFord() {
+	const ford = "Ford"
+	const lincoln = "Lincoln"
+	const mercury = "Mercury"
+	const mazda = "Mazda"
 	descrip := Ford{}
 
 	groupa := NewWMIGroup("A")
@@ -24,7 +23,7 @@ func groupsFord(){
 
 	groupn := NewWMIGroup("N")
 	groupn.Add("M0", ford, NotSpecified, descrip)
-	
+
 	groupp := NewWMIGroup("P")
 	groupp.Add("E1", ford, NotSpecified, descrip)
 
@@ -89,7 +88,7 @@ func groupsFord(){
 	group4.Add("F2", mazda, MPV, descrip)
 	group4.Add("F4", mazda, Truck, descrip)
 	group4.Add("M2", mercury, MPV, descrip)
-	
+
 	group5 := NewWMIGroup("5")
 	group5.Add("L1", lincoln, MPV, descrip)
 	group5.Add("LT", lincoln, Truck, descrip)
@@ -104,4 +103,3 @@ func groupsFord(){
 	group9 := NewWMIGroup("9")
 	group9.Add("BF", ford, NotSpecified, descrip)
 }
-

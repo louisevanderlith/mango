@@ -3,19 +3,19 @@ package descriptors
 type Volkswagen struct {
 }
 
-func (d Volkswagen) GetData(vin string) interface{} {
-	return 0
+func (d Volkswagen) GetData(vinNo string) string {
+	return ""
 }
 
-func groupsVW(){
-	const vw := "Volkswagen"
+func groupsVW() {
+	const vw = "Volkswagen"
 	descrip := Volkswagen{}
 
 	groupa := NewWMIGroup("A")
 	groupa.Add("AV", vw, PassengerCar, descrip)
 
 	groupl := NewWMIGroup("L")
-	group1.Add("SV", vw, PassengerCar, descrip)
+	groupl.Add("SV", vw, PassengerCar, descrip)
 
 	groupw := NewWMIGroup("W")
 	groupw.Add("VW", vw, PassengerCar, descrip)

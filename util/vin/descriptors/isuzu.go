@@ -3,12 +3,12 @@ package descriptors
 type Isuzu struct {
 }
 
-func (d Isuzu) GetData(vin string) interface{} {
-	return 0
+func (d Isuzu) GetData(vinNo string) string {
+	return ""
 }
 
 func groupsIsuzu() {
-	const isuzu := "Isuzu"
+	const isuzu = "Isuzu"
 	descrip := Isuzu{}
 
 	groupj := NewWMIGroup("J")

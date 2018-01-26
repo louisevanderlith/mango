@@ -3,15 +3,15 @@ package descriptors
 type Toyota struct {
 }
 
-func (d Toyota) GetData(vin string) interface{} {
-	return 0
+func (d Toyota) GetData(vinNo string) string {
+	return ""
 }
 
 func groupsToyota() {
-	const toyota := "Toyota"
-	const hino := "Hino"
-	const daihatsu := "Daihatsu"
-	const lexus := "Lexus"
+	const toyota = "Toyota"
+	const hino = "Hino"
+	const daihatsu = "Daihatsu"
+	const lexus = "Lexus"
 	descrip := Toyota{}
 
 	groupj := NewWMIGroup("J")
@@ -28,13 +28,13 @@ func groupsToyota() {
 	groupj.Add("TF", toyota, Truck, descrip)
 	groupj.Add("TM", toyota, Truck, descrip)
 	groupj.Add("T4", toyota, Truck, descrip)
-	groupj.Add("TE", toyota, MultiPurposePassenger, descrip)
-	groupj.Add("TL", toyota, MultiPurposePassenger, descrip)
-	groupj.Add("T3", toyota, MultiPurposePassenger, descrip)
+	groupj.Add("TE", toyota, MPV, descrip)
+	groupj.Add("TL", toyota, MPV, descrip)
+	groupj.Add("T3", toyota, MPV, descrip)
 	groupj.Add("T5", toyota, IncompleteCar, descrip)
 	groupj.Add("TH", lexus, PassengerCar, descrip)
-	groupj.Add("TJ", lexus, MultiPurposePassenger, descrip)
-	groupj.Add("T6", lexus, MultiPurposePassenger, descrip)
+	groupj.Add("TJ", lexus, MPV, descrip)
+	groupj.Add("T6", lexus, MPV, descrip)
 	groupj.Add("T8", lexus, PassengerCar, descrip)
 	groupj.Add("DA", daihatsu, PassengerCar, descrip)
 	groupj.Add("D1", daihatsu, PassengerCar, descrip)

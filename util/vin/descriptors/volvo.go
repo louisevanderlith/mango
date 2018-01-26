@@ -3,12 +3,12 @@ package descriptors
 type Volvo struct {
 }
 
-func (d Volvo) GetData(vin string) interface{} {
-	return 0
+func (d Volvo) GetData(vinNo string) string {
+	return ""
 }
 
 func groupsVolvo() {
-	const volvo := "Volvo"
+	const volvo = "Volvo"
 	descrip := Volvo{}
 
 	groupx := NewWMIGroup("X")
@@ -29,7 +29,7 @@ func groupsVolvo() {
 	group4.Add("V6", volvo, NotSpecified, descrip)
 	group4.Add("VL", volvo, NotSpecified, descrip)
 	group4.Add("VM", volvo, NotSpecified, descrip)
-	group4.Add("VZ", volvo, NotSpecified)
+	group4.Add("VZ", volvo, NotSpecified, descrip)
 
 	groupm := NewWMIGroup("M")
 	groupm.Add("HA", volvo, NotSpecified, descrip)

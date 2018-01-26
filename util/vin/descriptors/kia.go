@@ -3,8 +3,8 @@ package descriptors
 type KIA struct {
 }
 
-func (d KIA) GetData(vin string) interface{} {
-	return 0
+func (d KIA) GetData(vinNo string) string {
+	return ""
 }
 
 func groupsKIA() {

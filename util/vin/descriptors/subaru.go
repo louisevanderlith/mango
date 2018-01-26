@@ -3,13 +3,13 @@ package descriptors
 type Subaru struct {
 }
 
-func (d Subaru) GetData(vin string) interface{} {
-	return 0
+func (d Subaru) GetData(vinNo string) string {
+	return ""
 }
 
-func groupsSubaru(){
-	const fuji := "Fuji Heavy Industries"
-	const subaru := "Subaru"
+func groupsSubaru() {
+	const fuji = "Fuji Heavy Industries"
+	const subaru = "Subaru"
 	descrip := Subaru{}
 
 	groupj := NewWMIGroup("J")

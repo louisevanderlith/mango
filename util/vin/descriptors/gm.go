@@ -3,19 +3,19 @@ package descriptors
 type GeneralMotors struct {
 }
 
-func (d GeneralMotors) GetData(vin string) interface{} {
-	return 0
+func (d GeneralMotors) GetData(vinNo string) string {
+	return ""
 }
 
-func groupsGM(){
-	const chev := "Chevrolet"
-	const daewoo := "GM Daewoo"
-	const pontiac := "Pontiac"
-	const olds := "Oldsmobile"
-	const buick := "Buick"
-	const caddi := "Cadillac"
-	const saturn := "Saturn"
-	const gmc := "GMC"
+func groupsGM() {
+	const chev = "Chevrolet"
+	const daewoo = "GM Daewoo"
+	const pontiac = "Pontiac"
+	const olds = "Oldsmobile"
+	const buick = "Buick"
+	const caddi = "Cadillac"
+	const saturn = "Saturn"
+	const gmc = "GMC"
 
 	descrip := GeneralMotors{}
 
@@ -37,14 +37,14 @@ func groupsGM(){
 	group1.Add("G5", pontiac, PassengerCar, descrip)
 	group1.Add("G6", caddi, PassengerCar, descrip)
 	group1.Add("G8", saturn, PassengerCar, descrip)
-	
+
 	group2 := NewWMIGroup("2")
 	group2.Add("G1", chev, PassengerCar, descrip)
 	group2.Add("G2", pontiac, PassengerCar, descrip)
 	group2.Add("G3", olds, PassengerCar, descrip)
 	group2.Add("G4", buick, PassengerCar, descrip)
 	group2.Add("G6", caddi, PassengerCar, descrip)
-	
+
 	group3 := NewWMIGroup("3")
 	group3.Add("G1", chev, PassengerCar, descrip)
 	group3.Add("G2", pontiac, PassengerCar, descrip)

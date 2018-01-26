@@ -3,13 +3,13 @@ package descriptors
 type Hyundai struct {
 }
 
-func (d Hyundai) GetData(vin string) interface{} {
-	return 0
+func (d Hyundai) GetData(vinNo string) string {
+	return ""
 }
 
-func groupsHyundai(){
-	const hyundai := "Hyundai"
-	const kia := "Kia"
+func groupsHyundai() {
+	const hyundai = "Hyundai"
+	const kia = "Kia"
 	descrip := Hyundai{}
 
 	groupa := NewWMIGroup("A")
@@ -27,7 +27,7 @@ func groupsHyundai(){
 
 	groupl := NewWMIGroup("L")
 	groupl.Add("BE", hyundai, NotSpecified, descrip)
-	
+
 	groupm := NewWMIGroup("M")
 	groupm.Add("AL", hyundai, NotSpecified, descrip)
 
@@ -50,7 +50,7 @@ func groupsHyundai(){
 
 	group2 := NewWMIGroup("2")
 	group2.Add("HM", hyundai, NotSpecified, descrip)
-	
+
 	group3 := NewWMIGroup("3")
 	group3.Add("H3", hyundai, NotSpecified, descrip)
 

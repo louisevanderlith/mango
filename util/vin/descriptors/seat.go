@@ -3,8 +3,8 @@ package descriptors
 type SEAT struct {
 }
 
-func (d SEAT) GetData(vin string) interface{} {
-	return 0
+func (d SEAT) GetData(vinNo string) string {
+	return ""
 }
 
 func groupsSEAT() {

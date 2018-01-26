@@ -3,12 +3,12 @@ package descriptors
 type Mitsubishi struct {
 }
 
-func (d Mitsubishi) GetData(vin string) interface{} {
-	return 0
+func (d Mitsubishi) GetData(vinNo string) string {
+	return ""
 }
 
 func groupsMitsubishi() {
-	const mits := "Mitsubishi"
+	const mits = "Mitsubishi"
 	descrip := Mitsubishi{}
 
 	groupj := NewWMIGroup("J")

@@ -3,8 +3,8 @@ package descriptors
 type MercedesBenz struct {
 }
 
-func (d MercedesBenz) GetData(vin string) interface{} {
-	return 0
+func (d MercedesBenz) GetData(vinNo string) string {
+	return ""
 }
 
 func groupsMercedes() {

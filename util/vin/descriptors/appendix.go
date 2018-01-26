@@ -4,22 +4,26 @@ import "github.com/louisevanderlith/mango/util/vin"
 
 type WMICategory int
 
-type WMIGroup map[string][]WMIDescriptor
+type Descriptors []WMIDescriptor
+type WMIGroup map[string]*Descriptors
 
-func NewWMIGroup(groupName string) *WMIGroup {
+func NewWMIGroup(groupName string) *Descriptors {
 	group, ok := groups[groupName]
 
 	if ok {
 		return group
 	}
 
-	group[groupName] = []WMIDescriptor{}
-	return group[groupName]
+	groups[groupName] = &Descriptors{}
+	return groups[groupName]
 }
 
-func (g *WMIGroup) Add(manufacturerCode, manufacturerName string, category WMICategory, descriptor vin.Descriptor) {
+func (g *Descriptors) Add(manufacturerCode, manufacturerName string, category WMICategory, descriptor vin.Descriptor) {
 	descrip := buildDescriptor(manufacturerCode, manufacturerName, category, descriptor)
-	g = append(g, descrip)
+	copy := *g
+	copy = append(copy, descrip)
+
+	g = &copy
 }
 
 var groups WMIGroup

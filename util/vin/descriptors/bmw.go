@@ -3,14 +3,14 @@ package descriptors
 type BMW struct {
 }
 
-func (d BMW) GetData(vin string) interface{} {
-	return 0
+func (d BMW) GetData(vinNo string) string {
+	return ""
 }
 
-func groupsBMW(){
-	const bmw := "BMW"
-	const mini := "Mini"
-	const rolls := "Rolls Royce"
+func groupsBMW() {
+	const bmw = "BMW"
+	const mini = "Mini"
+	const rolls = "Rolls Royce"
 	descrip := BMW{}
 
 	groupm := NewWMIGroup("M")
