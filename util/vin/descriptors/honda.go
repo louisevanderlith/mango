@@ -2,6 +2,7 @@ package descriptors
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/louisevanderlith/mango/util/vin"
 )
@@ -26,38 +27,46 @@ type Honda struct {
 
 // GetData Deserializes Honda VIN Numbers
 func (d Honda) GetData(vinNo string) string {
+	var result string
 	yearCode := vinNo[9:10]
 	years := vin.GetYear(yearCode)
 	fmt.Println("Code:", yearCode, "Years:", years)
 
-	modelCode := vinNo[3:6]
-	model := modelTypes(modelCode, years[0])
-	fmt.Println("Code:", modelCode, "Model:", model)
+	for _, year := range years {
+		if year > time.Now().Year() {
+			modelCode := vinNo[3:6]
+			model := modelTypes(modelCode, year)
+			fmt.Println("Code:", modelCode, "Model:", model)
 
-	bodyCode := vinNo[3:5]
-	bodyType := bodyTypes(bodyCode)
-	fmt.Println("Code:", bodyCode, "Body:", bodyType)
+			bodyCode := vinNo[3:5]
+			bodyType := bodyTypes(bodyCode)
+			fmt.Println("Code:", bodyCode, "Body:", bodyType)
 
-	transCode := vinNo[6:7]
-	trans := transTypes(transCode)
-	fmt.Println("Code:", transCode, "Trans:", trans)
+			transCode := vinNo[6:7]
+			trans := transTypes(transCode)
+			fmt.Println("Code:", transCode, "Trans:", trans)
 
-	bodynTransCode := vinNo[6:7]
-	bodynTrans := bodynTransTypes(bodynTransCode, years[0])
-	fmt.Println("Code:", bodynTransCode, "Body n Trans:", bodynTrans)
+			bodynTransCode := vinNo[6:7]
+			bodynTrans := bodynTransTypes(bodynTransCode, year)
+			fmt.Println("Code:", bodynTransCode, "Body n Trans:", bodynTrans)
 
-	gradeCode := vinNo[8:9]
-	grade := gradeTypes(gradeCode, years[0], model)
-	fmt.Println("Code:", gradeCode, "Grade:", grade)
+			gradeCode := vinNo[8:9]
+			grade := gradeTypes(gradeCode, year, model)
+			fmt.Println("Code:", gradeCode, "Grade:", grade)
 
-	seq := vinNo[13:]
-	fmt.Println("SEQ:", seq)
+			seq := vinNo[11:]
+			fmt.Println("SEQ:", seq)
 
-	result := ""
-	result += fmt.Sprintf("Year: %s \r\n")
-	result += fmt.Sprintf("Year: %s \r\n")
-	result += fmt.Sprintf("Year: %s \r\n")
-	result += fmt.Sprintf("Year: %s \r\n")
+			result += fmt.Sprintf("Year: %v \r\n", year)
+			result += fmt.Sprintf("Model: %s \r\n", model)
+			result += fmt.Sprintf("Body: %s \r\n", bodyType)
+			result += fmt.Sprintf("Transmission: %s \r\n", trans)
+			result += fmt.Sprintf("Body and Transmission: %s \r\n", bodynTrans)
+			result += fmt.Sprintf("Grade: %s \r\n", grade)
+			result += fmt.Sprintf("Number: %s \r\n", seq)
+			result += "---"
+		}
+	}
 
 	return result
 }
