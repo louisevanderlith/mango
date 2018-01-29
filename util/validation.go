@@ -1,11 +1,11 @@
 package util
 
 import (
-	"fmt"
-	"strings"
 	"errors"
+	"fmt"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 type tagMeta struct {
@@ -123,7 +123,6 @@ func getTypeValidator(fieldType reflect.Kind) IValidation {
 	case reflect.Ptr:
 		result = PointerValidation{}
 	default:
-		fmt.Println(fieldType)
 		result = PointerValidation{}
 	}
 

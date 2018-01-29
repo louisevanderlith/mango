@@ -1,4 +1,4 @@
-package vin
+package common
 
 import "testing"
 

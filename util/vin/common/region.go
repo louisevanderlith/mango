@@ -1,4 +1,4 @@
-package vin
+package common
 
 import (
 	"strings"
@@ -31,7 +31,7 @@ func init() {
 	world = buildWorld()
 }
 
-func getRegion(wmi string) Region {
+func GetRegion(wmi string) Region {
 	var result Region
 
 	if len(wmi) == 2 {
@@ -85,11 +85,11 @@ func findCountry(countries []Country, countryCode string) Country {
 
 func isBetween(char, start, end string) bool {
 	// Check to see if a character is between to other characters in sequence.
-	charWeight := getWeight(char)
-	startWeight := getWeight(start)
-	endWeight := getWeight(end)
+	charValue := getValue(char)
+	startValue := getValue(start)
+	endValue := getValue(end)
 
-	return startWeight <= charWeight && endWeight >= charWeight
+	return startValue <= charValue && endValue >= charValue
 }
 
 func buildWorld() []Continent {

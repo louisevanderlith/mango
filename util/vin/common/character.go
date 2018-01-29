@@ -1,22 +1,22 @@
-package vin
+package common
 
 import "strconv"
 
-func getWeight(char string, illegalCharacters ...string) int {
-	resultWeight := getBaseWeight(char)
-	baseWeight := resultWeight
+func getValue(char string, illegalCharacters ...string) int {
+	resultValue := getBaseValue(char)
+	baseValue := resultValue
 	illegalList := getIllegalMap(illegalCharacters...)
 
 	for _, v := range illegalList {
-		if baseWeight > v {
-			resultWeight--
+		if baseValue > v {
+			resultValue--
 		}
 	}
 
-	return resultWeight
+	return resultValue
 }
 
-func getBaseWeight(char string) int {
+func getBaseValue(char string) int {
 	var result = 0
 
 	if num, err := strconv.Atoi(char); err == nil {

@@ -1,13 +1,28 @@
 package vin
 
+import (
+	"fmt"
+
+	"github.com/louisevanderlith/mango/util/vin/common"
+	"github.com/louisevanderlith/mango/util/vin/section"
+)
+
 type Info struct {
-	WMI WMI //[0:2]
-	//VDS VDS //[3:8] //Nested
-	VIS string //[9:16]
+	WMI section.WMI
+	VDS section.VDS
+	VIS section.VIS
 }
 
-func getInfo(vin string) Info {
-	var result Info
+// GetInfo is the main entry-point for reading VIN information
+func GetInfo(vinNo string) (result Info, err error) {
+	sections, err := common.LoadVINSections(vinNo)
 
-	return result
+	if err == nil {
+		fmt.Print(sections)
+		result.WMI = section.LoadWMI(sections)
+		result.VDS = section.LoadVDS(sections)
+		result.VIS = section.LoadVIS(sections)
+	}
+
+	return result, err
 }

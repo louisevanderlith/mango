@@ -1,10 +1,10 @@
-package vin
+package common
 
 import "testing"
 
 func TestGetRegion_Valid_SouthAfrica(t *testing.T) {
 	input := "AD"
-	actual := getRegion(input)
+	actual := GetRegion(input)
 	expectedCont := "Africa"
 	expectedCountry := "South Africa"
 
@@ -19,7 +19,7 @@ func TestGetRegion_Valid_SouthAfrica(t *testing.T) {
 
 func TestGetRegion_IllegalChars(t *testing.T) {
 	input := "QI"
-	actual := getRegion(input)
+	actual := GetRegion(input)
 
 	if actual.Continent != "" || actual.Country != "" {
 		t.Errorf("Expected empty values, got %s %s", actual.Continent, actual.Country)

@@ -1,4 +1,4 @@
-package vin
+package common
 
 import (
 	"reflect"
@@ -15,10 +15,10 @@ func TestGetIllegalMap_Success(t *testing.T) {
 	}
 }
 
-func TestGetWeight_Success(t *testing.T) {
+func TestGetValue_Success(t *testing.T) {
 	input := "K"
 	expected := 10
-	actual := getWeight(input, "I")
+	actual := getValue(input, "I")
 
 	if expected != actual {
 		t.Errorf("Expected %v got %v", expected, actual)

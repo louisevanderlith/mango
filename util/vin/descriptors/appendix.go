@@ -1,29 +1,27 @@
 package descriptors
 
-import "github.com/louisevanderlith/mango/util/vin"
+import (
+	"github.com/louisevanderlith/mango/util/vin/common"
+)
 
 type WMICategory int
 
-type Descriptors []WMIDescriptor
-type WMIGroup map[string]*Descriptors
+type Descriptors map[string]WMIDescriptor
+type WMIGroup map[string]Descriptors
 
-func NewWMIGroup(groupName string) *Descriptors {
+func NewWMIGroup(groupName string) Descriptors {
 	group, ok := groups[groupName]
 
 	if ok {
 		return group
 	}
 
-	groups[groupName] = &Descriptors{}
+	groups[groupName] = make(Descriptors)
 	return groups[groupName]
 }
 
-func (g *Descriptors) Add(manufacturerCode, manufacturerName string, category WMICategory, descriptor vin.Descriptor) {
-	descrip := buildDescriptor(manufacturerCode, manufacturerName, category, descriptor)
-	copy := *g
-	copy = append(copy, descrip)
-
-	g = &copy
+func (g Descriptors) Add(manufacturerCode, manufacturerName string, category WMICategory, descriptor common.Descriptor) {
+	g[manufacturerCode] = buildDescriptor(manufacturerName, category, descriptor)
 }
 
 var groups WMIGroup
@@ -58,10 +56,9 @@ func buildGroups() {
 }
 
 type WMIDescriptor struct {
-	Key          string
 	Manufacturer string
 	Category     WMICategory
-	Descriptor   vin.Descriptor
+	Descriptor   common.Descriptor
 }
 
 const (
@@ -76,15 +73,22 @@ const (
 	BasicChassis
 )
 
-func GetDescriptor(countryCode, manufacturerCode string) vin.Descriptor {
-	var result vin.Descriptor
+func GetWMIDescriptor(wmiCode string) WMIDescriptor {
+	var result WMIDescriptor
+	countryCode := wmiCode[:1]
+	manufacturerCode := wmiCode[1:]
+
+	group, hasGroup := groups[countryCode]
+
+	if hasGroup {
+		result = group[manufacturerCode]
+	}
 
 	return result
 }
 
-func buildDescriptor(manufacturerCode, manufacturerName string, category WMICategory, descriptor vin.Descriptor) WMIDescriptor {
+func buildDescriptor(manufacturerName string, category WMICategory, descriptor common.Descriptor) WMIDescriptor {
 	result := WMIDescriptor{
-		Key:          manufacturerCode,
 		Manufacturer: manufacturerName,
 		Category:     category,
 		Descriptor:   descriptor,
