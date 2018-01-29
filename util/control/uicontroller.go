@@ -23,5 +23,5 @@ func (ctrl *UIController) Setup(name string) {
 	ctrl.Data["HasScript"] = true
 	ctrl.Data["ScriptName"] = name + ".entry.js"
 	ctrl.Data["InstanceKey"] = util.GetInstanceKey()
-	ctrl.Data["RunMode"] = beego.BConfig.RunMode
+	ctrl.Data["RunModeDEV"] = beego.BConfig.RunMode == "dev"
 }

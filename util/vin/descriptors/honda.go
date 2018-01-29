@@ -33,7 +33,7 @@ func (d Honda) GetData(vinNo string) string {
 	fmt.Println("Code:", yearCode, "Years:", years)
 
 	for _, year := range years {
-		if year > time.Now().Year() {
+		if year <= time.Now().Year() {
 			modelCode := vinNo[3:6]
 			model := modelTypes(modelCode, year)
 			fmt.Println("Code:", modelCode, "Model:", model)
