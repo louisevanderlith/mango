@@ -35,3 +35,29 @@ func TestGetInfo_Correct(t *testing.T) {
 
 	t.Fail()
 }
+
+func TestLoadWMI(t *testing.T) {
+	input, err := common.LoadVINSections("JHLRD68405C200888")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := common.WMI{
+		Manufacturer: common.Manufacturer{
+			Category: common.NotSpecified,
+			Name:     "Honda",
+			VDSName:  "Honda",
+		},
+		Region: common.Region{
+			Continent: "Asia",
+			Country:   "Japan",
+		},
+	}
+
+	actual := loadWMI(input)
+
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Found %v, got %v", expected, actual)
+	}
+}

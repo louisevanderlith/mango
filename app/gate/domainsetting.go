@@ -15,7 +15,7 @@ type DomainSetting struct {
 type Settings []DomainSetting
 
 func loadSettings() *Settings {
-	dbConfPath := util.FindFilePath("domains.json")
+	dbConfPath := util.FindFilePath("domains.json", "conf")
 	content := util.GetFileContent(dbConfPath)
 
 	var settings *Settings

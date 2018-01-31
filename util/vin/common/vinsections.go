@@ -4,6 +4,9 @@ import "errors"
 
 type VINSections struct {
 	WMICode           string
+	ContinentCode     string
+	RegionCode        string
+	ManufacturerCode  string
 	FeatureCode       string
 	CheckDigit        string
 	YearCode          string
@@ -16,6 +19,9 @@ func LoadVINSections(vinNo string) (result VINSections, err error) {
 	if len(vinNo) == 17 {
 		result.FullVIN = vinNo
 		result.WMICode = vinNo[:3]
+		result.ContinentCode = vinNo[:1]
+		result.RegionCode = vinNo[1:2]
+		result.ManufacturerCode = vinNo[1:3]
 		result.FeatureCode = vinNo[3:8]
 		result.CheckDigit = vinNo[8:9]
 		result.YearCode = vinNo[9:10]

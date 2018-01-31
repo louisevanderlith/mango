@@ -1,0 +1,133 @@
+{
+    "A": [
+        {
+            "Name": "South Africa",
+            "Start": "A",
+            "End": "H"
+        },
+        {
+            "Name": "Ivory Coast",
+            "Start": "J",
+            "End": "N"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "P",
+            "End": "0"
+        }
+    ],
+    "B": [
+        {
+            "Name": "Angola",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Kenya",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Tanzania",
+            "Start": "L",
+            "End": "R"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "S",
+            "End": "0"
+        }
+    ],
+    "C": [
+        {
+            "Name": "Benin",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Madagascar",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Tunisia",
+            "Start": "L",
+            "End": "R"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "S",
+            "End": "0"
+        }
+    ],
+    "D": [
+        {
+            "Name": "Egypt",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Morocco",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Zambia",
+            "Start": "L",
+            "End": "R"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "S",
+            "End": "0"
+        }
+    ],
+    "E": [
+        {
+            "Name": "Ghana",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Mozambique",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "L",
+            "End": "0"
+        }
+    ],
+    "F": [
+        {
+            "Name": "India",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Nigeria",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "L",
+            "End": "0"
+        }
+    ],
+    "G": [
+        {
+            "Name": "Not Assigned",
+            "Start": "A",
+            "End": "0"
+        }
+    ],
+    "H": [
+        {
+            "Name": "Not Assigned",
+            "Start": "A",
+            "End": "0"
+        }
+    ]
+}
