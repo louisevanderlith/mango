@@ -11,7 +11,7 @@ import (
 type Manufacturer struct {
 	Category WMICategory
 	Name     string
-	VDSName  string // Shortname which will be used to load the correct IBrand interface
+	VDSName  string // Shortname which will be used to load the correct VDS interface
 }
 
 type ManufacturerGroup map[string]Manufacturer
@@ -82,25 +82,40 @@ func getVDSName(name string) string {
 	var result string
 
 	vdsNames := []string{
-		"Toyota",
-		"Ford",
-		"Opel",
-		"Mercury",
-		"Mazda",
-		"FIAT",
-		"Mercedes",
-		"Nissan",
-		"Audi",
-		"BMW",
-		"Honda",
+		"alfa",
+		"audi",
+		"bmw",
+		"ferrari",
+		"ford",
+		"gm",
+		"honda",
+		"hyundai",
+		"isuzu",
+		"kia",
+		"lamborghini",
+		"landrover",
+		"maserati",
+		"mercedes",
+		"mitsubishi",
+		"seat",
+		"skoda",
+		"subaru",
+		"toyota",
+		"volkswagen",
+		"volvo",
 	}
 
 	for _, v := range vdsNames {
-		if strings.Contains(name, v) {
+		if caseIgnoreContains(name, v) {
 			result = v
 			break
 		}
 	}
 
 	return result
+}
+
+func caseIgnoreContains(s, substr string) bool {
+	s = strings.ToLower(s)
+	return strings.Contains(s, substr)
 }

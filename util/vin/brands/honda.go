@@ -2,355 +2,620 @@ package brands
 
 import (
 	"fmt"
-	"time"
+	"strings"
 
 	"github.com/louisevanderlith/mango/util/vin/common"
 )
 
-// 1: Country of origin
-// 2: Manufacturer
-// 3: Make
-// 4-6: Chassis and engine
-// 7: Body and transmission
-// 8: Trim level and restraint
-// 9: Check digit
-// 10: Model year
-// 11: Assembly plant
-// 12-17: Production number
-type Honda struct {
+type Data struct {
+	Model        string
+	BodyStyle    string
+	Doors        string
+	EngineModel  string
+	EngineSize   string
+	Trim         string
+	Transmission string
+	Gears        string
+	Extra        string
 }
 
-func (b Honda) GetVDS(sections common.VINSections) common.VDS {
+type Dirty struct {
+	Models        []string
+	BodyStyles    []string
+	Doors         []string
+	EngineModels  []string
+	EngineSizes   []string
+	Trims         []string
+	Transmissions []string
+	Gears         []string
+	Extras        []string
+}
+
+type Honda struct {
+	common.VDS
+}
+
+func (v Honda) GetPassengerCar(sections common.VINSections, year int) common.VDS {
+	modelCode := sections.FeatureCode[:4]
+	gradeCode := sections.FeatureCode[4:]
+
+	dirt := Dirty{}
+
+	findModelTransBody(modelCode, year, &dirt)
+	findGradeType(gradeCode, year, cleanModel(dirt.Models), &dirt)
+
+	v.VDS = compileDirty(dirt)
+
+	v.AssemblyPlant = findAssemblyPlant(sections.AssemblyPlantCode)
+
+	return v.VDS
+}
+
+// VIN 4, 5, 6, 7
+func findModelTransBody(modelCode string, year int, dirt *Dirty) {
+	modelTypeCode := modelCode[:2]
+	transTypeCode := modelCode[2:3]
+	bodyAndTransCode := modelCode[3:]
+
+	if year <= 1983 {
+		modelTypePre83(modelTypeCode, dirt)
+	}
+
+	if year >= 1984 && year <= 1986 {
+		modelTypePre86(modelTypeCode, dirt)
+		transmissionTypePre86(transTypeCode, dirt)
+		bodyTypePre86(bodyAndTransCode, dirt)
+	}
+
+	if year >= 1987 && year <= 1989 {
+		modelTypePre89(modelCode[:3], year, dirt)
+		bodyTypePre89(bodyAndTransCode, dirt)
+	}
+
+	if year >= 1990 && year <= 1999 {
+		modelTypePre99(modelCode[:3], year, dirt)
+		bodyTypePre99(bodyAndTransCode, dirt)
+	}
+}
+
+func modelTypePre83(typeCode string, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	types["SR"] = Data{BodyStyle: "Sedan"}
+	types["WR"] = Data{BodyStyle: "Wagon"}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func modelTypePre86(typeCode string, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	types["AB"] = Data{Model: "Prelude"}
+	types["AD"] = Data{Model: "Accord"}
+	types["AE"] = Data{Model: "CRX", EngineSize: "1.3L"}
+	types["AF"] = Data{Model: "CRX", EngineSize: "1.5L"}
+	types["AG"] = Data{Model: "Civic", EngineSize: "1.3L", Doors: "3 Door"}
+	types["AH"] = Data{Model: "Civic", EngineSize: "1.5L", Doors: "3 Door"}
+	types["AK"] = Data{Model: "Civic", EngineSize: "1.5L", Doors: "4 Door"}
+	types["AN"] = Data{Model: "Civic", BodyStyle: "Wagon"}
+	types["AR"] = Data{Model: "Civic", BodyStyle: "Wagon", Extra: "4x4"}
+	types["BA"] = Data{Model: "Accord"}
+	types["AM"] = Data{Model: "Accord", EngineSize: "1.5L", Doors: "5 Door"}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func modelTypePre89(typeCode string, year int, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	types["BA3"] = Data{Model: "Prelude", EngineModel: "A20"}
+	types["BA4"] = Data{Model: "Prelude", EngineModel: "B20"}
+	types["BA6"] = Data{Model: "Prelude", EngineModel: "A18"}
+	types["CA5"] = Data{Model: "Accord"}
+	types["CA6"] = Data{Model: "Accord", BodyStyle: "Coupe"}
+	types["EC1"] = Data{Model: "CRX"}
+	types["EC2"] = Data{Model: "Civic", EngineSize: "1.3L"}
+	types["EC3"] = Data{Model: "Civic", EngineSize: "1.5L"}
+	types["EC4"] = Data{Model: "Civic", BodyStyle: "Sedan", Doors: "4 Doors"}
+	types["EC5"] = Data{Model: "Civic", BodyStyle: "Wagon"}
+	types["EC6"] = Data{Model: "Civic", BodyStyle: "Wagon", Extra: "4X4"}
+
+	if year == 1988 {
+		types["ED3"] = Data{Model: "Civic", BodyStyle: "Sedan", EngineSize: "1.5L"}
+		types["ED6"] = Data{Model: "Civic", BodyStyle: "Hatchback", EngineSize: "1.5L"}
+		types["ED7"] = Data{Model: "Civic", BodyStyle: "Hatchback", EngineSize: "1.6L"}
+		types["ED8"] = Data{Model: "CRX", EngineSize: "1.5L"}
+		types["ED9"] = Data{Model: "CRX", EngineSize: "1.6L"}
+		types["EE2"] = Data{Model: "Civic", BodyStyle: "Wagon", EngineSize: "1.5L"}
+		types["EE4"] = Data{Model: "Civic", BodyStyle: "Wagon", EngineSize: "1.6L"}
+	}
+
+	types["EY1"] = Data{Model: "Civic", BodyStyle: "Wagovan"}
+	types["EY3"] = Data{Model: "Civic", BodyStyle: "Wagovan", EngineSize: "1.5L"}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func modelTypePre99(typeCode string, year int, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	types["BA4"] = Data{Model: "Prelude", EngineSize: "2.0, 2.1L"}
+	types["BA8"] = Data{Model: "Prelude", EngineSize: "2.2L"}
+	types["BB"] = Data{Model: "Prelude", Extra: "VTEC", EngineSize: "2.2L"}
+	types["BB2"] = Data{Model: "Prelude", EngineSize: "2.3L"}
+	types["BB6"] = Data{Model: "Prelude", Doors: "2 Door"}
+	types["CB3"] = Data{Model: "Accord", Extra: "Japan Version", EngineSize: "2.2L"}
+	types["CB7"] = Data{Model: "Accord", EngineSize: "2.2L"}
+	types["CB9"] = Data{Model: "Accord", BodyStyle: "Wagon", EngineSize: "2.2L"}
+	types["CC1"] = Data{Model: "Accord", BodyStyle: "Coupe", EngineSize: "2.0L"}
+	types["CD5"] = Data{Model: "Accord", Doors: "4 Door", Extra: "VTEC", EngineSize: "2.2L"}
+	types["CD7"] = Data{Model: "Accord", Doors: "2 Door", EngineSize: "2.2L"}
+	types["CE1"] = Data{Model: "Accord", BodyStyle: "Wagon", EngineSize: "2.2L"}
+	types["CE6"] = Data{Model: "Accord", Doors: "4 Door", Extra: "V6", EngineSize: "2.7L"}
+	types["CF8"] = Data{Model: "Accord", Doors: "4 Door", Extra: "SOHC"}
+	types["CF4"] = Data{Model: "Accord", Doors: "4 Door", Extra: "DOHC", Trim: "SiR-T"}
+	types["CG1"] = Data{Model: "Accord", Doors: "4 Door", Extra: "VTEC, V6"}
+	types["CG2"] = Data{Model: "Accord", Doors: "2 Door", Extra: "VTEC, V6"}
+	types["CG3"] = Data{Model: "Accord", Doors: "2 Door", Extra: "VTEC, ULEV"}
+	types["CG5"] = Data{Model: "Accord", Doors: "4 Door", Extra: "VTEC"}
+	types["CG6"] = Data{Model: "Accord", Doors: "4 Door", Extra: "ULEV"}
+	types["CH9"] = Data{Model: "Accord", BodyStyle: "Wagon", Trim: "SiR", Extra: "VTEC", EngineSize: "2.3L"}
+	types["ED3"] = Data{Model: "Civic", Doors: "4 Door", EngineSize: "1.5L"}
+	types["ED4"] = Data{Model: "Civic", Doors: "4 Door", EngineSize: "1.6L"}
+	types["ED6"] = Data{Model: "Civic", Doors: "3 Door", EngineSize: "1.5L"}
+	types["ED7"] = Data{Model: "Civic", Doors: "3 Door", EngineSize: "1.6L"}
+	types["ED8"] = Data{Model: "CRX", EngineSize: "1.5L"}
+	types["ED9"] = Data{Model: "CRX", EngineSize: "1.6L"}
+	types["EE2"] = Data{Model: "Civic", BodyStyle: "Wagon", EngineSize: "1.5L"}
+	types["EE4"] = Data{Model: "Civic", BodyStyle: "Wagon", EngineSize: "1.6L"}
+	types["EE8"] = Data{Model: "CR-X", Extra: "VTEC", EngineSize: "1.6L"}
+	types["EM1"] = Data{Model: "Civic", Trim: "Si", Extra: "VTEC", EngineSize: "1.6L"}
+	types["EG1"] = Data{Model: "del Sol", EngineSize: "1.5L"}
+	types["EG2"] = Data{Model: "del Sol", Extra: "VTEC", EngineSize: "1.6L"}
+	types["EG6"] = Data{Model: "Civic", Doors: "3 Door", BodyStyle: "Hatchback", EngineSize: "1.6L"}
+	types["EG8"] = Data{Model: "Civic", Doors: "4 Door", EngineSize: "1.5L"}
+	types["EG9"] = Data{Model: "Civic", Doors: "4 Door", Extra: "VTEC", EngineSize: "1.6L"}
+	types["EH2"] = Data{Model: "Civic", Doors: "3 Door", EngineSize: "1.5L"}
+	types["EH3"] = Data{Model: "Civic", Doors: "3 Door", EngineSize: "1.6L"}
+	types["EH6"] = Data{Model: "del Sol", EngineSize: "1.6L"}
+	types["EH9"] = Data{Model: "Civic", Doors: "4 Door", EngineSize: "1.6L"}
+	types["EJ1"] = Data{Model: "Civic", Doors: "2 Door", EngineSize: "1.6L"}
+	types["EJ2"] = Data{Model: "Civic", Doors: "2 Door", EngineSize: "1.5L"}
+	types["EJ6"] = Data{Model: "Civic", Doors: "2 Door, 3 Door, 4 Door", EngineSize: "1.6L"}
+	types["EJ7"] = Data{Model: "Civic", Doors: "2 Door", EngineSize: "1.6L"}
+	types["EJ8"] = Data{Model: "Civic", Doors: "2 Door, 4 Door", EngineSize: "1.6L"}
+	types["EJ9"] = Data{Model: "Civic", Doors: "3 Door", EngineSize: "1.4L"}
+	types["EL1"] = Data{Model: "Orthia", Doors: "5 Door", BodyStyle: "Wagon", EngineSize: "1.8L"}
+	types["EL2"] = Data{Model: "Orthia", EngineSize: "2.0L", Doors: "5 Door", BodyStyle: "Wagon"}
+	types["EL3"] = Data{Model: "Orthia", EngineSize: "2.0L", Doors: "5 Door", BodyStyle: "Wagon", Extra: "4WD"}
+	types["RA1"] = Data{Model: "Odyssey"}
+
+	if year == 1998 {
+		types["RA3"] = Data{Model: "Odyssey", Doors: "5 Door", BodyStyle: "Wagon"}
+	}
+
+	types["RD1"] = Data{Model: "CR-V", Doors: "5 Door", Extra: "4WD"}
+	types["RD2"] = Data{Model: "CR-V", Doors: "5 Door"}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func transmissionTypePre86(transmissionCode string, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	types["2"] = Data{Transmission: "Semi-Hondamatic"}
+	types["3"] = Data{Gears: "3 Speed", Transmission: "Automatic"}
+	types["4"] = Data{Gears: "4 Speed", Transmission: "Manual"}
+	types["5"] = Data{Gears: "5 Speed", Transmission: "Manual"}
+	types["6"] = Data{Gears: "5 Speed", Transmission: "Manual Super-Low Gear"}
+	types["7"] = Data{Gears: "4 Speed", Transmission: "Automatic"}
+	types["8"] = Data{Gears: "5 Speed", Transmission: "Automatic"}
+
+	if val, ok := types[transmissionCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func bodyTypePre86(typeCode string, dirt *Dirty) {
+	val := fmt.Sprintf("%s Door", typeCode)
+	dirt.Doors = append(dirt.Doors, val)
+}
+
+func bodyTypePre89(typeCode string, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	types["1"] = Data{Doors: "2 Door", BodyStyle: "Sedan", Transmission: "Manual"}
+	types["2"] = Data{Doors: "2 Door", BodyStyle: "Sedan", Transmission: "Automatic"}
+	types["3"] = Data{Doors: "2 Door", BodyStyle: "Hatchback", Transmission: "Manual"}
+	types["4"] = Data{Doors: "2 Door", BodyStyle: "Hatchback", Transmission: "Automatic"}
+	types["5"] = Data{Doors: "4 Door", BodyStyle: "Sedan", Transmission: "Manual"}
+	types["6"] = Data{Doors: "4 Door", BodyStyle: "Sedan", Transmission: "Automatic"}
+	types["7"] = Data{Doors: "4 Door", BodyStyle: "Wagon", Transmission: "Manual"}
+	types["8"] = Data{Doors: "4 Door", BodyStyle: "Wagon", Transmission: "Automatic"}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func bodyTypePre99(typeCode string, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	types["1"] = Data{Doors: "2 Door", BodyStyle: "Coupe", Transmission: "Manual"}
+	types["2"] = Data{Doors: "2 Door", BodyStyle: "Coupe", Transmission: "Automatic"}
+	types["3"] = Data{Doors: "3 Door", BodyStyle: "Hatchback", Transmission: "Manual"}
+	types["4"] = Data{Doors: "3 Door", BodyStyle: "Hatchback", Transmission: "Automatic"}
+	types["5"] = Data{Doors: "4 Door", BodyStyle: "Sedan", Transmission: "Manual"}
+	types["6"] = Data{Doors: "4 Door", BodyStyle: "Sedan", Transmission: "Automatic"}
+	types["7"] = Data{Doors: "5 Door", BodyStyle: "Wagon", Transmission: "Manual"}
+	types["8"] = Data{Doors: "5 Door", BodyStyle: "Wagon", Transmission: "Automatic"}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func findGradeType(typeCode string, year int, model string, dirt *Dirty) {
+	if year <= 1987 {
+		gradeTypePre87(typeCode, dirt)
+	} else if year >= 1988 && year <= 1989 {
+		gradeTypePre89(typeCode, model, year, dirt)
+	} else if year >= 1990 && year <= 1993 {
+		gradeTypePre93(typeCode, model, year, dirt)
+	} else if year >= 1994 && year <= 1999 {
+		gradeTypePre99(typeCode, model, year, dirt)
+	}
+}
+
+func gradeTypePre87(typeCode string, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	types["1"] = Data{Trim: "Basic, HF"}
+	types["2"] = Data{Trim: "STD, DX"}
+	types["3"] = Data{Trim: "GL, GLS, LX"}
+	types["4"] = Data{Trim: "LXi, Si"}
+	types["5"] = Data{Trim: "Special"}
+	types["6"] = Data{Model: "Accord", BodyStyle: "Hatchback"}
+	types["7"] = Data{Model: "Accord", BodyStyle: "Hatchback", Trim: "LXi"}
+	types["8"] = Data{Model: "Accord", BodyStyle: "Hatchback", Trim: "LXi"}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func gradeTypePre89(typeCode, model string, year int, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	switch model {
+	case "Accord":
+		types["2"] = Data{Trim: "DX", Transmission: "Manual"}
+		types["3"] = Data{Trim: "LX", Transmission: "Manual"}
+		types["4"] = Data{Trim: "LXi", Transmission: "Manual"}
+		types["5"] = Data{Trim: "SEi", Transmission: "Manual"}
+		types["6"] = Data{Trim: "DX", Transmission: "Automatic"}
+		types["8"] = Data{Trim: "LXi", Transmission: "Automatic"}
+	case "Prelude":
+		types["2"] = Data{Trim: "S", Transmission: "Automatic"}
+		types["3"] = Data{Trim: "Si", Transmission: "Automatic"}
+		types["4"] = Data{Trim: "Si", Extra: "w/optional 4WS", Transmission: "Automatic"}
+	case "CRX", "CR-X":
+
+		if year == 1989 {
+			types["5"] = Data{Trim: "STD", Transmission: "Automatic"}
+		} else {
+			types["5"] = Data{Trim: "STD", Transmission: "Manual"}
+		}
+
+		// No idea how to differentiate "HF Civic CRX Manual Seat Belt | Si Civic CRX Manual Seat Belt | Si Civic CRX Automatic ('passive') Seat Belt |
+		types["6"] = Data{Trim: "HF, Si"}
+	case "Civic":
+
+		if contains(dirt.BodyStyles, "Hatchback") {
+			types["4"] = Data{Trim: "STD", Transmission: "Manual"}
+			types["5"] = Data{Trim: "DX", Transmission: "Manual"}
+			types["6"] = Data{Trim: "Si", Transmission: "Manual"}
+		} else if contains(dirt.BodyStyles, "Sedan") || contains(dirt.Doors, "4 Door") {
+			types["4"] = Data{Trim: "DX", Transmission: "Manual"}
+			types["5"] = Data{Trim: "LX", Transmission: "Manual"}
+		} else if contains(dirt.BodyStyles, "Wagon") || contains(dirt.BodyStyles, "Wagovan") {
+			types["4"] = Data{Trim: "STD", Transmission: "Manual"}
+			types["5"] = Data{Trim: "STD", Transmission: "Manual"}
+			types["6"] = Data{Trim: "RTi", Extra: "4WD", Transmission: "Manual"}
+		}
+	}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func gradeTypePre93(typeCode, model string, year int, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	switch model {
+	case "Accord":
+		types["4"] = Data{Trim: "DX"}
+		types["5"] = Data{Trim: "LX"}
+		types["6"] = Data{Trim: "DC"}
+
+		if year >= 1992 && year <= 1993 {
+			types["7"] = Data{Trim: "EX"}
+		}
+
+		types["8"] = Data{Trim: "SE"}
+		types["9"] = Data{Trim: "10th Anniversary"}
+	case "Prelude":
+		types["1"] = Data{Trim: "S", EngineSize: "2.0L"}
+		types["2"] = Data{Trim: "S", EngineSize: "2.0L"}
+		types["3"] = Data{Trim: "S", EngineSize: "2.1L"}
+
+		if year >= 1992 && year <= 1993 {
+			types["4"] = Data{Trim: "S"}
+			types["6"] = Data{Trim: "Si", Extra: "w/4WS"}
+			types["7"] = Data{Extra: "VTEC"}
+		} else {
+			types["4"] = Data{Trim: "Si", Extra: "w/4WS", EngineSize: "2.1L"}
+		}
+
+		types["5"] = Data{Trim: "Si", EngineSize: "2.3L"}
+	case "del Sol":
+		if year == 1993 {
+			types["4"] = Data{Trim: "S"}
+			types["6"] = Data{Trim: "Si"}
+		}
+	case "Civic":
+		if year == 1992 {
+			types["4"] = Data{Trim: "CX", Doors: "3 Door"}
+			types["6"] = Data{Trim: "VX"}
+		} else {
+			types["4"] = Data{Trim: "STD, DX", Doors: "3 Door"}
+		}
+
+		if year == 1993 {
+			types["5"] = Data{Trim: "CX"}
+
+			if contains(dirt.Doors, "3 Door") {
+				types["6"] = Data{Trim: "DX"}
+			} else if contains(dirt.Doors, "2 Door") {
+				types["6"] = Data{Trim: "EX"}
+			}
+
+			types["7"] = Data{Trim: "VX"}
+		} else {
+			if contains(dirt.Doors, "3 Door") {
+				types["5"] = Data{Trim: "DX"}
+				types["6"] = Data{Trim: "Si"}
+			} else if contains(dirt.BodyStyles, "Wagon") {
+				types["5"] = Data{Trim: "DX", Extra: "2WD"}
+				types["6"] = Data{Trim: "ATi", Extra: "4WD"}
+			} else {
+				types["5"] = Data{Trim: "LX"}
+				types["6"] = Data{Trim: "EX"}
+			}
+		}
+
+		types["8"] = Data{Trim: "Si", Doors: "3 Door"}
+	case "CRX":
+		types["6"] = Data{Trim: "HF, Si"}
+	}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func gradeTypePre99(typeCode, model string, year int, dirt *Dirty) {
+	types := make(map[string]Data)
+
+	switch model {
+	case "Accord":
+		types["0"] = Data{Trim: "SE", Doors: "2 Door, 4 Door"}
+		types["1"] = Data{Trim: "DX", Extra: "w/ABS", Doors: "2 Door, 4 Door"}
+
+		if contains(dirt.BodyStyles, "Wagon") || contains(dirt.BodyStyles, "Wagovan") {
+			types["2"] = Data{Trim: "LX"}
+			types["3"] = Data{Trim: "LX", Extra: "w/ABS"}
+			types["9"] = Data{Trim: "EX"}
+		} else {
+			types["2"] = Data{Trim: "DX", Doors: "2 Door, 4 Door"}
+			types["3"] = Data{Trim: "LX", Extra: "w/ABS, V6", Doors: "2 Door, 4 Door"}
+			types["9"] = Data{Trim: "Value Package", Doors: "4 Door"}
+		}
+
+		if year == 1998 {
+			types["4"] = Data{Trim: "DX", Doors: "4 Door"}
+			types["7"] = Data{Trim: "EX", Extra: "ULEV"}
+		} else {
+			types["4"] = Data{Trim: "LX", Extra: "w/ABS", Doors: "2 Door, 4 Door"}
+			types["7"] = Data{Trim: "EX"}
+		}
+
+		types["5"] = Data{Trim: "EX", Doors: "2 Door, 4 Door"}
+		types["6"] = Data{Trim: "E", Extra: "w/Leather", Doors: "2 Door, 4 Door"}
+		types["8"] = Data{Trim: "DX 25th Anniversary"}
+	case "Prelude":
+		if year == 1997 {
+			types["4"] = Data{Extra: "VTEC"}
+			types["5"] = Data{Trim: "SH"}
+		} else if year == 1998 {
+			types["4"] = Data{Extra: "w/o SH pkg."}
+			types["5"] = Data{Trim: "Si"}
+		} else {
+			types["4"] = Data{Trim: "S"}
+			types["5"] = Data{Trim: "Si"}
+		}
+
+		types["6"] = Data{Trim: "Si", Extra: "4WS"}
+		types["7"] = Data{Extra: "VTEC"}
+	case "del Sol":
+		types["4"] = Data{Trim: "S"}
+		types["6"] = Data{Trim: "Si"}
+		types["7"] = Data{Trim: "Si", Extra: "w/ABS, VTEC"}
+		types["9"] = Data{Trim: "LX, Si", Extra: "VTEC, w/ABS", Doors: "3 Door"}
+	case "Civic":
+		types["0"] = Data{Trim: "LX"}
+		types["2"] = Data{Trim: "CX, DX, EX, HX, CVT", Doors: "2 Door, 3 Door, 4 Door"}
+		types["3"] = Data{Trim: "CX, DX, EX, LX", Extra: "w/AC, w/ABS", Doors: "2 Door, 3 Door, 4 Door"}
+		types["4"] = Data{Trim: "DX, EX", Doors: "2 Door, 4 Door"}
+		types["5"] = Data{Trim: "CX, LX, DX, EX", Extra: "w/AC, w/ABS", Doors: "2 Door, 3 Door, 4 Door"}
+		types["6"] = Data{Trim: "DX, LX", Extra: "w/ABS", Doors: "3 Door, 4 Door"}
+		types["7"] = Data{Trim: "LX, VX", Extra: "w/AC", Doors: "3 Door"}
+		types["8"] = Data{Trim: "Si, LX", Extra: "w/ABS", Doors: "3 Door"}
+		types["9"] = Data{Trim: "Si, EX", Extra: "w/ABS", Doors: "3 Door, 4 Door"}
+	case "CR-V":
+		types["4"] = Data{Trim: "LX", Extra: "w/o ABS"}
+		types["5"] = Data{Extra: "w/ABS"}
+
+		if year >= 1998 && year <= 1999 {
+			types["6"] = Data{Trim: "EX"}
+		}
+	case "Odyssey":
+		types["4"] = Data{Trim: "LX", Extra: "6 Seater Passaway"}
+		types["6"] = Data{Trim: "LX", Extra: "7 Seater Passenger"}
+		types["7"] = Data{Trim: "EX"}
+	}
+
+	if val, ok := types[typeCode]; ok {
+		fillDirty(dirt, val)
+	}
+}
+
+func findAssemblyPlant(typeCode string) string {
+	types := make(map[string]string)
+
+	types["A"] = "Marysville, Ohio, USA"
+	types["B"] = "Lincoln, Alabama, USA"
+	types["C"] = "Sayama, Saitama, Japan"
+	types["E"] = "Greensburg, Indiana, USA"
+	types["G"] = "El Salto, Jalisco, Mexico"
+	types["H"] = "Alliston, Ontario, Canada"
+	types["L"] = "East Liberty, Ohio, USA"
+	types["M"] = "Celaya, Guanajuato, Mexico"
+	types["P"] = "Ayutthaya, Thailand"
+	types["S"] = "Suzuka, Mie, Japan"
+	types["T"] = "Utsunomiya, Tochigi, Japan"
+	types["U"] = "Swindon, Wiltshire, U.K."
+
+	result := "Unknown"
+
+	if val, ok := types[typeCode]; ok {
+		result = val
+	}
+
+	return result
+}
+
+func cleanModel(rawModel []string) string {
+	result := "Unknown"
+
+	models := []string{
+		"Accord",
+		"Civic",
+		"Prelude",
+		"CR-V",
+		"CRX",
+		"CR-X",
+		"Odyssey",
+		"Orthia",
+	}
+
+	for _, v := range models {
+		if contains(rawModel, v) {
+			result = v
+			break
+		}
+	}
+
+	return result
+}
+
+func contains(arr []string, str string) bool {
+	for _, a := range arr {
+		if a == str {
+			return true
+		}
+	}
+	return false
+}
+
+func getMany(val string) []string {
+	return strings.Split(val, ", ")
+}
+
+func fillDirty(dirt *Dirty, data Data) {
+	dirt.BodyStyles = appendNoNil(dirt.BodyStyles, getMany(data.BodyStyle)...)
+	dirt.Doors = appendNoNil(dirt.Doors, getMany(data.Doors)...)
+	dirt.EngineModels = appendNoNil(dirt.EngineModels, data.EngineModel)
+	dirt.EngineSizes = appendNoNil(dirt.EngineSizes, getMany(data.EngineSize)...)
+	dirt.Extras = appendNoNil(dirt.Extras, getMany(data.Extra)...)
+	dirt.Gears = appendNoNil(dirt.Gears, data.Gears)
+	dirt.Models = appendNoNil(dirt.Models, data.Model)
+	dirt.Transmissions = appendNoNil(dirt.Transmissions, data.Transmission)
+	dirt.Trims = appendNoNil(dirt.Trims, getMany(data.Trim)...)
+}
+
+func compileDirty(dirt Dirty) common.VDS {
 	var result common.VDS
 
-	year := common.GetBGYear(sections.YearCode)
-
-	modelCode := sections.FeatureCode[:3]
-	model := modelTypes(modelCode, year)
-
-	bodyCode := sections.FeatureCode[:2]
-	bodyType := bodyTypes(bodyCode)
-
-	bodynTransCode := sections.FeatureCode[3:]
-	bodynTrans := bodynTransTypes(bodynTransCode, year)
-
-	gradeCode := vinNo[8:9]
-	grade := gradeTypes(gradeCode, year, model)
+	fmt.Println(dirt)
+	result.BodyStyle = getBestGuess(dirt.BodyStyles)
+	result.Doors = getBestGuess(dirt.Doors)
+	result.EngineModel = getBestGuess(dirt.EngineModels)
+	result.EngineSize = getBestGuess(dirt.EngineSizes)
+	result.Extras = dirt.Extras
+	result.Gears = getBestGuess(dirt.Gears)
+	result.Model = getBestGuess(dirt.Models)
+	result.Transmission = getBestGuess(dirt.Transmissions)
+	result.Trim = getBestGuess(dirt.Trims)
 
 	return result
 }
 
-// GetData Deserializes Honda VIN Numbers
-func (d Honda) GetData(vinNo string) string {
+func getBestGuess(items []string) string {
 	var result string
-	yearCode := vinNo[9:10]
-	years := common.GetYear(yearCode)
+	itemLen := len(items)
 
-	for _, year := range years {
-		if year <= time.Now().Year() {
-			modelCode := vinNo[3:6]
-			model := modelTypes(modelCode, year)
+	if itemLen > 1 {
+		mf := 1
+		m := 0
+		for k, v := range items {
+			for i := k; i < len(items); i++ {
+				if v == items[i] {
+					m++
+				}
 
-			bodyCode := vinNo[3:5]
-			bodyType := bodyTypes(bodyCode)
+				if mf < m {
+					mf = m
+					result = v
+				}
+			}
 
-			transCode := vinNo[6:7]
-			trans := transTypes(transCode)
+			m = 0
+		}
+	} else if itemLen == 1 {
+		result = items[0]
+	}
 
-			bodynTransCode := vinNo[6:7]
-			bodynTrans := bodynTransTypes(bodynTransCode, year)
+	return result
+}
 
-			gradeCode := vinNo[8:9]
-			grade := gradeTypes(gradeCode, year, model)
-
-			seq := vinNo[11:]
-
-			result += fmt.Sprintf("Year: %v \r\n", year)
-			result += fmt.Sprintf("Model: %s \r\n", model)
-			result += fmt.Sprintf("Body: %s \r\n", bodyType)
-			result += fmt.Sprintf("Transmission: %s \r\n", trans)
-			result += fmt.Sprintf("Body and Transmission: %s \r\n", bodynTrans)
-			result += fmt.Sprintf("Grade: %s \r\n", grade)
-			result += fmt.Sprintf("Number: %s \r\n", seq)
-			result += "---"
+func appendNoNil(arr []string, obj ...string) []string {
+	for _, v := range obj {
+		if v != "" {
+			arr = append(arr, v)
 		}
 	}
 
-	return result
-}
-
-func bodyTypes(typeCode string) string {
-	types := make(map[string]string)
-	types["SR"] = "Sedan"
-	types["WR"] = "Wagon"
-	types["AB"] = "Prelude"
-	types["AD"] = "Accord"
-	types["AE"] = "Civic 1300cc CRX"
-	types["AF"] = "Civic 1500cc CRX"
-	types["AG"] = "Civic 1300cc 3 door"
-	types["AH"] = "Civic 1500cc 3 door"
-	types["AK"] = "Civic 1500cc 4 door"
-	types["AN"] = "Civic Wagon"
-	types["AR"] = "Civic Wagon 4x4"
-	types["BA"] = "Accord"
-	types["AM"] = "Accord 1500cc 5 door"
-
-	result := "Unknown"
-
-	if val, ok := types[typeCode]; ok {
-		result = val
-	}
-
-	return result
-}
-
-func transTypes(typeCode string) string {
-	types := make(map[string]string)
-	types["2"] = "Semi-Hondamatic"
-	types["3"] = "3 speed automatic"
-	types["4"] = "4 speed manual"
-	types["5"] = "5 speed manual"
-	types["6"] = "5 speed manual super-low gear"
-	types["7"] = "4 speed automatic"
-	types["8"] = "5 speed automatic"
-
-	result := "Unknown"
-
-	if val, ok := types[typeCode]; ok {
-		result = val
-	}
-
-	return result
-}
-
-func modelTypes(typeCode string, year int) string {
-	types := make(map[string]string)
-
-	if year <= 1989 {
-		types["BA3"] = "Prelude A20 Engine"
-		types["BA4"] = "Prelude B20 Engine"
-		types["BA6"] = "Prelude A18 Engine"
-		types["CA5"] = "Accord"
-		types["CA6"] = "Accord coupe"
-		types["EC1"] = "Civic CRX"
-		types["EC2"] = "Civic 1300"
-		types["EC3"] = "Civic 1500"
-		types["EC4"] = "Civic 4 Door Sedan"
-		types["EC5"] = "Civic Wagon"
-		types["EC6"] = "Civic Wagon 4X4"
-		types["ED3"] = "Civic Sedan 1.5L (1988)"
-		types["ED6"] = "Civic Hatchback 1.5L (1988)"
-		types["ED7"] = "Civic Hatchback 1.6L (1988)"
-		types["ED8"] = "Civic CRX 1.5L (1988)"
-		types["ED9"] = "Civic CRX 1.6L (1988)"
-		types["EE2"] = "Civic Wagon 1.5L (1988)"
-		types["EE4"] = "Civic Wagon 1.6L (1988)"
-		types["EY1"] = "Civic Wagovan"
-		types["EY3"] = "Civic Wagovan 1.5L"
-	} else {
-		types["BA4"] = "Prelude, 2.0/2.1L"
-		types["BA8"] = "Prelude, 2.2L"
-		types["BB"] = "Prelude VTEC, 2.2L"
-		types["BB2"] = "Prelude, 2.3L"
-		types["BB6"] = "Prelude 2-door"
-		types["CB3"] = "Japan Version Accord, 2.2L"
-		types["CB7"] = "Accord, 2.2L"
-		types["CB9"] = "Accord Wagon, 2.2L"
-		types["CC1"] = "Accord coupé, 2.0L"
-		types["CD5"] = "Accord 4 Door 2.2L VTEC"
-		types["CD7"] = "Accord 2 Door 2.2L"
-		types["CE1"] = "Accord Wagon 2.2L"
-		types["CE6"] = "Accord V6 4 Door 2.7L"
-		types["CF8"] = "Accord 4 Door SOHC"
-		types["CF4"] = "Accord 4 Door DOHC SiR-T"
-		types["CG1"] = "Accord 4 Door V6 VTEC"
-		types["CG2"] = "Accord 2 Door V6 VTEC"
-		types["CG3"] = "Accord 2 Door (VTEC or ULEV)"
-		types["CG5"] = "Accord 4 Door VTEC"
-		types["CG6"] = "Accord 4 Door ULEV"
-		types["CH9"] = "Accord Wagon SiR 2.3L (VTEC)"
-		types["ED3"] = "Civic 4 Door, 1.5L"
-		types["ED4"] = "Civic 4 Door, 1.6L"
-		types["ED6"] = "Civic 3 Door, 1.5L"
-		types["ED7"] = "Civic3 Door, 1.6L"
-		types["ED8"] = "CRX, 1.5L"
-		types["ED9"] = "CRX, 1.6L"
-		types["EE2"] = "Civic Wagon, 1.5L"
-		types["EE4"] = "Civic Wagon, 1.6L"
-		types["EE8"] = "CR-X 1.6L VTEC"
-		types["EM1"] = "Civic Si 1.6L VTEC"
-		types["EG1"] = "Civic del Sol, 1.5L"
-		types["EG2"] = "Civic del Sol VTEC 1.6L"
-		types["EG6"] = "Civic 3 door hatchback 1.6L"
-		types["EG8"] = "Civic 4 Door, 1.5L"
-		types["EG9"] = "Civic 4 Door, 1.6L VTEC"
-		types["EH2"] = "Civic 3 Door, 1.5L"
-		types["EH3"] = "Civic 3 Door, 1.6L"
-		types["EH6"] = "Civic del Sol, 1.6L"
-		types["EH9"] = "Civic 4 Door, 1.6L"
-		types["EJ1"] = "Civic2 Door, 1.6L"
-		types["EJ2"] = "Civic2 Door, 1.5L"
-		types["EJ6"] = "Civic 2/3/4 Door 1.6L"
-		types["EJ7"] = "Civic 2 Door 1.6L"
-		types["EJ8"] = "Civic 2/4 Door 1.6L"
-		types["EJ9"] = "Civic 3 Door 1.4L"
-		types["EL1"] = "Orthia 1.8L 5 Door Wagon"
-		types["EL2"] = "Orthia 2.0L 5 Door Wagon"
-		types["EL3"] = "Orthia 2.0L 5 Door Wagon 4WD"
-		types["RA1"] = "Odyssey"
-		types["RA3"] = "Odyssey 5 Door Wagon (1998)"
-		types["RD1"] = "CR-V 5-door (4 Wheel drive)"
-		types["RD2"] = "CR-V 5-door (2 Wheel drive)"
-	}
-
-	result := "Unknown"
-
-	if val, ok := types[typeCode]; ok {
-		result = val
-	}
-
-	return result
-}
-
-func bodynTransTypes(typeCode string, year int) string {
-	types := make(map[string]string)
-
-	if year <= 1986 {
-		types["2"] = "2 door"
-		types["3"] = "3 door"
-		types["4"] = "4 door"
-		types["5"] = "5 door"
-	} else if year >= 1987 && year <= 1989 {
-		types["1"] = "2 Door Sedan, Manual"
-		types["2"] = "2 Door Sedan, Manual"
-		types["3"] = "2 Door Hatchback, Manual"
-		types["4"] = "2 Door Hatchback, Automatic"
-		types["5"] = "4 Door Sedan, Manual"
-		types["6"] = "4 Door Sedan, Automatic"
-		types["7"] = "4 Door Wagon, Manual"
-		types["8"] = "4 Door Wagon, Automatic"
-	} else if year >= 1990 {
-		types["1"] = "2 Door Coupe, Manual"
-		types["2"] = "2 Door Coupe, Automatic"
-		types["3"] = "3 Door Hatchback, Manual"
-		types["4"] = "3 Door Hatchback, Automatic"
-		types["5"] = "4 Door Sedan, Manual"
-		types["6"] = "4 Door Sedan, Automatic"
-		types["7"] = "5 Door Wagon, Manual"
-		types["8"] = "5 Door Wagon, Automatic"
-	}
-
-	result := "Unknown"
-
-	if val, ok := types[typeCode]; ok {
-		result = val
-	}
-
-	return result
-}
-
-func gradeTypes(typeCode string, year int, model string) string {
-	types := make(map[string]string)
-
-	if year <= 1987 {
-		types["1"] = "Basic, HF"
-		types["2"] = "Standard, DX"
-		types["3"] = "GL, GLS, LX"
-		types["4"] = "LXi, Si"
-		types["5"] = "Special"
-		types["6"] = "Accord Hatchback"
-		types["7"] = "Accord Hatchback & LXi"
-		types["8"] = "Accord Hatchback & LXi ('passive') seat belt"
-	} else if year >= 1988 && year <= 1989 {
-		switch model {
-		case "Accord":
-			types["2"] = "DX Accord Manual seat belt"
-			types["3"] = "LX Accord Manual seat belt"
-			types["4"] = "LXi Accord Manual seat belt"
-			types["5"] = "SEi Accord Manual seat belt"
-			types["6"] = "DX Accord Automatic seat belt"
-			types["8"] = "LXi Accord Automatic ('passive') seat belt"
-		case "Prelude":
-			types["2"] = "S Prelude Automatic ('passive') seat belt"
-			types["3"] = "Si Prelude Automatic ('passive') seat belt"
-			types["4"] = "Si Prelude w/optional 4WS Automatic ('passive') seat belt"
-		case "Civic":
-			types["4"] = "(std) Civic Hatchback Manual seat belt | DX Civic Sedan Manual seat belt | (std) Civic Wagovan Manual seat belt"
-			types["5"] = "DX Civic Hatchback Manual seat belt | LX Civic Sedan Manual seat belt | (std) Civic CRX Manual seat belt | (std) '89 Civic CRX Automatic ('passive') seat belt | (std) Civic Wagon Manual seat belt"
-			types["6"] = "HF Civic CRX Manual seat belt | Si Civic CRX Manual seat belt | Si Civic CRX Automatic ('passive') seat belt | Si Civic Hatchback Manual seat belt | RTi Civic Wagon 4WD Manual seat belt"
-		}
-	} else if year >= 1990 && year <= 1993 {
-		switch model {
-		case "Accord":
-			types["4"] = "DX Accord"
-			types["5"] = "LX Accord"
-			types["6"] = "DC Accord"
-			types["7"] = "EX Accord (92-93)"
-			types["8"] = "SE Accord"
-			types["9"] = "Accord 10th Anniversary"
-		case "Prelude":
-			types["1"] = "2.0 S Prelude"
-			types["2"] = "2.0 S Prelude"
-			types["3"] = "2.1 S Prelude"
-			types["4"] = "2.1 Si Prelude w/4WS | S Prelude (92-93)"
-			types["5"] = "2.3 Si Prelude"
-			types["6"] = "Si Prelude w/4WS (92-93)"
-			types["7"] = "VTEC Prelude (1993)"
-		case "Civic":
-			types["4"] = "(std) Civic 3 Door | CX Civic 3 Door (1992) | DX Civic | S Civic del Sol (1993)"
-			types["5"] = "LX Civic | CX Civic (1993) | DX Civic 3 Door | DX Civic Wagon (2WD)"
-			types["6"] = "DX Civic 3 Door (1993) | EX Civic 4 Door | EX Civic 2 Door (1993) | Si Civic 3 Door | Si Civic del Sol (1993) | ATi Civic Wagon (4WD) | VX Civic 3 Door (1992)"
-			types["7"] = "VX Civic (1993)"
-			types["8"] = "Si Civic 3 Door (92-93)"
-		case "CRX":
-			types["6"] = "HF CRX | Si CRX"
-		}
-	} else if year >= 1994 && year <= 1999 {
-		switch model {
-		case "Accord":
-			types["0"] = "Accord SE 2/4 Door"
-			types["1"] = "Accord DX w/ABS 2/4 Door"
-			types["2"] = "Accord DX 2/4 Door | Accord Wagon LX"
-			types["3"] = "Accord LX 2/4 Door | Accord Wagon LX w/ABS | Accord w/ABS V6"
-			types["4"] = "Accord DX 4 Door (1998) | Accord LX w/ABS 2/4 Door"
-			types["5"] = "Accord EX 2/4 Door"
-			types["6"] = "Accord E w/leather 2/4 Door"
-			types["7"] = "Accord EX | Accord EX ULEV (1998)"
-			types["8"] = "Accord DX 25th Anniversary"
-			types["9"] = "Accord Wagon EX | Accord Value Package 4 Door"
-		case "Prelude":
-			types["4"] = "Prelude S | Prelude VTEC (1997) | Prelude w/o SH pkg. (1998)"
-			types["5"] = "Prelude Si | Prelude SH (1997)"
-			types["6"] = "Prelude 4WS Si"
-			types["7"] = "Prelude VTEC"
-		case "Civic":
-			types["0"] = "Civic LX"
-			types["2"] = "Civic CX 3 Door | Civic DX 2/4 Door | Civic EX 2 Door | Civic HX | Civic CVT"
-			types["3"] = "Civic CX w/AC 3 Door | Civic DX w/AC 4 Door | Civic EX w/ABS 2 Door | Civic LX"
-			types["4"] = "Civic DX 4 Door | Civic EX 2/4 Door | Civic del Sol S"
-			types["5"] = "Civic CX 3 Door | Civic LX 4 Door | Civic DX w/AC | Civic EX a/ABS 2 Door"
-			types["6"] = "Civic DX 3 Door | Civic LX w/ABS 4 Door | Civic del Sol Si"
-			types["7"] = "Civic LX w/AC | Civic del Sol Si w/ABS | Civic del Sol VTEC | Civic VX 3 Door"
-			types["8"] = "Civic Si 3 Door | Civic LX w/ABS"
-			types["9"] = "Civic del Sol LX w/ABS | Civic del Sol Si w/ABS | Civic del Sol VTEC w/ABS | Civic Si w/ABS 3 Door | Civic EX 4 Door"
-		case "CR-V":
-			types["4"] = "CR-V w/o ABS | CR-V LX"
-			types["5"] = "CR-V w/ABS"
-			types["6"] = "CR-V EX (98-99)"
-		case "Odyssey":
-			types["4"] = "Odyssey LX 6 Passaway"
-			types["6"] = "Odyssey LX 7 Passenger"
-			types["7"] = "Odyssey EX"
-		}
-	}
-
-	result := "Unknown"
-
-	if val, ok := types[typeCode]; ok {
-		result = val
-	}
-
-	return result
+	return arr
 }
 
 /*

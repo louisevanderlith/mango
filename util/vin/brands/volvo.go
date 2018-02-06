@@ -1,16 +1,13 @@
 package brands
 
-import (
-	"github.com/louisevanderlith/mango/util/vin/common"
-)
+import "github.com/louisevanderlith/mango/util/vin/common"
 
 type Volvo struct {
+	common.VDS
 }
 
-func (b Volve) GetVDS(sections common.VINSections) common.VDS {
-	var result common.VDS
-
-	return result
+func (v Volvo) GetPassengerCar(sections common.VINSections, year int) common.VDS {
+	return v.VDS
 }
 
 /*

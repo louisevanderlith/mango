@@ -11,6 +11,7 @@ Please note that this repo is currently maintained on Windows, and all scripts a
 * $ npm install
 * $ gulp (Watchers have been setup for JS & CSS changes.)
 * $ To build all projects, run 'build.ps1' and compiled files will be copied to /mango/bin
+* $ To run the application, run `play.ps1'. You can configure applications in 'play.json'
 
 ## Project Layout
 * The API folder contains all micro-services and APIs.

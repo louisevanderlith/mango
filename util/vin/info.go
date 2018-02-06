@@ -1,6 +1,7 @@
 package vin
 
 import (
+	"github.com/louisevanderlith/mango/util/vin/brands"
 	"github.com/louisevanderlith/mango/util/vin/common"
 )
 
@@ -16,8 +17,8 @@ func GetInfo(vinNo string) (result Info, err error) {
 
 	if err == nil {
 		result.WMI = loadWMI(sections)
-		result.VDS = loadVDS(sections)
 		result.VIS = loadVIS(sections)
+		result.VDS = loadVDS(sections, result.WMI.Manufacturer.VDSName, result.VIS.Year)
 	}
 
 	return result, err
@@ -32,9 +33,13 @@ func loadWMI(sections common.VINSections) common.WMI {
 	return result
 }
 
-func loadVDS(sections common.VINSections) common.VDS {
+func loadVDS(sections common.VINSections, vdsName string, year int) common.VDS {
 	var result common.VDS
-	// TODO
+
+	brandVDS := brands.GetVDSForBrand(vdsName)
+
+	result = brandVDS.GetPassengerCar(sections, year)
+
 	return result
 }
 
@@ -43,7 +48,6 @@ func loadVIS(sections common.VINSections) common.VIS {
 
 	result.ValidVIN = common.IsValid(sections.FullVIN, sections.CheckDigit)
 	result.Year = common.GetBGYear(sections.YearCode)
-	result.AssemblyPlant = ""
 	result.SequenceNo = sections.SequenceCode
 
 	return result

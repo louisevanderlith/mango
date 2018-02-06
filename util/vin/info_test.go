@@ -23,7 +23,7 @@ func TestLoadSectionCodes_Correct(t *testing.T) {
 	actual, _ := common.LoadVINSections(input)
 
 	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Expecting %v, got %v", expected, actual)
+		t.Errorf("Expected %v, got %v", expected, actual)
 	}
 }
 
@@ -58,6 +58,53 @@ func TestLoadWMI(t *testing.T) {
 	actual := loadWMI(input)
 
 	if !reflect.DeepEqual(expected, actual) {
-		t.Errorf("Found %v, got %v", expected, actual)
+		t.Errorf("Expected %v, got %v", expected, actual)
+	}
+}
+
+func TestLoadVDS(t *testing.T) {
+	input, err := common.LoadVINSections("1HGEJ8144XL019972")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := common.VDS{
+		Model:         "Civic",
+		BodyStyle:     "Coupe",
+		Doors:         "2 Door",
+		EngineModel:   "",
+		EngineSize:    "1.6L",
+		Extras:        []string{},
+		Gears:         "5",
+		Transmission:  "Manual",
+		Trim:          "EX",
+		AssemblyPlant: "East Liberty, Ohio, USA",
+	}
+
+	actual := loadVDS(input, "honda", 1999)
+
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Expected %v, got %v", expected, actual)
+	}
+}
+
+func TestLoadVIS(t *testing.T) {
+	input, err := common.LoadVINSections("1HGEJ8144XL019972")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expected := common.VIS{
+		SequenceNo: "019972",
+		ValidVIN:   true,
+		Year:       1999,
+	}
+
+	actual := loadVIS(input)
+
+	if !reflect.DeepEqual(expected, actual) {
+		t.Errorf("Expected %v, got %v", expected, actual)
 	}
 }

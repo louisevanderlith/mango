@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"strconv"
 )
 
@@ -19,6 +20,7 @@ func IsValid(fullVIN, checkChar string) bool {
 		remainder = "X"
 	}
 
+	fmt.Println(remainder)
 	return remainder == checkChar
 }
 

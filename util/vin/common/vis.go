@@ -1,8 +1,7 @@
 package common
 
 type VIS struct {
-	ValidVIN      bool
-	Year          int
-	AssemblyPlant string
-	SequenceNo    string
+	ValidVIN   bool
+	Year       int
+	SequenceNo string
 }
