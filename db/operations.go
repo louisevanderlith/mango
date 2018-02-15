@@ -23,6 +23,12 @@ func insert(obj interface{}) (int64, error) {
 	return o.Insert(obj)
 }
 
+func insertMulti(batchCount int, objs interface{}) (int64, error) {
+	o := orm.NewOrm()
+
+	return o.InsertMulti(batchCount, objs)
+}
+
 func read(obj interface{}, related ...string) error {
 	readColumns := getReadColumns(obj)
 
@@ -54,33 +60,37 @@ func readAll(filter interface{}, container interface{}) error {
 
 func update(obj interface{}) (int64, error) {
 	o := orm.NewOrm()
+	relationships := getRelationships(obj)
 
-	return o.Update(obj)
+	for _, v := range relationships {
+		o.Update(v, getReadColumns(v)...)
+	}
+
+	return o.Update(obj, getReadColumns(obj)...)
 }
 
-func getReadColumns(obj interface{}) []string {
-	var result []string
+// getRelationships returns the objects related to the current object
+func getRelationships(obj interface{}) []interface{} {
+	var result []interface{}
 
-	valOf := reflect.ValueOf(obj)
-	indi := reflect.Indirect(valOf)
-	typeOf := indi.Type()
+	val := reflect.ValueOf(obj).Elem()
 
-	for i := 0; i < typeOf.NumField(); i++ {
-		field := typeOf.Field(i)
+	for i := 0; i < val.NumField(); i++ {
+		valueField := val.Field(i)
+		typeField := val.Type().Field(i)
 
-		if field.Anonymous {
-			anon := reflect.New(field.Type).Elem().Interface()
-			names := getReadColumns(anon)
+		if typeField.Type.Kind() == reflect.Ptr || typeField.Type.Kind() == reflect.Slice {
+			value := valueField.Interface()
+			if value != nil {
+				switch reflect.TypeOf(value).Kind() {
+				case reflect.Slice:
+					s := reflect.ValueOf(value)
 
-			result = append(result, names...)
-		} else {
-			fieldVal := indi.Field(i).Interface()
-
-			if isFieldSet(fieldVal) {
-				result = append(result, field.Name)
-
-				if field.Name == "ID" {
-					break
+					for j := 0; j < s.Len(); j++ {
+						result = append(result, s.Index(j).Interface())
+					}
+				default:
+					result = append(result, value)
 				}
 			}
 		}
@@ -89,6 +99,47 @@ func getReadColumns(obj interface{}) []string {
 	return result
 }
 
+// getReadColumns returns a list of column names, used to search
+func getReadColumns(obj interface{}) []string {
+	var result []string
+
+	val := reflect.ValueOf(obj).Elem()
+
+	for i := 0; i < val.NumField(); i++ {
+		valueField := val.Field(i)
+		typeField := val.Type().Field(i)
+		value := valueField.Interface()
+		kind := valueField.Kind()
+
+		if !isFieldEmpty(value, kind) {
+			result = append(result, typeField.Name)
+		}
+	}
+
+	return result
+}
+
+// getFilterValues returns a map of parameters and their values, used to filter.
+func getFilterValues(filter interface{}) map[string]interface{} {
+	result := make(map[string]interface{})
+
+	val := reflect.ValueOf(filter).Elem()
+
+	for i := 0; i < val.NumField(); i++ {
+		valueField := val.Field(i)
+		typeField := val.Type().Field(i)
+		value := valueField.Interface()
+		kind := valueField.Kind()
+
+		if !isFieldEmpty(value, kind) {
+			result[typeField.Name] = value
+		}
+	}
+
+	return result
+}
+
+/*
 func getFilterValues(filter interface{}) map[string]interface{} {
 	result := make(map[string]interface{})
 
@@ -107,41 +158,80 @@ func getFilterValues(filter interface{}) map[string]interface{} {
 		} else {
 			fieldVal := indi.Field(i).Interface()
 
-			if isFieldSet(fieldVal) {
+			if !isFieldEmpty(fieldVal) {
 				result[field.Name] = fieldVal
 			}
 		}
 	}
 
 	return result
-}
+}*/
 
-func isFieldSet(field interface{}) (result bool) {
-	val := reflect.ValueOf(field)
+/*
+func getReadColumnsOld(obj interface{}) []string {
+	var result []string
 
-	switch val.Kind() {
+	valOf := reflect.ValueOf(obj)
+	indi := reflect.Indirect(valOf)
+	typeOf := indi.Type()
+
+	for i := 0; i < typeOf.NumField(); i++ {
+		field := typeOf.Field(i)
+
+		if field.Anonymous {
+			anon := reflect.New(field.Type).Elem().Interface()
+			names := getReadColumns(anon)
+
+			result = append(result, names...)
+		} else if field.PkgPath != "reflect" {
+			fmt.Println(field.PkgPath)
+			indiField := indi.Field(i)
+			fieldVal := indiField.Interface()
+
+			if isFieldSet(fieldVal) {
+				result = append(result, field.Name)
+
+				if field.Name == "ID" {
+					break
+				}
+			}
+		}
+	}
+
+	return result
+}*/
+
+func isFieldEmpty(val interface{}, kind reflect.Kind) bool {
+	var result bool
+
+	switch kind {
 	case reflect.Int:
-		iField := field.(int)
+		iField := val.(int)
 		result = intRule(iField)
 	case reflect.Int64:
-		i64Field := field.(int64)
+		i64Field := val.(int64)
 		result = int64Rule(i64Field)
 	case reflect.String:
-		strField := field.(string)
+		strField := val.(string)
 		result = strRule(strField)
 	case reflect.Ptr, reflect.Struct, reflect.Slice:
 		result = true
 	case reflect.Bool:
-		result = boolRule(field)
+		result = boolRule(val)
 	default:
-		result = nilRule(field)
+		result = nilRule(val)
 	}
 
-	if tField, ok := field.(time.Time); ok {
+	if tField, ok := val.(time.Time); ok {
 		result = tField.IsZero()
 	}
 
-	return !result
+	return result
+}
+
+func sliceRule(val interface{}) bool {
+	records := reflect.ValueOf(val)
+	return records.Len() <= 0
 }
 
 func nilRule(val interface{}) bool {

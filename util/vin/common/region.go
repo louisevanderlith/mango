@@ -30,20 +30,20 @@ func init() {
 	world = buildWorld()
 }
 
-func GetRegion(continentCode, countryCode string) Region {
+func GetRegion(wmiCode WMICode) Region {
 	var result Region
 
 	const illegalChars = "IOQ"
 
-	continentValid := strings.Index(illegalChars, continentCode) == -1
-	countryValid := strings.Index(illegalChars, countryCode) == -1
+	continentValid := strings.Index(illegalChars, wmiCode.ContinentCode) == -1
+	countryValid := strings.Index(illegalChars, wmiCode.RegionCode) == -1
 
 	if continentValid && countryValid {
-		continent := findContinent(continentCode)
+		continent := findContinent(wmiCode.ContinentCode)
 
 		if len(continent.Countries) > 0 {
-			countries := continent.Countries[continentCode]
-			county := findCountry(countries, countryCode)
+			countries := continent.Countries[wmiCode.ContinentCode]
+			county := findCountry(countries, wmiCode.RegionCode)
 
 			result.Continent = continent.Name
 			result.Country = county.Name

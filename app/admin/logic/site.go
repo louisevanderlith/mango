@@ -37,6 +37,7 @@ type socialLink struct {
 }
 
 type portfolioItem struct {
+	ID       int64
 	ImageID  int64
 	ImageURL string
 	URL      string
@@ -109,6 +110,11 @@ func (obj *BasicSite) setImageURLs() {
 
 	for _, v := range obj.PortfolioItems {
 		v.ImageURL = uploadURL + strconv.FormatInt(v.ImageID, 10)
+	}
+
+	for i := 0; i < len(obj.PortfolioItems); i++ {
+		row := &obj.PortfolioItems[i]
+		row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
 	}
 }
 

@@ -41,7 +41,7 @@ func GetCommentChain(itemID int64, commentType enums.CommentType) (results Comme
 	filter.CommentType = commentType
 
 	var container []*comment.Comment
-	err := comment.Ctx.Comment.Read(filter, &container)
+	err := comment.Ctx.Comment.Read(&filter, &container)
 
 	if err == nil {
 		for _, v := range container {
@@ -69,7 +69,7 @@ func getChildren(itemID int64) (results CommentChain) {
 	filter.CommentType = enums.Child
 
 	var container []*comment.Comment
-	err := comment.Ctx.Comment.Read(filter, &container)
+	err := comment.Ctx.Comment.Read(&filter, &container)
 
 	if err == nil {
 		for _, v := range container {

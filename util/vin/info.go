@@ -1,6 +1,8 @@
 package vin
 
 import (
+	"errors"
+
 	"github.com/louisevanderlith/mango/util/vin/brands"
 	"github.com/louisevanderlith/mango/util/vin/common"
 )
@@ -18,7 +20,12 @@ func GetInfo(vinNo string) (result Info, err error) {
 	if err == nil {
 		result.WMI = loadWMI(sections)
 		result.VIS = loadVIS(sections)
-		result.VDS = loadVDS(sections, result.WMI.Manufacturer.VDSName, result.VIS.Year)
+
+		if result.VIS.ValidVIN {
+			result.VDS = loadVDS(sections, result.WMI.Manufacturer.VDSName, result.VIS.Year)
+		} else {
+			err = errors.New("vin is not valid")
+		}
 	}
 
 	return result, err
@@ -27,8 +34,8 @@ func GetInfo(vinNo string) (result Info, err error) {
 func loadWMI(sections common.VINSections) common.WMI {
 	var result common.WMI
 
-	result.Region = common.GetRegion(sections.ContinentCode, sections.RegionCode)
-	result.Manufacturer = common.GetManufacturer(sections.ContinentCode, sections.ManufacturerCode)
+	result.Region = common.GetRegion(sections.WMICode)
+	result.Manufacturer = common.GetManufacturer(sections.WMICode)
 
 	return result
 }
@@ -46,9 +53,9 @@ func loadVDS(sections common.VINSections, vdsName string, year int) common.VDS {
 func loadVIS(sections common.VINSections) common.VIS {
 	var result common.VIS
 
-	result.ValidVIN = common.IsValid(sections.FullVIN, sections.CheckDigit)
-	result.Year = common.GetBGYear(sections.YearCode)
-	result.SequenceNo = sections.SequenceCode
+	result.ValidVIN = common.IsValid(sections.FullVIN, sections.VISCode.CheckDigit)
+	result.Year = common.GetYear(sections.VISCode.YearCode, sections.VDSCode.Char7)
+	result.SequenceNo = sections.VISCode.SequenceCode
 
 	return result
 }

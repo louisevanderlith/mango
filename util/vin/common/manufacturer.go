@@ -23,13 +23,13 @@ func init() {
 	worldGroup = loadManufacturerWorld()
 }
 
-func GetManufacturer(continentCode, manufacturerCode string) Manufacturer {
+func GetManufacturer(wmiCode WMICode) Manufacturer {
 	var result Manufacturer
 
-	group, ok := worldGroup[continentCode]
+	group, ok := worldGroup[wmiCode.ContinentCode]
 
 	if ok {
-		manufacturer, hasManu := group[manufacturerCode]
+		manufacturer, hasManu := group[wmiCode.ManufacturerCode]
 
 		if hasManu {
 			result = manufacturer

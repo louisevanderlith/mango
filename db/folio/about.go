@@ -7,10 +7,10 @@ import (
 
 type About struct {
 	db.Record
-	SectionText string `orm:"size(256)"`
-	Profile *Profile `orm:"rel(fk)"`
+	SectionText string   `orm:"size(256)"`
+	Profile     *Profile `orm:"rel(fk)" json:",omitempty"`
 }
 
-func (o About) Validate() (bool, error){
+func (o About) Validate() (bool, error) {
 	return util.ValidateStruct(o)
 }

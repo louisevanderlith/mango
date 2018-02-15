@@ -27,6 +27,7 @@ const _formValid = function(){
         let ctrl = _stateControl[currKey];
 
         if (!ctrl.valid) {
+            console.warn(ctrl.errors);
             result = false;
             break;
         }
