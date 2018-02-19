@@ -25,6 +25,11 @@ func init() {
 				&controllers.AboutController{},
 			),
 		),
+		beego.NSNamespace("/header",
+			beego.NSInclude(
+				&controllers.AboutController{},
+			),
+		),
 		beego.NSNamespace("/portfolio",
 			beego.NSInclude(
 				&controllers.PortfolioController{},
@@ -51,6 +56,7 @@ func setupMapping() {
 	uploadMap["PUT"] = enums.Admin
 
 	control.AddControllerMap("/about", uploadMap)
+	control.AddControllerMap("/header", uploadMap)
 	control.AddControllerMap("/portfolio", uploadMap)
 	control.AddControllerMap("/site", uploadMap)
 	control.AddControllerMap("/social", uploadMap)

@@ -20,6 +20,12 @@ func init() {
 func insert(obj interface{}) (int64, error) {
 	o := orm.NewOrm()
 
+	relationships := getRelationships(obj)
+
+	for _, v := range relationships {
+		o.Insert(v)
+	}
+
 	return o.Insert(obj)
 }
 

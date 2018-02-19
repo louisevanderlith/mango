@@ -32,11 +32,12 @@ function registerEvents() {
     $(document).on('keyup', pressEnter);
 }
 
-function trySend() {
+function trySend(e) {
     form.id.validator('validate');
 
     if (fs.isFormValid()) {
-        submitSend();
+        let toEmail = e.target.data.to;
+        submitSend(toEmail);
     }
 }
 
@@ -48,7 +49,7 @@ function pressEnter(e) {
     e.preventDefault();
 }
 
-function submitSend() {
+function submitSend(toEmail) {
     fs.submitDisabled(true);
 
     var firstName = form.name.val();
@@ -65,7 +66,8 @@ function submitSend() {
             Body: form.message.val(),
             Email: form.email.val(),
             Name: form.name.val(),
-            Phone: form.contact.val()
+            Phone: form.contact.val(),
+            To: toEmail
         }),
         cache: false,
         success: function () {
@@ -86,7 +88,7 @@ function submitSend() {
             $('#success').html("<div class='alert alert-danger'>");
             $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
                 .append("</button>");
-            $('#success > .alert-danger').append($("<strong>").text("Sorry " + firstName + ", it seems that my mail server is not responding. Please try again later!"));
+            $('#success > .alert-danger').append($("<strong>").text("Sorry " + firstName + ", it seems that our mail server is not responding. Please try again later!"));
             $('#success > .alert-danger').append('</div>');
             //clear all fields
             form.id.trigger("reset");

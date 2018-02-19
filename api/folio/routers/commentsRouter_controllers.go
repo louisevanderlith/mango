@@ -15,6 +15,14 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:HeaderController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:HeaderController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:PortfolioController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:PortfolioController"],
 		beego.ControllerComments{
 			Method: "Post",

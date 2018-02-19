@@ -1,73 +1,67 @@
 import * as lookup from './pathLookup';
 
+function defaultSuccess(data) {
+    console.log(data);
+}
+
+function defaultFail(data) {
+    console.error(data);
+}
+
+function defaultComplete() {
+}
+
+function doRequest(url, method, data, success, fail, complete) {
+    $.ajax({
+        url: url,
+        type: method,
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        cache: false,
+        success: success || defaultSuccess,
+        error: fail || defaultFail,
+        complete: complete || defaultFail
+    });
+}
+
+export function createSite(data, success, fail, complete) {
+    lookup.buildPath('Folio.API', "site").then((buildPath) => {
+        doRequest(buildPath, "POST", data, success, fail, complete);
+    });
+}
+
 export function updateSite(data, success, fail, complete) {
     lookup.buildPath('Folio.API', "site").then((buildPath) => {
-        $.ajax({
-            url: buildPath,
-            type: "PUT",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(data),
-            cache: false,
-            success: success,
-            error: fail,
-            complete: complete
-        });
+        doRequest(buildPath, "PUT", data, success, fail, complete);
     });
 }
 
-export function createUpload(data, success, fail, complete){
+export function createUpload(data, success, fail, complete) {
     lookup.buildPath('Artifact.API', 'upload').then((buildPath) => {
-        $.ajax({
-            url: buildPath,
-            type: 'POST',
-            contentType: false,
-            processData: false,
-            data: data,
-            success: success,
-            error: fail,
-            complete: complete
-        });
+        doRequest(buildPath, "POST", data, success, fail, complete);
     });
 }
 
-export function createSocialLink(data, success, fail){
+export function createSocialLink(data, success, fail, complete) {
     lookup.buildPath('Folio.API', 'social').then((buildPath) => {
-        $.ajax({
-            url: buildPath,
-            type: "POST",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(data),
-            cache: false,
-            success: success,
-            error: fail
-        });
+        doRequest(buildPath, "POST", data, success, fail, complete);
     });
 }
 
-export function createAboutSection(data, success, fail){
+export function createAboutSection(data, success, fail, complete) {
     lookup.buildPath('Folio.API', 'about').then((buildPath) => {
-        $.ajax({
-            url: buildPath,
-            type: "POST",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(data),
-            cache: false,
-            success: success,
-            error: fail
-        });
+        doRequest(buildPath, "POST", data, success, fail, complete);
     });
 }
 
-export function createPortfolioItem(data, success, fail){
+export function createPortfolioItem(data, success, fail, complete) {
     lookup.buildPath('Folio.API', 'portfolio').then((buildPath) => {
-        $.ajax({
-            url: buildPath,
-            type: "POST",
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify(data),
-            cache: false,
-            success: success,
-            error: fail
-        });
+        doRequest(buildPath, "POST", data, success, fail, complete);
+    });
+}
+
+export function createHeaderItem(data, success, fail, complete) {
+    lookup.buildPath('Folio.API', 'header').then((buildPath) => {
+        doRequest(buildPath, "POST", data, success, fail, complete);
     });
 }

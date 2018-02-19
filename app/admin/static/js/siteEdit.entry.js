@@ -16,6 +16,7 @@ const form = {
     socialLinks: $('#lstSocial'),
     portfolio: $('#lstPortfolio'),
     aboutSections: $('#lstAbout'),
+    headers: $('#lstHeader'),
     saveButton: $('#btnSave'),
     editButton: $('#btnEdit'),
     addSocialButton: $('#btnAddSocial'),
@@ -137,7 +138,8 @@ function submitSite() {
         StyleSheet: form.styleSheet.val(),
         SocialLinks: getList(form.socialLinks, "Social"),
         PortfolioItems: getList(form.portfolio, "Portfolio"),
-        AboutSections: getList(form.aboutSections, "About")
+        AboutSections: getList(form.aboutSections, "About"),
+        Headers: getList(form.headers, "Header")
     };
 
     let success = function (data) {
@@ -198,6 +200,9 @@ function getContainerInfo(child, container) {
         case "About":
             result = getAboutInfo(child);
             break;
+        case "Header":
+            result = getHeaderInfo(child);
+            break;
     }
 
     return result;
@@ -228,6 +233,15 @@ function getAboutInfo(child) {
     let paragraph = $(`#txtAboutParagraph${id}`).val();
 
     return { ID: recordID, SectionText: paragraph };
+}
+
+function getHeaderInfo(child) {
+    let id = child.id.replace('xxx', '');
+    let recordID = $(child).data('id');
+    let imageID = $(`#yyy${id}`).data('itemid');
+    let text = $(`#xxx${id}`).val();
+
+    return { ID: recordID, Text: text, ImageID: imageID };
 }
 
 function removeRow(e) {
@@ -290,9 +304,20 @@ function addParagraphRow(obj) {
         location.reload();
     };
 
-    let fail = function (data) {
-        console.error(data.Error);
-    }
+    services.createAboutSection(data, success);
+}
 
-    services.createAboutSection(data, success, fail);
+function addHeaderItem(obj) {
+    let data = {
+        Text: 'blank header',
+        Profile: {
+            ID: currentID
+        }
+    };
+
+    let success = function (data) {
+        location.reload();
+    };
+
+    services.createHeaderItem(data, success);
 }

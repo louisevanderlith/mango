@@ -22,13 +22,13 @@ func (req *SiteController) Post() {
 	var site folio.Profile
 	json.Unmarshal(req.Ctx.Input.RequestBody, &site)
 
-	_, err := folio.Ctx.Profile.Create(&site)
+	id, err := folio.Ctx.Profile.Create(&site)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = map[string]string{"Error": err.Error()}
 	} else {
-		req.Data["json"] = map[string]string{"Data": "Website has been created."}
+		req.Data["json"] = map[string]interface{}{"Data": id}
 	}
 
 	req.ServeJSON()
