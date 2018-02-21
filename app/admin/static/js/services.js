@@ -24,6 +24,19 @@ function doRequest(url, method, data, success, fail, complete) {
     });
 }
 
+function doMultipartRequest(url, data, success, fail, complete) {
+    $.ajax({
+        url: url,
+        type: 'POST',
+        contentType: false,
+        processData: false,
+        data: data,
+        success: success || defaultSuccess,
+        error: fail || defaultFail,
+        complete: complete || defaultComplete
+    });
+}
+
 export function createSite(data, success, fail, complete) {
     lookup.buildPath('Folio.API', "site").then((buildPath) => {
         doRequest(buildPath, "POST", data, success, fail, complete);
@@ -38,7 +51,7 @@ export function updateSite(data, success, fail, complete) {
 
 export function createUpload(data, success, fail, complete) {
     lookup.buildPath('Artifact.API', 'upload').then((buildPath) => {
-        doRequest(buildPath, "POST", data, success, fail, complete);
+        doMultipartRequest(buildPath, data, success, fail, complete);
     });
 }
 
