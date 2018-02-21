@@ -87,7 +87,7 @@ func (req *SiteController) GetOne() {
 		msg := folio.Profile{}
 
 		if id, err := strconv.ParseInt(siteParam, 10, 32); err == nil {
-			msg.ID = id
+			msg.Id = id
 		} else {
 			msg.Title = siteParam
 		}

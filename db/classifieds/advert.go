@@ -13,10 +13,10 @@ type Advert struct {
 	DateListed time.Time `orm:"type(datetime)"`
 	Price      int
 	Negotiable bool
-	Tags       []*Tag    `orm:"rel(m2m)"`
-	Location   string    `orm:"size(128)"`
+	Tags       []*Tag `orm:"rel(m2m)"`
+	Location   string `orm:"size(128)"`
 }
 
 func (o Advert) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

@@ -46,7 +46,7 @@ func GetCommentChain(itemID int64, commentType enums.CommentType) (results Comme
 	if err == nil {
 		for _, v := range container {
 			item := simpleComment{
-				Children:   getChildren(v.ID),
+				Children:   getChildren(v.Id),
 				DatePosted: v.CreateDate,
 				Text:       v.Text,
 				DownVotes:  v.DownVotes,
@@ -74,7 +74,7 @@ func getChildren(itemID int64) (results CommentChain) {
 	if err == nil {
 		for _, v := range container {
 			item := simpleComment{
-				Children:   getChildren(v.ID),
+				Children:   getChildren(v.Id),
 				DatePosted: v.CreateDate,
 				Text:       v.Text,
 				DownVotes:  v.DownVotes,

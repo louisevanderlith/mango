@@ -7,21 +7,22 @@ import (
 
 	"github.com/louisevanderlith/mango/db"
 
-	"github.com/astaxie/beego/orm"
-	"golang.org/x/crypto/bcrypt"
-	"github.com/louisevanderlith/mango/util/enums"
-	"strings"
 	"strconv"
+	"strings"
+
+	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // User database model
 type User struct {
 	db.Record
-	Name          string        `orm:"size(75)"`
-	Verified      bool          `orm:"default(false)"`
-	Email         string        `orm:"size(128)"`
-	ContactNumber string        `orm:"size(20)"`
+	Name          string `orm:"size(75)"`
+	Verified      bool   `orm:"default(false)"`
+	Email         string `orm:"size(128)"`
+	ContactNumber string `orm:"size(20)"`
 	Password      string
 	LoginDate     time.Time     `orm:"auto_now_add"`
 	LoginTraces   []*LoginTrace `orm:"reverse(many)"`
@@ -31,7 +32,7 @@ type User struct {
 var cost int
 
 func init() {
-	cost = 10
+	cost = 11
 }
 
 func (user User) Validate() (bool, error) {
@@ -41,7 +42,7 @@ func (user User) Validate() (bool, error) {
 		issues = append(issues, "Password must be atleast 6 characters.")
 	}
 
-	valid, common := util.ValidateStruct(user)
+	valid, common := util.ValidateStruct(&user)
 
 	if !valid {
 		issues = append(issues, common.Error())
@@ -92,7 +93,7 @@ func Login(identifier string, password []byte, ip string, location string) (pass
 				User:     user}
 
 			_, err = Ctx.LoginTrace.Create(&trace)
-			userID = user.ID
+			userID = user.Id
 
 			if err != nil {
 				log.Printf("Login: ", err)
@@ -103,7 +104,7 @@ func Login(identifier string, password []byte, ip string, location string) (pass
 	return passed, userID, roles
 }
 
-func securePassword(user *User) {
+func (user *User) SecurePassword() {
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(user.Password), cost)
 
 	if err != nil {

@@ -1,10 +1,10 @@
 package secure
 
 import (
-	"github.com/louisevanderlith/mango/util/enums"
-	"github.com/louisevanderlith/mango/db"
 	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/mango/db"
 	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type Role struct {
@@ -14,7 +14,7 @@ type Role struct {
 }
 
 func (o Role) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }
 
 func (obj *User) LoadRoles() error {

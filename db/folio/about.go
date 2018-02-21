@@ -12,5 +12,5 @@ type About struct {
 }
 
 func (o About) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

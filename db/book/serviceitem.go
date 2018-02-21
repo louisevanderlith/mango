@@ -13,5 +13,5 @@ type ServiceItem struct {
 }
 
 func (o ServiceItem) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

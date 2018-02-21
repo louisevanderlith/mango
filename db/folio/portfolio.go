@@ -14,5 +14,5 @@ type Portfolio struct {
 }
 
 func (o Portfolio) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

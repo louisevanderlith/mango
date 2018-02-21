@@ -13,5 +13,5 @@ type SocialLink struct {
 }
 
 func (o SocialLink) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

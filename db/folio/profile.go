@@ -21,5 +21,5 @@ type Profile struct {
 }
 
 func (p Profile) Validate() (bool, error) {
-	return util.ValidateStruct(p)
+	return util.ValidateStruct(&p)
 }

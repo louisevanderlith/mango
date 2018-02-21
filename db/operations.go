@@ -22,11 +22,15 @@ func insert(obj interface{}) (int64, error) {
 
 	relationships := getRelationships(obj)
 
-	for _, v := range relationships {
-		o.Insert(v)
+	id, err := o.Insert(obj)
+
+	if err == nil {
+		for _, v := range relationships {
+			o.Insert(v)
+		}
 	}
 
-	return o.Insert(obj)
+	return id, err
 }
 
 func insertMulti(batchCount int, objs interface{}) (int64, error) {

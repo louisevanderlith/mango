@@ -3,15 +3,16 @@ package classifieds
 import (
 	"time"
 
-	"github.com/louisevanderlith/mango/db"
 	"errors"
 	"strings"
+
+	"github.com/louisevanderlith/mango/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
 type CarAdvert struct {
 	db.Record
-	ModelID         int64
+	ModelID       int64
 	Info          string    `orm:"size(128)"`
 	Year          int       `orm:"null"`
 	Odometer      int       `orm:"null"`
@@ -22,7 +23,7 @@ type CarAdvert struct {
 func (o CarAdvert) Validate() (bool, error) {
 	var issues []string
 
-	valid, common := util.ValidateStruct(o)
+	valid, common := util.ValidateStruct(&o)
 	if !valid {
 		issues = append(issues, common.Error())
 	}

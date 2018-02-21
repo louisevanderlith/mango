@@ -11,7 +11,7 @@ function startPlay() {
 
             if($progName -eq 'gate'){
                 Write-Host 'Gate must wait for all applications to register with the router before starting.' -ForegroundColor "green"
-                Start-Sleep -s 5
+                Start-Sleep -s 7
             }
 
             $cmd = "Write-Host 'Starting' $progName -ForegroundColor 'red'; cd $progPath; $progCmd; Read-Host"

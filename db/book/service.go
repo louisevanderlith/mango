@@ -15,5 +15,5 @@ type Service struct {
 }
 
 func (o Service) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

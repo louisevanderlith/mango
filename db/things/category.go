@@ -13,5 +13,5 @@ type Category struct {
 }
 
 func (o Category) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

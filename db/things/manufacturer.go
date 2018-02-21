@@ -15,7 +15,7 @@ type Manufacturer struct {
 }
 
 func (o Manufacturer) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }
 
 func seedManufacturer() {

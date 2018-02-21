@@ -13,5 +13,5 @@ type Header struct {
 }
 
 func (o Header) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

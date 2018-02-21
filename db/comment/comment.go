@@ -17,5 +17,5 @@ type Comment struct {
 }
 
 func (o Comment) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

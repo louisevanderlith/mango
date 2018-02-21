@@ -41,13 +41,13 @@ func getIncorrectType(property string, value interface{}, correctType string) st
 	return fmt.Sprintf(incorrectType, property, value, correctType)
 }
 
-func getMeta(tag string, property reflect.Value) tagMeta {
+func getMeta(tag string, kind reflect.Kind) tagMeta {
 	result := tagMeta{}
 	parts := strings.Split(tag, ";")
 
 	required := !strings.Contains(tag, "null")
 	result.Required = required
-	result.Type = property.Type().Kind()
+	result.Type = kind
 
 	hasSize := strings.Contains(tag, "size")
 
@@ -80,17 +80,20 @@ func getFromTag(list []string, name string) string {
 func ValidateStruct(obj interface{}) (bool, error) {
 	var issues []string
 
-	v := reflect.ValueOf(obj)
+	val := reflect.ValueOf(obj).Elem()
 
-	for i := 0; i < v.NumField(); i++ {
-		typeField := v.Type().Field(i)
+	for i := 0; i < val.NumField(); i++ {
+		valueField := val.Field(i)
+		typeField := val.Type().Field(i)
 		tag := typeField.Tag.Get("orm")
 
-		meta := getMeta(tag, v.Field(i))
-		meta.PropName = typeField.Name
+		kind := valueField.Kind()
+		validator := getTypeValidator(kind)
 
-		value := v.Field(i).Interface()
-		validator := getTypeValidator(meta.Type)
+		meta := getMeta(tag, kind)
+		meta.PropName = typeField.Name
+		value := valueField.Interface()
+
 		isValid, problems := validator.Valid(value, meta)
 
 		if !isValid {
@@ -159,6 +162,7 @@ func (o StringValidation) Valid(obj interface{}, meta tagMeta) (bool, []string) 
 func (o IntValidation) Valid(obj interface{}, meta tagMeta) (bool, []string) {
 	var issues []string
 	val, ok := obj.(int)
+	fmt.Println("OBJECT:", obj, "VAL:", val)
 
 	if ok {
 		if meta.Required && val < 1 {

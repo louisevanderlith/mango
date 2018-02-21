@@ -22,7 +22,7 @@ type Message struct {
 }
 
 func (m Message) Validate() (bool, error) {
-	return util.ValidateStruct(m)
+	return util.ValidateStruct(&m)
 }
 
 func (m Message) SendMessage() error {

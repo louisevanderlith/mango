@@ -123,8 +123,8 @@ func (obj *BasicSite) setImageURLs() {
 		row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
 	}
 
-	for i := 0; i < len(obj.HeaderItems); i++ {
-		row := &obj.HeaderItems[i]
+	for i := 0; i < len(obj.Headers); i++ {
+		row := &obj.Headers[i]
 		row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
 	}
 }

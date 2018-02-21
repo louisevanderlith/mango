@@ -9,13 +9,14 @@ import (
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
-	uuid "github.com/nu7hatch/gouuid"
 	"strings"
+
+	uuid "github.com/nu7hatch/gouuid"
 )
 
 type Services []*util.Service
 
-var	serviceMap map[string]Services
+var serviceMap map[string]Services
 
 func init() {
 	serviceMap = make(map[string]Services)

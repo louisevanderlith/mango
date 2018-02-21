@@ -12,13 +12,13 @@ type IRecord interface {
 }
 
 type Record struct {
-	ID         int64     `orm:"column(id);auto;pk"`
+	Id         int64     `orm:"auto;pk;unique;`
 	CreateDate time.Time `orm:"auto_now_add"`
 	Deleted    bool      `orm:"default(false)"`
 }
 
 func (r Record) GetID() int64 {
-	return r.ID
+	return r.Id
 }
 
 func (r Record) IsDeleted() bool {

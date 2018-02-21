@@ -24,7 +24,7 @@ var testCtx *testContext
 func newTestTable() testTable {
 	return testTable{
 		Record: Record{
-			ID:         0,
+			Id:         0,
 			Deleted:    false,
 			CreateDate: time.Now(),
 		},

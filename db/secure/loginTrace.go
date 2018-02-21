@@ -14,5 +14,5 @@ type LoginTrace struct {
 }
 
 func (o LoginTrace) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }
