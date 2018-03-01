@@ -3,7 +3,7 @@ package classifieds
 import (
 	"time"
 
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 

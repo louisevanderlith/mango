@@ -27,7 +27,7 @@ func init() {
 		),
 		beego.NSNamespace("/header",
 			beego.NSInclude(
-				&controllers.AboutController{},
+				&controllers.HeaderController{},
 			),
 		),
 		beego.NSNamespace("/portfolio",

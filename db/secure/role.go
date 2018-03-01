@@ -2,7 +2,7 @@ package secure
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )

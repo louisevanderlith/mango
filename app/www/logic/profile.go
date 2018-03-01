@@ -54,6 +54,7 @@ type aboutSection struct {
 
 type headerItem struct {
 	ID       int64
+	Heading  string
 	Text     string
 	ImageID  int64
 	ImageURL string

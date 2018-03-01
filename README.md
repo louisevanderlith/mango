@@ -3,7 +3,7 @@ Mango monorepo for all of avosa's applications and services.
 Please note that this repo is currently maintained on Windows, and all scripts and settings are setup as such.
 
 ## Project Requirements
-* PostgreSQL v9.1 and above (We use 9.6)
+* PostgreSQL v9.6
 * GO v1.7.3 and above
 * Beego v1.8.3 and above
 
@@ -19,10 +19,10 @@ Please note that this repo is currently maintained on Windows, and all scripts a
 * The DB folder contains all database models and their logic.
 * The UTIL folder contains logic used by most applications.
 
-The 'Router' and 'WWW' applications are key to running any of the other products found within this repo.
+The 'Router' and 'Gate' applications are key to running any of the other products found within this repo.
 If you don't require fancy named URLs, then running 'Router' is all you need to get up and running.
 
-### Router
+### Router (/API/router)
 The router API is used hold all versions of an application or API's URLs
 For example, we can use the same router for all of our environments like 'LIVE', 'UAT', and 'DEV'
 This means that we can ask the router API for our e-mail API (Comms.API) and depending on the environment of the caller
@@ -38,15 +38,14 @@ This decreases effort when deploying our applications and also keeps the code fr
 You will see 'srv.Register(port)' within the main.go of every application.
 This function is used to register an application.
 
-### WWW (/APP/www)
-The www application acts as the main entry point for all applications, as we can assign names to every registered application.
+### Gate (/APP/gate)
+The Gate application acts as the main entry point for all applications, as we can assign names to every registered application.
 So, when debugging we can call 'https://comms.localhost:80/' instead of 'http://localhost:8085' for the 'Comms.API'.
-This avoids the need to remember the specific port for every application running.
+This avoids the need to remember the specific port for every application running and also removes the need to store URLs within every application.
+The front-end also relies on the Gate to determine the correct environment's URL when calling services.
 
-WWW also acts as the default website for avosa.co.za, this website is used as a fallback when
-an application can't be found by the Router API.
-
-We require 1(one) instance of www running for every environment we have.
+The gate application will try to load the default WWW website when a subdomain can't be found.
+We require 1(one) instance of Gate running for every environment we have.
 
 ## API Folder
 - ### Artifact
@@ -55,6 +54,8 @@ We require 1(one) instance of www running for every environment we have.
   Any comments made on the system, should all be controlled by the Comment API.
 - ### Comms
   Email, SMS and other Messages are all to handled by Comms.
+  ### Folio
+  The default website's (WWW's) data store.
 - ### Router
   See the description for Router above.
 - ### Secure
@@ -67,9 +68,11 @@ We require 1(one) instance of www running for every environment we have.
   We should be able to control and monitor every application and it's data from this application.
 - ### Classifieds
   Classifieds will act as the central platform for advertising products and services.
+  ### Gate
+  See the description for Gate above.
 - ### Logbook
   Logbook is an application that will be built to provide added value to the Classifieds application.
 - ### Shop
   This application is our central e-commerce platform.
 - ### WWW
-  See the description for www above.
+  WWW is as the name suggests, the default website for this repo.

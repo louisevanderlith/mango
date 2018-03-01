@@ -54,6 +54,7 @@ type aboutSection struct {
 
 type headerItem struct {
 	ID       int64
+	Heading  string
 	Text     string
 	ImageID  int64
 	ImageURL string
@@ -116,16 +117,24 @@ func (obj *BasicSite) setImageURLs() {
 		setUploadURL()
 	}
 
-	obj.ImageURL = uploadURL + strconv.FormatInt(obj.ImageID, 10)
+	if obj.ImageID != 0 {
+		obj.ImageURL = uploadURL + strconv.FormatInt(obj.ImageID, 10)
+	}
 
 	for i := 0; i < len(obj.PortfolioItems); i++ {
 		row := &obj.PortfolioItems[i]
-		row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
+
+		if row.ImageID != 0 {
+			row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
+		}
 	}
 
 	for i := 0; i < len(obj.Headers); i++ {
 		row := &obj.Headers[i]
-		row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
+
+		if row.ImageID != 0 {
+			row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
+		}
 	}
 }
 

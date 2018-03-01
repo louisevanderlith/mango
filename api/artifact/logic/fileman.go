@@ -8,7 +8,7 @@ import (
 	"io"
 	"mime/multipart"
 
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/db/artifact"
 	"github.com/louisevanderlith/mango/util/enums"
 )

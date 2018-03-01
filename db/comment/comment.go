@@ -1,7 +1,7 @@
 package comment
 
 import (
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )
