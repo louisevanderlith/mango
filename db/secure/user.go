@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 
 	"strconv"
 	"strings"

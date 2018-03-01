@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 	"gopkg.in/gomail.v2"
 )

@@ -30,39 +30,46 @@
 
 <!-- Header -->
 <header class="masthead">
-    <div class="container">
-        <h2 class="text-center green">What we do</h2>
-        <hr class="star-light">
+    {{range $key, $val := .data.Headers}}
+    <div class="container slider" data-img="{{$val.ImageURL}}" {{if $key -ne 0}}hidden{{end}}>
+        <h2 class="text-center green">{{$val.Heading}}</h2>
+        <hr class="star-light" />
         <div class="row">
-            <div class="col-lg-3 ml-auto">
-                <span>
-                    <i class="blue fa fa-keyboard-o fa-3x" aria-hidden="true"></i>
-                </span>
-                <h5 class="yellow">Custom Software & Consulting</h5>
-                <p>If you want to convert from an old paper based system or need to improve your business's productivity, we
-                    can assist you.
-                </p>
-                <p>We build software that will fit your every need and requirement.</p>
-            </div>
-            <div class="col-lg-3">
-                <span>
-                    <i class="blue fa fa-cogs fa-3x" aria-hidden="true"></i>
-                </span>
-                <h5 class="yellow">
-                    </i>SEO & Website Design</h5>
-                <p>We aim to aid your business in getting your brand recognised and provide websites that will work great on
-                    any device.</p>
-            </div>
-            <div class="col-lg-3 mr-auto">
-                <span>
-                    <i class="blue fa fa-database fa-3x" aria-hidden="true"></i>
-                </span>
-                <h5 class="yellow">
-                    </i>Systems Integration & Maintenance</h5>
-                <p>Your current software doesn't have all the bell and whistles? You don't have a dedicated team of software
-                    developers?</p>
-                <p>Perfect! We will help you to get the best out of your current software.</p>
-            </div>
+            {{$val.Text}}
+        </div>
+    </div>
+    {{end}}
+    <h2 class="text-center green">What we do</h2>
+    <hr class="star-light">
+    <div class="row">
+        <div class="col-lg-3 ml-auto">
+            <span>
+                <i class="blue fa fa-keyboard-o fa-3x" aria-hidden="true"></i>
+            </span>
+            <h5 class="yellow">Custom Software & Consulting</h5>
+            <p>If you want to convert from an old paper based system or need to improve your business's productivity, we can
+                assist you.
+            </p>
+            <p>We build software that will fit your every need and requirement.</p>
+        </div>
+        <div class="col-lg-3">
+            <span>
+                <i class="blue fa fa-cogs fa-3x" aria-hidden="true"></i>
+            </span>
+            <h5 class="yellow">
+                </i>SEO & Website Design</h5>
+            <p>We aim to aid your business in getting your brand recognised and provide websites that will work great on any
+                device.</p>
+        </div>
+        <div class="col-lg-3 mr-auto">
+            <span>
+                <i class="blue fa fa-database fa-3x" aria-hidden="true"></i>
+            </span>
+            <h5 class="yellow">
+                </i>Systems Integration & Maintenance</h5>
+            <p>Your current software doesn't have all the bell and whistles? You don't have a dedicated team of software developers?
+            </p>
+            <p>Perfect! We will help you to get the best out of your current software.</p>
         </div>
     </div>
 </header>
@@ -162,13 +169,12 @@
                         Out Details
                     </h6>
                     <p>
-                    {{ if .data.ContactEmail}}
+                        {{ if .data.ContactEmail}}
                         <strong class="green">Email: {{.data.ContactEmail}}</strong>
-                    {{ end }}
-                    {{ if .data.ContactPhone}}
+                        {{ end }} {{ if .data.ContactPhone}}
                         <strong class="green">Phone: {{ .data.ContactPhone}}</strong>
-                    {{ end }}
-                </p>
+                        {{ end }}
+                    </p>
                 </div>
                 <div class="footer-col col-md-8">
                     <h3 class="yellow">Get Social</h3>

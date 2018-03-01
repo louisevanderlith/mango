@@ -2,7 +2,8 @@ package comment
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
+	"github.com/louisevanderlith/mango/util"
 )
 
 type Context struct {
@@ -13,12 +14,15 @@ var Ctx *Context
 
 func NewDatabase() {
 	dbName := "Comment.DB"
+	dbSource, err := util.GetServiceURL(dbName, false)
 
-	registerModels()
-	db.SyncDatabase(dbName)
+	if err == nil {
+		registerModels()
+		db.SyncDatabase(dbSource)
 
-	Ctx = &Context{
-		Comment: db.NewSet(Comment{}),
+		Ctx = &Context{
+			Comment: db.NewSet(Comment{}),
+		}
 	}
 }
 

@@ -38,24 +38,17 @@ var store storage
 func init() {
 	// ensure names are also list in manufacturer.go (getVDSName)
 	store = make(storage)
-	store["alfa"] = AlfaRomeo{}
-	store["audi"] = Audi{}
 	store["bmw"] = BMW{}
-	store["ferrari"] = Ferrari{}
 	store["ford"] = Ford{}
-	store["gm"] = GeneralMotors{}
+	store["gwm"] = GWM{}
 	store["honda"] = Honda{}
 	store["hyundai"] = Hyundai{}
 	store["isuzu"] = Isuzu{}
 	store["kia"] = KIA{}
-	store["lamborghini"] = Lamborghini{}
-	store["landrover"] = LandRover{}
-	store["maserati"] = Maserati{}
+	store["mahindra"] = Mahindra{}
 	store["mercedes"] = MercedesBenz{}
-	store["mitsubishi"] = Mitsubishi{}
-	store["seat"] = SEAT{}
-	store["skoda"] = Skoda{}
-	store["subaru"] = Subaru{}
+	store["nissan"] = Nissan{}
+	store["renault"] = Renault{}
 	store["toyota"] = Toyota{}
 	store["volkswagen"] = Volkswagen{}
 	store["volvo"] = Volvo{}

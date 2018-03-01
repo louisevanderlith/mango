@@ -22,6 +22,7 @@ const form = {
     addSocialButton: $('#btnAddSocial'),
     addPortfolioButton: $('#btnAddPortfolio'),
     addParagraphButton: $('#btnAddParagraph'),
+    addHeaderButton: $('#btnAddHeader'),
     imageHolder: $('#imageHolder')
 };
 
@@ -47,9 +48,10 @@ function registerEvents() {
     validForm.on('invalid.bs.validator', fs.onValidate);
     validForm.on('valid.bs.validator', fs.onValidate);
 
-    form.addParagraphButton.on('click', addParagraphRow);
-    form.addSocialButton.on('click', addSocialRow);
-    form.addPortfolioButton.on('click', addPortfolioRow);
+    form.addParagraphButton.on('click', addRow);
+    form.addSocialButton.on('click', addRow);
+    form.addPortfolioButton.on('click', addRow);
+    form.addHeaderButton.on('click', addRow);
 
     const body = $('body');
     body.on('click', '.removeRow', removeRow);
@@ -236,12 +238,13 @@ function getAboutInfo(child) {
 }
 
 function getHeaderInfo(child) {
-    let id = child.id.replace('xxx', '');
-    let recordID = $(child).data('id');
-    let imageID = $(`#yyy${id}`).data('itemid');
-    let text = $(`#xxx${id}`).val();
+    let id = child.id.replace('liHeader', '');
+    let recordID = $(`#uplHeaderImg${id}`).data('itemid');
+    let imageID = $(`#uplHeaderImg${id}`).data('id');
+    let heading = $(`#txtHeaderHeading${id}`).val();
+    let text = $(`#txtHeaderText${id}`).val();
 
-    return { ID: recordID, Text: text, ImageID: imageID };
+    return { ID: recordID, ImageID: imageID, Heading: heading, Text: text };
 }
 
 function removeRow(e) {
@@ -249,6 +252,25 @@ function removeRow(e) {
 
     if (confirmed)
         $(e.target.parentNode).remove();
+}
+
+function addRow(e) {
+    let confirmed = confirm("All unsaved data will be lost. Continue?");
+
+    if (confirmed) {
+        let type = e.target.id.replace('btnAdd', ''); 
+        const funcs = {
+            "Social": addSocialRow,
+            "Portfolio": addPortfolioRow,
+            "Paragraph": addParagraphRow,
+            "Header": addHeaderRow
+        };
+
+        let rowFunc = funcs[type];
+        rowFunc(obj);
+
+        form.id.validator('update');
+    }
 }
 
 function addSocialRow(obj) {
@@ -307,8 +329,10 @@ function addParagraphRow(obj) {
     services.createAboutSection(data, success);
 }
 
-function addHeaderItem(obj) {
+function addHeaderRow(obj) {
     let data = {
+        ImageID: 0,
+        Heading: 'heading',
         Text: 'blank header',
         Profile: {
             ID: currentID

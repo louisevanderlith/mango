@@ -92,7 +92,7 @@ func (req *SiteController) GetOne() {
 			msg.Title = siteParam
 		}
 
-		result, err := folio.Ctx.Profile.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections")
+		result, err := folio.Ctx.Profile.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections", "Headers")
 
 		if err != nil {
 			req.Ctx.Output.SetStatus(500)
