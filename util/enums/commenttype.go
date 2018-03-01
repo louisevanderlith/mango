@@ -5,7 +5,7 @@ import "strings"
 type CommentType int
 
 const (
-	Profile   CommentType = iota
+	Profile CommentType = iota
 	Advert
 	Child
 )

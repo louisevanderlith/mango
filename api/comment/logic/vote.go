@@ -7,7 +7,7 @@ type Vote struct {
 	CommentID int64
 }
 
-func SumbitVote(vote Vote) (finalErr error) {
+func (vote Vote) Sumbit() (finalErr error) {
 
 	if vote.CommentID > 0 {
 		filter := comment.Comment{}

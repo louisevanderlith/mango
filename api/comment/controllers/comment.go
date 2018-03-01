@@ -7,3 +7,12 @@ import (
 type CommentController struct {
 	control.APIController
 }
+
+func (req *CommentController) Get() {
+	// ItemID : param
+	// CommentType : param
+}
+
+func (req *CommentController) Post() {
+
+}
