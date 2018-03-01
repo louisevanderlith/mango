@@ -26,8 +26,15 @@ func NewDatabase() {
 		Model:        db.NewSet(Model{}),
 		SubCategory:  db.NewSet(Subcategory{}),
 	}
+
+	seedData()
 }
 
 func registerModels() {
 	orm.RegisterModel(new(Category), new(Subcategory), new(Manufacturer), new(Model))
+}
+
+func seedData() {
+	seedManufacturer()
+	seedModel()
 }

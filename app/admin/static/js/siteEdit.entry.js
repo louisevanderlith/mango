@@ -1,6 +1,7 @@
 
 import FormState from './formState.js';
 import * as lookup from './pathLookup';
+import * as services from './services';
 
 const form = {
     panel: $('#pnlEdit'),
@@ -10,11 +11,12 @@ const form = {
     email: $('#txtEmail'),
     phone: $('#txtPhone'),
     url: $('#txtURL'),
-    image: $('#uplImage'),
+    image: $('#uplProfileImg'),
     styleSheet: $('#txtStylesheet'),
     socialLinks: $('#lstSocial'),
     portfolio: $('#lstPortfolio'),
     aboutSections: $('#lstAbout'),
+    headers: $('#lstHeader'),
     saveButton: $('#btnSave'),
     editButton: $('#btnEdit'),
     addSocialButton: $('#btnAddSocial'),
@@ -26,14 +28,15 @@ const form = {
 var fs = {};
 var currentID = 0;
 var imageURL = '';
-var uploadStore = {};
 
 $(document).ready(() => {
     fs = new FormState(form.saveButton);
     fs.submitDisabled(true);
 
-    getImageURL();
+    let path = window.location.pathname;
+    currentID = parseInt(path.substring(path.lastIndexOf('/') + 1));
 
+    getImageURL();
     registerEvents();
 });
 
@@ -68,7 +71,8 @@ function uploadFile(e) {
     const fileData = $(fileElem);
     const forAttr = fileData.data('for');
     const nameAttr = fileData.data('name');
-    const idAttr = fileData.data('id');
+    const idAttr = fileData.data('itemid');
+    const ctrlID = fileElem.id;
     const infoObj = {
         For: forAttr,
         ItemName: nameAttr,
@@ -80,35 +84,36 @@ function uploadFile(e) {
         formData.append('file', files[0]);
         formData.append('info', JSON.stringify(infoObj));
 
-        doUpload(formData, infoObj);
+        doUpload(formData, infoObj, ctrlID);
     }
 }
 
-function doUpload(formData, infoObj) {
-    lookup.buildPath('Artifact.API', 'upload').then((buildPath) => {
-        $.ajax({
-            url: buildPath,
-            type: 'POST',
-            contentType: false,
-            processData: false,
-            data: formData,
-            success: (obj) => {
-                finishUpload(obj, infoObj)
-            },
-            error: function (obj) {
-                $('#success').html("<div class='alert alert-danger'>");
-                $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                    .append("</button>");
-                $('#success > .alert-danger').append($("<strong>").text(obj.Error));
-                $('#success > .alert-danger').append('</div>');
-            }
-        });
-    });
+function doUpload(formData, infoObj, ctrlID) {
+    let success = function (obj) {
+        finishUpload(obj, infoObj, ctrlID);
+    }
+
+    let error = function (obj) {
+        $('#success').html("<div class='alert alert-danger'>");
+        $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+            .append("</button>");
+        $('#success > .alert-danger').append($("<strong>").text(obj.Error));
+        $('#success > .alert-danger').append('</div>');
+    }
+
+    services.createUpload(formData, success, error);
 }
 
-function finishUpload(obj, infoObj) {
-    const key = `${infoObj.ItemName}_${infoObj.ItemID}`;
-    uploadStore[key] = obj.Data;
+function finishUpload(obj, infoObj, ctrlID) {
+    let fullURL = imageURL + "/" + obj.Data;
+    let imageHolder = $(`#${ctrlID.replace('Img', 'View')}`);
+    let uploader = $('#' + ctrlID);
+
+    imageHolder.removeAttr('hidden');
+    imageHolder.attr("src", fullURL);
+
+    uploader.data("id", obj.Data);
+    uploader.removeAttr('required');
 }
 
 function trySave() {
@@ -122,74 +127,121 @@ function trySave() {
 function submitSite() {
     fs.submitDisabled(true);
 
-    $.ajax({
-        url: lookup.buildPath('Folio.API', "site"),
-        type: "POST",
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({
-            Id: currentID,
-            Title: form.title.val(),
-            Description: form.description.val(),
-            ContactEmail: form.email.val(),
-            ContactPhone: form.phone.val(),
-            URL: form.url.val(),
-            ImageID: form.image.val(),
-            StyleSheet: form.styleSheet.val(),
-            SocialLinks: getList(form.socialLinks),
-            PortfolioItems: getList(form.portfolio),
-            AboutSections: getList(form.aboutSections)
-        }),
-        cache: false,
-        success: function (data) {
-            $('#success').html("<div class='alert alert-danger'>");
-            $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                .append("</button>");
-            $('#success > .alert-danger').append($("<strong>").text(data));
-            $('#success > .alert-danger').append('</div>');
-            //clear all fields
-            form.id.trigger("reset");
-        },
-        error: function (err) {
-            // Fail message
-            $('#success').html("<div class='alert alert-danger'>");
-            $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                .append("</button>");
-            $('#success > .alert-danger').append($("<strong>").text(err));
-            $('#success > .alert-danger').append('</div>');
-            //clear all fields
-            form.id.trigger("reset");
-        },
-        complete: function () {
-            setTimeout(function () {
-                fs.submitDisabled(false);
-            }, 1000);
-        }
-    });
+    let data = {
+        Id: currentID,
+        Title: form.title.val(),
+        Description: form.description.val(),
+        ContactEmail: form.email.val(),
+        ContactPhone: form.phone.val(),
+        URL: form.url.val(),
+        ImageID: form.image.data('id'),
+        StyleSheet: form.styleSheet.val(),
+        SocialLinks: getList(form.socialLinks, "Social"),
+        PortfolioItems: getList(form.portfolio, "Portfolio"),
+        AboutSections: getList(form.aboutSections, "About"),
+        Headers: getList(form.headers, "Header")
+    };
+
+    let success = function (data) {
+        $('#success').html("<div class='alert alert-success'>");
+        $('#success > .alert-success').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+            .append("</button>");
+        $('#success > .alert-success').append($("<strong>").text(data.Data));
+        $('#success > .alert-success').append('</div>');
+        //clear all fields
+        form.id.trigger("reset");
+    };
+
+    let fail = function (data) {
+        // Fail message
+        $('#success').html("<div class='alert alert-danger'>");
+        $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+            .append("</button>");
+        $('#success > .alert-danger').append($("<strong>").text(data.Error));
+        $('#success > .alert-danger').append('</div>');
+        //clear all fields
+        form.id.trigger("reset");
+    };
+
+    let complete = function () {
+        setTimeout(function () {
+            fs.submitDisabled(false);
+        }, 1000);
+    };
+
+    services.updateSite(data, success, fail, complete);
 }
 
-function getList(elem) {
+function getList(elem, container) {
     let result = [];
-    const children = elem.children;
+    const children = elem.children();
     const childLen = children.length;
 
     for (let i = 0; i < childLen; i++) {
         let child = children[i];
-        result.push(child.text);
+        let info = getContainerInfo(child, container);
+
+        result.push(info);
     }
 
     return result;
 }
 
-function setList(elem, data, htmlFunc) {
-    const dataLen = data.length;
-    let items = [];
+function getContainerInfo(child, container) {
+    let result = "";
 
-    for (let i = 0; i < dataLen; i++) {
-        let row = htmlFunc(i, data[i]);
-        items.push(row);
+    switch (container) {
+        case "Social":
+            result = getSocialInfo(child);
+            break;
+        case "Portfolio":
+            result = getPortfolioInfo(child);
+            break;
+        case "About":
+            result = getAboutInfo(child);
+            break;
+        case "Header":
+            result = getHeaderInfo(child);
+            break;
     }
 
-    elem.append(items.join(''));
+    return result;
+}
+
+function getSocialInfo(child) {
+    let id = child.id.replace('liSocial', '');
+    let recordID = $(child).data('id');
+    let icon = $(`#txtSocialIcon${id}`).val();
+    let url = $(`#txtSocialURL${id}`).val();
+
+    return { ID: recordID, Icon: icon, URL: url };
+}
+
+function getPortfolioInfo(child) {
+    let id = child.id.replace('liPortfolio', '');
+    let recordID = $(`#uplPortfolioImg${id}`).data('itemid');
+    let imageID = $(`#uplPortfolioImg${id}`).data('id');
+    let name = $(`#txtPortfolioName${id}`).val();
+    let url = $(`#txtPortfolioURL${id}`).val();
+
+    return { ID: recordID, ImageID: imageID, Name: name, URL: url };
+}
+
+function getAboutInfo(child) {
+    let id = child.id.replace('liAbout', '');
+    let recordID = $(child).data('id');
+    let paragraph = $(`#txtAboutParagraph${id}`).val();
+
+    return { ID: recordID, SectionText: paragraph };
+}
+
+function getHeaderInfo(child) {
+    let id = child.id.replace('xxx', '');
+    let recordID = $(child).data('id');
+    let imageID = $(`#yyy${id}`).data('itemid');
+    let text = $(`#xxx${id}`).val();
+
+    return { ID: recordID, Text: text, ImageID: imageID };
 }
 
 function removeRow(e) {
@@ -200,22 +252,72 @@ function removeRow(e) {
 }
 
 function addSocialRow(obj) {
-    let id = form.socialLinks.children.length + 1;
-    let html = socialRowHTML(id, obj);
+    let data = {
+        Icon: 'fa-ban',
+        URL: 'none',
+        Profile: {
+            ID: currentID
+        }
+    };
 
-    form.socialLinks.append(html);
+    let success = function (data) {
+        location.reload();
+    };
+
+    let fail = function (data) {
+        console.error(data.Error);
+    }
+
+    services.createSocialLink(data, success, fail);
 }
 
 function addPortfolioRow(obj) {
-    let id = form.portfolio.children.length + 1;
-    let html = portfolioRowHTML(id, obj);
+    let data = {
+        ImageID: 0,
+        URL: 'https://avosa.co.za',
+        Name: 'avosa',
+        Profile: {
+            ID: currentID
+        }
+    };
 
-    form.portfolio.append(html);
+    let success = function (data) {
+        location.reload();
+    };
+
+    let fail = function (data) {
+        console.error(data.Error);
+    }
+
+    services.createPortfolioItem(data, success, fail);
 }
 
 function addParagraphRow(obj) {
-    let id = form.aboutSections.children.length + 1;
-    let html = paragraphRowHTML(id, obj);
+    let data = {
+        SectionText: 'new section',
+        Profile: {
+            ID: currentID
+        }
+    };
 
-    form.aboutSections.append(html);
+    let success = function (data) {
+        location.reload();
+    };
+
+    services.createAboutSection(data, success);
+}
+
+function addHeaderItem(obj) {
+    let data = {
+        Text: 'blank header',
+        Profile: {
+            ID: currentID
+        }
+    };
+
+    let success = function (data) {
+        location.reload();
+    };
+
+    services.createHeaderItem(data, success);
 }

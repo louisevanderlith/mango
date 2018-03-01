@@ -18,7 +18,7 @@ type ManufacturerController struct {
 func (req *ManufacturerController) Get() {
 	var results []*things.Manufacturer
 	man := things.Manufacturer{}
-	err := things.Ctx.Manufacturer.Read(man, &results)
+	err := things.Ctx.Manufacturer.Read(&man, &results)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

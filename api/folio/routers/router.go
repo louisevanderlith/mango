@@ -20,9 +20,29 @@ func init() {
 	setupMapping()
 
 	ns := beego.NewNamespace("/v1",
+		beego.NSNamespace("/about",
+			beego.NSInclude(
+				&controllers.AboutController{},
+			),
+		),
+		beego.NSNamespace("/header",
+			beego.NSInclude(
+				&controllers.AboutController{},
+			),
+		),
+		beego.NSNamespace("/portfolio",
+			beego.NSInclude(
+				&controllers.PortfolioController{},
+			),
+		),
 		beego.NSNamespace("/site",
 			beego.NSInclude(
 				&controllers.SiteController{},
+			),
+		),
+		beego.NSNamespace("/social",
+			beego.NSInclude(
+				&controllers.SocialController{},
 			),
 		),
 	)
@@ -33,14 +53,19 @@ func init() {
 func setupMapping() {
 	uploadMap := make(control.MethodMap)
 	uploadMap["POST"] = enums.Admin
+	uploadMap["PUT"] = enums.Admin
 
+	control.AddControllerMap("/about", uploadMap)
+	control.AddControllerMap("/header", uploadMap)
+	control.AddControllerMap("/portfolio", uploadMap)
 	control.AddControllerMap("/site", uploadMap)
+	control.AddControllerMap("/social", uploadMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
-		AllowMethods:    []string{"GET", "POST", "OPTIONS"},
+		AllowMethods:    []string{"GET", "POST", "PUT", "OPTIONS"},
 		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))

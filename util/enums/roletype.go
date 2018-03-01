@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-type RoleType int
+type RoleType = int
 
 const (
 	Admin RoleType = iota
@@ -17,9 +17,10 @@ var roleTypes = [...]string{
 	"Owner",
 	"User"}
 
+/*
 func (r RoleType) String() string {
 	return roleTypes[r]
-}
+}*/
 
 func GetRoleType(name string) RoleType {
 	var result RoleType

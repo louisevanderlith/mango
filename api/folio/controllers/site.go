@@ -22,13 +22,34 @@ func (req *SiteController) Post() {
 	var site folio.Profile
 	json.Unmarshal(req.Ctx.Input.RequestBody, &site)
 
-	_, err := folio.Ctx.Profile.Create(&site)
+	id, err := folio.Ctx.Profile.Create(&site)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
 		req.Data["json"] = map[string]string{"Error": err.Error()}
 	} else {
-		req.Data["json"] = map[string]string{"Data": "Website has been created."}
+		req.Data["json"] = map[string]interface{}{"Data": id}
+	}
+
+	req.ServeJSON()
+}
+
+// @Title UpdateWebsite
+// @Description Updates a Website
+// @Param	body		body 	folio.Profile	true		"body for service content"
+// @Success 200 {map[string]string} map[string]string
+// @Failure 403 body is empty
+// @router / [put]
+func (req *SiteController) Put() {
+	var site folio.Profile
+	json.Unmarshal(req.Ctx.Input.RequestBody, &site)
+	err := folio.Ctx.Profile.Update(&site)
+
+	if err != nil {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = map[string]string{"Error": err.Error()}
+	} else {
+		req.Data["json"] = map[string]string{"Data": "Website has been updated."}
 	}
 
 	req.ServeJSON()
@@ -42,7 +63,7 @@ func (req *SiteController) Get() {
 	if req.Ctx.Output.Status != 401 {
 		var results []*folio.Profile
 		prof := folio.Profile{}
-		err := folio.Ctx.Profile.Read(prof, &results)
+		err := folio.Ctx.Profile.Read(&prof, &results)
 
 		if err != nil {
 			req.Ctx.Output.SetStatus(500)
@@ -66,7 +87,7 @@ func (req *SiteController) GetOne() {
 		msg := folio.Profile{}
 
 		if id, err := strconv.ParseInt(siteParam, 10, 32); err == nil {
-			msg.ID = id
+			msg.Id = id
 		} else {
 			msg.Title = siteParam
 		}

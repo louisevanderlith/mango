@@ -3,7 +3,7 @@ package db
 import "time"
 
 type testContext struct {
-	TableA *Set
+	TableA *MemSet
 }
 
 type testTable struct {
@@ -14,8 +14,9 @@ type testTable struct {
 
 type testTableB struct {
 	Record
-	Details  string
-	Relation *testTable
+	Details     string
+	Relation    *testTable
+	Collections []*testTable
 }
 
 var testCtx *testContext
@@ -23,7 +24,7 @@ var testCtx *testContext
 func newTestTable() testTable {
 	return testTable{
 		Record: Record{
-			ID:         0,
+			Id:         0,
 			Deleted:    false,
 			CreateDate: time.Now(),
 		},
@@ -32,7 +33,7 @@ func newTestTable() testTable {
 
 func init() {
 	testCtx = &testContext{
-		TableA: NewSet(testTable{}),
+		TableA: NewMemSet(testTable{}),
 	}
 }
 

@@ -12,5 +12,5 @@ type Tag struct {
 }
 
 func (o Tag) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

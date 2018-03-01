@@ -10,6 +10,7 @@ type Context struct {
 	Portfolio  *db.Set
 	Profile    *db.Set
 	SocialLink *db.Set
+	Header     *db.Set
 }
 
 var Ctx *Context
@@ -25,9 +26,10 @@ func NewDatabase() {
 		Portfolio:  db.NewSet(Portfolio{}),
 		Profile:    db.NewSet(Profile{}),
 		SocialLink: db.NewSet(SocialLink{}),
+		Header:     db.NewSet(Header{}),
 	}
 }
 
 func registerModels() {
-	orm.RegisterModel(new(About), new(Portfolio), new(Profile), new(SocialLink))
+	orm.RegisterModel(new(About), new(Portfolio), new(Profile), new(SocialLink), new(Header))
 }

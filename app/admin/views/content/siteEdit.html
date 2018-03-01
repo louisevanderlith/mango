@@ -48,11 +48,13 @@
                         <div id="imageHolder">
                             <div class="control-group">
                                 <div class="form-group floating-label-form-group controls">
-                                    <label for="uplPortfolioImg{{.data.ImageID}}">Icon</label>
-                                    <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Portfolio" data-id="{{.data.ImageID}}"
-                                    accept=".jpg, .jpeg, .png" id="uplPortfolioImg{{.data.ImageID}}" placeholder="Portfolio Image"
-                                    required data-validation-required-message="Please provide this item's image." />
-                                    <input {{if not .data.ImageURL}} hidden {{end}} type="image" id="uplPortfolioImg{{.data.ImageID}}" class="img-thumbnail" src="{{.data.ImageURL}}" alt="portfolio image" />
+                                    <label for="uplProfileImg">Icon</label>
+                                    <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Profile" data-itemid="{{.data.ID}}" data-id="{{.data.ImageID}}"
+                                        accept=".jpg, .jpeg, .png" id="uplProfileImg" placeholder="Profile Image" {{if not .data.ImageURL}}
+                                        required data-validation-required-message="Please provide this item's image." {{end}}
+                                    />
+                                    <input {{if not .data.ImageURL}} hidden {{end}} type="image" id="uplProfileView" class="img-thumbnail" src="{{.data.ImageURL}}"
+                                        alt="profile image" />
                                     <p class="help-block with-errors text-danger"></p>
                                 </div>
                             </div>
@@ -64,7 +66,7 @@
                     <div class="form-group floating-label-form-group controls">
                         <label for="txtStylesheet">Stylesheet Name</label>
                         <input class="form-control" type="text" id="txtStylesheet" required data-validation-required-message="Please provide the stylesheet name."
-                        />
+                            value="{{.data.StyleSheet}}" />
                         <p class="help-block with-errors text-danger"></p>
                     </div>
                 </div>
@@ -74,7 +76,7 @@
                         <button type="button" class="btn btn-info btn-sm" id="btnAddSocial">Add Row</button>
                         <ul id="lstSocial" class="list-group">
                             {{range $key, $val := .data.SocialLinks}}
-                            <li class="list-group-item" id="liSocial{{$key}}">
+                            <li class="list-group-item" id="liSocial{{$key}}" data-id="{{$val.ID}}">
                                 <button type="button" class="fa fa-close close removeRow" data-liID="liSocial{{$key}}"></button>
                                 <div class="control-group">
                                     <div class="form-group floating-label-form-group controls">
@@ -103,15 +105,17 @@
                         <button type="button" class="btn btn-info btn-sm" id="btnAddPortfolio">Add Row</button>
                         <ul id="lstPortfolio" class="list-group">
                             {{range $key, $val := .data.PortfolioItems}}
-                            <li class="list-group-item" id="liPortfolio{{$key}}">
+                            <li class="list-group-item" id="liPortfolio{{$key}}" data-id="{{$val.ID}}">
                                 <button type="button" class="fa fa-close close removeRow" data-liID="liPortfolio{{$key}}"></button>
                                 <div class="control-group">
                                     <div class="form-group floating-label-form-group controls">
                                         <label for="uplPortfolioImg{{$key}}">Icon</label>
-                                        <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Portfolio" data-id="{{$key}}" accept=".jpg, .jpeg, .png"
-                                            id="uplPortfolioImg{{$key}}" placeholder="Portfolio Image" required data-validation-required-message="Please provide this item's image."
-                                        />
-                                        <input {{if not $val.ImageURL}} hidden {{end}} type="image" id="uplPortfolioImg{{$key}}" class="" src="{{$val.ImageURL}}" alt="portfolio image" />
+                                        <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Portfolio" data-itemid="{{$val.ID}}"
+                                            data-id="{{$val.ImageID}}" accept=".jpg, .jpeg, .png" id="uplPortfolioImg{{$key}}"
+                                            placeholder="Portfolio Image" {{if not $val.ImageURL}} required data-validation-required-message="Please provide this item's image."
+                                            {{end}} />
+                                        <input {{if not $val.ImageURL}} hidden {{end}} type="image" id="uplPortfolioView{{$key}}" class="img-thumbnail" src="{{$val.ImageURL}}"
+                                            alt="portfolio image" />
                                         <p class="help-block with-errors text-danger"></p>
                                     </div>
                                     <div class="form-group floating-label-form-group controls">
@@ -123,7 +127,7 @@
                                     <div class="form-group floating-label-form-group controls">
                                         <label for="txtPortfolioURL{{$key}}">URL</label>
                                         <input class="form-control" type="url" id="txtPortfolioURL{{$key}}" required placeholder="URL" data-validation-required-message="Please enter the destination URL."
-                                            value=" {{$val.URL}}" />
+                                            value="{{$val.URL}}" />
                                     </div>
                                 </div>
                             </li>
@@ -137,7 +141,7 @@
                         <button type="button" class="btn btn-info btn-sm" id="btnAddParagraph">Add Row</button>
                         <ul id="lstAbout" class="list-group">
                             {{range $key, $val := .data.AboutSections}}
-                            <li class="list-group-item" id="liAbout{{$key}}">
+                            <li class="list-group-item" id="liAbout{{$key}}" data-id="{{$val.ID}}">
                                 <button type="button" class="fa fa-close close removeRow" data-liID="liAbout{{$key}}"></button>
                                 <div class="control-group">
                                     <div class="form-group floating-label-form-group controls">
@@ -155,7 +159,7 @@
             </form>
             <div id="success"></div>
             <a class="btn btn-secondary" href="/site">Back</a>
-            <button type="button" class="btn btn-primary" btnSave>Save</button>
+            <button type="button" class="btn btn-primary" id="btnSave">Save</button>
         </div>
     </div>
 </div>

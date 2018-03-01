@@ -20,7 +20,7 @@ func (req *UploadController) Get() {
 
 	var results []*artifact.Upload
 	upl := artifact.Upload{}
-	err := artifact.Ctx.Upload.Read(upl, &results)
+	err := artifact.Ctx.Upload.Read(&upl, &results)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

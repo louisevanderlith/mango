@@ -65,7 +65,7 @@ func SaveFile(file multipart.File, header *multipart.FileHeader, info InfoHead) 
 func GetFile(id int64) (result *artifact.Upload, err error) {
 	if id > 0 {
 		filter := artifact.Upload{}
-		filter.ID = id
+		filter.Id = id
 
 		var record db.IRecord
 		record, err = artifact.Ctx.Upload.ReadOne(&filter)
@@ -81,7 +81,7 @@ func GetFile(id int64) (result *artifact.Upload, err error) {
 func getUpload(id int64) (result *artifact.Upload, err error) {
 	if id > 0 {
 		filter := artifact.Upload{}
-		filter.ID = id
+		filter.Id = id
 
 		var record db.IRecord
 		record, err = artifact.Ctx.Upload.ReadOne(&filter, "BLOB")

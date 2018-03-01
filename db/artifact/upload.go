@@ -16,5 +16,5 @@ type Upload struct {
 }
 
 func (o Upload) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

@@ -22,6 +22,7 @@ type BasicSite struct {
 	SocialLinks    SocialLinks
 	PortfolioItems PortfolioItems
 	AboutSections  AboutSections
+	Headers        HeaderItems
 }
 
 type SocialLinks []socialLink
@@ -30,6 +31,8 @@ type PortfolioItems []portfolioItem
 
 type AboutSections []aboutSection
 
+type HeaderItems []headerItem
+
 type socialLink struct {
 	ID   int64
 	Icon string
@@ -37,6 +40,7 @@ type socialLink struct {
 }
 
 type portfolioItem struct {
+	ID       int64
 	ImageID  int64
 	ImageURL string
 	URL      string
@@ -46,6 +50,13 @@ type portfolioItem struct {
 type aboutSection struct {
 	ID          int64
 	SectionText string
+}
+
+type headerItem struct {
+	ID       int64
+	Text     string
+	ImageID  int64
+	ImageURL string
 }
 
 var uploadURL string
@@ -83,7 +94,7 @@ func GetSite(siteID int64) (result BasicSite, finalErr error) {
 		err := json.Unmarshal(*data["Error"], &dataErr)
 
 		if err != nil {
-			log.Print("getSite: ", err)
+			log.Println("getSite: ", err)
 		}
 
 		finalErr = errors.New(dataErr)
@@ -91,7 +102,7 @@ func GetSite(siteID int64) (result BasicSite, finalErr error) {
 		err := json.Unmarshal(*data["Data"], &result)
 
 		if err != nil {
-			log.Print("getSite: ", err)
+			log.Println("getSite: ", err)
 		}
 
 		result.setImageURLs()
@@ -107,8 +118,14 @@ func (obj *BasicSite) setImageURLs() {
 
 	obj.ImageURL = uploadURL + strconv.FormatInt(obj.ImageID, 10)
 
-	for _, v := range obj.PortfolioItems {
-		v.ImageURL = uploadURL + strconv.FormatInt(v.ImageID, 10)
+	for i := 0; i < len(obj.PortfolioItems); i++ {
+		row := &obj.PortfolioItems[i]
+		row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
+	}
+
+	for i := 0; i < len(obj.Headers); i++ {
+		row := &obj.Headers[i]
+		row.ImageURL = uploadURL + strconv.FormatInt(row.ImageID, 10)
 	}
 }
 

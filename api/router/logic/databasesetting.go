@@ -20,7 +20,7 @@ type DatabaseSetting struct {
 type Settings []DatabaseSetting
 
 func loadSettings() *Settings {
-	dbConfPath := util.FindFilePath("database.json")
+	dbConfPath := util.FindFilePath("database.json", "conf")
 	content := util.GetFileContent(dbConfPath)
 
 	var settings *Settings

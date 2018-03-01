@@ -7,8 +7,7 @@ import (
 )
 
 type Set struct {
-	t     reflect.Type
-	items map[int64]IRecord
+	t reflect.Type
 }
 
 // NewSet creates an instance of a Set, which enables type checking and keeping track of records
@@ -16,7 +15,6 @@ type Set struct {
 func NewSet(t IRecord) *Set {
 	result := &Set{}
 	result.t = reflect.TypeOf(t)
-	result.items = make(map[int64]IRecord)
 
 	return result
 }
@@ -37,7 +35,6 @@ func (set *Set) Create(item IRecord) (id int64, err error) {
 
 			if !exists {
 				id, err = insert(item)
-				set.items[id] = item
 			}
 		}
 	} else {
@@ -48,21 +45,19 @@ func (set *Set) Create(item IRecord) (id int64, err error) {
 	return id, err
 }
 
+// CreateMulti inserts multiple records, without running validation
+// # manufacturers := []Manufacturer{}
+// # count, err := folio.Ctx.Manufacturer.CreateMulti(manufacturers)
+func (set *Set) CreateMulti(count int, items interface{}) (insertCount int64, err error) {
+	return insertMulti(count, items)
+}
+
 // ReadOne reads a single record from the database
 // filter: An object that has the fields populated that you want to filter on (Filters will always be 'AND')
 // related: Relationships are lazy-loaded, to include nested items you must specify them.
-// # record, err := testCtx.Profile.ReadOne(Profile{ID: 56}, "User")
+// # record, err := testCtx.Profile.ReadOne(&Profile{ID: 56}, "User")
 func (set *Set) ReadOne(filter IRecord, related ...string) (IRecord, error) {
-
 	err := read(filter, related...)
-
-	if err == nil {
-		_, ok := set.items[filter.GetID()]
-
-		if !ok {
-			set.items[filter.GetID()] = filter
-		}
-	}
 
 	return filter, err
 }
@@ -72,22 +67,9 @@ func (set *Set) ReadOne(filter IRecord, related ...string) (IRecord, error) {
 // container: The result set will populate the container.
 // # var results []*artifact.Upload
 // # upl := artifact.Upload{Type: "JPEG"}
-// # err := artifact.Ctx.Upload.Read(upl, &results)
+// # err := artifact.Ctx.Upload.Read(&upl, &results)
 func (set *Set) Read(filter IRecord, container interface{}) error {
 	err := readAll(filter, container)
-
-	if err == nil {
-		records := reflect.ValueOf(container).Elem()
-		for i := 0; i < records.Len(); i++ {
-			item := records.Index(i).Interface().(IRecord)
-
-			_, ok := set.items[item.GetID()]
-
-			if !ok {
-				set.items[item.GetID()] = item
-			}
-		}
-	}
 
 	return err
 }
@@ -96,14 +78,10 @@ func (set *Set) Read(filter IRecord, container interface{}) error {
 // The record must exist in the database.
 // item: The record you want to update.
 // #  testCtx.TableA.Update(row)
-func (set *Set) Update(item IRecord) {
-	id := item.GetID()
-	_, ok := set.items[id]
+func (set *Set) Update(item IRecord) error {
+	_, err := update(item)
 
-	if ok {
-		set.items[id] = item
-		update(item)
-	}
+	return err
 }
 
 // Delete will delete the record from the database.
@@ -111,11 +89,8 @@ func (set *Set) Update(item IRecord) {
 // item: The record containing the ID you want to delete.
 // # row := TableA{ID: 99}
 // # testCtx.TableA.Delete(row)
-func (set *Set) Delete(item IRecord) {
-	id := item.GetID()
-	memItem, ok := set.items[id]
+func (set *Set) Delete(item IRecord) error {
+	_, err := update(item.Disable())
 
-	if ok {
-		update(memItem.Disable())
-	}
+	return err
 }

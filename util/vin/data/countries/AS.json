@@ -1,0 +1,131 @@
+{
+    "J": [
+        {
+            "Name": "Japan",
+            "Start": "A",
+            "End": "0"
+        }
+    ],
+    "K": [
+        {
+            "Name": "Sri Lanka",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Isreal",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "South Korea",
+            "Start": "L",
+            "End": "R"
+        },
+        {
+            "Name": "Kazakhstan",
+            "Start": "S",
+            "End": "0"
+        }
+    ],
+    "L": [
+        {
+            "Name": "China",
+            "Start": "A",
+            "End": "0"
+        }
+    ],
+    "M": [
+        {
+            "Name": "India",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Indonesia",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Thailand",
+            "Start": "L",
+            "End": "R"
+        },
+        {
+            "Name": "Myanmar",
+            "Start": "S",
+            "End": "S"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "T",
+            "End": "0"
+        }
+    ],
+    "N": [
+        {
+            "Name": "Iran",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Pakistan",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Turkey",
+            "Start": "L",
+            "End": "R"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "S",
+            "End": "0"
+        }
+    ],
+    "P": [
+        {
+            "Name": "Philippines",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Singapore",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Malaysia",
+            "Start": "L",
+            "End": "R"
+        },
+        {
+            "Name": "Not Assigned",
+            "Start": "S",
+            "End": "0"
+        }
+    ],
+    "R": [
+        {
+            "Name": "UAE",
+            "Start": "A",
+            "End": "E"
+        },
+        {
+            "Name": "Taiwan",
+            "Start": "F",
+            "End": "K"
+        },
+        {
+            "Name": "Vietnam",
+            "Start": "L",
+            "End": "R"
+        },
+        {
+            "Name": "Saudi Arabia",
+            "Start": "S",
+            "End": "0"
+        }
+    ]
+}

@@ -19,22 +19,22 @@ func SaveRegistration(r Registration) error {
 
 	if r.Password == r.PasswordRepeat {
 
-		user := secure.User{
+		user := &secure.User{
 			Name:          r.Name,
 			Email:         r.Email,
 			ContactNumber: r.ContactNumber,
 			Password:      r.Password,
 		}
 
-		userRole := &secure.Role{
-			User:        &user,
+		userRole := secure.Role{
+			User:        user,
 			Description: enums.User,
 		}
 
-		user.Roles = append(user.Roles, userRole)
+		user.Roles = append(user.Roles, &userRole)
+		user.SecurePassword()
 
-		_, err = secure.Ctx.User.Create(&user)
-		_, err = secure.Ctx.Role.Create(&userRole)
+		_, err = secure.Ctx.User.Create(user)
 	} else {
 		err = errors.New("Passwords don't match")
 	}

@@ -13,5 +13,5 @@ type Subcategory struct {
 }
 
 func (o Subcategory) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

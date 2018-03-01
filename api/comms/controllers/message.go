@@ -47,7 +47,7 @@ func (req *MessageController) Get() {
 	if req.Ctx.Output.Status != 401 {
 		var result []*comms.Message
 		msg := comms.Message{}
-		err := comms.Ctx.Message.Read(msg, &result)
+		err := comms.Ctx.Message.Read(&msg, &result)
 
 		if err != nil {
 			req.Ctx.Output.SetStatus(500)
