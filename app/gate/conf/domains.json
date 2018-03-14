@@ -58,5 +58,10 @@
         "Name": "Shop.APP",
         "Address": "shop",
         "Type": "Subdomain"
+    },
+    {
+        "Name": "samplesite",
+        "Address": "samplesite.co.za",
+        "Type": "Static"
     }
 ]

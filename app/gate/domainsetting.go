@@ -10,6 +10,7 @@ import (
 type DomainSetting struct {
 	Address string
 	Name    string
+	Type    string
 }
 
 type Settings []DomainSetting

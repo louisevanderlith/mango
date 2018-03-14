@@ -31,7 +31,7 @@
 <!-- Header -->
 <header class="masthead">
     {{range $key, $val := .data.Headers}}
-    <div class="container slider" data-img="{{$val.ImageURL}}" {{if $key -ne 0}}hidden{{end}}>
+    <div class="container slider" data-img="{{$val.ImageURL}}" {{if $key }}hidden{{end}}>
         <h2 class="text-center green">{{$val.Heading}}</h2>
         <hr class="star-light" />
         <div class="row">
