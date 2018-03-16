@@ -60,8 +60,8 @@
         "Type": "Subdomain"
     },
     {
-        "Name": "samplesite",
-        "Address": "samplesite.co.za",
+        "Name": "example",
+        "Address": "example.co.za",
         "Type": "Static"
     }
 ]

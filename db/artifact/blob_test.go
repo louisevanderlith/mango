@@ -1,11 +1,12 @@
 package artifact
 
 import (
-	"testing"
-	"io/ioutil"
 	"fmt"
-	"github.com/louisevanderlith/mango/util/enums"
+	"io/ioutil"
 	"os"
+	"testing"
+
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 func getImage(location string) []byte {
@@ -27,9 +28,8 @@ func TestBlob_OptimizeFor_Logo_PNG2PNG(t *testing.T) {
 	writeLocation := "./testData/" + resultName
 	os.Remove(writeLocation)
 
-	data := Blob{
-		Data: getImage("./test.png"),
-	}
+	data := Blob{}
+	data.SetData(getImage("./test.png"))
 
 	err := data.OptimizeFor(enums.Logo)
 
@@ -37,7 +37,7 @@ func TestBlob_OptimizeFor_Logo_PNG2PNG(t *testing.T) {
 		t.Error("Error occured:", err)
 	}
 
-	saveImage(writeLocation, data.Data)
+	saveImage(writeLocation, data.GetData())
 }
 
 func TestBlob_OptimizeFor_Logo_JPG2PNG(t *testing.T) {
@@ -45,9 +45,8 @@ func TestBlob_OptimizeFor_Logo_JPG2PNG(t *testing.T) {
 	writeLocation := "./testData/" + resultName
 	os.Remove(writeLocation)
 
-	data := Blob{
-		Data: getImage("./test.jpg"),
-	}
+	data := Blob{}
+	data.SetData(getImage("./test.jpg"))
 
 	err := data.OptimizeFor(enums.Logo)
 
@@ -55,7 +54,7 @@ func TestBlob_OptimizeFor_Logo_JPG2PNG(t *testing.T) {
 		t.Error("Error occured:", err)
 	}
 
-	saveImage(writeLocation, data.Data)
+	saveImage(writeLocation, data.GetData())
 }
 
 func TestBlob_OptimizeFor_Banner_PNG2JPG(t *testing.T) {
@@ -63,9 +62,8 @@ func TestBlob_OptimizeFor_Banner_PNG2JPG(t *testing.T) {
 	writeLocation := "./testData/" + resultName
 	os.Remove(writeLocation)
 
-	data := Blob{
-		Data: getImage("./test.png"),
-	}
+	data := Blob{}
+	data.SetData(getImage("./test.png"))
 
 	err := data.OptimizeFor(enums.Banner)
 
@@ -73,7 +71,7 @@ func TestBlob_OptimizeFor_Banner_PNG2JPG(t *testing.T) {
 		t.Error("Error occured:", err)
 	}
 
-	saveImage(writeLocation, data.Data)
+	saveImage(writeLocation, data.GetData())
 }
 
 func TestBlob_OptimizeFor_Banner_JPG2JPG(t *testing.T) {
@@ -81,9 +79,8 @@ func TestBlob_OptimizeFor_Banner_JPG2JPG(t *testing.T) {
 	writeLocation := "./testData/" + resultName
 	os.Remove(writeLocation)
 
-	data := Blob{
-		Data: getImage("./test.jpg"),
-	}
+	data := Blob{}
+	data.SetData(getImage("./test.jpg"))
 
 	err := data.OptimizeFor(enums.Banner)
 
@@ -91,7 +88,7 @@ func TestBlob_OptimizeFor_Banner_JPG2JPG(t *testing.T) {
 		t.Error("Error occured:", err)
 	}
 
-	saveImage(writeLocation, data.Data)
+	saveImage(writeLocation, data.GetData())
 }
 
 func TestBlob_OptimizeFor_Ad_PNG2JPG(t *testing.T) {
@@ -99,9 +96,8 @@ func TestBlob_OptimizeFor_Ad_PNG2JPG(t *testing.T) {
 	writeLocation := "./testData/" + resultName
 	os.Remove(writeLocation)
 
-	data := Blob{
-		Data: getImage("./test.png"),
-	}
+	data := Blob{}
+	data.SetData(getImage("./test.png"))
 
 	err := data.OptimizeFor(enums.Ad)
 
@@ -109,7 +105,7 @@ func TestBlob_OptimizeFor_Ad_PNG2JPG(t *testing.T) {
 		t.Error("Error occured:", err)
 	}
 
-	saveImage(writeLocation, data.Data)
+	saveImage(writeLocation, data.GetData())
 }
 
 func TestBlob_OptimizeFor_Ad_JPG2JPG(t *testing.T) {
@@ -117,9 +113,8 @@ func TestBlob_OptimizeFor_Ad_JPG2JPG(t *testing.T) {
 	writeLocation := "./testData/" + resultName
 	os.Remove(writeLocation)
 
-	data := Blob{
-		Data: getImage("./test.jpg"),
-	}
+	data := Blob{}
+	data.SetData(getImage("./test.jpg"))
 
 	err := data.OptimizeFor(enums.Ad)
 
@@ -127,5 +122,22 @@ func TestBlob_OptimizeFor_Ad_JPG2JPG(t *testing.T) {
 		t.Error("Error occured:", err)
 	}
 
-	saveImage(writeLocation, data.Data)
+	saveImage(writeLocation, data.GetData())
+}
+
+func TestBlob_OptimizeFor_Ad(t *testing.T) {
+	resultName := "logo.png"
+	writeLocation := "./testData/" + resultName
+	os.Remove(writeLocation)
+
+	data := Blob{}
+	data.SetData(getImage("./logo.png"))
+
+	err := data.OptimizeFor(enums.Logo)
+
+	if err != nil {
+		t.Error("Error occured:", err)
+	}
+
+	saveImage(writeLocation, data.GetData())
 }

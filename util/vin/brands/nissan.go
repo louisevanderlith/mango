@@ -1,7 +1,7 @@
 package brands
 
 import (
-	"github.com/louisevanderlith/mango/util/vin/common"
+	"github.com/louisevanderlith/vin/common"
 )
 
 type Nissan struct {
@@ -11,6 +11,7 @@ type Nissan struct {
 // https://www.nedautoparts.com/pages/resources#
 // http://nissanhelp.com/diy/common/nissan_engine_decoder.php
 // https://x.nissanhelp.com/forums/Knowledgebase/links/16/?catid=16
+// http://www.datsuns.com/defaults.asp
 func (v Nissan) GetPassengerCar(sections common.VINSections, year int) common.VDS {
 	return v.VDS
 }
@@ -19,7 +20,7 @@ func decodeEngine(engineCode string) {
 
 }
 
-func decodeModel(modelCode string) {
+func decodeModel(modelCode string) string {
 	types := make(map[string]string)
 
 	types["310"] = "Nissan Sedan/Wagon"
@@ -99,5 +100,11 @@ func decodeModel(modelCode string) {
 	types["Z50"] = "Nissan Murano (2003-2007)"
 	types["Z51"] = "Nissan Murano (2009-2012)"
 
-	return types[modelCode]
+	result := "Unknown"
+
+	if val, ok := types[modelCode]; ok {
+		result = val
+	}
+
+	return result
 }
