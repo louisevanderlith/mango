@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/app/www/logic"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -11,7 +10,7 @@ type DefaultController struct {
 
 func (c *DefaultController) Get() {
 	c.Setup("default")
-	siteName := c.Ctx.Input.Param(":siteName")
+	/*siteName := c.Ctx.Input.Param(":siteName")
 	data, err := logic.GetProfileSite(siteName)
 
 	if err != nil {
@@ -19,5 +18,5 @@ func (c *DefaultController) Get() {
 		c.Data["error"] = err
 	} else {
 		c.Data["data"] = data
-	}
+	}*/
 }

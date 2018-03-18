@@ -88,24 +88,12 @@ func registerSubdomains() {
 	domains := loadSettings()
 
 	for _, v := range *domains {
-		rawURL, err := util.GetServiceURL(v.Name, false)
+		if v.Type == "Subdomain" {
+			subdomainMuxSetup(v)
+		}
 
-		if rawURL != "" && err == nil {
-			vshost, err := url.Parse(rawURL)
-
-			if err != nil {
-				log.Printf("registerSubdomains: %s", err)
-			}
-
-			proxy := httputil.NewSingleHostReverseProxy(vshost)
-
-			domainMux := http.NewServeMux()
-			domainMux.HandleFunc("/", domainHandler(proxy))
-
-			subdomains[v.Address] = domainMux
-			log.Print(v.Name, " ", v.Address, " ", rawURL)
-		} else {
-			log.Printf("registerSubdomains: %s", err)
+		if v.Type == "Static" {
+			staticMuxSetup(v)
 		}
 	}
 }
@@ -117,6 +105,38 @@ func sslMuxSetup() {
 	sslMux.Handle("/.well-known/acme-challenge/", fs)
 
 	subdomains["ssl"] = sslMux
+}
+
+func staticMuxSetup(setting DomainSetting) {
+	statMux := http.NewServeMux()
+	fullPath := "/static/" + setting.Name + "/"
+	fs := http.FileServer(http.FileSystem(http.Dir(fullPath)))
+	statMux.Handle(fullPath, http.StripPrefix(fullPath, fs))
+	statMux.Handle("/", fs)
+
+	subdomains[setting.Address] = statMux
+}
+
+func subdomainMuxSetup(setting DomainSetting) {
+	rawURL, err := util.GetServiceURL(setting.Name, false)
+
+	if rawURL != "" && err == nil {
+		vshost, err := url.Parse(rawURL)
+
+		if err != nil {
+			log.Printf("subdomainMuxSetup: %s", err)
+		}
+
+		proxy := httputil.NewSingleHostReverseProxy(vshost)
+
+		domainMux := http.NewServeMux()
+		domainMux.HandleFunc("/", domainHandler(proxy))
+
+		subdomains[setting.Address] = domainMux
+		log.Print(setting.Name, " ", setting.Address, " ", rawURL)
+	} else {
+		log.Printf("subdomainMuxSetup: %s", err)
+	}
 }
 
 func domainHandler(p *httputil.ReverseProxy) func(http.ResponseWriter, *http.Request) {
