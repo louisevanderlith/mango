@@ -267,13 +267,13 @@ function addRow(e) {
         };
 
         let rowFunc = funcs[type];
-        rowFunc(obj);
+        rowFunc();
 
         form.id.validator('update');
     }
 }
 
-function addSocialRow(obj) {
+function addSocialRow() {
     let data = {
         Icon: 'fa-ban',
         URL: 'none',
@@ -293,7 +293,7 @@ function addSocialRow(obj) {
     services.createSocialLink(data, success, fail);
 }
 
-function addPortfolioRow(obj) {
+function addPortfolioRow() {
     let data = {
         ImageID: 0,
         URL: 'https://avosa.co.za',
@@ -314,7 +314,7 @@ function addPortfolioRow(obj) {
     services.createPortfolioItem(data, success, fail);
 }
 
-function addParagraphRow(obj) {
+function addParagraphRow() {
     let data = {
         SectionText: 'new section',
         Profile: {
@@ -329,7 +329,7 @@ function addParagraphRow(obj) {
     services.createAboutSection(data, success);
 }
 
-function addHeaderRow(obj) {
+function addHeaderRow() {
     let data = {
         ImageID: 0,
         Heading: 'heading',
