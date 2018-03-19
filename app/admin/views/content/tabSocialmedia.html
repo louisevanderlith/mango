@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col-12">
+        <div class="container">
+            <form id="frmSocial" role="form" data-toggle="validator">
+                <div class="control-group">
+                    <div class="form-group floating-label-form-group controls">
+                        <label for="lstSocial">Social Media Links</label>
+                        <button type="button" class="btn btn-info btn-sm" id="btnAddSocial">Add Row</button>
+                        <ul id="lstSocial" class="list-group">
+                            {{range $key, $val := .data.SocialLinks}}
+                            <li class="list-group-item" id="liSocial{{$key}}" data-id="{{$val.ID}}">
+                                <button type="button" class="fa fa-close close removeRow" data-liID="liSocial{{$key}}"></button>
+                                <div class="control-group">
+                                    <div class="form-group floating-label-form-group controls">
+                                        <label for="txtSocialIcon{{$key}}">Icon Name
+                                            <i class="fa {{$val.Icon}}"></i>
+                                        </label>
+                                        <input class="form-control" type="text" id="txtSocialIcon{{$key}}" required data-validation-required-message="Please provide the icon's name. See font-awesome for options."
+                                            value="{{$val.Icon}}" />
+                                        <p class="help-block with-errors text-danger"></p>
+                                    </div>
+                                    <div class="form-group floating-label-form-group controls">
+                                        <label for="txtSocialURL{{$key}}">URL</label>
+                                        <input class="form-control" type="url" id="txtSocialURL{{$key}}" required data-validation-required-message="Please enter the social URL."
+                                            value="{{$val.URL}}" />
+                                        <p class="help-block with-errors text-danger"></p>
+                                    </div>
+                                </div>
+                            </li>
+                            {{end}}
+                        </ul>
+                    </div>
+                </div>
+                <div id="success"></div>
+                <a class="btn btn-secondary" href="/site">Back</a>
+                <button type="button" class="btn btn-primary" id="btnSave">Save</button>
+            </form>
+        </div>
+    </div>
+</div>

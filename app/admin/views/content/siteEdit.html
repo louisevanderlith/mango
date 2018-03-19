@@ -1,204 +1,42 @@
 <div class="row">
     <div class="col-12">
         <div class="container">
-            <form id="frmSite" role="form" data-toggle="validator">
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtTitle">Title</label>
-                        <input class="form-control" type="text" id="txtTitle" placeholder="Title" required data-validation-required-message="Please enter the Title"
-                            value="{{.data.Title}}" />
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtDescription">Description</label>
-                        <textarea class="form-control" id="txtDescription" placeholder="Description" required data-validation-required-message="Please enter the Description"
-                            cols="40" rows="5">{{.data.Description}}</textarea>
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtEmail">Email Address</label>
-                        <input class="form-control" type="email" id="txtEmail" required data-validation-required-message="Please enter the email address."
-                            value="{{.data.ContactEmail}}" />
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtPhone">Contact Number</label>
-                        <input class="form-control" type="tel" id="txtPhone" minlength="9" maxlength="10" required data-validation-required-message="Please enter the phone number."
-                            value="{{.data.ContactPhone}}" />
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtURL">URL</label>
-                        <input class="form-control" type="url" id="txtURL" required data-validation-required-message="Please enter this site's URL"
-                            value="{{.data.URL}}" />
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="uplImage">Logo</label>
-                        <div id="imageHolder">
-                            <div class="control-group">
-                                <div class="form-group floating-label-form-group controls">
-                                    <label for="uplProfileImg">Icon</label>
-                                    <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Profile" data-itemid="{{.data.ID}}" data-id="{{.data.ImageID}}"
-                                        accept=".jpg, .jpeg, .png" id="uplProfileImg" placeholder="Profile Image" {{if not .data.ImageURL}}
-                                        required data-validation-required-message="Please provide this item's image." {{end}}
-                                    />
-                                    <input {{if not .data.ImageURL}} hidden {{end}} type="image" id="uplProfileView" class="img-thumbnail" src="{{.data.ImageURL}}"
-                                        alt="profile image" />
-                                    <p class="help-block with-errors text-danger"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="txtStylesheet">Stylesheet Name</label>
-                        <input class="form-control" type="text" id="txtStylesheet" required data-validation-required-message="Please provide the stylesheet name."
-                            value="{{.data.StyleSheet}}" />
-                        <p class="help-block with-errors text-danger"></p>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="lstSocial">Social Media Links</label>
-                        <button type="button" class="btn btn-info btn-sm" id="btnAddSocial">Add Row</button>
-                        <ul id="lstSocial" class="list-group">
-                            {{range $key, $val := .data.SocialLinks}}
-                            <li class="list-group-item" id="liSocial{{$key}}" data-id="{{$val.ID}}">
-                                <button type="button" class="fa fa-close close removeRow" data-liID="liSocial{{$key}}"></button>
-                                <div class="control-group">
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="txtSocialIcon{{$key}}">Icon Name
-                                            <i class="fa {{$val.Icon}}"></i>
-                                        </label>
-                                        <input class="form-control" type="text" id="txtSocialIcon{{$key}}" required data-validation-required-message="Please provide the icon's name. See font-awesome for options."
-                                            value="{{$val.Icon}}" />
-                                        <p class="help-block with-errors text-danger"></p>
-                                    </div>
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="txtSocialURL{{$key}}">URL</label>
-                                        <input class="form-control" type="url" id="txtSocialURL{{$key}}" required data-validation-required-message="Please enter the social URL."
-                                            value="{{$val.URL}}" />
-                                        <p class="help-block with-errors text-danger"></p>
-                                    </div>
-                                </div>
-                            </li>
-                            {{end}}
-                        </ul>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="lstPortfolio">Portfolio</label>
-                        <button type="button" class="btn btn-info btn-sm" id="btnAddPortfolio">Add Row</button>
-                        <ul id="lstPortfolio" class="list-group">
-                            {{range $key, $val := .data.PortfolioItems}}
-                            <li class="list-group-item" id="liPortfolio{{$key}}" data-id="{{$val.ID}}">
-                                <button type="button" class="fa fa-close close removeRow" data-liID="liPortfolio{{$key}}"></button>
-                                <div class="control-group">
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="uplPortfolioImg{{$key}}">Icon</label>
-                                        <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Portfolio" data-itemid="{{$val.ID}}"
-                                            data-id="{{$val.ImageID}}" accept=".jpg, .jpeg, .png" id="uplPortfolioImg{{$key}}"
-                                            placeholder="Portfolio Image" {{if not $val.ImageURL}} required data-validation-required-message="Please provide this item's image."
-                                            {{end}} />
-                                        <input {{if not $val.ImageURL}} hidden {{end}} type="image" id="uplPortfolioView{{$key}}" class="img-thumbnail" src="{{$val.ImageURL}}"
-                                            alt="portfolio image" />
-                                        <p class="help-block with-errors text-danger"></p>
-                                    </div>
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="txtPortfolioName{{$key}}">Name</label>
-                                        <input type="text" class="form-control" id="txtPortfolioName{{$key}}" required placeholder="Name" data-validation-required-message="Please enter a name."
-                                            value="{{$val.Name}}" />
-                                        <p class="help-block with-errors text-danger"></p>
-                                    </div>
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="txtPortfolioURL{{$key}}">URL</label>
-                                        <input class="form-control" type="url" id="txtPortfolioURL{{$key}}" required placeholder="URL" data-validation-required-message="Please enter the destination URL."
-                                            value="{{$val.URL}}" />
-                                    </div>
-                                </div>
-                            </li>
-                            {{end}}
-                        </ul>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="lstAbout">About</label>
-                        <button type="button" class="btn btn-info btn-sm" id="btnAddParagraph">Add Row</button>
-                        <ul id="lstAbout" class="list-group">
-                            {{range $key, $val := .data.AboutSections}}
-                            <li class="list-group-item" id="liAbout{{$key}}" data-id="{{$val.ID}}">
-                                <button type="button" class="fa fa-close close removeRow" data-liID="liAbout{{$key}}"></button>
-                                <div class="control-group">
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="txtAboutParagraph{{$key}}">Paragraph</label>
-                                        <textarea class="form-control" id="txtAboutParagraph{{$key}}" cols="40" rows="5" required data-validation-required-message="Please provide this paragraphs's text."
-                                            placeholder="About Paragraph">{{$val.SectionText}}</textarea>
-                                        <p class="help-block with-errors text-danger"></p>
-                                    </div>
-                                </div>
-                            </li>
-                            {{end}}
-                        </ul>
-                    </div>
-                </div>
+            <h3>Tabs</h3>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" role="tab" data-toggle="tab" href="#tabBasicsite">Site Info</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabHeader">Headers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabPortfolio">Portfolio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabAbout">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabSocialMedia">Social media</a>
+                </li>
+            </ul>
 
-                <div class="control-group">
-                    <div class="form-group floating-label-form-group controls">
-                        <label for="lstHeader">Headers</label>
-                        <button type="button" class="btn btn-info btn-sm" id="btnAddHeader">Add Row</button>
-                        <ul id="lstHeader" class="list-group">
-                            {{range $key, $val := .data.Headers}}
-                            <li class="list-group-item" id="liHeader{{$key}}" data-id="{{$val.ID}}">
-                                <button type="button" class="fa fa-close close removeRow" data-liID="liHeader{{$key}}"></button>
-                                <div class="control-group">
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="uplHeaderImg{{$key}}">Banner</label>
-                                        <input class="form-control" type="file" multiple="false" data-for="banner" data-name="Header" data-itemid="{{$val.ID}}"
-                                            data-id="{{$val.ImageID}}" accept=".jpg, .jpeg, .png" id="uplHeaderImg{{$key}}"
-                                            placeholder="Header Banner" {{if not $val.ImageURL}} required data-validation-required-message="Please provide this item's image."
-                                            {{end}} />
-                                        <input {{if not $val.ImageURL}} hidden {{end}} type="image" id="uplHeaderView{{$key}}" class="img-thumbnail" src="{{$val.ImageURL}}"
-                                            alt="header image" />
-                                        <p class="help-block with-errors text-danger"></p>
-                                    </div>
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="txtHeaderHeading{{$key}}">Heading</label>
-                                        <input type="text" class="form-control" id="txtHeaderHeading{{$key}}" required placeholder="Heading" data-validation-required-message="Please enter a heading."
-                                            value="{{$val.Heading}}" />
-                                        <p class="help-block with-errors text-danger"></p>
-                                    </div>
-                                    <div class="form-group floating-label-form-group controls">
-                                        <label for="txtHeaderText{{$key}}">Text</label>
-                                        <textarea class="form-control" id="txtHeaderText{{$key}}" cols="40" rows="5" required data-validation-required-message="Please provide this banner's text."
-                                            placeholder="Header Text">{{$val.Text}}</textarea>
-                                        <p class="help-block with-errors text-danger"></p>
-                                    </div>
-                                </div>
-                            </li>
-                            {{end}}
-                        </ul>
-                    </div>
+            <div class="tab-content">
+                <div role="tabpanel" id="tabBasicsite" class="tab-pane fade in active">
+                    {{ template "/content/tabBasicsite.html" . }}
                 </div>
-
-            </form>
-            <div id="success"></div>
-            <a class="btn btn-secondary" href="/site">Back</a>
-            <button type="button" class="btn btn-primary" id="btnSave">Save</button>
+                <div role="tabpanel" id="tabHeader" class="tab-pane fade">
+                    {{ template "/content/tabHeader.html" . }}
+                </div>
+                <div role="tabpanel" id="tabPortfolio" class="tab-pane fade">
+                    {{ template "/content/tabPortfolio.html" . }}
+                </div>
+                <div role="tabpanel" id="tabAbout" class="tab-pane fade">
+                    {{ template "/content/tabAbout.html" . }}
+                </div>
+                <div role="tabpanel" id="tabSocialMedia" class="tab-pane fade">
+                    {{ template "/content/tabSocialmedia.html" . }}
+                </div>
+            </div>
         </div>
     </div>
 </div>
