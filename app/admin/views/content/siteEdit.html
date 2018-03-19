@@ -2,28 +2,40 @@
     <div class="col-12">
         <div class="container">
             <h3>Tabs</h3>
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#tabBasicsite">Site Info</a></li>
-                <li><a href="#tabHeader">Headers</a></li>
-                <li><a href="#tabPortfolio">Portfolio</a></li>
-                <li><a href="#tabAbout"></a>About Us</li>
-                <li><a href="#tabSocialMedia">Social media</a></li>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" role="tab" data-toggle="tab" href="#tabBasicsite">Site Info</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabHeader">Headers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabPortfolio">Portfolio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabAbout">About Us</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabSocialMedia">Social media</a>
+                </li>
             </ul>
 
-            <div id="tabBasicsite">
-                {{ template "/content/tabBasicsite.html" . }}
-            </div>
-            <div id="tabHeader">
-                {{ template "/content/tabHeader.html" . }}
-            </div>
-            <div id="tabPortfolio">
-                {{ template "/content/tabPortfolio.html" . }}
-            </div>
-            <div id="tabAbout">
-                {{ template "/content/tabAbout.html" . }}
-            </div>
-            <div id="tabSocialMedia">
-                {{ template "/content/tabSocialmedia.html" . }}
+            <div class="tab-content">
+                <div role="tabpanel" id="tabBasicsite" class="tab-pane fade in active">
+                    {{ template "/content/tabBasicsite.html" . }}
+                </div>
+                <div role="tabpanel" id="tabHeader" class="tab-pane fade">
+                    {{ template "/content/tabHeader.html" . }}
+                </div>
+                <div role="tabpanel" id="tabPortfolio" class="tab-pane fade">
+                    {{ template "/content/tabPortfolio.html" . }}
+                </div>
+                <div role="tabpanel" id="tabAbout" class="tab-pane fade">
+                    {{ template "/content/tabAbout.html" . }}
+                </div>
+                <div role="tabpanel" id="tabSocialMedia" class="tab-pane fade">
+                    {{ template "/content/tabSocialmedia.html" . }}
+                </div>
             </div>
         </div>
     </div>
