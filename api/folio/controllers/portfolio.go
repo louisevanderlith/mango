@@ -32,3 +32,25 @@ func (req *PortfolioController) Post() {
 
 	req.ServeJSON()
 }
+
+// @Title UpdatePortfolio
+// @Description Updates a Portfolio item on a current site
+// @Param	body		body 	folio.PortFolio	true		"body for service content"
+// @Success 200 {map[string]string} map[string]string
+// @Failure 403 body is empty
+// @router / [put]
+func (req *PortfolioController) Put() {
+	var portfolio folio.Portfolio
+	json.Unmarshal(req.Ctx.Input.RequestBody, &portfolio)
+
+	err := folio.Ctx.Portfolio.Update(&portfolio)
+
+	if err != nil {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = map[string]string{"Error": err.Error()}
+	} else {
+		req.Data["json"] = map[string]string{"Data": "Portfolio has been updated."}
+	}
+
+	req.ServeJSON()
+}

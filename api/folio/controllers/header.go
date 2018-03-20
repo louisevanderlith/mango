@@ -32,3 +32,25 @@ func (req *HeaderController) Post() {
 
 	req.ServeJSON()
 }
+
+// @Title UpdateHeader
+// @Description Updates a Header on a current site
+// @Param	body		body 	folio.Header	true		"body for service content"
+// @Success 200 {map[string]string} map[string]string
+// @Failure 403 body is empty
+// @router / [put]
+func (req *HeaderController) Put() {
+	var head folio.Header
+	json.Unmarshal(req.Ctx.Input.RequestBody, &head)
+
+	err := folio.Ctx.Header.Update(&head)
+
+	if err != nil {
+		req.Ctx.Output.SetStatus(500)
+		req.Data["json"] = map[string]string{"Error": err.Error()}
+	} else {
+		req.Data["json"] = map[string]string{"Data": "Header has been updated."}
+	}
+
+	req.ServeJSON()
+}
