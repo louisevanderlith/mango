@@ -106,22 +106,23 @@ function tabClick(e) {
     $(this).tab("show");
 }
 
-function startCarousel() {
+function startCarousel(){
     let idx = 0;
+    let sliders = $('.masthead>.slider');
 
-    if (carouselImages.length === 1) {
-        showNext(idx);
+    if (sliders.length === 1){
+        showNext(sliders, idx);
     } else {
         setInterval(() => {
-            idx = showNext(idx)
-        }, 3000); // 3 seconds
+            idx = showNext(sliders, idx)
+        }, 3000); 
     }
 }
 
-function showNext(idx) {
+function showNext(carouselImages, idx) {
     const mastHeader = $('header.masthead');
     const header = $(mastHeader[0]);
-    const image = carouselImages[idx];
+    const image = $(carouselImages[idx]).data('img');
 
     header.css('background-image', `url("${image}")`);
 

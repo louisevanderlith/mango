@@ -15,7 +15,31 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:AboutController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:AboutController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:HeaderController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:HeaderController"],
+		beego.ControllerComments{
+			Method: "Post",
+			Router: `/`,
+			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:HeaderController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:HeaderController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/`,
+			AllowHTTPMethods: []string{"put"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:PortfolioController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:PortfolioController"],
 		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
@@ -25,9 +49,9 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:PortfolioController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:PortfolioController"],
 		beego.ControllerComments{
-			Method: "Post",
+			Method: "Put",
 			Router: `/`,
-			AllowHTTPMethods: []string{"post"},
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
@@ -68,6 +92,14 @@ func init() {
 			Method: "Post",
 			Router: `/`,
 			AllowHTTPMethods: []string{"post"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:SocialController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:SocialController"],
+		beego.ControllerComments{
+			Method: "Put",
+			Router: `/`,
+			AllowHTTPMethods: []string{"put"},
 			MethodParams: param.Make(),
 			Params: nil})
 
