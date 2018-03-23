@@ -10,12 +10,14 @@ const (
 	Logo OptimizeType = iota
 	Banner
 	Ad
+	Thumb
 )
 
 var optimizeTypes = [...]string{
 	"Logo",
 	"Banner",
-	"Ad"}
+	"Ad",
+	"Thumb"}
 
 func (r OptimizeType) String() string {
 	return roleTypes[r]
