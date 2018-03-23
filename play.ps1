@@ -10,12 +10,14 @@ function startPlay() {
         if(Test-Path($progPath)){
 
             if($progName -eq 'gate'){
-                Write-Host 'Gate must wait for all applications to register with the router before starting.' -ForegroundColor "green"
-                Start-Sleep -s 5
+                $waitTime = ($progs.Length * 1.5)
+                $msg = 'Gate must wait ' + $waitTime + ' seconds for all applications to register with the router before starting.'
+                Write-Host $msg -ForegroundColor "green"
+                Start-Sleep -s $waitTime
             }
 
             $cmd = "Write-Host 'Starting' $progName -ForegroundColor 'red'; cd $progPath; $progCmd; Read-Host"
-            Start-Process powershell -argument $cmd
+            spawnWindow $cmd $progName
 
             if($progName -eq 'router'){
                 Write-Host 'Giving router some time to spin up.' -ForegroundColor "green"
@@ -25,6 +27,16 @@ function startPlay() {
             Write-Host 'Directory' $progPath 'not Found. Please ensure "./build" has been run.' -ForegroundColor "red"
         }
     }
+}
+
+function spawnWindow($cmd, $name) {
+    $process = new-object System.Diagnostics.Process
+    $startInfo = new-object System.Diagnostics.ProcessStartInfo
+    $startInfo.FileName = "$pshome\powershell.exe"
+    $startInfo.Arguments = $cmd
+
+    $process.StartInfo = $startInfo
+    $process.Start()
 }
 
 function getPrograms() {

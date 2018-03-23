@@ -18,7 +18,7 @@ type CategoryController struct {
 func (req *CategoryController) Get() {
 	var results []*things.Category
 	cat := things.Category{}
-	err := things.Ctx.Category.Read(cat, &results)
+	err := things.Ctx.Category.Read(&cat, &results)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 	"gopkg.in/gomail.v2"
 )
@@ -22,7 +22,7 @@ type Message struct {
 }
 
 func (m Message) Validate() (bool, error) {
-	return util.ValidateStruct(m)
+	return util.ValidateStruct(&m)
 }
 
 func (m Message) SendMessage() error {

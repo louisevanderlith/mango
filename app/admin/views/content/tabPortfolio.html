@@ -1,0 +1,46 @@
+<div class="row">
+    <div class="col-12">
+        <div class="container">
+            <form id="frmPortfolio" role="form" data-toggle="validator">
+                <div class="control-group">
+                    <div class="form-group floating-label-form-group controls">
+                        <label for="lstPortfolio">Portfolio</label>
+                        <button type="button" class="btn btn-info btn-sm" id="btnAddPortfolio">Add Row</button>
+                        <ul id="lstPortfolio" class="list-group">
+                            {{range $key, $val := .data.PortfolioItems}}
+                            <li class="list-group-item" id="liPortfolio{{$key}}" data-id="{{$val.ID}}">
+                                <button type="button" class="fa fa-close close removeRow" data-liID="liPortfolio{{$key}}"></button>
+                                <div class="control-group">
+                                    <div class="form-group floating-label-form-group controls">
+                                        <label for="uplPortfolioImg{{$key}}">Icon</label>
+                                        <input class="form-control" type="file" multiple="false" data-for="logo" data-name="Portfolio" data-itemid="{{$val.ID}}"
+                                            data-id="{{$val.ImageID}}" accept=".jpg, .jpeg, .png" id="uplPortfolioImg{{$key}}"
+                                            placeholder="Portfolio Image" {{if not $val.ImageURL}} required data-validation-required-message="Please provide this item's image."
+                                            {{end}} />
+                                        <input {{if not $val.ImageURL}} hidden {{end}} type="image" id="uplPortfolioView{{$key}}" class="img-thumbnail" src="{{$val.ImageURL}}"
+                                            alt="portfolio image" />
+                                        <p class="help-block with-errors text-danger"></p>
+                                    </div>
+                                    <div class="form-group floating-label-form-group controls">
+                                        <label for="txtPortfolioName{{$key}}">Name</label>
+                                        <input type="text" class="form-control" id="txtPortfolioName{{$key}}" required placeholder="Name" data-validation-required-message="Please enter a name."
+                                            value="{{$val.Name}}" />
+                                        <p class="help-block with-errors text-danger"></p>
+                                    </div>
+                                    <div class="form-group floating-label-form-group controls">
+                                        <label for="txtPortfolioURL{{$key}}">URL</label>
+                                        <input class="form-control" type="url" id="txtPortfolioURL{{$key}}" required placeholder="URL" data-validation-required-message="Please enter the destination URL."
+                                            value="{{$val.URL}}" />
+                                    </div>
+                                </div>
+                            </li>
+                            {{end}}
+                        </ul>
+                    </div>
+                </div>
+                <a class="btn btn-secondary" href="/site">Back</a>
+                <button type="button" class="btn btn-primary" id="btnSavePortfolio">Save</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,7 +1,7 @@
 package classifieds
 
 import (
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
@@ -12,5 +12,5 @@ type Tag struct {
 }
 
 func (o Tag) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

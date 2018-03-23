@@ -1,30 +1,15 @@
-const _stateControl = {};
-let _submitButton = {};
-
-const _onValid = function(targetName) {
-    _stateControl[targetName] = {
-        valid: true,
-        errors: []
-    };
+function _submitDisabled(btn, disable) {
+    btn.prop('disabled', disable);
 }
 
-const _onInvalid = function(targetName, errors) {
-    _stateControl[targetName] = { valid: false, errors: errors };
-    _submitDisabled(true);
-}
-
-const _submitDisabled = function(disable){
-    _submitButton.prop('disabled', disable);
-}
-
-const _formValid = function(){
+function _isFormValid(stateObj) {
     let result = true;
-    let stateControlKeys = Object.keys(_stateControl);
-    let keysLen = stateControlKeys.length;
+    let stateKeys = Object.keys(stateObj);
+    let keysLen = stateKeys.length;
 
     for (let i = 0; i < keysLen; i++) {
-        let currKey = stateControlKeys[i];
-        let ctrl = _stateControl[currKey];
+        let currKey = stateKeys[i];
+        let ctrl = stateObj[currKey];
 
         if (!ctrl.valid) {
             result = false;
@@ -35,33 +20,39 @@ const _formValid = function(){
     return result;
 }
 
-export default class FormState {
+let _formMap = {};
 
-    constructor(submitButton){
-        _submitButton = submitButton;
+export default class FormState {
+    constructor(formName, submitButton) {
+        _formMap[formName] = {
+            submitButton: submitButton,
+            stateControl: {}
+        };
     }
 
-    onValidate(event) {
+    onValidate(formName, event) {
+        let form = _formMap[formName];
         let isValid = event.type === "valid";
         let targetName = event.relatedTarget.id;
 
         if (isValid) {
-            _onValid(targetName);
+            form.stateControl[targetName] = { valid: true, errors: [] };
         } else {
             let errors = event.detail;
-            _onInvalid(targetName, errors);
+            form.stateControl[targetName] = { valid: false, errors: errors };
         }
 
-        if(_formValid()){
-            _submitDisabled(false)
-        }
+        let formValid = _isFormValid(form.stateControl);
+        _submitDisabled(form.submitButton, !formValid);
     }
 
-    isFormValid() {
-        return _formValid();
+    isFormValid(formName) {
+        let stateControl = _formMap[formName].stateControl;
+        return _isFormValid(stateControl);
     }
 
-    submitDisabled(disable){
-        _submitDisabled(disable);
+    submitDisabled(formName, disable) {
+        let submit = _formMap[formName].submitButton;
+        _submitDisabled(submit, disable);
     }
 }

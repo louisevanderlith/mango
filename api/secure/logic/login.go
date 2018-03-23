@@ -1,9 +1,10 @@
 package logic
 
 import (
-	"github.com/louisevanderlith/mango/db/secure"
-	"github.com/astaxie/beego/context"
 	"encoding/json"
+
+	"github.com/astaxie/beego/context"
+	"github.com/louisevanderlith/mango/db/secure"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/nu7hatch/gouuid"
 )
@@ -19,7 +20,7 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 	u4, _ := uuid.NewV4()
 	sessionID = u4.String()
 
-	if util.HasAvo(sessionID){
+	if util.HasAvo(sessionID) {
 		passed = true
 	} else {
 		var l Login

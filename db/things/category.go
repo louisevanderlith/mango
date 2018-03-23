@@ -1,7 +1,7 @@
 package things
 
 import (
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
@@ -13,5 +13,5 @@ type Category struct {
 }
 
 func (o Category) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

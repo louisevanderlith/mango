@@ -2,7 +2,8 @@ package folio
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
+	"github.com/louisevanderlith/mango/util"
 )
 
 type Context struct {
@@ -10,24 +11,29 @@ type Context struct {
 	Portfolio  *db.Set
 	Profile    *db.Set
 	SocialLink *db.Set
+	Header     *db.Set
 }
 
 var Ctx *Context
 
 func NewDatabase() {
 	dbName := "Folio.DB"
+	dbSource, err := util.GetServiceURL(dbName, false)
 
-	registerModels()
-	db.SyncDatabase(dbName)
+	if err == nil {
+		registerModels()
+		db.SyncDatabase(dbSource)
 
-	Ctx = &Context{
-		About:      db.NewSet(About{}),
-		Portfolio:  db.NewSet(Portfolio{}),
-		Profile:    db.NewSet(Profile{}),
-		SocialLink: db.NewSet(SocialLink{}),
+		Ctx = &Context{
+			About:      db.NewSet(About{}),
+			Portfolio:  db.NewSet(Portfolio{}),
+			Profile:    db.NewSet(Profile{}),
+			SocialLink: db.NewSet(SocialLink{}),
+			Header:     db.NewSet(Header{}),
+		}
 	}
 }
 
 func registerModels() {
-	orm.RegisterModel(new(About), new(Portfolio), new(Profile), new(SocialLink))
+	orm.RegisterModel(new(About), new(Portfolio), new(Profile), new(SocialLink), new(Header))
 }

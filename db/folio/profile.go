@@ -1,24 +1,25 @@
 package folio
 
 import (
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
 type Profile struct {
 	db.Record
-	Title          string `orm:"size(128)"`
-	Description    string `orm:"size(512)"`
-	ContactEmail   string `orm:"size(128)"`
-	ContactPhone   string `orm:"size(20)"`
-	URL            string `orm:"size(128)"`
-	ImageID        int64
+	Title          string        `orm:"size(128)" json:",omitempty"`
+	Description    string        `orm:"size(512)" json:",omitempty"`
+	ContactEmail   string        `orm:"size(128)" json:",omitempty"`
+	ContactPhone   string        `orm:"size(20)" json:",omitempty"`
+	URL            string        `orm:"size(128)" json:",omitempty"`
+	ImageID        int64         `orm:"null"`
 	StyleSheet     string        `orm:"size(50)"`
-	SocialLinks    []*SocialLink `orm:"reverse(many)"`
-	PortfolioItems []*Portfolio  `orm:"reverse(many)"`
-	AboutSections  []*About      `orm:"reverse(many)"`
+	SocialLinks    []*SocialLink `orm:"reverse(many)" json:",omitempty"`
+	PortfolioItems []*Portfolio  `orm:"reverse(many)" json:",omitempty"`
+	AboutSections  []*About      `orm:"reverse(many)" json:",omitempty"`
+	Headers        []*Header     `orm:"reverse(many)" json:",omitempty"`
 }
 
 func (p Profile) Validate() (bool, error) {
-	return util.ValidateStruct(p)
+	return util.ValidateStruct(&p)
 }

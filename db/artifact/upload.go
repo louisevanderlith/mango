@@ -1,7 +1,7 @@
 package artifact
 
 import (
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
@@ -16,5 +16,5 @@ type Upload struct {
 }
 
 func (o Upload) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }

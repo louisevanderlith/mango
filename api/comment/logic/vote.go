@@ -11,9 +11,9 @@ func (vote Vote) Sumbit() (finalErr error) {
 
 	if vote.CommentID > 0 {
 		filter := comment.Comment{}
-		filter.ID = vote.CommentID
+		filter.Id = vote.CommentID
 
-		result, err := comment.Ctx.Comment.ReadOne(filter)
+		result, err := comment.Ctx.Comment.ReadOne(&filter)
 
 		if err == nil {
 			record, _ := result.(comment.Comment)
@@ -24,7 +24,7 @@ func (vote Vote) Sumbit() (finalErr error) {
 				record.DownVotes++
 			}
 
-			comment.Ctx.Comment.Update(record)
+			comment.Ctx.Comment.Update(&record)
 		} else {
 			finalErr = err
 		}

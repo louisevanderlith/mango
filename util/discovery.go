@@ -9,9 +9,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/louisevanderlith/mango/util/enums"
-	"github.com/astaxie/beego"
 	"strconv"
+
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type Service struct {
@@ -38,11 +38,7 @@ var (
 func init() {
 	serviceKeys = make(map[k]string)
 
-	if beego.AppConfig.String("runmode") == "dev" {
-		serviceKeys[k{"Router.API", false}] = "http://localhost:8080/"
-	} else {
-		serviceKeys[k{"Router.API", false}] = "https://router.avosa.co.za/"
-	}
+	serviceKeys[k{"Router.API", false}] = "http://localhost:8080/"
 }
 
 func GetInstanceKey() string {

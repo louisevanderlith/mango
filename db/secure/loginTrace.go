@@ -1,7 +1,7 @@
 package secure
 
 import (
-	"github.com/louisevanderlith/mango/db"
+	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
@@ -14,5 +14,5 @@ type LoginTrace struct {
 }
 
 func (o LoginTrace) Validate() (bool, error) {
-	return util.ValidateStruct(o)
+	return util.ValidateStruct(&o)
 }
