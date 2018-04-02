@@ -2,8 +2,7 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
         <a class="js-scroll-trigger" href="#page-top">
-            <!--<img src="./img/logo.png" alt="avosa logo" style="height: 64px"/>-->
-            <img src="{{.data.ImageURL}}" alt="{{.data.Title}} logo" />
+            <img src="{{.data.ImageURL}}" width="128px" alt="{{.data.Title}} logo" />
         </a>
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive"
             aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,12 +50,11 @@
             <div class="col-sm-4 portfolio-item">
                 <a class="portfolio-link" target="_blank" href="{{$val.URL}}">
                     <div class="caption">
-                        {{$val.Name}}
                         <div class="caption-content">
-                            <i class="fa fa-search-plus fa-3x"></i>
+                            {{$val.Name}}
                         </div>
                     </div>
-                    <img class="img-fluid" src="{{$val.ImageURL}}" alt="">
+                    <img class="img-fluid" src="{{$val.ImageURL}}" alt="{{$val.Name}}">
                 </a>
             </div>
             {{end}}
@@ -137,10 +135,10 @@
                     </h6>
                     <p>
                         {{ if .data.ContactEmail}}
-                        <strong class="green">Email: {{.data.ContactEmail}}</strong><br/>
-                        {{ end }} {{ if .data.ContactPhone}}
-                        <strong class="green">Phone: {{ .data.ContactPhone}}</strong><br/>
-                        {{ end }}
+                        <strong class="green">Email: {{.data.ContactEmail}}</strong>
+                        <br/> {{ end }} {{ if .data.ContactPhone}}
+                        <strong class="green">Phone: {{ .data.ContactPhone}}</strong>
+                        <br/> {{ end }}
                     </p>
                 </div>
                 <div class="footer-col col-md-8">

@@ -1,5 +1,5 @@
 let pastNames = {
-    "Router.API": "https://router.avosa.co.za/v1/discovery/"
+    "Router.API": "https://router.localhost/v1/discovery/"
 };
 
 async function getRouterPath(serviceName) {
