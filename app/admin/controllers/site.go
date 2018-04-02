@@ -5,11 +5,10 @@ import (
 	"strconv"
 
 	"github.com/louisevanderlith/mango/app/admin/logic"
-	"github.com/louisevanderlith/mango/util/control"
 )
 
 type SiteController struct {
-	control.UIController
+	logic.MenuController	
 }
 
 func (c *SiteController) Get() {
