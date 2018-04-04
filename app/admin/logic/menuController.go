@@ -1,6 +1,8 @@
 package logic
 
 import (
+	"strings"
+
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -17,7 +19,7 @@ func (ctrl *MenuController) Setup(name string) {
 	ctrl.UIController.Setup(name)
 }
 
-type Menu map[int64]*menuItem
+type Menu map[string]*menuItem
 
 type menuItem struct {
 	State     bool
@@ -38,71 +40,92 @@ func getMenu(path string) Menu {
 func getItems() Menu {
 	result := make(Menu)
 
-	result[0] = newItem("Home", "/", "fa-home")
-	result[0].setActive()
+	homeKey, homeItem := newItem("Home", "/", "fa-home")
+	result[homeKey] = homeItem
+	result[homeKey].setActive()
 
-	result[1] = artifactMenu()
-	result[2] = commsMenu()
-	result[3] = folioMenu()
-	result[4] = userMenu()
+	artifactKey, artifactItem := artifactMenu()
+	result[artifactKey] = artifactItem
+
+	commsKey, commsItem := commsMenu()
+	result[commsKey] = commsItem
+
+	folioKey, folioItem := folioMenu()
+	result[folioKey] = folioItem
+
+	userKey, userItem := userMenu()
+	result[userKey] = userItem
 
 	return result
 }
 
-func artifactMenu() *menuItem {
+func artifactMenu() (shortName string, result *menuItem) {
+	shortName, result = newItem("Artifact API", "#", "fa-ban")
 
-	result := newItem("Artifact API", "#", "fa-ban")
-
-	result.Children[0] = newItem("Uploads", "/uploads", "fa-ban")
+	uplKey, uplItem := newItem("Uploads", "/uploads", "fa-ban")
+	result.Children[uplKey] = uplItem
 
 	result.setActive()
-	return result
+
+	return shortName, result
 }
 
-func commsMenu() *menuItem {
-	result := newItem("Comms API", "#", "fa-mail")
+func commsMenu() (shortName string, result *menuItem) {
+	shortName, result = newItem("Comms API", "#", "fa-mail")
 
-	result.Children[0] = newItem("Messages", "/comms", "fa-mail")
+	msgKey, msgItem := newItem("Messages", "/comms", "fa-mail")
+	result.Children[msgKey] = msgItem
 
 	result.setActive()
-	return result
+
+	return shortName, result
 }
 
-func folioMenu() *menuItem {
-	result := newItem("Folio API", "/site", "fa-web")
+func folioMenu() (shortName string, result *menuItem) {
+	shortName, result = newItem("Folio API", "/site", "fa-web")
 
 	result.setActive()
-	return result
+
+	return shortName, result
 }
 
-func userMenu() *menuItem {
-	result := newItem("Secure API", "#", "fa-lock")
+func userMenu() (shortName string, result *menuItem) {
+	shortName, result = newItem("Secure API", "#", "fa-lock")
 
-	result.Children[0] = newItem("Users", "/user", "fa-user")
+	usrKey, usrItem := newItem("Users", "/user", "fa-user")
+	result.Children[usrKey] = usrItem
 
 	result.setActive()
-	return result
+
+	return shortName, result
 }
 
-func newItem(text, path, iconClass string) *menuItem {
-	return &menuItem{
+func newItem(text, path, iconClass string) (shortName string, result *menuItem) {
+	shortName = getUniqueName(text)
+	result = &menuItem{
 		Text:      text,
 		Path:      path,
 		IconClass: iconClass,
 		State:     false,
 		Children:  make(Menu),
 	}
+
+	return shortName, result
 }
 
 func (item *menuItem) setActive() {
-	if len(item.Children) > 0 {
-		for _, v := range item.Children {
-			if v.Path == _path {
-				v.State = true
-				item.State = true
-			}
-		}
-	} else if item.Path == _path {
+	if item.Path == _path {
 		item.State = true
 	}
+
+	for _, v := range item.Children {
+		if v.Path == _path {
+			v.State = true
+			item.State = true
+		}
+	}
+}
+
+func getUniqueName(raw string) string {
+	return strings.ToLower(strings.Replace(raw, " ", "", -1))
 }
