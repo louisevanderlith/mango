@@ -26,7 +26,6 @@ function registerMenu() {
 function toggleMenu(e) {
     let tag = $(e.currentTarget);
     let subID = "#" + tag.data('sub');
-    console.log(subID);
     let sub = $(subID);
 
     tag.toggleClass('collapsed');

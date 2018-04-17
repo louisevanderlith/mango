@@ -33,6 +33,8 @@ func (m Message) SendMessage() error {
 		if sendErr != nil {
 			m.Sent = false
 			m.Error = sendErr.Error()
+		} else {
+			m.Sent = true
 		}
 	}
 

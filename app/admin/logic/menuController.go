@@ -40,10 +40,6 @@ func getMenu(path string) Menu {
 func getItems() Menu {
 	result := make(Menu)
 
-	homeKey, homeItem := newItem("Home", "/", "fa-home")
-	result[homeKey] = homeItem
-	result[homeKey].setActive()
-
 	artifactKey, artifactItem := artifactMenu()
 	result[artifactKey] = artifactItem
 
@@ -60,9 +56,9 @@ func getItems() Menu {
 }
 
 func artifactMenu() (shortName string, result *menuItem) {
-	shortName, result = newItem("Artifact API", "#", "fa-ban")
+	shortName, result = newItem("Artifact API", "#", "fa-cloud")
 
-	uplKey, uplItem := newItem("Uploads", "/uploads", "fa-ban")
+	uplKey, uplItem := newItem("Uploads", "/uploads", "fa-file-image-o")
 	result.Children[uplKey] = uplItem
 
 	result.setActive()
@@ -71,9 +67,9 @@ func artifactMenu() (shortName string, result *menuItem) {
 }
 
 func commsMenu() (shortName string, result *menuItem) {
-	shortName, result = newItem("Comms API", "#", "fa-mail")
+	shortName, result = newItem("Comms API", "#", "fa-fax")
 
-	msgKey, msgItem := newItem("Messages", "/comms", "fa-mail")
+	msgKey, msgItem := newItem("Messages", "/comms", "fa-newspaper-o")
 	result.Children[msgKey] = msgItem
 
 	result.setActive()
@@ -82,7 +78,10 @@ func commsMenu() (shortName string, result *menuItem) {
 }
 
 func folioMenu() (shortName string, result *menuItem) {
-	shortName, result = newItem("Folio API", "/site", "fa-web")
+	shortName, result = newItem("Folio API", "#", "fa-users")
+
+	siteKey, siteItem := newItem("Sites", "/site", "fa-globe")
+	result.Children[siteKey] = siteItem
 
 	result.setActive()
 
@@ -90,7 +89,7 @@ func folioMenu() (shortName string, result *menuItem) {
 }
 
 func userMenu() (shortName string, result *menuItem) {
-	shortName, result = newItem("Secure API", "#", "fa-lock")
+	shortName, result = newItem("Secure API", "#", "fa-user-secret")
 
 	usrKey, usrItem := newItem("Users", "/user", "fa-user")
 	result.Children[usrKey] = usrItem
