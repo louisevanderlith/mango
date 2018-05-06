@@ -1,11 +1,9 @@
 package controllers
 
-import (
-	"github.com/louisevanderlith/mango/util/control"
-)
+import "github.com/louisevanderlith/mango/app/admin/logic"
 
 type DefaultController struct {
-	control.UIController
+	logic.MenuController
 }
 
 func (c *DefaultController) Get() {
