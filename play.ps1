@@ -16,7 +16,7 @@ function startPlay() {
                 Start-Sleep -s $waitTime
             }
 
-            $cmd = "Write-Host 'Starting' $progName -ForegroundColor 'red'; cd $progPath; $progCmd; Read-Host -Wait"
+            $cmd = "Write-Host 'Starting' $progName -ForegroundColor 'red'; cd $progPath; $progCmd; Read-Host"
             spawnWindow $cmd $progName
 
             if($progName -eq 'router'){

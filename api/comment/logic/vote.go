@@ -24,7 +24,7 @@ func (vote Vote) Sumbit() (finalErr error) {
 				record.DownVotes++
 			}
 
-			comment.Ctx.Comment.Update(record)
+			comment.Ctx.Comment.Update(&record)
 		} else {
 			finalErr = err
 		}

@@ -2,11 +2,10 @@ package controllers
 
 import (
 	"github.com/louisevanderlith/mango/app/admin/logic"
-	"github.com/louisevanderlith/mango/util/control"
 )
 
 type ManufacturerController struct {
-	control.UIController
+	logic.MenuController
 }
 
 func (c *ManufacturerController) Get() {

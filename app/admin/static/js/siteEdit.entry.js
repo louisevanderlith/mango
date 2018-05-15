@@ -3,36 +3,58 @@ import FormState from './formState.js';
 import * as lookup from './pathLookup';
 import * as services from './services';
 
-const form = {
-    panel: $('#pnlEdit'),
-    id: $('#frmSite'),
-    title: $('#txtTitle'),
-    description: $('#txtDescription'),
-    email: $('#txtEmail'),
-    phone: $('#txtPhone'),
-    url: $('#txtURL'),
-    image: $('#uplProfileImg'),
-    styleSheet: $('#txtStylesheet'),
-    socialLinks: $('#lstSocial'),
-    portfolio: $('#lstPortfolio'),
-    aboutSections: $('#lstAbout'),
-    headers: $('#lstHeader'),
-    saveButton: $('#btnSave'),
-    editButton: $('#btnEdit'),
+const tabAdder = {
     addSocialButton: $('#btnAddSocial'),
     addPortfolioButton: $('#btnAddPortfolio'),
     addParagraphButton: $('#btnAddParagraph'),
-    addHeaderButton: $('#btnAddHeader'),
-    imageHolder: $('#imageHolder')
+    addHeaderButton: $('#btnAddHeader')
 };
 
-var fs = {};
+const forms = {
+    frmAbout: {
+        id: $('#frmAbout'),
+        lstAbout: $('#lstAbout'),
+        save: $('#btnSaveAbout'),
+        saveEvent: trySaveAbout
+    },
+    frmBasicSite: {
+        id: $('#frmBasicSite'),
+        txtTitle: $('#txtTitle'),
+        txtDescription: $('#txtDescription'),
+        txtEmail: $('#txtEmail'),
+        txtPhone: $('#txtPhone'),
+        txtURL: $('#txtURL'),
+        image: $('#uplProfileImg'),
+        txtStylesheet: $('#txtStylesheet'),
+        save: $('#btnSaveSite'),
+        saveEvent: trySaveSite
+    },
+    frmHeader: {
+        id: $('#frmHeader'),
+        lstHeader: $('#lstHeader'),
+        save: $('#btnSaveHeader'),
+        saveEvent: trySaveHeader
+    },
+    frmPortfolio: {
+        id: $('#frmPortfolio'),
+        lstPortfolio: $('#lstPortfolio'),
+        save: $('#btnSavePortfolio'),
+        saveEvent: trySavePortfolio
+    },
+    frmSocialmedia: {
+        id: $('#frmSocialmedia'),
+        lstSocial: $('#lstSocial'),
+        save: $('#btnSaveSocial'),
+        saveEvent: trySaveSocial
+    }
+};
+
+var formStates = {};
 var currentID = 0;
 var imageURL = '';
 
 $(document).ready(() => {
-    fs = new FormState(form.saveButton);
-    fs.submitDisabled(true);
+    readyForms();
 
     let path = window.location.pathname;
     currentID = parseInt(path.substring(path.lastIndexOf('/') + 1));
@@ -41,17 +63,29 @@ $(document).ready(() => {
     registerEvents();
 });
 
+function readyForms() {
+    let keys = Object.keys(forms);
+    let keyLen = keys.length;
+
+    for (let i = 0; i < keyLen; i++) {
+        let key = keys[i];
+        let item = forms[key];
+
+        formStates[key] = new FormState(key, item.save);
+
+        item.save.on('click', item.saveEvent);
+
+        let validForm = item.id.validator();
+        validForm.on('invalid.bs.validator', (event) => { formStates[key].onValidate(key, event); });
+        validForm.on('valid.bs.validator', (event) => { formStates[key].onValidate(key, event); });
+    }
+}
+
 function registerEvents() {
-    form.saveButton.on('click', trySave);
-
-    let validForm = form.id.validator();
-    validForm.on('invalid.bs.validator', fs.onValidate);
-    validForm.on('valid.bs.validator', fs.onValidate);
-
-    form.addParagraphButton.on('click', addRow);
-    form.addSocialButton.on('click', addRow);
-    form.addPortfolioButton.on('click', addRow);
-    form.addHeaderButton.on('click', addRow);
+    tabAdder.addParagraphButton.on('click', addRow);
+    tabAdder.addSocialButton.on('click', addRow);
+    tabAdder.addPortfolioButton.on('click', addRow);
+    tabAdder.addHeaderButton.on('click', addRow);
 
     const body = $('body');
     body.on('click', '.removeRow', removeRow);
@@ -95,15 +129,7 @@ function doUpload(formData, infoObj, ctrlID) {
         finishUpload(obj, infoObj, ctrlID);
     }
 
-    let error = function (obj) {
-        $('#success').html("<div class='alert alert-danger'>");
-        $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-            .append("</button>");
-        $('#success > .alert-danger').append($("<strong>").text(obj.Error));
-        $('#success > .alert-danger').append('</div>');
-    }
-
-    services.createUpload(formData, success, error);
+    services.createUpload(formData, success, errorMessage);
 }
 
 function finishUpload(obj, infoObj, ctrlID) {
@@ -118,60 +144,152 @@ function finishUpload(obj, infoObj, ctrlID) {
     uploader.removeAttr('required');
 }
 
-function trySave() {
-    form.id.validator('validate');
+function successMessage(message) {
+    $('#success').html("<div class='alert alert-success'>");
+    $('#success > .alert-success').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+        .append("</button>");
+    $('#success > .alert-success').append($("<strong>").text(message.Data));
+    $('#success > .alert-success').append('</div>');
+}
 
-    if (fs.isFormValid()) {
-        submitSite();
+function errorMessage(message) {
+    $('#success').html("<div class='alert alert-danger'>");
+    $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+        .append("</button>");
+    $('#success > .alert-danger').append($("<strong>").text(message.Error));
+    $('#success > .alert-danger').append('</div>');
+}
+
+function completeForm(formKey, formState) {
+    return () => {
+        setTimeout(function () {
+            formState.submitDisabled(formKey, false);
+        }, 1000);
     }
 }
 
-function submitSite() {
-    fs.submitDisabled(true);
+function trySaveAbout() {
+    const formKey = "frmAbout";
+    forms.frmAbout.id.validator('validate');
+
+    if (formStates[formKey].isFormValid(formKey)) {
+        submitAbout(formKey);
+    }
+}
+
+function submitAbout(formKey) {
+    let formState = formStates[formKey];
+    let sections = getList(forms.frmAbout.lstAbout, "About");
+
+    formState.submitDisabled(formKey, true);
+
+    for (let i = 0; i < sections.length; i++) {
+        let data = sections[i];
+
+        services.updateAboutSection(data, successMessage, errorMessage);
+    }
+
+    completeForm(formKey, formState)();
+}
+
+function trySaveSite() {
+    const formKey = "frmBasicSite";
+    forms.frmBasicSite.id.validator('validate');
+
+    if (formStates[formKey].isFormValid(formKey)) {
+        submitSite(formKey);
+    }
+}
+
+function submitSite(formKey) {
+    let siteForm = forms.frmBasicSite;
+    let formState = formStates[formKey];
+    formState.submitDisabled(formKey, true);
 
     let data = {
         Id: currentID,
-        Title: form.title.val(),
-        Description: form.description.val(),
-        ContactEmail: form.email.val(),
-        ContactPhone: form.phone.val(),
-        URL: form.url.val(),
-        ImageID: form.image.data('id'),
-        StyleSheet: form.styleSheet.val(),
-        SocialLinks: getList(form.socialLinks, "Social"),
-        PortfolioItems: getList(form.portfolio, "Portfolio"),
-        AboutSections: getList(form.aboutSections, "About"),
-        Headers: getList(form.headers, "Header")
+        Title: siteForm.txtTitle.val(),
+        Description: siteForm.txtDescription.val(),
+        ContactEmail: siteForm.txtEmail.val(),
+        ContactPhone: siteForm.txtPhone.val(),
+        URL: siteForm.txtURL.val(),
+        ImageID: siteForm.image.data('id'),
+        StyleSheet: siteForm.txtStylesheet.val()
     };
 
-    let success = function (data) {
-        $('#success').html("<div class='alert alert-success'>");
-        $('#success > .alert-success').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-            .append("</button>");
-        $('#success > .alert-success').append($("<strong>").text(data.Data));
-        $('#success > .alert-success').append('</div>');
-        //clear all fields
-        form.id.trigger("reset");
-    };
+    services.updateSite(data, successMessage, errorMessage, completeForm(formKey, formState));
+}
 
-    let fail = function (data) {
-        // Fail message
-        $('#success').html("<div class='alert alert-danger'>");
-        $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-            .append("</button>");
-        $('#success > .alert-danger').append($("<strong>").text(data.Error));
-        $('#success > .alert-danger').append('</div>');
-        //clear all fields
-        form.id.trigger("reset");
-    };
+function trySaveHeader() {
+    const formKey = "frmHeader";
+    forms.frmHeader.id.validator('validate');
 
-    let complete = function () {
-        setTimeout(function () {
-            fs.submitDisabled(false);
-        }, 1000);
-    };
+    if (formStates[formKey].isFormValid(formKey)) {
+        submitHeader(formKey);
+    }
+}
 
-    services.updateSite(data, success, fail, complete);
+function submitHeader(formKey) {
+    let formState = formStates[formKey];
+    let sections = getList(forms.frmHeader.lstHeader, "Header");
+
+    formState.submitDisabled(formKey, true);
+
+    for (let i = 0; i < sections.length; i++) {
+        let data = sections[i];
+
+        services.updateHeaderItem(data, successMessage, errorMessage);
+    }
+
+    completeForm(formKey, formState)();
+}
+
+function trySavePortfolio() {
+    const formKey = "frmPortfolio";
+    forms.frmPortfolio.id.validator('validate');
+
+    if (formStates[formKey].isFormValid(formKey)) {
+        submitPortfolio(formKey);
+    }
+}
+
+function submitPortfolio(formKey) {
+    let formState = formStates[formKey];
+    let sections = getList(forms.frmPortfolio.lstPortfolio, "Portfolio");
+
+    formState.submitDisabled(formKey, true);
+
+    for (let i = 0; i < sections.length; i++) {
+        let data = sections[i];
+
+        services.updatePortfolioItem(data, successMessage, errorMessage);
+    }
+
+    completeForm(formKey, formState)();
+}
+
+function trySaveSocial() {
+    const formKey = "frmSocialmedia";
+    forms.frmSocialmedia.id.validator('validate');
+
+    if (formStates[formKey].isFormValid(formKey)) {
+        submitSocial(formKey);
+    }
+}
+
+function submitSocial(formKey) {
+    let formState = formStates[formKey];
+    let sections = getList(forms.frmSocialmedia.lstSocial, "Social");
+
+    formState.submitDisabled(formKey, true);
+
+    for (let i = 0; i < sections.length; i++) {
+        let data = sections[i];
+
+        services.updateSocialLink(data, successMessage, errorMessage);
+    }
+
+    completeForm(formKey, formState)();
 }
 
 function getList(elem, container) {
@@ -258,7 +376,7 @@ function addRow(e) {
     let confirmed = confirm("All unsaved data will be lost. Continue?");
 
     if (confirmed) {
-        let type = e.target.id.replace('btnAdd', ''); 
+        let type = e.target.id.replace('btnAdd', '');
         const funcs = {
             "Social": addSocialRow,
             "Portfolio": addPortfolioRow,
@@ -268,8 +386,6 @@ function addRow(e) {
 
         let rowFunc = funcs[type];
         rowFunc();
-
-        form.id.validator('update');
     }
 }
 
@@ -286,11 +402,7 @@ function addSocialRow() {
         location.reload();
     };
 
-    let fail = function (data) {
-        console.error(data.Error);
-    }
-
-    services.createSocialLink(data, success, fail);
+    services.createSocialLink(data, success);
 }
 
 function addPortfolioRow() {
@@ -307,11 +419,7 @@ function addPortfolioRow() {
         location.reload();
     };
 
-    let fail = function (data) {
-        console.error(data.Error);
-    }
-
-    services.createPortfolioItem(data, success, fail);
+    services.createPortfolioItem(data, success);
 }
 
 function addParagraphRow() {

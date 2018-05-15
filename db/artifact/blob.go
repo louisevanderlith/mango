@@ -16,7 +16,7 @@ type Blob struct {
 	Data string `orm:"type(bytea)"`
 }
 
-type optmizer map[enums.OptimizeType]func(data image.Image) []byte
+type optmizer map[enums.OptimizeType]func(data image.Image) ([]byte, error)
 
 var optimizers optmizer
 
@@ -36,7 +36,12 @@ func (o *Blob) OptimizeFor(oType enums.OptimizeType) error {
 		opt, hasOpt := optimizers[oType]
 
 		if hasOpt {
-			o.SetData(opt(decoded))
+			var data []byte
+			data, err = opt(decoded)
+
+			if err == nil {
+				o.SetData(data)
+			}
 		}
 	}
 
@@ -57,42 +62,35 @@ func getOptimizers() optmizer {
 	result[enums.Logo] = optimizeLogo
 	result[enums.Banner] = optimizeBanner
 	result[enums.Ad] = optimizeAd
+	result[enums.Thumb] = optimizeThumb
 
 	return result
 }
 
-func optimizeAd(data image.Image) []byte {
-	var b bytes.Buffer
-
-	writer := bufio.NewWriter(&b)
-	optImage := imaging.Fill(data, 700, 450, imaging.Center, imaging.Lanczos)
-	imaging.Encode(writer, optImage, imaging.JPEG)
-
-	defer writer.Flush()
-
-	return b.Bytes()
+func optimizeAd(data image.Image) ([]byte, error) {
+	return optimize(data, 700, 450, imaging.JPEG)
 }
 
-func optimizeBanner(data image.Image) []byte {
-	var b bytes.Buffer
-
-	writer := bufio.NewWriter(&b)
-	optImage := imaging.Fill(data, 1536, 864, imaging.Center, imaging.Lanczos)
-	imaging.Encode(writer, optImage, imaging.JPEG)
-
-	defer writer.Flush()
-
-	return b.Bytes()
+func optimizeBanner(data image.Image) ([]byte, error) {
+	return optimize(data, 1536, 864, imaging.JPEG)
 }
 
-func optimizeLogo(data image.Image) []byte {
-	var b bytes.Buffer
+func optimizeLogo(data image.Image) ([]byte, error) {
+	return optimize(data, 256, 128, imaging.PNG)
+}
 
+func optimizeThumb(data image.Image) ([]byte, error) {
+	return optimize(data, 350, 145, imaging.JPEG)
+}
+
+func optimize(data image.Image, width, height int, format imaging.Format) ([]byte, error) {
+	var b bytes.Buffer
 	writer := bufio.NewWriter(&b)
-	optImage := imaging.Fill(data, 128, 64, imaging.Center, imaging.Lanczos)
-	imaging.Encode(writer, optImage, imaging.PNG)
+	optImage := imaging.Fit(data, width, height, imaging.Lanczos)
+
+	err := imaging.Encode(writer, optImage, format)
 
 	defer writer.Flush()
 
-	return b.Bytes()
+	return b.Bytes(), err
 }

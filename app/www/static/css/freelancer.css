@@ -212,7 +212,7 @@ header.masthead {
     cursor: pointer; }
     #portfolio .portfolio-item .portfolio-link .caption {
       position: absolute;
-      width: 100%;
+      width: 75%;
       height: 100%;
       -webkit-transition: all ease 0.5s;
       -moz-transition: all ease 0.5s;

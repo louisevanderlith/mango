@@ -144,3 +144,9 @@ func getUser(identifier string) *User {
 
 	return result
 }
+
+func GetUsers() (result []*User, err error) {
+	err = Ctx.User.Read(&User{}, &result)
+
+	return result, err
+}

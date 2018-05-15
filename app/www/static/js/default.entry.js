@@ -35,8 +35,8 @@ function registerEvents() {
 function trySend(e) {
     form.id.validator('validate');
 
-    if (fs.isFormValid()) {
-        let toEmail = e.target.data.to;
+    if (fs.isFormValid() && e) {
+        let toEmail = e.currentTarget.dataset.to;
         submitSend(toEmail);
     }
 }
@@ -49,7 +49,7 @@ function pressEnter(e) {
     e.preventDefault();
 }
 
-function submitSend(toEmail) {
+async function submitSend(toEmail) {
     fs.submitDisabled(true);
 
     var firstName = form.name.val();
@@ -59,7 +59,7 @@ function submitSend(toEmail) {
     }
 
     $.ajax({
-        url: lookup.buildPath('Comms.API', "message"),
+        url: await lookup.buildPath('Comms.API', "message"),
         type: "POST",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
@@ -108,20 +108,21 @@ function tabClick(e) {
 
 function startCarousel() {
     let idx = 0;
+    let sliders = $('.masthead>.slider');
 
-    if (carouselImages.length === 1) {
-        showNext(idx);
+    if (sliders.length === 1) {
+        showNext(sliders, idx);
     } else {
         setInterval(() => {
-            idx = showNext(idx)
-        }, 3000); // 3 seconds
+            idx = showNext(sliders, idx)
+        }, 3000);
     }
 }
 
-function showNext(idx) {
+function showNext(carouselImages, idx) {
     const mastHeader = $('header.masthead');
     const header = $(mastHeader[0]);
-    const image = carouselImages[idx];
+    const image = $(carouselImages[idx]).data('img');
 
     header.css('background-image', `url("${image}")`);
 

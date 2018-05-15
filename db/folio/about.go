@@ -7,7 +7,7 @@ import (
 
 type About struct {
 	db.Record
-	SectionText string   `orm:"size(256)"`
+	SectionText string   `orm:"size(512)"`
 	Profile     *Profile `orm:"rel(fk)" json:",omitempty"`
 }
 
