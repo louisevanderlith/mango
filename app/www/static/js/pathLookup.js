@@ -1,17 +1,19 @@
 let pastNames = {
-    "Router.API": "https://router.avosa.co.za/v1/discovery/"
+    "Router.API": "https://router.localhost/v1/discovery/"//"https://router.avosa.co.za/v1/discovery/"//
 };
 
 async function getRouterPath(serviceName) {
-    const routerURL = await this.getServiceURL("Router.API");
+    const routerURL = await pathLookup.getServiceURL("Router.API");
 
     return `${routerURL}${instanceKey}/${serviceName}/true`;
 }
 
-function doLookup(serviceName) {
+async function doLookup(serviceName) {
+    const routerPath = await getRouterPath(serviceName);
+
     return new Promise((resolve) => {
         $.ajax({
-            url: getRouterPath(serviceName),
+            url: routerPath,
             type: "GET",
             contentType: "application/json; charset=utf-8",
             cache: true,
@@ -35,10 +37,12 @@ const pathLookup = {
     },
     buildPath: async function (serviceName, controller, params) {
         let url = await pathLookup.getServiceURL(serviceName);
-        let result = url + controller;
+        let result = url + 'v1/' + controller;
 
-        for (let i = 0; i < params.length; i++) {
-            result += "/" + params[i];
+        if (params) {
+            for (let i = 0; i < params.length; i++) {
+                result += "/" + params[i];
+            }
         }
 
         return result;

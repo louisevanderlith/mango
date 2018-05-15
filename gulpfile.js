@@ -64,6 +64,23 @@ function createCSSTask(appPath) {
     return taskName;
 }
 
+function createColorTask(appPath) {
+    const name = getNameFromPath(appPath);
+    const taskName = `${name}-colorcss`;
+    const fullPath = path.join(appPath, 'static/css/color/*.css');
+    const destPath = path.join(appPath, 'static/dist/css/color');
+
+    gulp.task(taskName, () => {
+        gulp.src(fullPath)
+            .pipe(cleanCSS())
+            .pipe(gulp.dest(destPath))
+    });
+
+    gulp.watch(fullPath, [taskName]);
+
+    return taskName;
+}
+
 function getRollupOptions(entry, name) {
     return {
         entry: entry,
@@ -98,9 +115,11 @@ function getTasks() {
 
             if (fs.existsSync(staticPath)) {
                 appTasks = getEntryPoints(filePath);
-                var cssTask = createCSSTask(filePath);
+                let cssTask = createCSSTask(filePath);
+                let colorTask = createColorTask(filePath);
 
                 appTasks.push(cssTask);
+                appTasks.push(colorTask);
             }
 
             rollupTasks = rollupTasks.concat(appTasks);

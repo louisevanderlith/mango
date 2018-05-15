@@ -125,6 +125,40 @@ func TestBlob_OptimizeFor_Ad_JPG2JPG(t *testing.T) {
 	saveImage(writeLocation, data.GetData())
 }
 
+func TestBlob_OptimizeFor_Thumb_PNG2JPG(t *testing.T) {
+	resultName := "png2jpg_thumb.jpg"
+	writeLocation := "./testData/" + resultName
+	os.Remove(writeLocation)
+
+	data := Blob{}
+	data.SetData(getImage("./test.png"))
+
+	err := data.OptimizeFor(enums.Thumb)
+
+	if err != nil {
+		t.Error("Error occured:", err)
+	}
+
+	saveImage(writeLocation, data.GetData())
+}
+
+func TestBlob_OptimizeFor_Thumb_JPG2JPG(t *testing.T) {
+	resultName := "jpg2jpg_thumb.jpg"
+	writeLocation := "./testData/" + resultName
+	os.Remove(writeLocation)
+
+	data := Blob{}
+	data.SetData(getImage("./test.jpg"))
+
+	err := data.OptimizeFor(enums.Thumb)
+
+	if err != nil {
+		t.Error("Error occured:", err)
+	}
+
+	saveImage(writeLocation, data.GetData())
+}
+
 func TestBlob_OptimizeFor_Ad(t *testing.T) {
 	resultName := "logo.png"
 	writeLocation := "./testData/" + resultName
@@ -139,5 +173,12 @@ func TestBlob_OptimizeFor_Ad(t *testing.T) {
 		t.Error("Error occured:", err)
 	}
 
-	saveImage(writeLocation, data.GetData())
+	objData := data.GetData()
+	t.Log(len(objData))
+	if len(objData) > 0 {
+		saveImage(writeLocation, objData)
+	} else {
+		t.Error("Image Zero")
+	}
+
 }

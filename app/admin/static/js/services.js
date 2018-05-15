@@ -61,9 +61,21 @@ export function createSocialLink(data, success, fail, complete) {
     });
 }
 
+export function updateSocialLink(data, success, fail, complete) {
+    lookup.buildPath('Folio.API', 'social').then((buildPath) => {
+        doRequest(buildPath, "PUT", data, success, fail, complete);
+    });
+}
+
 export function createAboutSection(data, success, fail, complete) {
     lookup.buildPath('Folio.API', 'about').then((buildPath) => {
         doRequest(buildPath, "POST", data, success, fail, complete);
+    });
+}
+
+export function updateAboutSection(data, success, fail, complete) {
+    lookup.buildPath('Folio.API', 'about').then((buildPath) => {
+        doRequest(buildPath, 'PUT', data, success, fail, complete);
     });
 }
 
@@ -73,8 +85,20 @@ export function createPortfolioItem(data, success, fail, complete) {
     });
 }
 
+export function updatePortfolioItem(data, success, fail, complete) {
+    lookup.buildPath('Folio.API', 'portfolio').then((buildPath) => {
+        doRequest(buildPath, "PUT", data, success, fail, complete);
+    });
+}
+
 export function createHeaderItem(data, success, fail, complete) {
     lookup.buildPath('Folio.API', 'header').then((buildPath) => {
         doRequest(buildPath, "POST", data, success, fail, complete);
+    });
+}
+
+export function updateHeaderItem(data, success, fail, complete) {
+    lookup.buildPath('Folio.API', 'header').then((buildPath) => {
+        doRequest(buildPath, "PUT", data, success, fail, complete);
     });
 }

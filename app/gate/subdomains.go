@@ -20,12 +20,11 @@ func init() {
 }
 
 func (subdomains Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	result := subdomains["www"]
-
-	handleSession(*r.URL, w)
+	result := subdomains["ssl"]
 
 	// CertBot requires tests on well-known for SSL Certs
 	if !strings.Contains(r.URL.String(), "well-known") {
+		handleSession(*r.URL, w)
 		domainParts := strings.Split(r.Host, ".")
 		result = getMux(subdomains, domainParts)
 	}
@@ -101,8 +100,11 @@ func registerSubdomains() {
 func sslMuxSetup() {
 	sslMux := http.NewServeMux()
 	certPath := beego.AppConfig.String("certpath")
-	fs := http.FileServer(http.FileSystem(http.Dir(certPath)))
-	sslMux.Handle("/.well-known/acme-challenge/", fs)
+	fullCertPath := http.FileSystem(http.Dir(certPath))
+	fs := http.FileServer(fullCertPath)
+	challengePath := "/.well-known/acme-challenge/"
+	
+	sslMux.Handle(challengePath, fs)
 
 	subdomains["ssl"] = sslMux
 }

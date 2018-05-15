@@ -3,8 +3,8 @@
         <div class="container">
             <h3>Tabs</h3>
             <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" role="tab" data-toggle="tab" href="#tabBasicsite">Site Info</a>
+                <li class="nav-item active">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#tabBasicsite">Site Info</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" role="tab" data-toggle="tab" href="#tabHeader">Headers</a>
@@ -19,7 +19,7 @@
                     <a class="nav-link" role="tab" data-toggle="tab" href="#tabSocialMedia">Social media</a>
                 </li>
             </ul>
-
+            <div id="success"></div>
             <div class="tab-content">
                 <div role="tabpanel" id="tabBasicsite" class="tab-pane fade in active">
                     {{ template "/content/tabBasicsite.html" . }}

@@ -31,7 +31,17 @@ func main() {
 	if err != nil {
 		log.Printf("Register: ", err)
 	} else {
+		showSMTPInfo()
+
 		comms.NewDatabase()
 		beego.Run()
 	}
+}
+
+func showSMTPInfo() {
+	smtpUser := beego.AppConfig.String("smtpUsername")
+	smtpAddress := beego.AppConfig.String("smtpAddress")
+	smtpPort := beego.AppConfig.String("smtpPort")
+
+	log.Print(smtpUser, smtpAddress, smtpPort)
 }
