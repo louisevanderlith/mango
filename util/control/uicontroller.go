@@ -12,11 +12,13 @@ type UIController struct {
 }
 
 func (ctrl *UIController) Prepare() {
+	//ctrl.ViewPath = "./_shared/views/"
 	ctrl.Layout = "master.html"
 }
 
 func (ctrl *UIController) Setup(name string) {
-	ctrl.TplName = "content/" + name + ".html"
+	//ctrl.ViewPath = "views"
+	ctrl.TplName = "" + name + ".html"
 
 	// By default we want to include scripts
 	// Set this to false in your controller, when scripts aren't needed

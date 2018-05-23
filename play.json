@@ -6,6 +6,7 @@
         {"type": "api", "name":"artifact", "cmd": "bee run -downdoc=true -gendoc=true"},
         {"type": "api", "name":"comms", "cmd": "bee run -downdoc=true -gendoc=true"},
         {"type": "api", "name":"folio", "cmd": "bee run -downdoc=true -gendoc=true"},
+        {"type": "app", "name":"classifieds", "cmd": "bee run"},
         {"type": "app", "name":"www", "cmd": "bee run"},
         {"type": "app", "name":"admin", "cmd": "bee run"},
         {"type": "app", "name":"gate", "cmd": "go build; ./gate.exe"}
