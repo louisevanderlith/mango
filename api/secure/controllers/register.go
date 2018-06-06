@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/louisevanderlith/mango/api/secure/logic"
 	"github.com/louisevanderlith/mango/util/control"
@@ -32,12 +31,5 @@ func (req *RegisterController) Post() {
 
 	err := logic.SaveRegistration(user)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = err.Error()
-	} else {
-		req.Data["json"] = fmt.Sprintf("User %s created Successfully.", user.Name)
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "User has been created.")
 }

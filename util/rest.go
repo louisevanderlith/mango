@@ -24,14 +24,14 @@ func GETMessage(serviceName, controller string, params ...string) ([]byte, int) 
 		resp, err := client.Do(req)
 
 		if err != nil {
-			log.Printf("http.Get: ", err)
+			log.Print("http.Get: ", err)
 		} else {
 			defer resp.Body.Close()
 			statusCode = resp.StatusCode
 			contents, err := ioutil.ReadAll(resp.Body)
 
 			if err != nil {
-				log.Printf("ioutil.ReadAll: ", err)
+				log.Print("ioutil.ReadAll: ", err)
 			}
 
 			result = contents
@@ -60,14 +60,14 @@ func POSTMessage(serviceName, controller string, obj interface{}) (result []byte
 		resp, err := client.Do(req)
 
 		if err != nil {
-			log.Printf("http.Post: ", err)
+			log.Print("http.Post: ", err)
 		} else {
 			defer resp.Body.Close()
 			statusCode = resp.StatusCode
 			contents, err := ioutil.ReadAll(resp.Body)
 
 			if err != nil {
-				log.Printf("ioutil.ReadAll: ", err)
+				log.Print("ioutil.ReadAll: ", err)
 			}
 
 			result = contents
@@ -85,7 +85,7 @@ func MarshalToMap(content []byte) map[string]*json.RawMessage {
 	err := json.Unmarshal(content, &objmap)
 
 	if err != nil {
-		log.Printf("MarshalToMap: ", err)
+		log.Print("MarshalToMap: ", err)
 	}
 
 	return objmap

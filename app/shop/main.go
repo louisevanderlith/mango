@@ -17,10 +17,10 @@ func main() {
 		Type:        enums.APP}
 
 	port := beego.AppConfig.String("httpport")
-	_, err := srv.Register( port)
+	_, err := srv.Register(port)
 
 	if err != nil {
-		log.Printf("Register: ", err)
+		log.Print("Register: ", err)
 	} else {
 		beego.Run()
 	}

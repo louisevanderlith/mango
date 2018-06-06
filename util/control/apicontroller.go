@@ -21,3 +21,15 @@ func (ctrl *APIController) ServeBinary(data []byte, filename string) {
 
 	output.Body(data)
 }
+
+func (ctrl *APIController) Serve(err error, data interface{}) {
+
+	if err != nil {
+		ctrl.Ctx.Output.SetStatus(500)
+		ctrl.Data["json"] = map[string]string{"Error": err.Error()}
+	} else {
+		ctrl.Data["json"] = map[string]interface{}{"Data": data}
+	}
+
+	ctrl.ServeJSON()
+}

@@ -21,7 +21,7 @@ func (req *HeaderController) Post() {
 	var header folio.Header
 	json.Unmarshal(req.Ctx.Input.RequestBody, &header)
 
-	_, err := folio.Ctx.Header.Create(&header)
+	_, err := folio.Ctx.Headers.Create(&header)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
@@ -43,14 +43,7 @@ func (req *HeaderController) Put() {
 	var head folio.Header
 	json.Unmarshal(req.Ctx.Input.RequestBody, &head)
 
-	err := folio.Ctx.Header.Update(&head)
+	err := folio.Ctx.Headers.Update(&head)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Header has been updated."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Header has been updated.")
 }

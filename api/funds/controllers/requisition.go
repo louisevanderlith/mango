@@ -2,6 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"strconv"
+
+	"github.com/louisevanderlith/db"
 
 	"github.com/louisevanderlith/mango/db/funds"
 	"github.com/louisevanderlith/mango/util/control"
@@ -17,7 +20,11 @@ type RequisitionController struct {
 // @Failure 403 body is empty
 // @router / [get]
 func (req *RequisitionController) Get() {
+	filter := funds.Requisition{}
+	var container []*funds.Requisition
+	err := funds.Ctx.Requisition.Read(&filter, &container)
 
+	req.Serve(err, container)
 }
 
 // @Title GetRequisitionDetail
@@ -27,17 +34,18 @@ func (req *RequisitionController) Get() {
 // @Failure 403 body is empty
 // @router /:requisitionID [get]
 func (req *RequisitionController) GetByID() {
+	var result db.IRecord
+
 	reqID, err := strconv.ParseInt(req.Ctx.Input.Param(":requisitionID"), 10, 64)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		requisition := funds.Context.Requisition.ReadOne()
-		req.Data["json"] = map[string]string{"Data": }
+	if err == nil {
+		filter := funds.Requisition{}
+		filter.Id = reqID
+
+		result, err = funds.Ctx.Requisition.ReadOne(&filter)
 	}
 
-	req.ServeJSON()
+	req.Serve(err, result)
 }
 
 // @Title CreateRequisition
@@ -52,14 +60,7 @@ func (req *RequisitionController) Post() {
 
 	_, err := funds.Ctx.Requisition.Create(&requisition)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Requisition has been created."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Requisition has been created.")
 }
 
 // @Title UpdateRequisition
@@ -74,12 +75,5 @@ func (req *RequisitionController) Put() {
 
 	err := funds.Ctx.Requisition.Update(&requisition)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Requisition has been updated."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Requisition has been updated.")
 }

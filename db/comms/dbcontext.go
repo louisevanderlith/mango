@@ -1,13 +1,12 @@
 package comms
 
 import (
-	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
 type Context struct {
-	Message *db.Set
+	Messages db.Setter
 }
 
 var Ctx *Context
@@ -17,15 +16,14 @@ func NewDatabase() {
 	dbSource, err := util.GetServiceURL(dbName, false)
 
 	if err == nil {
-		registerModels()
-		db.SyncDatabase(dbSource)
-
 		Ctx = &Context{
-			Message: db.NewSet(Message{}),
+			Messages: db.NewDBSet(Message{}),
+		}
+
+		err = db.SyncDatabase(Ctx, dbSource)
+
+		if err != nil {
+			panic(err)
 		}
 	}
-}
-
-func registerModels() {
-	orm.RegisterModel(&Message{})
 }

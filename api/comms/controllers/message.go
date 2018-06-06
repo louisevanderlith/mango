@@ -28,14 +28,7 @@ func (req *MessageController) Post() {
 
 	err := message.SendMessage()
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Message has been sent."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Message has been sent.")
 }
 
 // @Title GetMessages
@@ -43,19 +36,9 @@ func (req *MessageController) Post() {
 // @Success 200 {[]comms.Message]} []comms.Message]
 // @router / [get]
 func (req *MessageController) Get() {
+	var result comms.Messages
+	msg := comms.Message{}
+	err := comms.Ctx.Messages.Read(&msg, &result)
 
-	if req.Ctx.Output.Status != 401 {
-		var result []*comms.Message
-		msg := comms.Message{}
-		err := comms.Ctx.Message.Read(&msg, &result)
-
-		if err != nil {
-			req.Ctx.Output.SetStatus(500)
-			req.Data["json"] = map[string]string{"Error": err.Error()}
-		} else {
-			req.Data["json"] = map[string]interface{}{"Data": result}
-		}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, result)
 }

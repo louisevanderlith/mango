@@ -21,16 +21,9 @@ func (req *AboutController) Post() {
 	var about folio.About
 	json.Unmarshal(req.Ctx.Input.RequestBody, &about)
 
-	_, err := folio.Ctx.About.Create(&about)
+	_, err := folio.Ctx.Abouts.Create(&about)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "About Section has been created."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "About Section has been created.")
 }
 
 // @Title UpdateAbout
@@ -43,14 +36,7 @@ func (req *AboutController) Put() {
 	var about folio.About
 	json.Unmarshal(req.Ctx.Input.RequestBody, &about)
 
-	err := folio.Ctx.About.Update(&about)
+	err := folio.Ctx.Abouts.Update(&about)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "About Section has been updated."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "About Section has been updated.")
 }

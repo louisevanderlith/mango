@@ -1,13 +1,15 @@
 package book
 
 import (
-	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
 type Context struct {
-	Vehicle *db.Set
+	Vehicles     db.Setter
+	VINs         db.Setter
+	Services     db.Setter
+	ServiceItems db.Setter
 }
 
 var Ctx *Context
@@ -17,15 +19,14 @@ func NewDatabase() {
 	dbSource, err := util.GetServiceURL(dbName, false)
 
 	if err == nil {
-		registerModels()
-		db.SyncDatabase(dbSource)
-
 		Ctx = &Context{
-			Vehicle: db.NewSet(Vehicle{}),
+			Vehicles: db.NewDBSet(Vehicle{}),
+			VINs:     db.NewDBSet}
+
+		err = db.SyncDatabase(Ctx, dbSource)
+
+		if err != nil {
+			panic(err)
 		}
 	}
-}
-
-func registerModels() {
-	orm.RegisterModel(new(Vehicle))
 }

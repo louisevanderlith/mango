@@ -16,18 +16,11 @@ type ManufacturerController struct {
 // @Success 200 {[]things.Manufacturer} []things.Manufacturer
 // @router / [get]
 func (req *ManufacturerController) Get() {
-	var results []*things.Manufacturer
+	var results things.Manufacturers
 	man := things.Manufacturer{}
-	err := things.Ctx.Manufacturer.Read(&man, &results)
+	err := things.Ctx.Manufacturers.Read(&man, &results)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]interface{}{"Data": results}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, results)
 }
 
 // @Title SaveManufacturer
@@ -40,14 +33,7 @@ func (req *ManufacturerController) Post() {
 	var obj things.Manufacturer
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
 
-	_, err := things.Ctx.Manufacturer.Create(&obj)
+	_, err := things.Ctx.Manufacturers.Create(&obj)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Save Successful."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Save Successful")
 }

@@ -13,7 +13,7 @@ type Requisition struct {
 	ClientID   int64
 	SupplierID int64
 	Total      int64
-	LineItems  []*LineItem `orm:"reverse(many)"`
+	LineItems  LineItems `orm:"reverse(many)"`
 }
 
 func (o Requisition) Validate() (bool, error) {

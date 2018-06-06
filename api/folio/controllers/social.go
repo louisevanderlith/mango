@@ -21,16 +21,9 @@ func (req *SocialController) Post() {
 	var link folio.SocialLink
 	json.Unmarshal(req.Ctx.Input.RequestBody, &link)
 
-	_, err := folio.Ctx.SocialLink.Create(&link)
+	_, err := folio.Ctx.SocialLinks.Create(&link)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Social Media Item has been created."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Social Media Item has been created.")
 }
 
 // @Title UpdateSocialLink
@@ -43,14 +36,7 @@ func (req *SocialController) Put() {
 	var social folio.SocialLink
 	json.Unmarshal(req.Ctx.Input.RequestBody, &social)
 
-	err := folio.Ctx.SocialLink.Update(&social)
+	err := folio.Ctx.SocialLinks.Update(&social)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Social link has been updated."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Social Link has been updated.")
 }

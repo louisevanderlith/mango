@@ -7,8 +7,8 @@ import (
 
 type Tag struct {
 	db.Record
-	Description string    `orm:"size(255)"`
-	Adverts     []*Advert `orm:"reverse(many)"`
+	Description string  `orm:"size(255)"`
+	Adverts     Adverts `orm:"reverse(many)"`
 }
 
 func (o Tag) Validate() (bool, error) {

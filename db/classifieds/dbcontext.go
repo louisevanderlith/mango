@@ -1,15 +1,14 @@
 package classifieds
 
 import (
-	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
 type Context struct {
-	Advert    *db.Set
-	CarAdvert *db.Set
-	Tag       *db.Set
+	Adverts    db.Setter
+	CarAdverts db.Setter
+	Tags       db.Setter
 }
 
 var Ctx *Context
@@ -19,17 +18,16 @@ func NewDatabase() {
 	dbSource, err := util.GetServiceURL(dbName, false)
 
 	if err == nil {
-		registerModels()
-		db.SyncDatabase(dbSource)
-
 		Ctx = &Context{
-			Advert:    db.NewSet(Advert{}),
-			CarAdvert: db.NewSet(CarAdvert{}),
-			Tag:       db.NewSet(Tag{}),
+			Adverts:    db.NewDBSet(Advert{}),
+			CarAdverts: db.NewDBSet(CarAdvert{}),
+			Tags:       db.NewDBSet(Tag{}),
+		}
+
+		err = db.SyncDatabase(Ctx, dbSource)
+
+		if err != nil {
+			panic(err)
 		}
 	}
-}
-
-func registerModels() {
-	orm.RegisterModel(new(Advert), new(CarAdvert), new(Tag))
 }

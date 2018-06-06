@@ -21,7 +21,7 @@ func (req *PortfolioController) Post() {
 	var portfolio folio.Portfolio
 	json.Unmarshal(req.Ctx.Input.RequestBody, &portfolio)
 
-	_, err := folio.Ctx.Portfolio.Create(&portfolio)
+	_, err := folio.Ctx.Portfolios.Create(&portfolio)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
@@ -43,14 +43,7 @@ func (req *PortfolioController) Put() {
 	var portfolio folio.Portfolio
 	json.Unmarshal(req.Ctx.Input.RequestBody, &portfolio)
 
-	err := folio.Ctx.Portfolio.Update(&portfolio)
+	err := folio.Ctx.Portfolios.Update(&portfolio)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Portfolio has been updated."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Portfolio has been updated.")
 }

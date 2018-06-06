@@ -1,16 +1,17 @@
 package things
 
 import (
-	"github.com/astaxie/beego/orm"
+	"log"
+
 	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
 type Context struct {
-	Category     *db.Set
-	Manufacturer *db.Set
-	Model        *db.Set
-	SubCategory  *db.Set
+	Categories    db.Setter
+	Manufacturers db.Setter
+	Models        db.Setter
+	SubCategories db.Setter
 }
 
 var Ctx *Context
@@ -20,22 +21,21 @@ func NewDatabase() {
 	dbSource, err := util.GetServiceURL(dbName, false)
 
 	if err == nil {
-		registerModels()
-		db.SyncDatabase(dbSource)
-
 		Ctx = &Context{
-			Category:     db.NewSet(Category{}),
-			Manufacturer: db.NewSet(Manufacturer{}),
-			Model:        db.NewSet(Model{}),
-			SubCategory:  db.NewSet(Subcategory{}),
+			Categories:    db.NewDBSet(Category{}),
+			Manufacturers: db.NewDBSet(Manufacturer{}),
+			Models:        db.NewDBSet(Model{}),
+			SubCategories: db.NewDBSet(Subcategory{}),
+		}
+		log.Print(Ctx.Categories)
+		err = db.SyncDatabase(Ctx, dbSource)
+
+		if err != nil {
+			panic(err)
 		}
 
 		seedData()
 	}
-}
-
-func registerModels() {
-	orm.RegisterModel(new(Category), new(Subcategory), new(Manufacturer), new(Model))
 }
 
 func seedData() {

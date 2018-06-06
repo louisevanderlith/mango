@@ -9,9 +9,9 @@ import (
 
 type Manufacturer struct {
 	db.Record
-	Name        string   `orm:"size(50)"`
-	Description string   `orm:"null;size(255)"`
-	Models      []*Model `orm:"reverse(many)"`
+	Name        string `orm:"size(50)"`
+	Description string `orm:"null;size(255)"`
+	Models      Models `orm:"reverse(many)"`
 }
 
 func (o Manufacturer) Validate() (bool, error) {
@@ -19,95 +19,93 @@ func (o Manufacturer) Validate() (bool, error) {
 }
 
 func seedManufacturer() {
-	data := []Manufacturer{
-		Manufacturer{Name: "Acura"},
-		Manufacturer{Name: "Alfa Romeo"},
-		Manufacturer{Name: "Aptera"},
-		Manufacturer{Name: "Aston Martin"},
-		Manufacturer{Name: "Audi"},
-		Manufacturer{Name: "Austin"},
-		Manufacturer{Name: "Bentley"},
-		Manufacturer{Name: "BMW"},
-		Manufacturer{Name: "Bugatti"},
-		Manufacturer{Name: "Buick"},
-		Manufacturer{Name: "Cadillac"},
-		Manufacturer{Name: "Chevrolet"},
-		Manufacturer{Name: "Chrysler"},
-		Manufacturer{Name: "Citroën"},
-		Manufacturer{Name: "Corbin"},
-		Manufacturer{Name: "Daewoo"},
-		Manufacturer{Name: "Daihatsu"},
-		Manufacturer{Name: "Dodge"},
-		Manufacturer{Name: "Eagle"},
-		Manufacturer{Name: "Fairthorpe"},
-		Manufacturer{Name: "Ferrari"},
-		Manufacturer{Name: "FIAT"},
-		Manufacturer{Name: "Fillmore"},
-		Manufacturer{Name: "Foose"},
-		Manufacturer{Name: "Ford"},
-		Manufacturer{Name: "Geo"},
-		Manufacturer{Name: "GMC"},
-		Manufacturer{Name: "Hillman"},
-		Manufacturer{Name: "Holden"},
-		Manufacturer{Name: "Honda"},
-		Manufacturer{Name: "HUMMER"},
-		Manufacturer{Name: "Hyundai"},
-		Manufacturer{Name: "Infiniti"},
-		Manufacturer{Name: "Isuzu"},
-		Manufacturer{Name: "Jaguar"},
-		Manufacturer{Name: "Jeep"},
-		Manufacturer{Name: "Jensen"},
-		Manufacturer{Name: "Kia"},
-		Manufacturer{Name: "Lamborghini"},
-		Manufacturer{Name: "Land Rover"},
-		Manufacturer{Name: "Lexus"},
-		Manufacturer{Name: "Lincoln"},
-		Manufacturer{Name: "Lotus"},
-		Manufacturer{Name: "Maserati"},
-		Manufacturer{Name: "Maybach"},
-		Manufacturer{Name: "Mazda"},
-		Manufacturer{Name: "McLaren"},
-		Manufacturer{Name: "Mercedes-Benz"},
-		Manufacturer{Name: "Mercury"},
-		Manufacturer{Name: "Merkur"},
-		Manufacturer{Name: "MG"},
-		Manufacturer{Name: "MINI"},
-		Manufacturer{Name: "Mitsubishi"},
-		Manufacturer{Name: "Morgan"},
-		Manufacturer{Name: "Nissan"},
-		Manufacturer{Name: "Oldsmobile"},
-		Manufacturer{Name: "Panoz"},
-		Manufacturer{Name: "Peugeot"},
-		Manufacturer{Name: "Plymouth"},
-		Manufacturer{Name: "Pontiac"},
-		Manufacturer{Name: "Porsche"},
-		Manufacturer{Name: "Ram"},
-		Manufacturer{Name: "Rambler"},
-		Manufacturer{Name: "Renault"},
-		Manufacturer{Name: "Rolls-Royce"},
-		Manufacturer{Name: "Saab"},
-		Manufacturer{Name: "Saturn"},
-		Manufacturer{Name: "Scion"},
-		Manufacturer{Name: "Shelby"},
-		Manufacturer{Name: "Smart"},
-		Manufacturer{Name: "Spyker"},
-		Manufacturer{Name: "Spyker Cars"},
-		Manufacturer{Name: "Studebaker"},
-		Manufacturer{Name: "Subaru"},
-		Manufacturer{Name: "Suzuki"},
-		Manufacturer{Name: "Tesla"},
-		Manufacturer{Name: "Toyota"},
-		Manufacturer{Name: "Volkswagen"},
-		Manufacturer{Name: "Volvo"},
-	}
+	data := Manufacturers{}
+	data.Add(Manufacturer{Name: "Acura"})
+	data.Add(Manufacturer{Name: "Alfa Romeo"})
+	data.Add(Manufacturer{Name: "Aptera"})
+	data.Add(Manufacturer{Name: "Aston Martin"})
+	data.Add(Manufacturer{Name: "Audi"})
+	data.Add(Manufacturer{Name: "Austin"})
+	data.Add(Manufacturer{Name: "Bentley"})
+	data.Add(Manufacturer{Name: "BMW"})
+	data.Add(Manufacturer{Name: "Bugatti"})
+	data.Add(Manufacturer{Name: "Buick"})
+	data.Add(Manufacturer{Name: "Cadillac"})
+	data.Add(Manufacturer{Name: "Chevrolet"})
+	data.Add(Manufacturer{Name: "Chrysler"})
+	data.Add(Manufacturer{Name: "Citroën"})
+	data.Add(Manufacturer{Name: "Corbin"})
+	data.Add(Manufacturer{Name: "Daewoo"})
+	data.Add(Manufacturer{Name: "Daihatsu"})
+	data.Add(Manufacturer{Name: "Dodge"})
+	data.Add(Manufacturer{Name: "Eagle"})
+	data.Add(Manufacturer{Name: "Fairthorpe"})
+	data.Add(Manufacturer{Name: "Ferrari"})
+	data.Add(Manufacturer{Name: "FIAT"})
+	data.Add(Manufacturer{Name: "Fillmore"})
+	data.Add(Manufacturer{Name: "Foose"})
+	data.Add(Manufacturer{Name: "Ford"})
+	data.Add(Manufacturer{Name: "Geo"})
+	data.Add(Manufacturer{Name: "GMC"})
+	data.Add(Manufacturer{Name: "Hillman"})
+	data.Add(Manufacturer{Name: "Holden"})
+	data.Add(Manufacturer{Name: "Honda"})
+	data.Add(Manufacturer{Name: "HUMMER"})
+	data.Add(Manufacturer{Name: "Hyundai"})
+	data.Add(Manufacturer{Name: "Infiniti"})
+	data.Add(Manufacturer{Name: "Isuzu"})
+	data.Add(Manufacturer{Name: "Jaguar"})
+	data.Add(Manufacturer{Name: "Jeep"})
+	data.Add(Manufacturer{Name: "Jensen"})
+	data.Add(Manufacturer{Name: "Kia"})
+	data.Add(Manufacturer{Name: "Lamborghini"})
+	data.Add(Manufacturer{Name: "Land Rover"})
+	data.Add(Manufacturer{Name: "Lexus"})
+	data.Add(Manufacturer{Name: "Lincoln"})
+	data.Add(Manufacturer{Name: "Lotus"})
+	data.Add(Manufacturer{Name: "Maserati"})
+	data.Add(Manufacturer{Name: "Maybach"})
+	data.Add(Manufacturer{Name: "Mazda"})
+	data.Add(Manufacturer{Name: "McLaren"})
+	data.Add(Manufacturer{Name: "Mercedes-Benz"})
+	data.Add(Manufacturer{Name: "Mercury"})
+	data.Add(Manufacturer{Name: "Merkur"})
+	data.Add(Manufacturer{Name: "MG"})
+	data.Add(Manufacturer{Name: "MINI"})
+	data.Add(Manufacturer{Name: "Mitsubishi"})
+	data.Add(Manufacturer{Name: "Morgan"})
+	data.Add(Manufacturer{Name: "Nissan"})
+	data.Add(Manufacturer{Name: "Oldsmobile"})
+	data.Add(Manufacturer{Name: "Panoz"})
+	data.Add(Manufacturer{Name: "Peugeot"})
+	data.Add(Manufacturer{Name: "Plymouth"})
+	data.Add(Manufacturer{Name: "Pontiac"})
+	data.Add(Manufacturer{Name: "Porsche"})
+	data.Add(Manufacturer{Name: "Ram"})
+	data.Add(Manufacturer{Name: "Rambler"})
+	data.Add(Manufacturer{Name: "Renault"})
+	data.Add(Manufacturer{Name: "Rolls-Royce"})
+	data.Add(Manufacturer{Name: "Saab"})
+	data.Add(Manufacturer{Name: "Saturn"})
+	data.Add(Manufacturer{Name: "Scion"})
+	data.Add(Manufacturer{Name: "Shelby"})
+	data.Add(Manufacturer{Name: "Smart"})
+	data.Add(Manufacturer{Name: "Spyker"})
+	data.Add(Manufacturer{Name: "Spyker Cars"})
+	data.Add(Manufacturer{Name: "Studebaker"})
+	data.Add(Manufacturer{Name: "Subaru"})
+	data.Add(Manufacturer{Name: "Suzuki"})
+	data.Add(Manufacturer{Name: "Tesla"})
+	data.Add(Manufacturer{Name: "Toyota"})
+	data.Add(Manufacturer{Name: "Volkswagen"})
+	data.Add(Manufacturer{Name: "Volvo"})
 
-	var items []Manufacturer
-	err := Ctx.Manufacturer.Read(&Manufacturer{}, &items)
+	var items Manufacturers
+	err := Ctx.Manufacturers.Read(&Manufacturer{}, &items)
 
 	if err == nil {
 		if len(items) == 0 {
-			batchCount := len(data)
-			_, err = Ctx.Manufacturer.CreateMulti(batchCount, data)
+			_, err = Ctx.Manufacturers.CreateMulti(data)
 
 			if err != nil {
 				fmt.Println("seedManufacturer:", err)

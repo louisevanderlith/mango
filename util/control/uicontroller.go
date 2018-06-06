@@ -25,3 +25,12 @@ func (ctrl *UIController) Setup(name string) {
 	ctrl.Data["InstanceKey"] = util.GetInstanceKey()
 	ctrl.Data["RunModeDEV"] = beego.BConfig.RunMode == "dev"
 }
+
+func (ctrl *UIController) Serve(err error, data interface{}) {
+	if err != nil {
+		ctrl.Ctx.Output.SetStatus(500)
+		ctrl.Data["error"] = err
+	} else {
+		ctrl.Data["data"] = data
+	}
+}

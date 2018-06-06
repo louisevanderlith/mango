@@ -16,18 +16,11 @@ type SubCategoryController struct {
 // @Success 200 {[]things.Subcategory} []things.Subcategory
 // @router / [get]
 func (req *SubCategoryController) Get() {
-	var result []*things.Subcategory
+	var result things.Subcategories
 	scat := things.Subcategory{}
-	err := things.Ctx.SubCategory.Read(&scat, &result)
+	err := things.Ctx.SubCategories.Read(&scat, &result)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]interface{}{"Data": result}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, result)
 }
 
 // @Title SaveSubcategory
@@ -40,14 +33,7 @@ func (req *SubCategoryController) Post() {
 	var obj things.Subcategory
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
 
-	_, err := things.Ctx.SubCategory.Create(&obj)
+	_, err := things.Ctx.SubCategories.Create(&obj)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Save Successful."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Save Successful.")
 }

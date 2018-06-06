@@ -22,7 +22,7 @@ func (req *SiteController) Post() {
 	var site folio.Profile
 	json.Unmarshal(req.Ctx.Input.RequestBody, &site)
 
-	id, err := folio.Ctx.Profile.Create(&site)
+	id, err := folio.Ctx.Profiles.Create(&site)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
@@ -43,7 +43,7 @@ func (req *SiteController) Post() {
 func (req *SiteController) Put() {
 	var site folio.Profile
 	json.Unmarshal(req.Ctx.Input.RequestBody, &site)
-	err := folio.Ctx.Profile.Update(&site)
+	err := folio.Ctx.Profiles.Update(&site)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
@@ -61,9 +61,9 @@ func (req *SiteController) Put() {
 // @router / [get]
 func (req *SiteController) Get() {
 	if req.Ctx.Output.Status != 401 {
-		var results []*folio.Profile
+		var results folio.Profiles
 		prof := folio.Profile{}
-		err := folio.Ctx.Profile.Read(&prof, &results)
+		err := folio.Ctx.Profiles.Read(&prof, &results)
 
 		if err != nil {
 			req.Ctx.Output.SetStatus(500)
@@ -82,25 +82,16 @@ func (req *SiteController) Get() {
 // @Success 200 {folio.Profile} folio.Profile
 // @router /:site [get]
 func (req *SiteController) GetOne() {
-	if req.Ctx.Output.Status != 401 {
-		siteParam := req.Ctx.Input.Param(":site")
-		msg := folio.Profile{}
+	siteParam := req.Ctx.Input.Param(":site")
+	msg := folio.Profile{}
 
-		if id, err := strconv.ParseInt(siteParam, 10, 32); err == nil {
-			msg.Id = id
-		} else {
-			msg.Title = siteParam
-		}
-
-		result, err := folio.Ctx.Profile.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections", "Headers")
-
-		if err != nil {
-			req.Ctx.Output.SetStatus(500)
-			req.Data["json"] = map[string]string{"Error": err.Error()}
-		} else {
-			req.Data["json"] = map[string]interface{}{"Data": result}
-		}
+	if id, err := strconv.ParseInt(siteParam, 10, 32); err == nil {
+		msg.Id = id
+	} else {
+		msg.Title = siteParam
 	}
 
-	req.ServeJSON()
+	result, err := folio.Ctx.Profiles.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections", "Headers")
+
+	req.Serve(err, result)
 }
