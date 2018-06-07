@@ -12,7 +12,16 @@ type UIController struct {
 }
 
 func (ctrl *UIController) Prepare() {
+	defer ctrl.APIController.Prepare()
+
 	ctrl.Layout = "master.html"
+
+	output := ctrl.Ctx.Output
+
+	output.Header("Content-Security-Policy", "default-src https:")
+	output.Header("X-Frame-Options", "SAMEORIGIN")
+	output.Header("X-XSS-Protection", "1; mode=block")
+	output.Header("X-Content-Type-Options", "nosniff")
 }
 
 func (ctrl *UIController) Setup(name string) {

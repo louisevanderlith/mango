@@ -8,6 +8,13 @@ type APIController struct {
 	beego.Controller
 }
 
+func (ctrl *APIController) Prepare() {
+	output := ctrl.Ctx.Output
+
+	output.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+	output.Header("Server", "kettle")
+}
+
 func (ctrl *APIController) ServeBinary(data []byte, filename string) {
 	output := ctrl.Ctx.Output
 
