@@ -55,7 +55,7 @@ func (service Service) Register(port string) (string, error) {
 	jerr := json.Unmarshal(contents, &data)
 
 	if jerr != nil {
-		log.Printf("json.Unmarshal: ", jerr)
+		log.Print("json.Unmarshal: ", jerr)
 	}
 
 	instanceKey = data.AppID
@@ -78,7 +78,7 @@ func GetServiceURL(serviceName string, cleanURL bool) (string, error) {
 		err := json.Unmarshal(contents, &rawURL)
 
 		if err != nil {
-			log.Printf("json.Unmarshal: ", err)
+			log.Print("json.Unmarshal: ", err)
 		}
 
 		if statusCode != 200 {
@@ -102,7 +102,7 @@ func getPublicIP(port string, env enums.Environment) string {
 		resp, err := http.Get("http://myexternalip.com/raw")
 
 		if err != nil {
-			log.Printf("getPublicIP: ", err)
+			log.Print("getPublicIP: ", err)
 		}
 
 		defer resp.Body.Close()
@@ -111,7 +111,7 @@ func getPublicIP(port string, env enums.Environment) string {
 		publicIP = strings.Replace(string(ip), "\n", "", -1)
 
 		if err != nil {
-			log.Printf("getPublicIP: ", err)
+			log.Print("getPublicIP: ", err)
 		}
 	}
 

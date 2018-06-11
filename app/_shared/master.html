@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>{{.data.Title}}</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <link href="static/_shared/css/bootstrap.min.css" rel="stylesheet"> <!--netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css-->
+    <link href="static/_shared/css/main.css" rel="stylesheet">
+
+    <!--[if lt IE 9]>
+          <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div class="box">
+            <div class="row row-offcanvas row-offcanvas-left">
+
+                <!-- sidebar -->
+                {{ template "_shared/sidebar.html" . }}
+                <!-- /sidebar -->
+
+                <!-- main right col -->
+                <div class="column col-sm-10 col-xs-11" id="main">
+
+                    <!-- top nav -->
+                    {{ template "_shared/navigation.html" . }}
+                    <!-- /top nav -->
+
+                    <div class="padding">
+
+                        <!-- content -->
+                        <div class="full col-sm-9">
+                            <div class="row" style="height: 800px;">
+
+                                {{.LayoutContent}}
+
+                            </div>
+                        </div>
+                        <!--/content-->
+
+
+                        <!--footer-->
+                        {{ template "_shared/footer.html" . }}
+                        <!--footer-->
+
+                    </div>
+
+                </div>
+                <!-- /padding -->
+            </div>
+            <!-- /main -->
+
+        </div>
+    </div>
+    </div>
+
+    <script type='text/javascript' src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type='text/javascript' src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+    <script type='text/javascript' src="static/_shared/js/main.js"></script>
+    
+</body>
+
+</html>

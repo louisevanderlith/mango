@@ -18,18 +18,11 @@ type UploadController struct {
 // @router / [get]
 func (req *UploadController) Get() {
 
-	var results []*artifact.Upload
+	var results artifact.Uploads
 	upl := artifact.Upload{}
-	err := artifact.Ctx.Upload.Read(&upl, &results)
+	err := artifact.Ctx.Uploads.Read(&upl, &results)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]interface{}{"Data": results}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, results)
 }
 
 // @Title GetUpload
@@ -38,22 +31,14 @@ func (req *UploadController) Get() {
 // @Success 200 {artifact.Upload} artifact.Upload
 // @router /:uploadID [get]
 func (req *UploadController) GetByID() {
+	var result *artifact.Upload
 	uploadID, err := strconv.ParseInt(req.Ctx.Input.Param(":uploadID"), 10, 64)
 
 	if err == nil {
-		file, err := logic.GetFile(uploadID)
-
-		if err == nil {
-			req.Data["json"] = map[string]interface{}{"Data": file}
-		}
+		result, err = logic.GetFile(uploadID)
 	}
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, result)
 }
 
 // @Title GetFile
@@ -90,7 +75,6 @@ func (req *UploadController) Post() {
 
 	info := req.GetString("info")
 	infoHead := logic.GetInfoHead(info)
-
 	file, header, err := req.GetFile("file")
 
 	if err == nil {
@@ -98,12 +82,5 @@ func (req *UploadController) Post() {
 		id, err = logic.SaveFile(file, header, infoHead)
 	}
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]interface{}{"Data": id}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, id)
 }

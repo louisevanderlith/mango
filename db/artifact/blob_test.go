@@ -34,7 +34,7 @@ func TestBlob_OptimizeFor_Logo_PNG2PNG(t *testing.T) {
 	err := data.OptimizeFor(enums.Logo)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	saveImage(writeLocation, data.GetData())
@@ -51,7 +51,7 @@ func TestBlob_OptimizeFor_Logo_JPG2PNG(t *testing.T) {
 	err := data.OptimizeFor(enums.Logo)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	saveImage(writeLocation, data.GetData())
@@ -68,7 +68,7 @@ func TestBlob_OptimizeFor_Banner_PNG2JPG(t *testing.T) {
 	err := data.OptimizeFor(enums.Banner)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	saveImage(writeLocation, data.GetData())
@@ -85,7 +85,7 @@ func TestBlob_OptimizeFor_Banner_JPG2JPG(t *testing.T) {
 	err := data.OptimizeFor(enums.Banner)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	saveImage(writeLocation, data.GetData())
@@ -102,7 +102,7 @@ func TestBlob_OptimizeFor_Ad_PNG2JPG(t *testing.T) {
 	err := data.OptimizeFor(enums.Ad)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	saveImage(writeLocation, data.GetData())
@@ -119,7 +119,7 @@ func TestBlob_OptimizeFor_Ad_JPG2JPG(t *testing.T) {
 	err := data.OptimizeFor(enums.Ad)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	saveImage(writeLocation, data.GetData())
@@ -136,7 +136,7 @@ func TestBlob_OptimizeFor_Thumb_PNG2JPG(t *testing.T) {
 	err := data.OptimizeFor(enums.Thumb)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	saveImage(writeLocation, data.GetData())
@@ -153,7 +153,7 @@ func TestBlob_OptimizeFor_Thumb_JPG2JPG(t *testing.T) {
 	err := data.OptimizeFor(enums.Thumb)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	saveImage(writeLocation, data.GetData())
@@ -170,7 +170,7 @@ func TestBlob_OptimizeFor_Ad(t *testing.T) {
 	err := data.OptimizeFor(enums.Logo)
 
 	if err != nil {
-		t.Error("Error occured:", err)
+		t.Error("Error occurred:", err)
 	}
 
 	objData := data.GetData()

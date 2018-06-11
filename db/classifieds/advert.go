@@ -13,7 +13,7 @@ type Advert struct {
 	DateListed time.Time `orm:"type(datetime)"`
 	Price      int
 	Negotiable bool
-	Tags       []*Tag `orm:"rel(m2m)"`
+	Tags       Tags   `orm:"rel(m2m)"`
 	Location   string `orm:"size(128)"`
 }
 

@@ -103,7 +103,7 @@ func sslMuxSetup() {
 	fullCertPath := http.FileSystem(http.Dir(certPath))
 	fs := http.FileServer(fullCertPath)
 	challengePath := "/.well-known/acme-challenge/"
-	
+
 	sslMux.Handle(challengePath, fs)
 
 	subdomains["ssl"] = sslMux
@@ -126,7 +126,7 @@ func subdomainMuxSetup(setting DomainSetting) {
 		vshost, err := url.Parse(rawURL)
 
 		if err != nil {
-			log.Printf("subdomainMuxSetup: %s", err)
+			log.Print("subdomainMuxSetup: %s", err)
 		}
 
 		proxy := httputil.NewSingleHostReverseProxy(vshost)
@@ -137,7 +137,7 @@ func subdomainMuxSetup(setting DomainSetting) {
 		subdomains[setting.Address] = domainMux
 		log.Print(setting.Name, " ", setting.Address, " ", rawURL)
 	} else {
-		log.Printf("subdomainMuxSetup: %s", err)
+		log.Print("subdomainMuxSetup:", err)
 	}
 }
 

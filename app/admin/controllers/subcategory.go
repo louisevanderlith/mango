@@ -13,10 +13,5 @@ func (c *SubCategoryController) Get() {
 
 	data, err := logic.GetSubCategories()
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Data["error"] = err
-	} else {
-		c.Data["data"] = data
-	}
+	c.Serve(err, data)
 }

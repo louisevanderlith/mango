@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"github.com/louisevanderlith/mango/app/shop/controllers"
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/app/shop/controllers"
 	"github.com/louisevanderlith/mango/util/control"
 )
 

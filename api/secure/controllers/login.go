@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"errors"
+
 	"github.com/louisevanderlith/mango/api/secure/logic"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
@@ -27,15 +29,16 @@ func (req *LoginController) GetAvo() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
 	hasAvo := util.HasAvo(sessionID)
 
+	var err error
+	var result util.Cookies
+
 	if !hasAvo {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": "No data found."}
+		err = errors.New("no data found")
 	} else {
-		data := util.FindAvo(sessionID)
-		req.Data["json"] = map[string]interface{}{"Data": data}
+		result = util.FindAvo(sessionID)
 	}
 
-	req.ServeJSON()
+	req.Serve(err, result)
 }
 
 // @Title Login
@@ -47,17 +50,11 @@ func (req *LoginController) GetAvo() {
 func (req *LoginController) Post() {
 	loggedIn, sessionID, err := logic.AttemptLogin(req.Ctx)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = "Login Error " + err.Error()
-	} else if !loggedIn {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = "Login Failed"
-	} else {
-		req.Data["json"] = sessionID
+	if !loggedIn {
+		err = errors.New("Login Failed. Incorrect details")
 	}
 
-	req.ServeJSON()
+	req.Serve(err, sessionID)
 }
 
 // @Title Logout
@@ -69,6 +66,5 @@ func (req *LoginController) Logout() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
 	util.DestroyAvo(sessionID)
 
-	req.Data["json"] = "Logout Success"
-	req.ServeJSON()
+	req.Serve(nil, "Logout Success")
 }

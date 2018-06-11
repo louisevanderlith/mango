@@ -81,6 +81,82 @@ function createColorTask(appPath) {
     return taskName;
 }
 
+function createSharedTasks(destinations) {
+    const cssTask = createSharedCSSTask(destinations);
+    const jsTask = createSharedJSTask(destinations);
+    const htmlTask = createSharedHTMLTask(destinations);
+
+    return [cssTask, jsTask, htmlTask];
+}
+
+function createSharedCSSTask(destinations) {
+    const taskName = '_shared.CSS';
+    const fullPath = 'app/_shared/css/*css';
+
+    gulp.task(taskName, () => {
+        let pipeline = gulp.src(fullPath)
+            .pipe(cleanCSS());
+
+        queueDestinations(pipeline, 'CSS', destinations);
+    });
+
+    gulp.watch(fullPath, [taskName]);
+
+    return taskName;
+}
+
+function createSharedJSTask(destinations) {
+    const taskName = '_shared.JS';
+    const fullPath = 'app/_shared/js/*.js';
+
+    gulp.task(taskName, () => {
+        let pipeline = gulp.src(fullPath);
+        // Is Rollup needed?
+
+        queueDestinations(pipeline, 'JS', destinations);
+    });
+
+    gulp.watch(fullPath, [taskName]);
+
+    return taskName;
+}
+
+function createSharedHTMLTask(destinations) {
+    const taskName = '_shared.HTML';
+    const fullPath = 'app/_shared/*.html';
+
+    gulp.task(taskName, () => {
+        let pipeline = gulp.src(fullPath);
+
+        queueDestinations(pipeline, 'HTML', destinations);
+    });
+
+    gulp.watch(fullPath, [taskName]);
+
+    return taskName;
+}
+
+function queueDestinations(pipeline, sectionName, destinations) {
+    const sections = {
+        'CSS': 'static/_shared/css',
+        'JS': 'static/_shared/js',
+        'HTML': 'views/_shared'
+    };
+
+    const currSection = sections[sectionName];
+
+    for (var i = 0; i < destinations.length; i++) {
+        const d = destinations[i];
+
+        if (d !== './app/_shared' && d !== './app/gate') {
+            const destFolder = path.join(d, currSection);
+            pipeline = pipeline.pipe(gulp.dest(destFolder));
+        }
+    }
+
+    return pipeline;
+}
+
 function getRollupOptions(entry, name) {
     return {
         entry: entry,
@@ -108,8 +184,15 @@ function getTasks() {
 
     for (let i = 0; i < appFolders.length; i++) {
         const currFolder = appFolders[i];
+        const children = glob.sync(currFolder + '*');
 
-        glob.sync(currFolder + '*').forEach((filePath) => {
+        if (currFolder === './app/') {
+            children.push('./api/secure'); // it's not a app, but it has a UI.
+            const sharedTasks = createSharedTasks(children);
+            rollupTasks = rollupTasks.concat(sharedTasks);
+        }
+
+        children.forEach((filePath) => {
             const staticPath = path.join(filePath, 'static');
             var appTasks = [];
 

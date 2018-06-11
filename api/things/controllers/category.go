@@ -16,18 +16,11 @@ type CategoryController struct {
 // @Success 200 {[]things.Category} []things.Category]
 // @router / [get]
 func (req *CategoryController) Get() {
-	var results []*things.Category
+	var results things.Categories
 	cat := things.Category{}
-	err := things.Ctx.Category.Read(&cat, &results)
+	err := things.Ctx.Categories.Read(&cat, &results)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]interface{}{"Data": results}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, results)
 }
 
 // @Title SaveCategory
@@ -40,14 +33,7 @@ func (req *CategoryController) Post() {
 	var obj things.Category
 	json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
 
-	_, err := things.Ctx.Category.Create(&obj)
+	_, err := things.Ctx.Categories.Create(&obj)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Save Successful."}
-	}
-
-	req.ServeJSON()
+	req.Serve(err, "Save Successful.")
 }

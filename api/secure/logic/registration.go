@@ -34,7 +34,7 @@ func SaveRegistration(r Registration) error {
 		user.Roles = append(user.Roles, &userRole)
 		user.SecurePassword()
 
-		_, err = secure.Ctx.User.Create(user)
+		_, err = secure.Ctx.Users.Create(user)
 	} else {
 		err = errors.New("Passwords don't match")
 	}

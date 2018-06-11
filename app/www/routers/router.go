@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"github.com/louisevanderlith/mango/app/www/controllers"
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/app/www/controllers"
 )
 
 func init() {

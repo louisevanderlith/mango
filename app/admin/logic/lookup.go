@@ -2,9 +2,10 @@ package logic
 
 import (
 	"encoding/json"
-	"log"
-	"github.com/louisevanderlith/mango/util"
 	"errors"
+	"log"
+
+	"github.com/louisevanderlith/mango/util"
 )
 
 type LookupObj struct {
@@ -48,7 +49,7 @@ func toDTO(contents []byte, statusCode int) ([]LookupObj, error) {
 		err := json.Unmarshal(*data["Error"], &dataErr)
 
 		if err != nil {
-			log.Printf("toDTO: ", err)
+			log.Print("toDTO: ", err)
 		}
 
 		finalErr = errors.New(dataErr)
@@ -56,7 +57,7 @@ func toDTO(contents []byte, statusCode int) ([]LookupObj, error) {
 		err := json.Unmarshal(*data["Data"], &result)
 
 		if err != nil {
-			log.Printf("toDTO: ", err)
+			log.Print("toDTO: ", err)
 		}
 	}
 

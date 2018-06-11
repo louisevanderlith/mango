@@ -2,7 +2,8 @@ package logic
 
 import (
 	"testing"
-"github.com/louisevanderlith/mango/util"
+
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	uuid "github.com/nu7hatch/gouuid"
@@ -57,7 +58,7 @@ func TestGetServicePath_SameEnv_ShouldFindService(t *testing.T) {
 	api := dummyService("Test.Api")
 	AddService(api)
 
-	_, err := GetServicePath("Test.Api", requestorID)
+	_, err := GetServicePath("Test.Api", requestorID, false)
 
 	if err != nil {
 		t.Error(err)
@@ -73,7 +74,7 @@ func TestGetServicePath_DiffEnv_ShouldHaveError(t *testing.T) {
 	api.Environment = enums.UAT
 	AddService(api)
 
-	_, err := GetServicePath("Test.Api", requestorID)
+	_, err := GetServicePath("Test.Api", requestorID, false)
 
 	if err == nil {
 		t.Error("Expecting an error message: Test.Api wasn't found for the requesting application")
@@ -86,7 +87,7 @@ func TestGetServicePath_FakeRequestorID_ShouldHaveError(t *testing.T) {
 	api := dummyService("Test.Api")
 	AddService(api)
 
-	_, err := GetServicePath("Test.Api", requestorID.String())
+	_, err := GetServicePath("Test.Api", requestorID.String(), false)
 
 	if err == nil {
 		t.Error("Expecting an error message: Couldn't find an application with the given appID")
@@ -97,7 +98,7 @@ func TestGetServicePath_ShouldFindDB(t *testing.T) {
 	requestor := dummyService("Test.Main")
 	requestorID := AddService(requestor)
 
-	_, err := GetServicePath("Communication.DB", requestorID)
+	_, err := GetServicePath("Communication.DB", requestorID, false)
 
 	if err != nil {
 		t.Error(err)

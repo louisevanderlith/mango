@@ -11,7 +11,7 @@ type Service struct {
 	DoneBy       string
 	Odometer     int64
 	LicensePlate string
-	Items        []*ServiceItem
+	Items        ServiceItems
 }
 
 func (o Service) Validate() (bool, error) {

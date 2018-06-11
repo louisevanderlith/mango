@@ -1,11 +1,12 @@
 package main
 
 import (
-	_ "github.com/louisevanderlith/mango/app/www/routers"
-	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/util/enums"
 	"log"
+
+	"github.com/astaxie/beego"
+	_ "github.com/louisevanderlith/mango/app/www/routers"
 	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 )
 
 func main() {
@@ -19,9 +20,8 @@ func main() {
 	_, err := srv.Register(port)
 
 	if err != nil {
-		log.Printf("Register: ", err)
+		log.Print("Register: ", err)
 	} else {
 		beego.Run()
 	}
 }
-

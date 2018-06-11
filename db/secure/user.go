@@ -24,9 +24,9 @@ type User struct {
 	Email         string `orm:"size(128)"`
 	ContactNumber string `orm:"size(20)"`
 	Password      string
-	LoginDate     time.Time     `orm:"auto_now_add"`
-	LoginTraces   []*LoginTrace `orm:"reverse(many)"`
-	Roles         []*Role       `orm:"reverse(many)"`
+	LoginDate     time.Time   `orm:"auto_now_add"`
+	LoginTraces   LoginTraces `orm:"reverse(many)"`
+	Roles         Roles       `orm:"reverse(many)"`
 }
 
 var cost int
@@ -81,7 +81,7 @@ func Login(identifier string, password []byte, ip string, location string) (pass
 			passed = err == nil
 
 			if !passed {
-				log.Printf("Login: ", err)
+				log.Print("Login: ", err)
 			} else {
 				roles = GetRolesTypes(user.Roles)
 			}
@@ -92,11 +92,11 @@ func Login(identifier string, password []byte, ip string, location string) (pass
 				IP:       ip,
 				User:     user}
 
-			_, err = Ctx.LoginTrace.Create(&trace)
+			_, err = Ctx.LoginTraces.Create(&trace)
 			userID = user.Id
 
 			if err != nil {
-				log.Printf("Login: ", err)
+				log.Print("Login: ", err)
 			}
 		}
 	}
@@ -108,7 +108,7 @@ func (user *User) SecurePassword() {
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(user.Password), cost)
 
 	if err != nil {
-		log.Printf("securePassword: ", err)
+		log.Print("securePassword: ", err)
 	}
 
 	user.Password = string(hashedPwd)
@@ -136,7 +136,7 @@ func getUser(identifier string) *User {
 	var result *User
 
 	filter := correctIdentifier(identifier)
-	record, err := Ctx.User.ReadOne(&filter, "Roles")
+	record, err := Ctx.Users.ReadOne(&filter, "Roles")
 
 	if record != nil && err == nil {
 		result = record.(*User)
@@ -145,8 +145,8 @@ func getUser(identifier string) *User {
 	return result
 }
 
-func GetUsers() (result []*User, err error) {
-	err = Ctx.User.Read(&User{}, &result)
+func GetUsers() (result Users, err error) {
+	err = Ctx.Users.Read(&User{}, &result)
 
 	return result, err
 }

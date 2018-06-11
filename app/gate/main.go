@@ -6,10 +6,11 @@ import (
 
 	"github.com/astaxie/beego"
 
+	"fmt"
+
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 	"golang.org/x/net/http2"
-	"fmt"
 )
 
 func main() {
@@ -24,7 +25,7 @@ func main() {
 	_, err := srv.Register(httpsPort)
 
 	if err != nil {
-		log.Printf("Register: ", err)
+		log.Print("Register: ", err)
 	} else {
 		httpPort := beego.AppConfig.String("httpport")
 		setupHost(httpPort, httpsPort)
@@ -41,7 +42,7 @@ func setupHost(httpPort, httpsPort string) {
 	cerr := http2.ConfigureServer(&srv, nil)
 
 	if cerr != nil {
-		log.Printf("ConfigureServer: ", cerr)
+		log.Print("ConfigureServer: ", cerr)
 	}
 
 	log.Println("Listening...")
