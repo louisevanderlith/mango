@@ -1,13 +1,9 @@
 package control
 
 import (
-	"encoding/json"
-	"errors"
-	"log"
 	"strings"
 
 	"github.com/astaxie/beego/context"
-	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
@@ -70,7 +66,7 @@ func hasRole(funcRole enums.RoleType, sessionID string) bool {
 	result := false
 
 	if sessionID != "" {
-		roles, _ := loadRoles(sessionID)
+		roles, _ := GetRoles(sessionID)
 
 		if len(roles) > 0 {
 			for _, val := range roles {
@@ -83,31 +79,4 @@ func hasRole(funcRole enums.RoleType, sessionID string) bool {
 	}
 
 	return result
-}
-
-func loadRoles(sessionID string) ([]enums.RoleType, error) {
-	var result util.Cookies
-	var finalError error
-
-	contents, statusCode := util.GETMessage("Secure.API", "login", "avo", sessionID)
-	data := util.MarshalToMap(contents)
-
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Println("loadRoles:", err)
-		}
-
-		finalError = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
-
-		if err != nil {
-			log.Println("loadRoles:", err)
-		}
-	}
-
-	return result.Roles, finalError
 }

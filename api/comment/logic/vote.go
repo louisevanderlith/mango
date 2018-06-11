@@ -7,16 +7,16 @@ type Vote struct {
 	CommentID int64
 }
 
-func (vote Vote) Sumbit() (finalErr error) {
+func (vote Vote) Submit() (finalErr error) {
 
 	if vote.CommentID > 0 {
-		filter := comment.Comment{}
+		filter := comment.Message{}
 		filter.Id = vote.CommentID
 
-		result, err := comment.Ctx.Comment.ReadOne(&filter)
+		result, err := comment.Ctx.Messages.ReadOne(&filter)
 
 		if err == nil {
-			record, _ := result.(comment.Comment)
+			record, _ := result.(comment.Message)
 
 			if vote.IsUp {
 				record.UpVotes++
@@ -24,7 +24,7 @@ func (vote Vote) Sumbit() (finalErr error) {
 				record.DownVotes++
 			}
 
-			comment.Ctx.Comment.Update(&record)
+			comment.Ctx.Messages.Update(&record)
 		} else {
 			finalErr = err
 		}

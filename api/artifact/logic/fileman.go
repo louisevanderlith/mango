@@ -51,10 +51,10 @@ func SaveFile(file multipart.File, header *multipart.FileHeader, info InfoHead) 
 				MimeType: "image/png",
 			}
 
-			_, err = artifact.Ctx.BLOB.Create(blob)
+			_, err = artifact.Ctx.BLOBs.Create(blob)
 
 			if err == nil {
-				id, err = artifact.Ctx.Upload.Create(&upload)
+				id, err = artifact.Ctx.Uploads.Create(&upload)
 			}
 		}
 	}
@@ -68,7 +68,7 @@ func GetFile(id int64) (result *artifact.Upload, err error) {
 		filter.Id = id
 
 		var record db.IRecord
-		record, err = artifact.Ctx.Upload.ReadOne(&filter)
+		record, err = artifact.Ctx.Uploads.ReadOne(&filter)
 
 		result = record.(*artifact.Upload)
 	} else {
@@ -84,7 +84,7 @@ func getUpload(id int64) (result *artifact.Upload, err error) {
 		filter.Id = id
 
 		var record db.IRecord
-		record, err = artifact.Ctx.Upload.ReadOne(&filter, "BLOB")
+		record, err = artifact.Ctx.Uploads.ReadOne(&filter, "BLOB")
 
 		result = record.(*artifact.Upload)
 	} else {

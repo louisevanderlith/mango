@@ -61,7 +61,7 @@ func TestValidateStruct_SimpleObject_IntValid(t *testing.T) {
 func TestValidateStruct_SimpleObject_IntRequired(t *testing.T) {
 	obj := struct {
 		Age int
-	} {
+	}{
 		Age: 0,
 	}
 
@@ -73,15 +73,15 @@ func TestValidateStruct_SimpleObject_IntRequired(t *testing.T) {
 }
 
 func TestValidateStruct_ChildStruct_ChildValid(t *testing.T) {
-	type child struct{
+	type child struct {
 		Age int `orm:"null"`
 	}
-	obj := struct{
-		Name string `orm:"null"`
+	obj := struct {
+		Name  string `orm:"null"`
 		Child *child
-	} {
-		Name: "ABC",
-		Child: &child{Age: 24 },
+	}{
+		Name:  "ABC",
+		Child: &child{Age: 24},
 	}
 
 	valid, err := ValidateStruct(obj)
@@ -92,13 +92,13 @@ func TestValidateStruct_ChildStruct_ChildValid(t *testing.T) {
 }
 
 func TestValidateStruct_ChildStruct_EmptyChildValid(t *testing.T) {
-	type child struct{
+	type child struct {
 		Age int `orm:"null"`
 	}
-	obj := struct{
-		Name string `orm:"null"`
+	obj := struct {
+		Name  string `orm:"null"`
 		Child *child
-	} {
+	}{
 		Name: "ABC",
 	}
 

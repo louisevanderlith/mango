@@ -15,11 +15,13 @@ type tagMeta struct {
 	PropName string
 }
 
-const idMessage = "%s must be provided."
-const emptyMessage = "%s can't be empty."
-const shortMessage = "%s can't be more than %v characters."
-const relationMessage = "%s can't be nil."
-const incorrectType = "%s's value '%s' is not of type %s."
+const (
+	idMessage       = "%s must be provided."
+	emptyMessage    = "%s can't be empty."
+	shortMessage    = "%s can't be more than %v characters."
+	relationMessage = "%s can't be nil."
+	incorrectType   = "%s's value '%s' is not of type %s."
+)
 
 func getIDMessage(property string) string {
 	return fmt.Sprintf(idMessage, property)

@@ -8,7 +8,7 @@ import (
 )
 
 type SiteController struct {
-	logic.MenuController	
+	logic.MenuController
 }
 
 func (c *SiteController) Get() {
@@ -16,12 +16,7 @@ func (c *SiteController) Get() {
 
 	data, err := logic.GetSites()
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Data["error"] = err
-	} else {
-		c.Data["data"] = data
-	}
+	c.Serve(err, data)
 }
 
 func (c *SiteController) GetEdit() {
@@ -34,10 +29,5 @@ func (c *SiteController) GetEdit() {
 
 	data, err := logic.GetSite(id)
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Data["error"] = err
-	} else {
-		c.Data["data"] = data
-	}
+	c.Serve(err, data)
 }

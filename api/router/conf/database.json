@@ -117,5 +117,22 @@
                 "Value": "host=localhost port=5432 user=postgres password=sa dbname=folio sslmode=disable"
             }
         ]
+    },
+    {
+        "Name": "Funds.DB",
+        "Environments": [
+            {
+                "Name": "LIVE",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=funds sslmode=disable"
+            },
+            {
+                "Name": "UAT",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=funds sslmode=disable"
+            },
+            {
+                "Name": "DEV",
+                "Value": "host=localhost port=5432 user=postgres password=sa dbname=funds sslmode=disable"
+            }
+        ]
     }
 ]

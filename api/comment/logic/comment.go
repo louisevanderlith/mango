@@ -5,8 +5,13 @@ import (
 	"time"
 
 	"github.com/louisevanderlith/mango/db/comment"
-	"github.com/louisevanderlith/mango/util/enums"
 )
+
+type MessageEntry struct {
+	Text        string
+	ParentID    int64
+	CommentType comment.CommentType
+}
 
 type simpleComment struct {
 	User       string
@@ -19,29 +24,29 @@ type simpleComment struct {
 
 type CommentChain []simpleComment
 
-func SubmitComment(userID, parentID int64, text string, commentType enums.CommentType) (finalErr error) {
+func SubmitComment(userID int64, entry MessageEntry) (finalErr error) {
 
-	record := comment.Comment{
-		CommentType: commentType,
-		Text:        strings.Trim(text, " "),
-		ItemID:      parentID,
+	record := comment.Message{
+		CommentType: entry.CommentType,
+		Text:        strings.Trim(entry.Text, " "),
+		ItemID:      entry.ParentID,
 		UpVotes:     0,
 		DownVotes:   0,
 		UserID:      userID,
 	}
 
-	_, finalErr = comment.Ctx.Comment.Create(&record)
+	_, finalErr = comment.Ctx.Messages.Create(&record)
 
 	return finalErr
 }
 
-func GetCommentChain(itemID int64, commentType enums.CommentType) (results CommentChain, finalErr error) {
-	filter := comment.Comment{}
+func GetCommentChain(itemID int64, commentType comment.CommentType) (results CommentChain, finalErr error) {
+	filter := comment.Message{}
 	filter.ItemID = itemID
 	filter.CommentType = commentType
 
-	var container []*comment.Comment
-	err := comment.Ctx.Comment.Read(&filter, &container)
+	var container comment.Messages
+	err := comment.Ctx.Messages.Read(&filter, &container)
 
 	if err == nil {
 		for _, v := range container {
@@ -64,12 +69,12 @@ func GetCommentChain(itemID int64, commentType enums.CommentType) (results Comme
 }
 
 func getChildren(itemID int64) (results CommentChain) {
-	filter := comment.Comment{}
+	filter := comment.Message{}
 	filter.ItemID = itemID
-	filter.CommentType = enums.Child
+	filter.CommentType = comment.Child
 
-	var container []*comment.Comment
-	err := comment.Ctx.Comment.Read(&filter, &container)
+	var container comment.Messages
+	err := comment.Ctx.Messages.Read(&filter, &container)
 
 	if err == nil {
 		for _, v := range container {

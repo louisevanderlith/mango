@@ -1,15 +1,14 @@
 package secure
 
 import (
-	"github.com/astaxie/beego/orm"
 	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
 type Context struct {
-	LoginTrace *db.Set
-	Role       *db.Set
-	User       *db.Set
+	LoginTraces db.Setter
+	Roles       db.Setter
+	Users       db.Setter
 }
 
 var Ctx *Context
@@ -19,17 +18,16 @@ func NewDatabase() {
 	dbSource, err := util.GetServiceURL(dbName, false)
 
 	if err == nil {
-		registerModels()
-		db.SyncDatabase(dbSource)
-
 		Ctx = &Context{
-			LoginTrace: db.NewSet(LoginTrace{}),
-			Role:       db.NewSet(Role{}),
-			User:       db.NewSet(User{}),
+			LoginTraces: db.NewDBSet(LoginTrace{}),
+			Roles:       db.NewDBSet(Role{}),
+			Users:       db.NewDBSet(User{}),
+		}
+
+		err = db.SyncDatabase(Ctx, dbSource)
+
+		if err != nil {
+			panic(err)
 		}
 	}
-}
-
-func registerModels() {
-	orm.RegisterModel(new(User), new(LoginTrace), new(Role))
 }
