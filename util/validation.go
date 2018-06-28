@@ -164,7 +164,6 @@ func (o StringValidation) Valid(obj interface{}, meta tagMeta) (bool, []string) 
 func (o IntValidation) Valid(obj interface{}, meta tagMeta) (bool, []string) {
 	var issues []string
 	val, ok := obj.(int)
-	fmt.Println("OBJECT:", obj, "VAL:", val)
 
 	if ok {
 		if meta.Required && val < 1 {
