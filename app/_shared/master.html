@@ -9,13 +9,13 @@
     <meta name="description" content="">
     <meta name="author" content="Louise van der Lith">
 
-    <title>Avosa - Mango</title>
+    <title>{{.data.Title}}</title>
+
     <link rel="stylesheet" href="static/_shared/css/bootstrap.min.css" crossorigin="anonymous" >
-    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">-->
 
     <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
+    <![endif]-->
 
     <link href="static/_shared/css/main.css" rel="stylesheet">
 </head>
@@ -35,8 +35,8 @@
 
                             <!-- content -->
                             <div class="row">
-
-                                <!-- main col left -->
+                                {{.LayoutContent}}
+                                <!-- main col left --
                                 <div class="col-sm-5">
 
                                     <div class="panel panel-default">
@@ -134,9 +134,9 @@
 
 
 
-                                </div>
+                                </div>-->
 
-                                <!-- main col right -->
+                                <!-- main col right ->
                                 <div class="col-sm-7">
 
                                     <div class="well">
@@ -233,7 +233,7 @@
                                         </div>
                                     </div>
 
-                                </div>
+                                </div>-->
                             </div>
                             <!--/row-->
                         </div>
@@ -246,7 +246,7 @@
         {{ template "_shared/footer.html" . }}
         <!--modal footer-->
     </div>
-
+   
         <!--scrips footer-->
         <script type="text/javascript" src="static/_shared/js/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="static/_shared/js/master.entry.js"></script> {{ if .HasScript }}
