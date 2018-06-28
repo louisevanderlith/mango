@@ -186,11 +186,11 @@ function getTasks() {
         const currFolder = appFolders[i];
         const children = glob.sync(currFolder + '*');
 
-        /*if (currFolder === './app/') {
+        if (currFolder === './app/') {
             children.push('./api/secure'); // it's not a app, but it has a UI.
             const sharedTasks = createSharedTasks(children);
             rollupTasks = rollupTasks.concat(sharedTasks);
-        }*/
+        }
 
         children.forEach((filePath) => {
             const staticPath = path.join(filePath, 'static');

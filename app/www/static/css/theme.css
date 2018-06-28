@@ -442,13 +442,13 @@ a {
 }
 
 .navbar .nav-container {
-    background-color: #0195b1;
+    background-color: #2c3e50;
     height: 64px;
     line-height: 64px
 }
 
 .navbar, .navbar a {
-    color: #2c3e50
+    color: #c9d5e0
 }
 
 .navbar i.material-icons {
@@ -518,7 +518,7 @@ a {
 
 .navbar form.nav-form {
     position: relative;
-    background: #0195b1;
+    background: #2c3e50;
     border-radius: 2px;
     -webkit-box-flex: 0;
     -moz-box-flex: 0;
@@ -553,7 +553,7 @@ a {
     -moz-box-flex: 0;
     -ms-flex: none;
     flex: none;
-    color: #2c3e50;
+    color: #f9d706;
     -webkit-transition: color .2s;
     transition: color .2s;
     line-height: inherit;
@@ -562,7 +562,7 @@ a {
 }
 
 .navbar form.nav-form .form-group ::-webkit-input-placeholder {
-    color: #2c3e50;
+    color: #a3f700;
     -webkit-transition: color .2s;
     transition: color .2s
 }
@@ -613,23 +613,23 @@ a {
 }
 
 .navbar form.nav-form:hover {
-    background: #2c3e50
+    background: #0195b1
 }
 
 .navbar form.nav-form:hover i.material-icons, .navbar form.nav-form:hover input {
-    color: #adadad
+    color: #f9d706
 }
 
 .navbar form.nav-form:hover ::-webkit-input-placeholder {
-    color: #adadad
+    color: #f9d706
 }
 
 .navbar form.nav-form:hover :-moz-placeholder, .navbar form.nav-form:hover ::-moz-placeholder {
-    color: #adadad
+    color: #f9d706
 }
 
 .navbar form.nav-form:hover :-ms-input-placeholder {
-    color: #adadad
+    color: #f9d706
 }
 
 .navbar ul.nav-menu li {
@@ -647,7 +647,7 @@ a {
     -webkit-transition: background-color .3s;
     transition: background-color .3s;
     font-size: 1.2rem;
-    color: #adadad;
+    color: #f9d706;
     display: block;
     padding: 0 15px;
     cursor: pointer
@@ -1373,11 +1373,11 @@ small {
 }
 
 .tabs.tabs-transparent .tab a.active, .tabs.tabs-transparent .tab a:hover {
-    color: #adadad
+    color: #f9d706
 }
 
 .tabs.tabs-transparent .indicator {
-    background-color: #adadad
+    background-color: #f01a25
 }
 
 .tabs.tabs-fixed-width {
@@ -2083,7 +2083,7 @@ body, html {
 
 .search-result {
     overflow-y: auto;
-    color: #2c3e50;
+    color: #474c50;
     font-size: 15px;
     line-height: 1.2em;
     padding: 12px 24px

@@ -14,7 +14,7 @@ type UIController struct {
 func (ctrl *UIController) Prepare() {
 	defer ctrl.APIController.Prepare()
 
-	ctrl.Layout = "master.html"
+	ctrl.Layout = "_shared/master.html"
 
 	output := ctrl.Ctx.Output
 
@@ -25,7 +25,8 @@ func (ctrl *UIController) Prepare() {
 }
 
 func (ctrl *UIController) Setup(name string) {
-	ctrl.TplName = "content/" + name + ".html"
+	//ctrl.ViewPath = "views"
+	ctrl.TplName = "" + name + ".html"
 
 	// By default we want to include scripts
 	// Set this to false in your controller, when scripts aren't needed
