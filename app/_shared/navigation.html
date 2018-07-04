@@ -6,7 +6,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a href="/" class="navbar-brand logo">b</a>
+        <a href="#" class="navbar-brand logo glyphicon glyphicon-font"></a>
     </div>
     <nav class="collapse navbar-collapse" role="navigation">
         <form class="navbar-form navbar-left">
@@ -20,20 +20,27 @@
             </div>
         </form>
         <ul class="nav navbar-nav">
-            <li>
-                <a href="#">
-                    <i class="glyphicon glyphicon-home"></i> Home</a>
-            </li>
-            <li>
-                <a href="#postModal" role="button" data-toggle="modal">
-                    <i class="glyphicon glyphicon-plus"></i> Post</a>
-            </li>
-            <li>
-                <a href="#">
-                    <span class="badge">badge</span>
-                </a>
-            </li>
+            {{range $key, $val := .TopMenu}}
+                <li {{if $val.Children}}class="dropdown"{{end}}> 
+                    <a href="{{if $val.Link }}{{$val.Link}} {{else}} # {{end}}" {{if $val.Children}}class="dropdown-toggle" data-toggle="dropdown"{{end}}>
+                        <i class="{{$val.Class}}"></i>{{$val.Name}}
+                    </a>
+                </li>
+
+                <!--{{if $val.Children}}
+                <ul class="dropdown-menu">
+                    {{range $ckey, $cval := $val.Children }}
+                        <li>
+                            <a href="{{if $cval.Link }}{{$cval.Link}} {{else}} # {{end}}">
+                                <i class="{{$cval.Class}}"></i>{{$cval.Name}}
+                            </a>
+                        </li>
+                    {{end}}
+                </ul>
+                {{end}}-->
+            {{end}}
         </ul>
+
         <ul class="nav navbar-nav navbar-right">
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">

@@ -5,10 +5,19 @@ import (
 	"github.com/louisevanderlith/mango/util"
 )
 
+type Menu struct {
+	Name     string
+	Class    string
+	Link     string
+	Children []Menu
+}
+
 type UIController struct {
 	APIController
 	HasScript  bool
 	ScriptName string
+	TopMenu    []Menu
+	SideMenu   []Menu
 }
 
 func (ctrl *UIController) Prepare() {
@@ -43,4 +52,16 @@ func (ctrl *UIController) Serve(err error, data interface{}) {
 	} else {
 		ctrl.Data["data"] = data
 	}
+}
+
+func (ctrl *UIController) CreateTopMenu(menu []Menu) {
+	ctrl.createMenu("TopMenu", menu)
+}
+
+func (ctrl *UIController) CreateSideMenu(menu []Menu) {
+	ctrl.createMenu("SideMenu", menu)
+}
+
+func (ctrl *UIController) createMenu(name string, menu []Menu) {
+	ctrl.Data[name] = menu
 }
