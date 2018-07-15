@@ -1,18 +1,14 @@
 package funds
 
-import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
-)
+import "github.com/louisevanderlith/husk"
 
 type Transaction struct {
-	db.Record
 	FromUserID  int64
 	ToUserID    int64
 	Amount      int64
-	Requisition *Requisition `orm:"rel(fk)"`
+	Requisition *Requisition
 }
 
-func (o Transaction) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Transaction) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

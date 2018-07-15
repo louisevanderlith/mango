@@ -1,18 +1,16 @@
 package book
 
 import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type VIN struct {
-	db.Record
 	Number     string
-	StandardID enums.StandardType `orm:"type(int)"`
+	StandardID enums.StandardType
 	Vehicle    *Vehicle
 }
 
-func (o VIN) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o VIN) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

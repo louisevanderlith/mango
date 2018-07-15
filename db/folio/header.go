@@ -1,18 +1,13 @@
 package folio
 
-import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
-)
+import "github.com/louisevanderlith/husk"
 
 type Header struct {
-	db.Record
-	ImageID int64    `orm:"null"`
-	Heading string   `orm:"size(50)" json:",omitempty"`
-	Text    string   `orm:"size(1024)" json:",omitempty"`
-	Profile *Profile `orm:"rel(fk)" json:",omitempty"`
+	ImageID int64  `hsk:"null"`
+	Heading string `hsk:"size(50)" json:",omitempty"`
+	Text    string `hsk:"size(1024)" json:",omitempty"`
 }
 
-func (o Header) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Header) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

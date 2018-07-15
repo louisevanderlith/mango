@@ -4,17 +4,15 @@ import (
 	"fmt"
 
 	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 )
 
 type Model struct {
-	db.Record
-	Name         string        `orm:"size(50)"`
-	Manufacturer *Manufacturer `orm:"rel(fk)"`
+	Name string `hsk:"size(50)"`
 }
 
-func (o Model) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Model) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }
 
 func seedModel() {

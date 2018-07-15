@@ -1,17 +1,13 @@
 package things
 
-import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
-)
+import "github.com/louisevanderlith/husk"
 
 type Category struct {
-	db.Record
-	Name          string        `orm:"size(50)"`
-	Description   string        `orm:"size(255)"`
-	SubCategories Subcategories `orm:"reverse(many)"`
+	Name          string `hsk:"size(50)"`
+	Description   string `hsk:"size(255)"`
+	SubCategories Subcategories
 }
 
-func (o Category) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Category) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

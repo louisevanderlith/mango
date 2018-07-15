@@ -3,23 +3,21 @@ package funds
 import (
 	"time"
 
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 )
 
 type Hero struct {
-	db.Record
 	UserID       int64
 	Credits      int
 	Requisitions Requisitions
 	Experiences  Experiences
 	Level        *Level
 	TotalXP      int
-	LastUpdated  time.Time `orm:"auto_update_???`
+	LastUpdated  time.Time //update on save???
 }
 
-func (o Hero) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Hero) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }
 
 func (h *Hero) AddExperience(xpType ExperienceType) {
@@ -27,7 +25,6 @@ func (h *Hero) AddExperience(xpType ExperienceType) {
 	// Update Hero to reflect new TotalXP
 	xpValue := XPValue(xpType)
 	xp := Experience{
-		Hero:   h,
 		Points: xpValue,
 		Type:   xpType,
 	}

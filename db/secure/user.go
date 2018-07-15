@@ -5,44 +5,36 @@ import (
 	"log"
 	"time"
 
-	"github.com/louisevanderlith/db"
+	"github.com/astaxie/beego/orm"
+	"github.com/louisevanderlith/husk"
 
-	"strconv"
 	"strings"
 
-	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// User database model
 type User struct {
-	db.Record
-	Name          string `orm:"size(75)"`
-	Verified      bool   `orm:"default(false)"`
-	Email         string `orm:"size(128)"`
-	ContactNumber string `orm:"size(20)"`
+	Name          string `hsk:"size(75)"`
+	Verified      bool   `hsk:"default(false)"`
+	Email         string `hsk:"size(128)"`
+	ContactNumber string `hsk:"size(20)"`
 	Password      string
-	LoginDate     time.Time   `orm:"auto_now_add"`
-	LoginTraces   LoginTraces `orm:"reverse(many)"`
-	Roles         Roles       `orm:"reverse(many)"`
+	LoginDate     time.Time
+	LoginTraces   LoginTraces
+	Roles         Roles
 }
 
-var cost int
+const cost int = 11
 
-func init() {
-	cost = 11
-}
-
-func (user User) Validate() (bool, error) {
+func (user User) Valid() (bool, error) {
 	var issues []string
 
 	if len(user.Password) < 6 {
 		issues = append(issues, "Password must be atleast 6 characters.")
 	}
 
-	valid, common := util.ValidateStruct(&user)
+	valid, common := husk.ValidateStruct(&user)
 
 	if !valid {
 		issues = append(issues, common.Error())
@@ -74,7 +66,8 @@ func (user User) Exists() (bool, error) {
 func Login(identifier string, password []byte, ip string, location string) (passed bool, userID int64, roles []enums.RoleType) {
 
 	if identifier != "" && len(password) > 0 {
-		user := getUser(identifier)
+		userRec := getUser(identifier)
+		user := userRec.Data().(*User)
 
 		if user != nil {
 			err := bcrypt.CompareHashAndPassword([]byte(user.Password), password)
@@ -90,10 +83,11 @@ func Login(identifier string, password []byte, ip string, location string) (pass
 				Allowed:  passed,
 				Location: location,
 				IP:       ip,
-				User:     user}
+			}
 
-			_, err = Ctx.LoginTraces.Create(&trace)
-			userID = user.Id
+			user.LoginTraces = append(user.LoginTraces, &trace)
+
+			ctx.Users.Update(userRec)
 
 			if err != nil {
 				log.Print("Login: ", err)
@@ -114,39 +108,19 @@ func (user *User) SecurePassword() {
 	user.Password = string(hashedPwd)
 }
 
-func correctIdentifier(identifier string) User {
-	var result User
+func getUser(identifier string) userRecord {
+	record := ctx.Users.FindFirst(func(o husk.Dataer) bool {
+		obj := o.(*User)
+		return obj.Email == identifier || obj.ContactNumber == identifier
+	})
 
-	if identifier != "" {
-		if _, err := strconv.ParseInt(identifier, 10, 64); err == nil {
-			result = User{
-				ContactNumber: identifier,
-			}
-		} else {
-			result = User{
-				Email: identifier,
-			}
-		}
-	}
-
-	return result
+	return record
 }
 
-func getUser(identifier string) *User {
-	var result *User
-
-	filter := correctIdentifier(identifier)
-	record, err := Ctx.Users.ReadOne(&filter, "Roles")
-
-	if record != nil && err == nil {
-		result = record.(*User)
-	}
+func GetUsers() []userRecord {
+	result := ctx.Users.Find(1, 10, func(o husk.Dataer) bool {
+		return true
+	})
 
 	return result
-}
-
-func GetUsers() (result Users, err error) {
-	err = Ctx.Users.Read(&User{}, &result)
-
-	return result, err
 }

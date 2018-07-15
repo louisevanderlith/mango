@@ -1,21 +1,19 @@
 package funds
 
 import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type Requisition struct {
-	db.Record
 	Reference  string
 	Status     enums.RequisitionStatus
 	ClientID   int64
 	SupplierID int64
 	Total      int64
-	LineItems  LineItems `orm:"reverse(many)"`
+	LineItems  LineItems
 }
 
-func (o Requisition) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Requisition) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

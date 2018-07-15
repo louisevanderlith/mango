@@ -1,17 +1,14 @@
 package folio
 
 import (
-	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util"
 )
 
 type SocialLink struct {
-	db.Record
-	Icon    string   `orm:"size(25)"`
-	URL     string   `orm:"size(128)"`
-	Profile *Profile `orm:"rel(fk)" json:",omitempty"`
+	Icon string `hsk:"size(25)"`
+	URL  string `hsk:"size(128)"`
 }
 
-func (o SocialLink) Validate() (bool, error) {
+func (o SocialLink) Valid() (bool, error) {
 	return util.ValidateStruct(&o)
 }

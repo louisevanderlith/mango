@@ -5,24 +5,23 @@ import (
 	"log"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
+
 	"gopkg.in/gomail.v2"
 )
 
 type Message struct {
-	db.Record
-	Name  string `orm:"size(50)"`
-	Email string `orm:"size(128)"`
-	Phone string `orm:"size(15)"`
-	Body  string `orm:"size(1024)"`
-	To    string `orm:"null;size(128)"`
-	Sent  bool   `orm:"default(false)"`
-	Error string `orm:"null;size(2048)"`
+	Name  string `hsk:"size(50)"`
+	Email string `hsk:"size(128)"`
+	Phone string `hsk:"size(15)"`
+	Body  string `hsk:"size(1024)"`
+	To    string `hsk:"null;size(128)"`
+	Sent  bool   `hsk:"default(false)"`
+	Error string `hsk:"null;size(2048)"`
 }
 
-func (m Message) Validate() (bool, error) {
-	return util.ValidateStruct(&m)
+func (m Message) Valid() (bool, error) {
+	return husk.ValidateStruct(&m)
 }
 
 func (m Message) SendMessage() error {
@@ -38,7 +37,7 @@ func (m Message) SendMessage() error {
 		}
 	}
 
-	_, err := Ctx.Messages.Create(&m)
+	_, err := ctx.Messages.Create(m)
 
 	return err
 }

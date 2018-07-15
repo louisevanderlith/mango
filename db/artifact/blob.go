@@ -6,17 +6,15 @@ import (
 	"image"
 
 	"github.com/disintegration/imaging"
-	"github.com/louisevanderlith/db"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-// Blob - We have to manually change the 'DATA' column to 'bytea' as Beego doesn't support this type.
 type Blob struct {
-	db.Record
-	Data string `orm:"type(bytea)"`
+	Data []byte
 }
 
-type optmizer map[enums.OptimizeType]func(data image.Image) ([]byte, error)
+type optimFunc func(data image.Image) ([]byte, error)
+type optmizer map[enums.OptimizeType]optimFunc
 
 var optimizers optmizer
 
@@ -24,12 +22,12 @@ func init() {
 	optimizers = getOptimizers()
 }
 
-func (o Blob) Validate() (bool, error) {
+func (o Blob) Valid() (bool, error) {
 	return true, nil
 }
 
 func (o *Blob) OptimizeFor(oType enums.OptimizeType) error {
-	reader := bytes.NewReader(o.GetData())
+	reader := bytes.NewReader(o.Data)
 	decoded, err := imaging.Decode(reader)
 
 	if err == nil {
@@ -40,20 +38,12 @@ func (o *Blob) OptimizeFor(oType enums.OptimizeType) error {
 			data, err = opt(decoded)
 
 			if err == nil {
-				o.SetData(data)
+				o.Data = data
 			}
 		}
 	}
 
 	return err
-}
-
-func (o *Blob) GetData() []byte {
-	return []byte(o.Data)
-}
-
-func (o *Blob) SetData(blob []byte) {
-	o.Data = string(blob)
 }
 
 func getOptimizers() optmizer {

@@ -36,7 +36,7 @@ func SaveFile(file multipart.File, header *multipart.FileHeader, info InfoHead) 
 
 	if err == nil {
 		blob := new(artifact.Blob)
-		blob.SetData(b.Bytes())
+		blob.Data = b.Bytes()
 
 		targetType := enums.GetOptimizeType(info.For)
 		err = blob.OptimizeFor(targetType)
@@ -50,6 +50,8 @@ func SaveFile(file multipart.File, header *multipart.FileHeader, info InfoHead) 
 				ItemName: info.ItemName,
 				MimeType: "image/png",
 			}
+
+			artifact.CreateUpload
 
 			_, err = artifact.Ctx.BLOBs.Create(blob)
 

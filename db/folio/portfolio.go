@@ -1,18 +1,14 @@
 package folio
 
-import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
-)
+import "github.com/louisevanderlith/husk"
 
 type Portfolio struct {
-	db.Record
-	ImageID int64    `orm:"null"`
-	URL     string   `orm:"size(128)"`
-	Name    string   `orm:"size(50)"`
-	Profile *Profile `orm:"rel(fk)" json:",omitempty"`
+	ImageID int64    `hsk:"null"`
+	URL     string   `hsk:"size(128)"`
+	Name    string   `hsk:"size(50)"`
+	Profile *Profile `json:",omitempty"`
 }
 
-func (o Portfolio) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Portfolio) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

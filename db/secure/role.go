@@ -2,19 +2,16 @@ package secure
 
 import (
 	"github.com/astaxie/beego/orm"
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type Role struct {
-	db.Record
-	User        *User          `orm:"rel(fk)"`
-	Description enums.RoleType `orm:"type(int)"`
+	Description enums.RoleType
 }
 
-func (o Role) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Role) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }
 
 func (obj *User) LoadRoles() error {

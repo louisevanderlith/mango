@@ -1,20 +1,16 @@
 package comment
 
-import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
-)
+import "github.com/louisevanderlith/husk"
 
 type Message struct {
-	db.Record
 	UserID      int64
 	UpVotes     int64
 	DownVotes   int64
 	ItemID      int64
-	Text        string      `orm:"size(512)"`
-	CommentType CommentType `orm:"type(int)"`
+	Text        string `hsk:"size(512)"`
+	CommentType CommentType
 }
 
-func (o Message) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Message) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

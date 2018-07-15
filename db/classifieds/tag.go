@@ -1,16 +1,13 @@
 package classifieds
 
 import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 )
 
 type Tag struct {
-	db.Record
-	Description string  `orm:"size(255)"`
-	Adverts     Adverts `orm:"reverse(many)"`
+	Description string `hsk:"size(255)"`
 }
 
-func (o Tag) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Tag) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

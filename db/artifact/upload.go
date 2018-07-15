@@ -1,20 +1,18 @@
 package artifact
 
 import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 )
 
 type Upload struct {
-	db.Record
 	ItemID   int64
-	ItemName string `orm:"size(75)"`
-	Name     string `orm:"size(50)"`
-	MimeType string `orm:"size(30)"`
+	ItemName string `hsk:"size(75)"`
+	Name     string `hsk:"size(50)"`
+	MimeType string `hsk:"size(30)"`
 	Size     int
-	BLOB     *Blob `orm:"rel(fk)"`
+	BLOB     *Blob
 }
 
-func (o Upload) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Upload) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

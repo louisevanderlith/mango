@@ -1,16 +1,11 @@
 package folio
 
-import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
-)
+import "github.com/louisevanderlith/husk"
 
 type About struct {
-	db.Record
-	SectionText string   `orm:"size(512)"`
-	Profile     *Profile `orm:"rel(fk)" json:",omitempty"`
+	SectionText string `hsk:"size(512)"`
 }
 
-func (o About) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o About) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

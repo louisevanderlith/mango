@@ -1,63 +1,36 @@
 package funds
 
 import (
-	"fmt"
-
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 )
 
 type Level struct {
-	db.Record
 	Rank     int
 	Required int
 	Next     *Level
 }
 
-func (o Level) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Level) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }
 
-func getLevel(xp int) *Level {
+func getLevel(xp int) husk.Recorder {
 	// return level based on xp given
-	result := new(Level)
-
-	var container Levels
-	err := Ctx.Levels.Read(&Level{}, &container)
-
-	if err == nil {
-		for _, v := range container {
-			if xp <= v.Required {
-				result = v
-				break
-			}
-		}
-	} else {
-		fmt.Print(err)
-	}
-
-	return result
+	return ctx.Levels.FindFirst(func(o husk.Dataer) bool {
+		item := o.(*Level)
+		return xp <= item.Required
+	})
 }
 
 func seedLevel() {
-	var items Levels
-	err := Ctx.Levels.Read(&Level{}, &items)
+	exists := ctx.Levels.Exists(func(o husk.Dataer) bool {
+		return true
+	})
 
-	if err == nil {
-		if len(items) == 0 {
-			var data Levels
-			for i := 75; i >= 0; i-- {
-				data.Add(createLevel(i))
-			}
-
-			_, err = Ctx.Levels.CreateMulti(data)
-
-			if err != nil {
-				fmt.Println("seedLevel:", err)
-			}
+	if !exists {
+		for i := 75; i >= 0; i-- {
+			ctx.Levels.Create(createLevel(i))
 		}
-	} else {
-		fmt.Println("seedLevel:", err)
 	}
 }
 

@@ -1,17 +1,12 @@
 package funds
 
-import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
-)
+import "github.com/louisevanderlith/husk"
 
 type Experience struct {
-	db.Record
-	Hero   *Hero
 	Type   ExperienceType
 	Points int
 }
 
-func (o Experience) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o Experience) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }

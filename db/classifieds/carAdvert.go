@@ -1,29 +1,29 @@
 package classifieds
 
 import (
+	"strings"
 	"time"
 
 	"errors"
-	"strings"
 
 	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/husk"
 )
 
 type CarAdvert struct {
 	db.Record
 	ModelID       int64
-	Info          string    `orm:"size(128)"`
-	Year          int       `orm:"null"`
-	Odometer      int       `orm:"null"`
-	HasPapers     bool      `orm:"default(false)"`
-	LicenseExpiry time.Time `orm:"type(date)"`
+	Info          string `hsk:"size(128)"`
+	Year          int    `orm:"null"`
+	Odometer      int    `orm:"null"`
+	HasPapers     bool   `hsk:"default(false)"`
+	LicenseExpiry time.Time
 }
 
-func (o CarAdvert) Validate() (bool, error) {
+func (o CarAdvert) Valid() (bool, error) {
 	var issues []string
 
-	valid, common := util.ValidateStruct(&o)
+	valid, common := husk.ValidateStruct(&o)
 	if !valid {
 		issues = append(issues, common.Error())
 	}

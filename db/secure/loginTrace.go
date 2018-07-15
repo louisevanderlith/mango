@@ -1,18 +1,13 @@
 package secure
 
-import (
-	"github.com/louisevanderlith/db"
-	"github.com/louisevanderlith/mango/util"
-)
+import "github.com/louisevanderlith/husk"
 
 type LoginTrace struct {
-	db.Record
-	Location string `orm:"null;size(128)"`
-	IP       string `orm:"null;size(50)"`
-	Allowed  bool   `orm:"default(true)"`
-	User     *User  `orm:"rel(fk)"`
+	Location string `hsk:"null;size(128)"`
+	IP       string `hsk:"null;size(50)"`
+	Allowed  bool   `hsk:"default(true)"`
 }
 
-func (o LoginTrace) Validate() (bool, error) {
-	return util.ValidateStruct(&o)
+func (o LoginTrace) Valid() (bool, error) {
+	return husk.ValidateStruct(&o)
 }
