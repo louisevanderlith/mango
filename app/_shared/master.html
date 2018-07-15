@@ -9,15 +9,16 @@
     <meta name="description" content="">
     <meta name="author" content="Louise van der Lith">
 
-    <title>{{.data.Title}}</title>
+    <title>{{.Title}}</title>
 
-    <link rel="stylesheet" href="static/_shared/css/bootstrap.min.css" crossorigin="anonymous" >
+    <link rel="stylesheet" href="/static/_shared/css/bootstrap.min.css" crossorigin="anonymous">
 
     <!--[if lt IE 9]>
     <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
-    <link href="static/_shared/css/main.css" rel="stylesheet">
+    <link href="/static/_shared/css/main.css" rel="stylesheet">
+
 </head>
 
 <body>
@@ -246,12 +247,21 @@
         {{ template "_shared/footer.html" . }}
         <!--modal footer-->
     </div>
-   
-        <!--scrips footer-->
-        <script type="text/javascript" src="static/_shared/js/jquery-3.2.1.min.js"></script>
-        <script type="text/javascript" src="static/_shared/js/master.entry.js"></script> {{ if .HasScript }}
-        <script type="text/javascript" src="/static/dist/js/{{.ScriptName}}"></script> {{ end }}
-        <script type='text/javascript' src="static/_shared/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+    <!--scrips footer-->
+    <!-- Bootstrap core JavaScript -->
+    <script type="text/javascript" src="/static/_shared/js/jquery-3.2.1.min.js"></script>
+    <!-- src="https://code.jquery.com/jquery-3.2.1.min.js" -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script> {{ if .HasScript }}
+    <script type="text/javascript" src="/static/dist/js/{{.ScriptName}}"></script> {{ end }}
+
+    <script type="text/javascript" src="/static/_shared/js/master.entry.js"></script>
+
+    <script type='text/javascript' src="/static/_shared/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <!-- src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" -->
+
 </body>
 
 </html>
