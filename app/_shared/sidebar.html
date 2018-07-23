@@ -9,32 +9,37 @@
     </ul>
 
     <ul class="nav hidden-xs" id="lg-menu">
-        <li class="active">
-            <a href="#featured">
-                <i class="glyphicon glyphicon-list-alt"></i> Featured</a>
-        </li>
+
+        {{range $key, $val := .SideMenu}}
+
         <li>
-            <a href="#stories">
-                <i class="glyphicon glyphicon-list"></i> Stories</a>
+            <a href="#{{$key}}" data-toggle="collapse">
+                <i class="{{$val.Class}}"></i>{{$val.Name}}
+            </a>
         </li>
-        <li>
-            <a href="#">
-                <i class="glyphicon glyphicon-paperclip"></i> Saved</a>
-        </li>
-        <li>
-            <a href="#">
-                <i class="glyphicon glyphicon-refresh"></i> Refresh</a>
-        </li>
+
+        <ul id="{{$key}}" class="panel-collapse collapse">
+            {{range $ckey, $cval := $val.Children }}
+            <li id="{{$ckey}}">
+                <a href="{{$cval.Link}}">
+                    <i class="{{$cval.Class}}"></i>{{$cval.Name}}
+                </a>
+            </li>
+            {{end}}
+        </ul>
+
+        {{end}}
+
     </ul>
+
     <ul class="list-unstyled hidden-xs" id="sidebar-footer">
-        <li>
-            <a href="#">
-                <h3>Bootstrap</h3>
-                <i class="glyphicon glyphicon-heart-empty"></i> Bootply</a>
+        <li class="text-center">
+            <a href="https://avosa.co.za"> Copyright &copy;
+                <br> Avosa Software 2017
+            </a>
         </li>
     </ul>
 
-    <!-- tiny only nav-->
     <ul class="nav visible-xs" id="xs-menu">
         <li>
             <a href="#featured" class="text-center">
@@ -57,71 +62,5 @@
             </a>
         </li>
     </ul>
-
-
-    <!-- /sidebar -->
-    <!--side bar avosa-->
-
-    <!--<ul class="nav">
-        <li>
-            <a href="#" data-toggle="offcanvas" class="visible-xs text-center">
-                <i class="glyphicon glyphicon-chevron-right"></i>
-            </a>
-        </li>
-    </ul>
-    <ul class="list-unstyled hidden-xs" id="sidebar-icon">
-        <li>
-            <img src="//placehold.it/150x150" class="img-responsive">
-        </li>
-    </ul>
-
-    <ul class="nav hidden-xs" id="lg-menu">
-        <li>
-            <h3>Car Filters</h3>
-            <hr>
-        </li>
-        <li>
-            <div class="form-group">
-                <label for="ddlMake">Make</label>
-                <select class="form-control" id="ddlMake">
-                    <option value="0">All</option>
-                    <option value="1">Toyota</option>
-                    <option value="2">Opel</option>
-                </select>
-            </div>
-        </li>
-        <li>
-            <div class="form-group">
-                <label for="ddlModel">Model</label>
-                <select class="form-control" id="ddlModel">
-                    <option value="0">All</option>
-                    <option value="1">Model X</option>
-                    <option value="2">Model Y</option>
-                </select>
-            </div>
-        </li>
-        <li>
-            <div class="form-group">
-                <label for="ddlYear">Year</label>
-                <select class="form-control" id="ddlYear">
-                    <option value="0">All</option>
-                    <option value="1">1991</option>
-                    <option value="2">2016</option>
-                </select>
-            </div>
-        </li>
-        <li>
-            <div class="form-group">
-                <label for="chkHasPapers">Has Registration Papers</label>
-                <input type="checkbox" class="form-control" id="chkHasPapers" />
-            </div>
-        </li>
-        <li>
-            <div class="form-group">
-                <label for="chkExpired">License Disc Expired</label>
-                <input type="checkbox" class="form-control" id="chkExpired" />
-            </div>
-        </li>
-    </ul>-->
 
 </div>

@@ -4,7 +4,6 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/app/admin/controllers"
 	"github.com/louisevanderlith/mango/util/control"
-	"github.com/louisevanderlith/mango/util/enums"
 )
 
 func init() {
@@ -22,8 +21,8 @@ func init() {
 
 func setupMapping() {
 	uploadMap := make(control.MethodMap)
-	uploadMap["POST"] = enums.Admin
-	uploadMap["GET"] = enums.Admin
+	//uploadMap["POST"] = enums.Admin
+	//uploadMap["GET"] = enums.Admin
 
 	control.AddControllerMap("/", uploadMap)
 	control.AddControllerMap("/category", uploadMap)

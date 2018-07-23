@@ -5,13 +5,6 @@ import (
 	"github.com/louisevanderlith/mango/util"
 )
 
-type Menu struct {
-	Name     string
-	Class    string
-	Link     string
-	Children []Menu
-}
-
 type UIController struct {
 	APIController
 	HasScript  bool
@@ -39,6 +32,7 @@ func (ctrl *UIController) Setup(name string) {
 
 	// By default we want to include scripts
 	// Set this to false in your controller, when scripts aren't needed
+	ctrl.Data["Title"] = name
 	ctrl.Data["HasScript"] = true
 	ctrl.Data["ScriptName"] = name + ".entry.js"
 	ctrl.Data["InstanceKey"] = util.GetInstanceKey()
@@ -54,14 +48,14 @@ func (ctrl *UIController) Serve(err error, data interface{}) {
 	}
 }
 
-func (ctrl *UIController) CreateTopMenu(menu []Menu) {
+func (ctrl *UIController) CreateTopMenu(menu *Menu) {
 	ctrl.createMenu("TopMenu", menu)
 }
 
-func (ctrl *UIController) CreateSideMenu(menu []Menu) {
+func (ctrl *UIController) CreateSideMenu(menu *Menu) {
 	ctrl.createMenu("SideMenu", menu)
 }
 
-func (ctrl *UIController) createMenu(name string, menu []Menu) {
+func (ctrl *UIController) createMenu(name string, menu *Menu) {
 	ctrl.Data[name] = menu
 }

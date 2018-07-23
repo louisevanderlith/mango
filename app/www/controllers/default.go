@@ -18,37 +18,12 @@ func (c *DefaultController) Get() {
 	c.Serve(err, data)
 }
 
-func getTopMenu() []control.Menu {
-	var result []control.Menu
+func getTopMenu() *control.Menu {
+	result := control.NewMenu("/home")
 
-	result = append(result, control.Menu{
-		Name:  "Portfolio",
-		Class: "home gome fa-home",
-		Link:  "#portfolio",
-	})
-
-	result = append(result, control.Menu{
-		Name:  "About Us",
-		Class: "globe world",
-		Link:  "#aboutus",
-	})
-
-	result = append(result, control.Menu{
-		Name:  "Contact",
-		Class: "globe world",
-		Link:  "#contact",
-	})
-
-	/*result = append(result, control.Menu{
-		Name:  "Has Children",
-		Class: "pregnant",
-		Children: []control.Menu{
-			control.Menu{
-				Name:  "Home",
-				Class: "home gome fa-home",
-			},
-		},
-	})*/
+	result.AddItem("#portfolio", "Portfolio", "home gome fa-home", nil)
+	result.AddItem("#aboutus", "About Us", "home gome fa-home", nil)
+	result.AddItem("#contact", "Contact", "home gome fa-home", nil)
 
 	return result
 }
