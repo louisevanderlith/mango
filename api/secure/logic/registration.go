@@ -9,7 +9,6 @@ import (
 type Registration struct {
 	Name           string
 	Email          string
-	ContactNumber  string
 	Password       string
 	PasswordRepeat string
 }
@@ -22,7 +21,6 @@ func SaveRegistration(r Registration) error {
 		user := &secure.User{
 			Name:          r.Name,
 			Email:         r.Email,
-			ContactNumber: r.ContactNumber,
 			Password:      r.Password,
 		}
 
