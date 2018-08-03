@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/louisevanderlith/mango/api/artifact/logic"
@@ -15,12 +16,14 @@ type UploadController struct {
 // @Title GetUploads
 // @Description Gets the uploads
 // @Success 200 {[]artifact.Upload} []artifact.Upload
-// @router / [get]
+// @router /:pageData(^[A-Z](?:_?[0-9]+)*$) [get]
 func (req *UploadController) Get() {
+	page, size := req.GetPageData()
+	fmt.Println(page, size)
 
-	var results artifact.Uploads
-	upl := artifact.Upload{}
-	err := artifact.Ctx.Uploads.Read(&upl, &results)
+	results, err := artifact.Uploads.Read(page, size, func(obj Upload) bool {
+		return true
+	})
 
 	req.Serve(err, results)
 }
@@ -29,7 +32,7 @@ func (req *UploadController) Get() {
 // @Description Gets the requested upload
 // @Param	uploadID			path	int64 	true		"ID of the file you require"
 // @Success 200 {artifact.Upload} artifact.Upload
-// @router /:uploadID [get]
+// @router /:uploadID([0-9]+) [get]
 func (req *UploadController) GetByID() {
 	var result *artifact.Upload
 	uploadID, err := strconv.ParseInt(req.Ctx.Input.Param(":uploadID"), 10, 64)

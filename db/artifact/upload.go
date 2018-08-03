@@ -9,10 +9,39 @@ type Upload struct {
 	ItemName string `hsk:"size(75)"`
 	Name     string `hsk:"size(50)"`
 	MimeType string `hsk:"size(30)"`
-	Size     int
-	BLOB     *Blob
+	//len([]byte)
+	Size int
+	BLOB *Blob
 }
 
 func (o Upload) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
+}
+
+func GetUploads(page, pagesize int, filterFunc uploadFilter) (uploadSet, error) {
+	return ctx.Uploads.Find(page, pagesize, filterFunc)
+}
+
+func GetUpload(id int64) (result uploadRecord, err error) {
+	return ctx.Uploads.FindByID(id)
+}
+
+func GetUploadFile(id int64) (result []byte, filename string, err error) {
+	upload, err := GetUpload(id)
+
+	if err != nil {
+		return nil, "", err
+	}
+
+	uploadData := upload.Data()
+	blob := uploadData.BLOB.Data
+
+	return blob, uploadData.Name, err
+}
+
+//GetUploadsBySize returns the first 50 records larger than @size bytes.
+func GetUploadsBySize(size int) (uploadSet, error) {
+	return ctx.Uploads.Find(1, 50, func(o Upload) bool {
+		return o.Size >= size
+	})
 }

@@ -1,6 +1,9 @@
 package control
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/astaxie/beego"
 )
 
@@ -39,4 +42,19 @@ func (ctrl *APIController) Serve(err error, data interface{}) {
 	}
 
 	ctrl.ServeJSON()
+}
+
+func (ctrl *APIController) GetPageData() (page, pageSize int) {
+	pageData := ctrl.Ctx.Input.Param(":pageData")
+	page = 0
+	pageSize = 10
+
+	if len(pageData) >= 2 {
+		pChar, _ := strconv.Atoi(fmt.Sprintf("%c", pageData[0]))
+
+		page = pChar % 32
+		pageSize, _ = strconv.Atoi(pageData[1:])
+	}
+
+	return page, pageSize
 }

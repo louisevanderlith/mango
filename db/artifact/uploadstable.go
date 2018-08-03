@@ -18,22 +18,41 @@ func (t uploadsTable) FindByID(id int64) (uploadRecord, error) {
 	return uploadRecord{result}, err
 }
 
-func (t uploadsTable) Find(page, pageSize int, filter uploadFilter) []uploadRecord {
-	result := t.tbl.Find(page, pageSize, filter)
+func (t uploadsTable) Find(page, pageSize int, filter uploadFilter) (uploadSet, error) {
+	huskFilter, err := husk.MakeFilter(filter)
 
-	return result
+	var result uploadSet
+
+	if err == nil {
+		items := t.tbl.Find(page, pageSize, huskFilter)
+		result = uploadSet{items}
+	}
+
+	return result, err
 }
 
-func (t uploadsTable) FindFirst(filter uploadFilter) uploadRecord {
-	result := t.tbl.FindFirst(filter)
+func (t uploadsTable) FindFirst(filter uploadFilter) (uploadRecord, error) {
+	huskFilter, err := husk.MakeFilter(filter)
 
-	return result
+	var result husk.Recorder
+
+	if err == nil {
+		result, err = t.tbl.FindFirst(huskFilter)
+	}
+
+	return uploadRecord{result}, err
 }
 
-func (t uploadsTable) Exists(filter uploadFilter) bool {
-	result := t.tbl.Exists(filter)
+func (t uploadsTable) Exists(filter uploadFilter) (bool, error) {
+	huskFilter, err := husk.MakeFilter(filter)
 
-	return result
+	result := true
+
+	if err == nil {
+		result, err = t.tbl.Exists(huskFilter)
+	}
+
+	return result, err
 }
 
 func (t uploadsTable) Create(obj Upload) (uploadRecord, error) {
@@ -43,7 +62,7 @@ func (t uploadsTable) Create(obj Upload) (uploadRecord, error) {
 }
 
 func (t uploadsTable) Update(record uploadRecord) error {
-	result := t.tbl.Update(record)
+	result := t.tbl.Update(record.rec)
 
 	return result
 }
@@ -61,3 +80,13 @@ func (r uploadRecord) Data() *Upload {
 }
 
 type uploadFilter func(o Upload) bool
+
+type uploadSet struct {
+	*husk.RecordSet
+}
+
+func newUploadSet() *uploadSet {
+	result := husk.NewRecordSet()
+
+	return &uploadSet{result}
+}

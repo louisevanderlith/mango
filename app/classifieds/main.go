@@ -6,7 +6,6 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
-	_ "github.com/lib/pq"
 	_ "github.com/louisevanderlith/mango/app/classifieds/routers"
 	"github.com/louisevanderlith/mango/db/classifieds"
 	"github.com/louisevanderlith/mango/util"
@@ -25,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
-		classifieds.NewDatabase()
+		classifieds.NewContext()
 		beego.Run()
 	}
 }
