@@ -8,8 +8,7 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
-	_ "github.com/lib/pq"
-	"github.com/louisevanderlith/mango/db/folio"
+	"github.com/louisevanderlith/mango/core/folio"
 )
 
 func main() {

@@ -17,7 +17,7 @@
         ]
     },
     {
-        "Name": "Classifieds.DB",
+        "Name": "Auto.DB",
         "Environments": [
             {
                 "Name": "LIVE",

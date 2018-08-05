@@ -2,7 +2,7 @@ package logic
 
 import "errors"
 import (
-	"github.com/louisevanderlith/mango/db/secure"
+	"github.com/louisevanderlith/mango/core/secure"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 

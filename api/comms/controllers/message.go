@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/db/comms"
+	"github.com/louisevanderlith/mango/core/comms"
 	"github.com/louisevanderlith/mango/util/control"
 )
 

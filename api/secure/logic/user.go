@@ -3,7 +3,7 @@ package logic
 import (
 	"time"
 
-	"github.com/louisevanderlith/mango/db/secure"
+	"github.com/louisevanderlith/mango/core/secure"
 )
 
 type UserObject struct {

@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/louisevanderlith/mango/db/things"
+	"github.com/louisevanderlith/mango/core/things"
 	"github.com/louisevanderlith/mango/util/control"
 )
 

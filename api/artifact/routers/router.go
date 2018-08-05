@@ -31,8 +31,9 @@ func init() {
 }
 
 func setupMapping() {
-	uploadMap := make(control.MethodMap)
-	uploadMap["POST"] = enums.Owner
+	appName := beego.BConfig.AppName
+	uploadMap := control.MakeMethodMap(appName)
+	uploadMap.Add("POST", enums.Owner)
 
 	control.AddControllerMap("/upload", uploadMap)
 

@@ -3,15 +3,14 @@ package control
 import (
 	"fmt"
 	"strconv"
-
-	"github.com/astaxie/beego"
 )
 
 type APIController struct {
-	beego.Controller
+	IDController
 }
 
 func (ctrl *APIController) Prepare() {
+	defer ctrl.IDController.Prepare()
 	output := ctrl.Ctx.Output
 
 	output.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")

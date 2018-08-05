@@ -7,10 +7,9 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 
 	_ "github.com/louisevanderlith/mango/api/comms/routers"
-	"github.com/louisevanderlith/mango/db/comms"
+	"github.com/louisevanderlith/mango/core/comms"
 
 	"github.com/astaxie/beego"
-	_ "github.com/lib/pq"
 )
 
 func main() {

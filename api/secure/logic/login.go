@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego/context"
-	"github.com/louisevanderlith/mango/db/secure"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/nu7hatch/gouuid"
+	"github.com/louisevanderlith/mango/core/secure"
+	"github.com/louisevanderlith/mango/util/control"
+	uuid "github.com/nu7hatch/gouuid"
 )
 
 type Login struct {
@@ -20,25 +20,26 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 	u4, _ := uuid.NewV4()
 	sessionID = u4.String()
 
-	if util.HasAvo(sessionID) {
+	if control.HasAvo(sessionID) {
 		passed = true
 	} else {
 		var l Login
 		err = json.Unmarshal(ctx.Input.RequestBody, &l)
 
 		if err == nil {
-			loggedIn, userID, roles := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
+			auth := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
 
-			if loggedIn {
+			if auth.L {
 				passed = true
 
-				session := util.Cookies{
+				session := control.Cookies{
 					UserID:   userID,
+					Username: 
 					IP:       l.IP,
 					Location: l.Location,
 					Roles:    roles}
 
-				util.CreateAvo(ctx, session, sessionID)
+				control.CreateAvo(session, sessionID)
 			}
 		}
 	}

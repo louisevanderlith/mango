@@ -4,7 +4,7 @@ import (
 	"log"
 
 	_ "github.com/louisevanderlith/mango/api/artifact/routers"
-	"github.com/louisevanderlith/mango/db/artifact"
+	"github.com/louisevanderlith/mango/core/artifact"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 

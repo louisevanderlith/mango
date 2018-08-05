@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/louisevanderlith/mango/db/folio"
+	"github.com/louisevanderlith/mango/core/folio"
 	"github.com/louisevanderlith/mango/util/control"
 )
 

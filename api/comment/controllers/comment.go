@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/louisevanderlith/mango/api/comment/logic"
-	"github.com/louisevanderlith/mango/db/comment"
+	"github.com/louisevanderlith/mango/api/comment/models"
+	"github.com/louisevanderlith/mango/core/comment"
 
 	"github.com/louisevanderlith/mango/util/control"
 )
@@ -22,14 +22,22 @@ type CommentController struct {
 // @Failure 403 body is empty
 // @router /:type/:nodeID[get]
 func (req *CommentController) Get() {
-	var result logic.CommentChain
+	result := models.CommentChain{}
 
 	commentType := comment.GetCommentType(req.Ctx.Input.Param(":type"))
 	nodeID, err := strconv.ParseInt(req.Ctx.Input.Param(":nodeID"), 10, 64)
 
-	if err == nil {
-		result, err = logic.GetCommentChain(nodeID, commentType)
+	if err != nil {
+		req.Serve(err, result)
 	}
+
+	parent, children, err := comment.GetCommentChain(nodeID, commentType)
+		parentData := parent.Data()
+
+		commentP := models.SimpleComment{
+			User: parentData.USerI
+			DatePosted: 
+		}
 
 	req.Serve(err, result)
 }

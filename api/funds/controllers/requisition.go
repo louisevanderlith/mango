@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/louisevanderlith/mango/db/funds"
+	"github.com/louisevanderlith/mango/core/funds"
 	"github.com/louisevanderlith/mango/util/control"
 )
 

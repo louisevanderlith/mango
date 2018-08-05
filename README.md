@@ -7,6 +7,13 @@ Please note that this repo is currently maintained on Windows, and all scripts a
 * GO v1.7.3 and above
 * Beego v1.8.3 and above
 
+## Fun Facts:
+1. Current target Hardware;
+  CPU: Intel(R) Xeon(R) X5675@3.07GHz (1 Socket, 1 Core)
+  RAM: 2GiB
+  HDD: 50GiB
+  NET: 1x10Gbit/s Physical Ethernet
+
 ## Running the Project
 * $ npm install
 * $ gulp (Watchers have been setup for JS & CSS changes.)
@@ -66,12 +73,12 @@ We require 1(one) instance of Gate running for every environment we have.
 ## APP Folder
 - ### Admin
   We should be able to control and monitor every application and it's data from this application.
-- ### Classifieds
-  Classifieds will act as the central platform for advertising products and services.
+- ### Auto
+  Auto will act as the central platform for advertising vehicles.
   ### Gate
   See the description for Gate above.
 - ### Logbook
-  Logbook is an application that will be built to provide added value to the Classifieds application.
+  Logbook is an application that will be built to provide added value to the Auto application.
 - ### Shop
   This application is our central e-commerce platform.
 - ### WWW
