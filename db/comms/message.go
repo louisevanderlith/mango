@@ -1,7 +1,6 @@
 package comms
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/astaxie/beego"
@@ -27,7 +26,7 @@ func (m Message) Validate() (bool, error) {
 
 func (m Message) SendMessage() error {
 	if beego.BConfig.RunMode != "dev" {
-		body := buildMessage(m)
+		body := populatTemplate(m)
 		sendErr := sendEmail(body, m.Name, m.To)
 
 		if sendErr != nil {
@@ -64,15 +63,4 @@ func sendEmail(body, name, to string) error {
 	}
 
 	return err
-}
-
-func buildMessage(m Message) string {
-	result := ""
-
-	result += fmt.Sprintf("Name: %s <br/>", m.Name)
-	result += fmt.Sprintf("Email: %s <br/>", m.Email)
-	result += fmt.Sprintf("Phone: %s <br/>", m.Phone)
-	result += fmt.Sprintf("Message: %s <br/>", m.Body)
-
-	return result
 }
