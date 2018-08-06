@@ -29,25 +29,23 @@ function getEntryPoints(appPath) {
     return taskNames;
 }
 
-function getFontsPoints(appPath){
-    var taskNames = [];
-    var workingDirectory = path.join(appPath, 'static/fonts/glyphicons-halflings-regular.{eot,svg,ttf,woff,woff2}');
+/*function createFONTSTask() {
+    const name = getNameFromPath(appPath);
+    const taskName = `glyphicons-halflings-regular`;
+    const fullPath = path.join(appPath, 'static/fonts/*.woff');
+    const destPath = path.join(appPath, 'static/dist/fonts');
 
-    var entryPoints = glob.sync(workingDirectory)
-        .map((componentDir) => {
-            return path.basename(componentDir);
-        });
-
-    entryPoints.forEach((name) => {
-        const entry = path.join(appPath, `static/fonts/${name}`);
-        const tskName = createFontsTask(name, entry, appPath);
-
-        gulp.watch(entry, [tskName]);
-        taskNames.push(tskName);
+    gulp.task(taskName, () => {
+        gulp.src(fullPath)
+            .pipe(concatCSS('glyphicons-halflings-regular.woff'))
+            .pipe(cleanCSS())
+            .pipe(gulp.dest(destPath))
     });
 
-    return taskNames;
-}
+    gulp.watch(fullPath, [taskName]);
+
+    return taskName;
+}*/
 
 function createJSTask(name, entry, appPath) {
     const taskName = getJSTaskName(name, appPath);
@@ -101,24 +99,13 @@ function createColorTask(appPath) {
     return taskName;
 }
 
-function createFontsTask(appPath) {
-    const name = getNameFromPath(appPath);
-    const taskName = `glyphicons-halflings-regular`;
-    const fullPath = path.join(appPath, 'static/fonts/glyphicons-halflings-regular.{eot,svg,ttf,woff,woff2}');
-
-    gulp.task(taskName, () => {
-        gulp.src(fullPath)
-            .pipe(gulp.dest('static/_shared/fonts/'));
-    });
-}
-
 function createSharedTasks(destinations) {
     const cssTask = createSharedCSSTask(destinations);
     const jsTask = createSharedJSTask(destinations);
     const htmlTask = createSharedHTMLTask(destinations);
-    const fontsTask = createSharedFontsTasks(destinations);
+    const fontsTask = createSharedFONTSTask(destinations);
 
-    return [cssTask, jsTask, htmlTask, fontsTask];
+    return [cssTask, jsTask, htmlTask];
 }
 
 function createSharedCSSTask(destinations) {
@@ -136,6 +123,22 @@ function createSharedCSSTask(destinations) {
 
     return taskName;
 }
+
+/*function createSharedFONTSTask(destinations) {
+    const taskName = '_shared.FONTS';
+    const fullPath = 'app/_shared/fonts/*woff';
+
+    gulp.task(taskName, () => {
+        let pipeline = gulp.src(fullPath)
+            .pipe(cleanFONTS());
+
+        queueDestinations(pipeline, 'FONTS', destinations);
+    });
+
+    gulp.watch(fullPath, [taskName]);
+
+    return taskName;
+}*/
 
 function createSharedJSTask(destinations) {
     const taskName = '_shared.JS';
@@ -168,27 +171,12 @@ function createSharedHTMLTask(destinations) {
     return taskName;
 }
 
-function createSharedFontsTasks(destinations) {
-    const taskName = '_shared.FONTS';
-    const fullPath = 'app/_shared/fonts/glyphicons-halflings-regular.*';
-
-    gulp.task(taskName, () => {
-        let pipeline = gulp.src(fullPath);
-
-        queueDestinations(pipeline, 'FONTS', destinations);
-    });
-
-    gulp.watch(fullPath, [taskName]);
-
-    return taskName
-}
-
 function queueDestinations(pipeline, sectionName, destinations) {
     const sections = {
         'CSS': 'static/_shared/css',
         'JS': 'static/_shared/js',
         'HTML': 'views/_shared',
-        'FONTS': 'static/_shared/fonts',
+        /*'FONTS' : 'static/_shared/fonts',*/
     };
 
     const currSection = sections[sectionName];
@@ -246,12 +234,13 @@ function getTasks() {
 
             if (fs.existsSync(staticPath)) {
                 appTasks = getEntryPoints(filePath);
-                appTasks = getFontsPoints(filePath);
                 let cssTask = createCSSTask(filePath);
                 let colorTask = createColorTask(filePath);
+                /*let fontsTask = createFONTSTask(filePath);*/
 
                 appTasks.push(cssTask);
                 appTasks.push(colorTask);
+                /*appTasks.push(fontsTask);*/
             }
 
             rollupTasks = rollupTasks.concat(appTasks);
