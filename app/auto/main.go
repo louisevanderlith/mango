@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/louisevanderlith/mango/core/auto"
+	_ "github.com/louisevanderlith/mango/core/auto"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
@@ -24,7 +24,6 @@ func main() {
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
-		auto.NewContext()
 		beego.Run()
 	}
 }

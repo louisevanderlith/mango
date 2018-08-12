@@ -37,6 +37,6 @@ func (req *SocialController) Put() {
 	json.Unmarshal(req.Ctx.Input.RequestBody, &social)
 
 	err := folio.Ctx.SocialLinks.Update(&social)
-
-	req.Serve(err, "Social Link has been updated.")
+	folio.
+		req.Serve(err, "Social Link has been updated.")
 }

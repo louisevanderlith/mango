@@ -29,15 +29,15 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 		if err == nil {
 			auth := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
 
-			if auth.L {
+			if auth.Passed {
 				passed = true
 
 				session := control.Cookies{
-					UserID:   userID,
-					Username: 
+					UserID:   auth.UserID,
+					Username: auth.Username,
 					IP:       l.IP,
 					Location: l.Location,
-					Roles:    roles}
+					Roles:    auth.Application.}
 
 				control.CreateAvo(session, sessionID)
 			}

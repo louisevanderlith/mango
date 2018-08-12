@@ -4,7 +4,7 @@ import (
 	"log"
 
 	_ "github.com/louisevanderlith/mango/api/artifact/routers"
-	"github.com/louisevanderlith/mango/core/artifact"
+	_ "github.com/louisevanderlith/mango/core/artifact"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
@@ -29,7 +29,6 @@ func main() {
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
-		artifact.NewContext()
 		beego.Run()
 	}
 }

@@ -30,12 +30,12 @@ func (req *LoginController) GetAvo() {
 	hasAvo := util.HasAvo(sessionID)
 
 	var err error
-	var result util.Cookies
+	var result control.Cookies
 
 	if !hasAvo {
 		err = errors.New("no data found")
 	} else {
-		result = util.FindAvo(sessionID)
+		result = control.FindAvo(sessionID)
 	}
 
 	req.Serve(err, result)

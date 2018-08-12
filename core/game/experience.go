@@ -1,4 +1,4 @@
-package funds
+package game
 
 import "github.com/louisevanderlith/husk"
 

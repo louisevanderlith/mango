@@ -8,7 +8,7 @@ type context struct {
 
 var ctx context
 
-func NewContext() {
+func init() {
 	ctx = context{
 		LoginTraces: NewLoginTracesTable(),
 		Roles:       NewRolesTable(),

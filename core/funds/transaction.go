@@ -3,12 +3,19 @@ package funds
 import "github.com/louisevanderlith/husk"
 
 type Transaction struct {
-	FromUserID  int64
-	ToUserID    int64
-	Amount      int64
-	Requisition *Requisition
+	HeroID       int64
+	Total        int64
+	Requisitions []Requisition
 }
 
 func (o Transaction) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
+}
+
+func CreateTransaction() {
+
+}
+
+func GetTransactions(heroID int64) {
+
 }

@@ -13,14 +13,12 @@ type ControllerMap struct {
 
 var controllerMap *ControllerMap
 
-func CreateControllerMap(appName string) (actionMap ActionMap) {
+func CreateControllerMap(appName string) {
 	result := ControllerMap{}
 	result.applicationName = appName
 	result.mapping = make(map[string]ActionMap)
 
 	controllerMap = &result
-
-	return result.mapping
 }
 
 // AddControllerMap is used to specify the permissions required for a controller's actions.

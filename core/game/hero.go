@@ -1,4 +1,4 @@
-package funds
+package game
 
 import (
 	"time"
@@ -7,13 +7,12 @@ import (
 )
 
 type Hero struct {
-	UserID       int64
-	Credits      int
-	Requisitions Requisitions
-	Experiences  Experiences
-	Level        *Level
-	TotalXP      int
-	LastUpdated  time.Time //update on save???
+	UserID      int64
+	Credits     int
+	Experiences []Experience
+	Level       *Level
+	TotalXP     int
+	LastUpdated time.Time //update on save???
 }
 
 func (o Hero) Valid() (bool, error) {
@@ -31,7 +30,6 @@ func (h *Hero) AddExperience(xpType ExperienceType) {
 
 	h.Experiences = append(h.Experiences, &xp)
 	h.TotalXP += xpValue
-
 }
 
 func (h *Hero) AddRequisition() {

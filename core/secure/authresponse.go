@@ -6,7 +6,7 @@ type AuthResponse struct {
 	Passed      bool
 	UserID      int64
 	Username    string
-	application *control.Application
+	Application *control.Application
 }
 
 func NewAuthResponse(passed bool, userID int64, username string, application *control.Application) *AuthResponse {

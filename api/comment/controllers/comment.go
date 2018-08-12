@@ -32,12 +32,12 @@ func (req *CommentController) Get() {
 	}
 
 	parent, children, err := comment.GetCommentChain(nodeID, commentType)
-		parentData := parent.Data()
+	parentData := parent.Data()
 
-		commentP := models.SimpleComment{
-			User: parentData.USerI
-			DatePosted: 
-		}
+	/*commentP := models.SimpleComment{
+		User: parentData.UserID
+		DatePosted:
+	}*/
 
 	req.Serve(err, result)
 }

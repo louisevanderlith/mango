@@ -36,7 +36,8 @@ func init() {
 
 func setupMapping() {
 	appName := beego.BConfig.AppName
-	emptyMap := control.CreateControllerMap(appName)
+	control.CreateControllerMap(appName)
+	emptyMap := make(control.ActionMap)
 
 	control.AddControllerMap("/login", emptyMap)
 	control.AddControllerMap("/register", emptyMap)

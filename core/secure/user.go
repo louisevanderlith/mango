@@ -72,6 +72,8 @@ func Login(authReq AuthRequest) *AuthResponse {
 		return NewAuthResponse(passed, userID, username, app)
 	}
 
+	app.SetRole()
+
 	trace := LoginTrace{
 		Allowed:         passed,
 		Location:        authReq.Location,

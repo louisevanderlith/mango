@@ -1,13 +1,15 @@
-package artifact
+package game
 
 type context struct {
-	Uploads uploadsTable
+	Heroes heroesTable
 }
 
 var ctx context
 
 func init() {
 	ctx = context{
-		Uploads: NewUploadsTable(),
+		Heroes: NewHeroesTable(),
 	}
+
+	go seedLevel()
 }

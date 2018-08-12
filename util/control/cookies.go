@@ -5,17 +5,19 @@ import (
 	"log"
 	"net/url"
 
+	"github.com/louisevanderlith/mango/util/enums"
+
 	"github.com/astaxie/beego/context"
 )
 
 const cookieName = "_avocookie"
 
 type Cookies struct {
-	UserID   int64
-	Username string
-	IP       string
-	Location string
-	Roles    mangorole
+	UserID    int64
+	Username  string
+	UserRoles map[string]enums.RoleType
+	IP        string
+	Location  string
 }
 
 var jar map[string]Cookies

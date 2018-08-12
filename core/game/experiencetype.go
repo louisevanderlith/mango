@@ -1,4 +1,4 @@
-package funds
+package game
 
 import "strings"
 

@@ -1,17 +1,13 @@
 package auto
 
 type context struct {
-	Adverts    advertsTable
-	CarAdverts carAdvertsTable
-	Tags       tagsTable
+	Adverts advertsTable
 }
 
 var ctx context
 
-func NewContext() {
+func init() {
 	ctx = context{
-		Adverts:    NewAdvertsTable(),
-		CarAdverts: NewCarAdvertsTable(),
-		Tags:       NewTagsTable(),
+		Adverts: NewAdvertsTable(),
 	}
 }

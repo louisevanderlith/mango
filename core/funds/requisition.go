@@ -11,7 +11,7 @@ type Requisition struct {
 	ClientID   int64
 	SupplierID int64
 	Total      int64
-	LineItems  LineItems
+	LineItems  []LineItem
 }
 
 func (o Requisition) Valid() (bool, error) {

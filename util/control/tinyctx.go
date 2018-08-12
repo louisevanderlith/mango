@@ -83,7 +83,7 @@ func (ctx *tinyCtx) getRole() enums.RoleType {
 	}
 
 	appName := ctx.ApplicationName
-	if role, ok := cookie.Roles[appName]; ok {
+	if role, ok := cookie.UserRoles[appName]; ok {
 		result = role
 	}
 

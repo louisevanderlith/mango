@@ -35,13 +35,15 @@ func init() {
 }
 
 func setupMapping() {
-	uploadMap := make(control.MethodMap)
-	uploadMap["GET"] = enums.User
-	uploadMap["POST"] = enums.User
-	uploadMap["PUT"] = enums.User
+	appName := beego.BConfig.AppName
+	control.CreateControllerMap(appName)
+	emptyMap := make(control.ActionMap)
+	emptyMap["GET"] = enums.User
+	emptyMap["POST"] = enums.User
+	emptyMap["PUT"] = enums.User
 
-	control.AddControllerMap("/credit", uploadMap)
-	control.AddControllerMap("/register", uploadMap)
+	control.AddControllerMap("/credit", emptyMap)
+	control.AddControllerMap("/register", emptyMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
 
