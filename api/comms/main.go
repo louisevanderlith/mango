@@ -7,7 +7,7 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 
 	_ "github.com/louisevanderlith/mango/api/comms/routers"
-	"github.com/louisevanderlith/mango/core/comms"
+	_ "github.com/louisevanderlith/mango/core/comms"
 
 	"github.com/astaxie/beego"
 )
@@ -31,8 +31,6 @@ func main() {
 		log.Print("Register: ", err)
 	} else {
 		showSMTPInfo()
-
-		comms.NewDatabase()
 		beego.Run()
 	}
 }

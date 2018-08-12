@@ -1,3 +1,3 @@
 function nothing(){
-    alert('nothing');
+    alert('XXX');
 }

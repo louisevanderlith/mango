@@ -11,8 +11,37 @@ type LoginTrace struct {
 	Allowed         bool   `hsk:"default(true)"`
 	InstanceID      uuid.UUID
 	ApplicationName string `hsk:"size(20)"`
+	TraceType
 }
 
 func (o LoginTrace) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
+}
+
+func getRegistrationTrace(r AuthRequest) LoginTrace {
+	return LoginTrace{
+		Allowed:         true,
+		ApplicationName: r.ApplicationName,
+		InstanceID:      r.InstanceID,
+		IP:              r.IP,
+		Location:        r.Location,
+		TraceType:       TraceRegister,
+	}
+}
+
+func getLoginTrace(r AuthRequest, passed bool) LoginTrace {
+	trace := TraceLogin
+
+	if !passed {
+		trace = TraceFail
+	}
+
+	return LoginTrace{
+		Allowed:         passed,
+		ApplicationName: r.ApplicationName,
+		InstanceID:      r.InstanceID,
+		IP:              r.IP,
+		Location:        r.Location,
+		TraceType:       trace,
+	}
 }

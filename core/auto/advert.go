@@ -18,8 +18,3 @@ type Advert struct {
 func (o Advert) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
 }
-
-func CreateCarAdvert() error {
-
-	// Save Advert
-}

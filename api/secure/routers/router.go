@@ -42,7 +42,7 @@ func setupMapping() {
 	control.AddControllerMap("/login", emptyMap)
 	control.AddControllerMap("/register", emptyMap)
 
-	userMap := make(ActionMap)
+	userMap := make(control.ActionMap)
 	userMap["GET"] = enums.Admin
 
 	control.AddControllerMap("/user", userMap)

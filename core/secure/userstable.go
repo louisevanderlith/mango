@@ -57,7 +57,7 @@ func (t usersTable) Exists(filter userFilter) (bool, error) {
 	return result, err
 }
 
-func (t usersTable) Create(obj User) (userRecord, error) {
+func (t usersTable) Create(obj *User) (userRecord, error) {
 	result, err := t.tbl.Create(obj)
 
 	return userRecord{result}, err

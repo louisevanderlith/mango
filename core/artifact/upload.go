@@ -9,9 +9,8 @@ type Upload struct {
 	ItemName string `hsk:"size(75)"`
 	Name     string `hsk:"size(50)"`
 	MimeType string `hsk:"size(30)"`
-	//len([]byte)
-	Size int
-	BLOB *Blob
+	Size     int64
+	BLOB     *Blob
 }
 
 func (o Upload) Valid() (bool, error) {
@@ -40,8 +39,12 @@ func GetUploadFile(id int64) (result []byte, filename string, err error) {
 }
 
 //GetUploadsBySize returns the first 50 records larger than @size bytes.
-func GetUploadsBySize(size int) (uploadSet, error) {
+func GetUploadsBySize(size int64) (uploadSet, error) {
 	return ctx.Uploads.Find(1, 50, func(o Upload) bool {
 		return o.Size >= size
 	})
+}
+
+func (upload Upload) Create() (uploadRecord, error) {
+	return ctx.Uploads.Create(upload)
 }

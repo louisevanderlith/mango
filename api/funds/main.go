@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/core/funds"
+	_ "github.com/louisevanderlith/mango/core/funds"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )
@@ -27,7 +27,6 @@ func main() {
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
-		funds.NewDatabase()
 		beego.Run()
 	}
 }

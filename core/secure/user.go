@@ -22,12 +22,10 @@ type User struct {
 	Roles       []Role
 }
 
-const cost int = 11
-
 func (user User) Valid() (bool, error) {
 
 	if len(user.Password) < 6 {
-		return false, errors.New("passwor must be atleast 6 characters")
+		return false, errors.New("password must be atleast 6 characters")
 	}
 
 	valid, common := husk.ValidateStruct(&user)
@@ -43,56 +41,17 @@ func (user User) Valid() (bool, error) {
 	return true, nil
 }
 
-// Login will attempt to authenticate a user
-func Login(authReq AuthRequest) *AuthResponse {
-	passed := false
-	userID := int64(-1)
-	username := "Unknown"
-	app := authReq.GetApplication()
+func NewUser(name, email string, verified bool) *User {
+	result := new(User)
+	result.Name = name
+	result.Email = email
+	result.Verified = verified
 
-	if len(authReq.Password) == 0 || len(authReq.Email) < 3 {
-		return NewAuthResponse(passed, userID, username, app)
-	}
-
-	userRec := getUser(authReq.Email)
-	defer ctx.Users.Update(userRec)
-
-	user := userRec.Data()
-
-	if userRec.rec == nil {
-		return NewAuthResponse(passed, userID, username, app)
-	}
-
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), authReq.Password)
-	passed = err == nil
-	userID = userRec.rec.GetID()
-	username = user.Name
-
-	if !passed {
-		return NewAuthResponse(passed, userID, username, app)
-	}
-
-	app.SetRole()
-
-	trace := LoginTrace{
-		Allowed:         passed,
-		Location:        authReq.Location,
-		IP:              authReq.IP,
-		ApplicationName: authReq.ApplicationName,
-		InstanceID:      authReq.InstanceID,
-	}
-
-	user.LoginTraces = append(user.LoginTraces, trace)
-
-	if err != nil {
-		log.Print("Login: ", err)
-	}
-
-	return NewAuthResponse(passed, userID, username, app)
+	return result
 }
 
-func (user *User) SecurePassword() {
-	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(user.Password), cost)
+func (user *User) SecurePassword(plainPassword string) {
+	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(plainPassword), cost)
 
 	if err != nil {
 		log.Print("securePassword: ", err)
@@ -106,12 +65,18 @@ func (user *User) AddRole(appName string, role enums.RoleType) {
 	user.Roles = append(user.Roles, appRole)
 }
 
-func GetUsers(page, pageSize int) userSet {
-	result, _ := ctx.Users.Find(page, pageSize, func(o User) bool {
+func (user *User) AddTrace(trace LoginTrace) {
+	if trace.TraceType == TraceLogin {
+		user.LoginDate = time.Now()
+	}
+
+	user.LoginTraces = append(user.LoginTraces, trace)
+}
+
+func getUsers(page, size int) (userSet, error) {
+	return ctx.Users.Find(page, size, func(o User) bool {
 		return true
 	})
-
-	return result
 }
 
 func getUser(email string) userRecord {

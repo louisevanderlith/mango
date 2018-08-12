@@ -81,6 +81,8 @@ func (r portfolioRecord) Data() *Portfolio {
 	return r.rec.Data().(*Portfolio)
 }
 
+func (r *portfolioRecord) Set(portfolio Portfolio) error
+
 type portfolioFilter func(o Portfolio) bool
 
 type portfolioSet struct {

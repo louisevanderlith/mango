@@ -1,6 +1,8 @@
 package secure
 
-import "github.com/louisevanderlith/mango/util/control"
+import (
+	"github.com/louisevanderlith/mango/util/control"
+)
 
 type AuthResponse struct {
 	Passed      bool

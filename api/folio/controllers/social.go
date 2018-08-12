@@ -33,10 +33,9 @@ func (req *SocialController) Post() {
 // @Failure 403 body is empty
 // @router / [put]
 func (req *SocialController) Put() {
-	var social folio.SocialLink
-	json.Unmarshal(req.Ctx.Input.RequestBody, &social)
+	var prtfolio folio.Portfolio
 
-	err := folio.Ctx.SocialLinks.Update(&social)
-	folio.
-		req.Serve(err, "Social Link has been updated.")
+	folio.UpdateP(id, social)
+
+	req.Serve(err, "Social Link has been updated.")
 }

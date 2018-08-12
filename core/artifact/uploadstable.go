@@ -75,6 +75,10 @@ type uploadRecord struct {
 	rec husk.Recorder
 }
 
+func (r uploadRecord) GetID() int64 {
+	return r.GetID()
+}
+
 func (r uploadRecord) Data() *Upload {
 	return r.rec.Data().(*Upload)
 }

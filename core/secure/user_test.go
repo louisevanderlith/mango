@@ -6,9 +6,9 @@ import (
 
 func TestCreateUser_MustHaveError(t *testing.T) {
 	input := User{
-		ContactNumber: "",
-		Email:         "",
-		Password:      "pass"}
+		Email:    "",
+		Name:     "",
+		Password: "pass"}
 
 	err := CreateUser(input)
 

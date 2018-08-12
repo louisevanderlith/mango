@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/louisevanderlith/mango/api/secure/logic"
+	"github.com/louisevanderlith/mango/core/secure"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -21,15 +21,14 @@ func (req *RegisterController) Get() {
 
 // @Title Register
 // @Description Registers a new user
-// @Param	body		body 	logic.Registration		true		"body for message content"
+// @Param	body		body 	secure.AuthRequest		true		"body for message content"
 // @Success 200 {string} string
 // @Failure 403 body is empty
 // @router / [post]
 func (req *RegisterController) Post() {
-	var user logic.Registration
-	json.Unmarshal(req.Ctx.Input.RequestBody, &user)
+	var authReq secure.AuthRequest
+	json.Unmarshal(req.Ctx.Input.RequestBody, &authReq)
 
-	err := logic.SaveRegistration(user)
-
-	req.Serve(err, "User has been created.")
+	result, err := authReq.CreateUser()
+	req.Serve(err, result)
 }

@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"github.com/louisevanderlith/mango/api/secure/logic"
+	"github.com/louisevanderlith/mango/core/secure"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -14,7 +14,7 @@ type UserController struct {
 // @Success 200 {[]logic.UserObject]} []logic.UserObject]
 // @router / [get]
 func (req *UserController) Get() {
-	result, err := logic.GetUsers()
-
+	page, size := req.GetPageData()
+	result, err := secure.GetUsers(page, size)
 	req.Serve(err, result)
 }

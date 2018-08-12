@@ -2,6 +2,7 @@ package logic
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/mango/core/secure"
@@ -21,28 +22,35 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 	sessionID = u4.String()
 
 	if control.HasAvo(sessionID) {
-		passed = true
-	} else {
-		var l Login
-		err = json.Unmarshal(ctx.Input.RequestBody, &l)
-
-		if err == nil {
-			auth := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
-
-			if auth.Passed {
-				passed = true
-
-				session := control.Cookies{
-					UserID:   auth.UserID,
-					Username: auth.Username,
-					IP:       l.IP,
-					Location: l.Location,
-					Roles:    auth.Application.}
-
-				control.CreateAvo(session, sessionID)
-			}
-		}
+		return true, sessionID, nil
 	}
+
+	var authReq secure.AuthRequest
+	err = json.Unmarshal(ctx.Input.RequestBody, &authReq)
+
+	if err != nil {
+		return false, sessionID, err
+	}
+
+	auth := secure.Login(authReq)
+
+	passed = auth.Passed
+
+	if !passed {
+		errMsg := errors.New("login failed")
+		return passed, sessionID, errMsg
+	}
+
+	session := control.Cookies{
+		UserID:   auth.UserID,
+		Username: auth.Username,
+		IP:       authReq.IP,
+		Location: authReq.Location,
+	}
+
+	session.UserRoles = auth.Application.Roles
+
+	control.CreateAvo(ctx, session, sessionID)
 
 	return passed, sessionID, err
 }

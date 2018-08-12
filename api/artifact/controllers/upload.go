@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/louisevanderlith/mango/api/artifact/logic"
@@ -19,11 +18,8 @@ type UploadController struct {
 // @router /:pageData(^[A-Z](?:_?[0-9]+)*$) [get]
 func (req *UploadController) Get() {
 	page, size := req.GetPageData()
-	fmt.Println(page, size)
 
-	results, err := artifact.Uploads.Read(page, size, func(obj Upload) bool {
-		return true
-	})
+	results, err := artifact.GetUploads(page, size)
 
 	req.Serve(err, results)
 }
