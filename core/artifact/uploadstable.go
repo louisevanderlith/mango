@@ -12,8 +12,8 @@ func NewUploadsTable() uploadsTable {
 	return uploadsTable{result}
 }
 
-func (t uploadsTable) FindByID(id int64) (uploadRecord, error) {
-	result, err := t.tbl.FindByID(id)
+func (t uploadsTable) FindByKey(key husk.Key) (uploadRecord, error) {
+	result, err := t.tbl.FindByKey(key)
 
 	return uploadRecord{result}, err
 }

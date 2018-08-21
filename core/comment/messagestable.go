@@ -1,6 +1,8 @@
 package comment
 
 import (
+	"time"
+
 	"github.com/louisevanderlith/husk"
 )
 
@@ -14,8 +16,8 @@ func NewMessagesTable() messagesTable {
 	return messagesTable{result}
 }
 
-func (t messagesTable) FindByID(id int64) (messageRecord, error) {
-	result, err := t.tbl.FindByID(id)
+func (t messagesTable) FindByKey(key husk.Key) (messageRecord, error) {
+	result, err := t.tbl.FindByKey(key)
 
 	return messageRecord{result}, err
 }
@@ -75,6 +77,10 @@ func (t messagesTable) Delete(id int64) error {
 
 type messageRecord struct {
 	rec husk.Recorder
+}
+
+func (r messageRecord) CreateDate() time.Time {
+	return r.rec.Meta().CreateDate
 }
 
 func (r messageRecord) Data() *Message {

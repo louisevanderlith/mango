@@ -24,6 +24,12 @@ func (m Message) Valid() (bool, error) {
 	return husk.ValidateStruct(&m)
 }
 
+func GetMessages(page, size int) (messageSet, error) {
+	return ctx.Messages.Find(page, size, func(obj Message) bool {
+		return true
+	})
+}
+
 func (m Message) SendMessage() error {
 	if beego.BConfig.RunMode != "dev" {
 		body := buildMessage(m)

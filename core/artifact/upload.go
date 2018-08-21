@@ -21,8 +21,8 @@ func GetUploads(page, pagesize int, filterFunc uploadFilter) (uploadSet, error) 
 	return ctx.Uploads.Find(page, pagesize, filterFunc)
 }
 
-func GetUpload(id int64) (result uploadRecord, err error) {
-	return ctx.Uploads.FindByID(id)
+func GetUpload(key husk.Key) (result uploadRecord, err error) {
+	return ctx.Uploads.FindByKey(id)
 }
 
 func GetUploadFile(id int64) (result []byte, filename string, err error) {

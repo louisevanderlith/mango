@@ -36,9 +36,8 @@ func (req *MessageController) Post() {
 // @Success 200 {[]comms.Message]} []comms.Message]
 // @router / [get]
 func (req *MessageController) Get() {
-	var result comms.Messages
-	msg := comms.Message{}
-	err := comms.Ctx.Messages.Read(&msg, &result)
+	page, size := req.GetPageData()
+	result, err := comms.GetMessages(page, size)
 
 	req.Serve(err, result)
 }

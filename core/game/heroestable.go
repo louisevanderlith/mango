@@ -14,8 +14,8 @@ func NewHeroesTable() heroesTable {
 	return heroesTable{result}
 }
 
-func (t heroesTable) FindByID(id int64) (heroRecord, error) {
-	result, err := t.tbl.FindByID(id)
+func (t heroesTable) FindByKey(key husk.Key) (heroRecord, error) {
+	result, err := t.tbl.FindByKey(key)
 
 	return heroRecord{result}, err
 }
@@ -57,7 +57,7 @@ func (t heroesTable) Exists(filter heroFilter) (bool, error) {
 	return result, err
 }
 
-func (t heroesTable) Create(obj hero) (heroRecord, error) {
+func (t heroesTable) Create(obj Hero) (heroRecord, error) {
 	result, err := t.tbl.Create(obj)
 
 	return heroRecord{result}, err
@@ -69,8 +69,8 @@ func (t heroesTable) Update(record heroRecord) error {
 	return result
 }
 
-func (t heroesTable) Delete(id int64) error {
-	return t.tbl.Delete(id)
+func (t heroesTable) Delete(key husk.Key) error {
+	return t.tbl.Delete(key)
 }
 
 type heroRecord struct {

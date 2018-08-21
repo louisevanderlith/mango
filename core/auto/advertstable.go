@@ -14,8 +14,8 @@ func NewAdvertsTable() advertsTable {
 	return advertsTable{result}
 }
 
-func (t advertsTable) FindByID(id int64) (advertRecord, error) {
-	result, err := t.tbl.FindByID(id)
+func (t advertsTable) FindByKey(key husk.Key) (advertRecord, error) {
+	result, err := t.tbl.FindByKey(key)
 
 	return advertRecord{result}, err
 }
@@ -69,8 +69,8 @@ func (t advertsTable) Update(record advertRecord) error {
 	return result
 }
 
-func (t advertsTable) Delete(id int64) error {
-	return t.tbl.Delete(id)
+func (t advertsTable) Delete(key husk.Key) error {
+	return t.tbl.Delete(key)
 }
 
 type advertRecord struct {

@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/url"
 
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego/context"
@@ -13,7 +14,7 @@ import (
 const cookieName = "_avocookie"
 
 type Cookies struct {
-	UserID    int64
+	UserKey   husk.Key
 	Username  string
 	UserRoles map[string]enums.RoleType
 	IP        string

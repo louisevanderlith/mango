@@ -41,11 +41,11 @@ func (user User) Valid() (bool, error) {
 	return true, nil
 }
 
-func NewUser(name, email string, verified bool) *User {
+func NewUser(name, email string) *User {
 	result := new(User)
 	result.Name = name
 	result.Email = email
-	result.Verified = verified
+	result.Verified = false
 
 	return result
 }

@@ -19,3 +19,37 @@ type Profile struct {
 func (p Profile) Valid() (bool, error) {
 	return husk.ValidateStruct(&p)
 }
+
+func getProfile(key husk.Key) (profileRecord, error) {
+	return ctx.Profiles.FindByKey(key)
+}
+
+func GetProfile(key husk.Key) (*Profile, error) {
+	rec, err := getProfile(key)
+
+	return rec.Data(), err
+}
+
+func GetProfiles(page, size int) (profileSet, error) {
+	return ctx.Profiles.Find(page, size, func(o Profile) bool {
+		return true
+	})
+}
+
+func (p Profile) Update(key husk.Key) error {
+	prtfolio, err := getProfile(key)
+
+	if err != nil {
+		return err
+	}
+
+	prtfolio.Set(p)
+
+	return ctx.Profiles.Update(prtfolio)
+}
+
+func (p *Profile) AddSocialLink(key husk.Key, socialLink SocialLink) error {
+	p.SocialLinks = append(p.SocialLinks, socialLink)
+
+	return p.Update(key)
+}

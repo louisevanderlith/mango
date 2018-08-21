@@ -14,8 +14,8 @@ func NewUsersTable() usersTable {
 	return usersTable{result}
 }
 
-func (t usersTable) FindByID(id int64) (userRecord, error) {
-	result, err := t.tbl.FindByID(id)
+func (t usersTable) FindByKey(key husk.Key) (userRecord, error) {
+	result, err := t.tbl.FindByKey(key)
 
 	return userRecord{result}, err
 }
@@ -69,8 +69,8 @@ func (t usersTable) Update(record userRecord) error {
 	return result
 }
 
-func (t usersTable) Delete(id int64) error {
-	return t.tbl.Delete(id)
+func (t usersTable) Delete(key husk.Key) error {
+	return t.tbl.Delete(key)
 }
 
 type userRecord struct {

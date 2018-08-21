@@ -29,9 +29,17 @@ func (req *CommentController) Get() {
 
 	if err != nil {
 		req.Serve(err, result)
+		return
 	}
 
-	parent, children, err := comment.GetCommentChain(nodeID, commentType)
+	parent, children, err := comment.GetCommentParts(nodeID, commentType)
+
+	if err != nil {
+		req.Serve(err, result)
+	}
+	parentData := parent.Data()
+
+	result = append(result)
 	parentData := parent.Data()
 
 	/*commentP := models.SimpleComment{
@@ -49,15 +57,20 @@ func (req *CommentController) Get() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *CommentController) Post() {
-	var comment logic.MessageEntry
-	json.Unmarshal(req.Ctx.Input.RequestBody, &comment)
+	var entry models.MessageEntry
+	err := json.Unmarshal(req.Ctx.Input.RequestBody, &entry)
 
-	sessionID := req.Ctx.GetCookie("avosession")
-	userID, err := control.GetUserID(sessionID)
-
-	if err == nil {
-		err = logic.SubmitComment(userID, comment)
+	if err != nil {
+		req.Serve(err, "")
 	}
 
-	req.Serve(err, "Comment has been created.")
+	msg := comment.Message{}
+	msg.CommentType = entry.CommentType
+	msg.UserID = req.UserID()
+	msg.Text = entry.Text
+	msg.ItemID = entry.ParentID
+
+	rec, err := comment.SubmitMessage(msg)
+
+	req.Serve(err, rec)
 }

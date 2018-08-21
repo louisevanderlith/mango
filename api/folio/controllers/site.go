@@ -91,7 +91,7 @@ func (req *SiteController) GetOne() {
 		msg.Title = siteParam
 	}
 
-	result, err := folio.Ctx.Profiles.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections", "Headers")
+	result, err := folio.GetPortfolio() folio.Ctx.Profiles.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections", "Headers")
 
 	req.Serve(err, result)
 }

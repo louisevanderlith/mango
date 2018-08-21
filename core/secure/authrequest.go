@@ -3,6 +3,7 @@ package secure
 import (
 	"errors"
 
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/control"
 	"github.com/louisevanderlith/mango/util/enums"
 	"github.com/nu7hatch/gouuid"
@@ -25,12 +26,12 @@ const cost int = 11
 // Login will attempt to authenticate a user
 func Login(authReq AuthRequest) *AuthResponse {
 	passed := false
-	userID := int64(-1)
+	userKey := husk.NewKey(-1)
 	username := "Unknown"
 	app := authReq.GetApplication()
 
 	if len(authReq.Password) < 6 || len(authReq.Email) < 3 {
-		return NewAuthResponse(passed, userID, username, app)
+		return NewAuthResponse(passed, userKey, username, app)
 	}
 
 	userRec := getUser(authReq.Email)
@@ -39,26 +40,26 @@ func Login(authReq AuthRequest) *AuthResponse {
 	user := userRec.Data()
 
 	if userRec.rec == nil {
-		return NewAuthResponse(passed, userID, username, app)
+		return NewAuthResponse(passed, userKey, username, app)
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authReq.Password))
 
 	if err != nil {
-		return NewAuthResponse(passed, userID, username, app)
+		return NewAuthResponse(passed, userKey, username, app)
 	}
 
 	passed = err == nil
-	userID = userRec.rec.GetID()
+	userKey = userRec.rec.GetKey()
 	username = user.Name
 
 	user.AddTrace(getLoginTrace(authReq, passed))
 
 	if !passed {
-		return NewAuthResponse(passed, userID, username, app)
+		return NewAuthResponse(passed, userKey, username, app)
 	}
 
-	return NewAuthResponse(passed, userID, username, app)
+	return NewAuthResponse(passed, userKey, username, app)
 }
 
 func (req AuthRequest) GetApplication() *control.Application {
@@ -82,7 +83,7 @@ func (r AuthRequest) CreateUser() (result userRecord, err error) {
 		return result, err
 	}
 
-	user := NewUser(r.Name, r.Email, false)
+	user := NewUser(r.Name, r.Email)
 
 	user.SecurePassword(r.Password)
 	user.AddTrace(getRegistrationTrace(r))

@@ -1,9 +1,13 @@
 package secure
 
-import "time"
+import (
+	"time"
+
+	"github.com/louisevanderlith/husk"
+)
 
 type SafeUser struct {
-	ID          int64
+	Key         husk.Key
 	Name        string
 	Verified    bool
 	DateCreated time.Time
@@ -15,11 +19,10 @@ func createSafeUser(user userRecord) SafeUser {
 	meta := user.rec.Meta()
 
 	result := SafeUser{
-		ID:          meta.ID,
-		DateCreated: meta.CreateDate,
-		LastLogin:   data.LoginDate,
-		Name:        data.Name,
-		Verified:    data.Verified,
+		Key:       meta.Key,
+		LastLogin: data.LoginDate,
+		Name:      data.Name,
+		Verified:  data.Verified,
 	}
 
 	return result

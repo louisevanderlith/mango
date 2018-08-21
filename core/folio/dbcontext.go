@@ -1,13 +1,13 @@
 package folio
 
 type context struct {
-	Portfolios portfoliosTable
+	Profiles profilesTable
 }
 
 var ctx context
 
 func init() {
 	ctx = context{
-		Portfolios: NewPortfoliosTable(),
+		Profiles: NewProfilesTable(),
 	}
 }

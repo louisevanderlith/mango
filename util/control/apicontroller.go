@@ -1,6 +1,7 @@
 package control
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -56,4 +57,11 @@ func (ctrl *APIController) GetPageData() (page, pageSize int) {
 	}
 
 	return page, pageSize
+}
+
+func (ctrl *APIController) GetKeyedRequest() (WithID, error) {
+	result := WithID{}
+	err := json.Unmarshal(ctrl.Ctx.Input.RequestBody, &result)
+
+	return result, err
 }

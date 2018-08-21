@@ -42,7 +42,7 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 	}
 
 	session := control.Cookies{
-		UserID:   auth.UserID,
+		UserKey:  auth.UserKey,
 		Username: auth.Username,
 		IP:       authReq.IP,
 		Location: authReq.Location,

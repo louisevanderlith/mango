@@ -16,8 +16,8 @@ func NewServiceItemsTable() serviceItemsTable {
 	return serviceItemsTable{result}
 }
 
-func (t serviceItemsTable) FindByID(id int64) (serviceItemRecord, error) {
-	result, err := t.tbl.FindByID(id)
+func (t serviceItemsTable) FindByKey(key husk.Key) (serviceItemRecord, error) {
+	result, err := t.tbl.FindByKey(key)
 
 	return serviceItemRecord{result}, err
 }
@@ -27,7 +27,6 @@ func (t serviceItemsTable) Find(page, pageSize int, filter serviceItemFilter) []
 	hskFilter, err := husk.MakeFilter(filter)
 
 	if err != nil {
-		log.Print(err)
 		return result
 	}
 
@@ -62,8 +61,8 @@ func (t serviceItemsTable) Update(record serviceItemRecord) error {
 	return result
 }
 
-func (t serviceItemsTable) Delete(id int64) error {
-	return t.tbl.Delete(id)
+func (t serviceItemsTable) Delete(key husk.Key) error {
+	return t.tbl.Delete(key)
 }
 
 type serviceItemRecord struct {
@@ -75,3 +74,13 @@ func (r serviceItemRecord) Data() *ServiceItem {
 }
 
 type serviceItemFilter func(o ServiceItem) bool
+
+type serviceItemSet struct {
+	*husk.RecordSet
+}
+
+func newServiceItemSet() *serviceItemSet {
+	result := husk.NewRecordSet()
+
+	return &serviceItemSet{result}
+}

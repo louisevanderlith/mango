@@ -22,3 +22,18 @@ type SimpleComment struct {
 }
 
 type CommentChain []SimpleComment
+
+func CreateCommentChain(parentData comment.Message, children []comment.Message, username string, createdate time.Time) CommentChain {
+	smplComment := SimpleComment{
+		DatePosted: createdate,
+		Text:       parentData.Text,
+		User:       username,
+		DownVotes:  parentData.DownVotes,
+		UpVotes:    parentData.UpVotes,
+	}
+
+	for _, childMsg := range children {
+		newChild := CreateCommentChain(childMsg)
+		smplComment.Children = append(smplComment.Children)
+	}
+}

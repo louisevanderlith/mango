@@ -7,21 +7,22 @@ import (
 )
 
 type Message struct {
-	UserID      int64
+	UserKey     husk.Key
+	ItemKey     husk.Key
 	UpVotes     int64
 	DownVotes   int64
-	ItemID      int64
 	Text        string `hsk:"size(512)"`
 	CommentType CommentType
-	Voters      map[string]struct{}
+	Voters      map[husk.Key]struct{}
+	Children    []Message
 }
 
 func (o Message) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
 }
 
-func SubmitVote(messageID int64, isUp bool, userID string) error {
-	msgRec, err := ctx.Messages.FindByID(messageID)
+func SubmitVote(messageKey husk.Key, isUp bool, userKey husk.Key) error {
+	msgRec, err := ctx.Messages.FindByKey(messageKey)
 
 	if err != nil {
 		return err
@@ -29,7 +30,7 @@ func SubmitVote(messageID int64, isUp bool, userID string) error {
 
 	msgData := msgRec.Data()
 
-	if _, hasVoted := msgData.Voters[userID]; hasVoted {
+	if _, hasVoted := msgData.Voters[userKey]; hasVoted {
 		return errors.New("user has already voted")
 	}
 
@@ -39,7 +40,7 @@ func SubmitVote(messageID int64, isUp bool, userID string) error {
 		msgData.DownVotes++
 	}
 
-	msgData.Voters[userID] = struct{}{}
+	msgData.Voters[userKey] = struct{}{}
 
 	err = ctx.Messages.Update(msgRec)
 
@@ -53,19 +54,19 @@ func SubmitMessage(msg Message) (messageRecord, error) {
 	return ctx.Messages.Create(msg)
 }
 
-func GetCommentChain(itemID int64, commentType CommentType) (parent messageRecord, children messageSet, err error) {
+func GetCommentParts(itemKey husk.Key, commentType CommentType) (parent messageRecord, children messageSet, err error) {
 	parent, err = ctx.Messages.FindFirst(func(obj Message) bool {
-		return obj.ItemID == itemID && obj.CommentType == commentType
+		return obj.ItemKey == itemKey && obj.CommentType == commentType
 	})
 
-	parentID := parent.rec.GetID()
+	parentKey := parent.rec.GetKey()
 
 	if err != nil {
 		return parent, children, err
 	}
 
 	children, err = ctx.Messages.Find(1, 10, func(obj Message) bool {
-		return obj.CommentType == Child && obj.ItemID == parentID
+		return obj.CommentType == Child && obj.ItemKey == parentKey
 	})
 
 	if err != nil {

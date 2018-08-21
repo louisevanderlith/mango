@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/context"
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )
@@ -45,32 +46,24 @@ func (ctx *tinyCtx) allowed() bool {
 	return ctx.hasRole(ctx.RequiredRole)
 }
 
-func (ctx *tinyCtx) getUserID() int64 {
-	result := int64(-1)
-
+func (ctx *tinyCtx) getUserKey() husk.Key {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
-		return result
+		return husk.CrazyKey()
 	}
 
-	result = cookie.UserID
-
-	return result
+	return cookie.UserKey
 }
 
 func (ctx *tinyCtx) getUsername() string {
-	result := "Unknown"
-
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
-		return result
+		return "Unknown"
 	}
 
-	result = cookie.Username
-
-	return result
+	return cookie.Username
 }
 
 func (ctx *tinyCtx) getRole() enums.RoleType {

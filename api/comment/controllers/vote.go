@@ -24,7 +24,7 @@ func (req *VoteController) Post() {
 	var vote models.Vote
 	json.Unmarshal(req.Ctx.Input.RequestBody, &vote)
 
-	userID := req.
+	userID := req.UserID()
 
 	err := comment.SubmitVote(vote.CommentID, vote.IsUp, userID)
 
