@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/louisevanderlith/mango/db/folio"
+	"github.com/louisevanderlith/mango/core/folio"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -21,7 +21,7 @@ func (req *PortfolioController) Post() {
 	var portfolio folio.Portfolio
 	json.Unmarshal(req.Ctx.Input.RequestBody, &portfolio)
 
-	_, err := folio.Ctx.Portfolios.Create(&portfolio)
+	_, err := folio.C() //.Portfolios.Create(&portfolio)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

@@ -1,14 +1,17 @@
 package control
 
 import (
-	"github.com/astaxie/beego"
+	"encoding/json"
+	"fmt"
+	"strconv"
 )
 
 type APIController struct {
-	beego.Controller
+	IDController
 }
 
 func (ctrl *APIController) Prepare() {
+	defer ctrl.IDController.Prepare()
 	output := ctrl.Ctx.Output
 
 	output.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
@@ -39,4 +42,26 @@ func (ctrl *APIController) Serve(err error, data interface{}) {
 	}
 
 	ctrl.ServeJSON()
+}
+
+func (ctrl *APIController) GetPageData() (page, pageSize int) {
+	pageData := ctrl.Ctx.Input.Param(":pageData")
+	page = 0
+	pageSize = 10
+
+	if len(pageData) >= 2 {
+		pChar, _ := strconv.Atoi(fmt.Sprintf("%c", pageData[0]))
+
+		page = pChar % 32
+		pageSize, _ = strconv.Atoi(pageData[1:])
+	}
+
+	return page, pageSize
+}
+
+func (ctrl *APIController) GetKeyedRequest() (WithID, error) {
+	result := WithID{}
+	err := json.Unmarshal(ctrl.Ctx.Input.RequestBody, &result)
+
+	return result, err
 }

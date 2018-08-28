@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/louisevanderlith/mango/db/folio"
+	"github.com/louisevanderlith/mango/core/folio"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -91,7 +91,8 @@ func (req *SiteController) GetOne() {
 		msg.Title = siteParam
 	}
 
-	result, err := folio.Ctx.Profiles.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections", "Headers")
+	result, err := folio.GetPortfolio()
+	//folio.Ctx.Profiles.ReadOne(&msg, "SocialLinks", "PortfolioItems", "AboutSections", "Headers")
 
 	req.Serve(err, result)
 }

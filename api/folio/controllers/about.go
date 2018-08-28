@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/louisevanderlith/mango/db/folio"
+	"github.com/louisevanderlith/mango/core/folio"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -21,7 +21,8 @@ func (req *AboutController) Post() {
 	var about folio.About
 	json.Unmarshal(req.Ctx.Input.RequestBody, &about)
 
-	_, err := folio.Ctx.Abouts.Create(&about)
+	_, err := folio.GetPortfolio()
+	//folio.Ctx.Abouts.Create(&about)
 
 	req.Serve(err, "About Section has been created.")
 }

@@ -9,6 +9,7 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/secure/controllers"
+	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
@@ -34,10 +35,17 @@ func init() {
 }
 
 func setupMapping() {
-	uploadMap := make(control.MethodMap)
+	appName := beego.BConfig.AppName
+	control.CreateControllerMap(appName)
+	emptyMap := make(control.ActionMap)
 
-	control.AddControllerMap("/login", uploadMap)
-	control.AddControllerMap("/register", uploadMap)
+	control.AddControllerMap("/login", emptyMap)
+	control.AddControllerMap("/register", emptyMap)
+
+	userMap := make(control.ActionMap)
+	userMap["GET"] = enums.Admin
+
+	control.AddControllerMap("/user", userMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
 

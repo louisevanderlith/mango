@@ -22,7 +22,7 @@ function getEntryPoints(appPath) {
         const entry = path.join(appPath, `static/js/${name}`);
         const tskName = createJSTask(name, entry, appPath);
 
-        gulp.watch(entry, [tskName]);
+        gulp.watch(entry, gulp.series([tskName]));
         taskNames.push(tskName);
     });
 
@@ -54,14 +54,14 @@ function createJSTask(name, entry, appPath) {
     const dest = path.join(appPath, "static/dist/js");
     const rollOptions = getRollupOptions(entry, name);
 
-    gulp.task(taskName, () => {
+    gulp.task(taskName, gulp.series(() => {
         gulp.src(entry)
             .pipe(rollup(rollOptions, 'iife'))
             .on('error', (err) => {
                 console.error("Entry: %s, Task: %s. Details: %s", entry, taskName, err);
             })
             .pipe(gulp.dest(dest));
-    });
+    }));
 
     return taskName;
 }
@@ -72,14 +72,14 @@ function createCSSTask(appPath) {
     const fullPath = path.join(appPath, 'static/css/*.css');
     const destPath = path.join(appPath, 'static/dist/css');
 
-    gulp.task(taskName, () => {
+    gulp.task(taskName, gulp.series(() => {
         gulp.src(fullPath)
             .pipe(concatCSS('bundle.css'))
             .pipe(cleanCSS())
             .pipe(gulp.dest(destPath))
-    });
+    }));
 
-    gulp.watch(fullPath, [taskName]);
+    gulp.watch(fullPath, gulp.series([taskName]));
 
     return taskName;
 }
@@ -90,13 +90,13 @@ function createColorTask(appPath) {
     const fullPath = path.join(appPath, 'static/css/color/*.css');
     const destPath = path.join(appPath, 'static/dist/css/color');
 
-    gulp.task(taskName, () => {
+    gulp.task(taskName, gulp.series(() => {
         gulp.src(fullPath)
             .pipe(cleanCSS())
             .pipe(gulp.dest(destPath))
-    });
+    }));
 
-    gulp.watch(fullPath, [taskName]);
+    gulp.watch(fullPath, gulp.series([taskName]));
 
     return taskName;
 }
@@ -125,14 +125,14 @@ function createSharedCSSTask(destinations) {
     const taskName = '_shared.CSS';
     const fullPath = 'app/_shared/css/*css';
 
-    gulp.task(taskName, () => {
+    gulp.task(taskName, gulp.series(() => {
         let pipeline = gulp.src(fullPath)
             .pipe(cleanCSS());
 
         queueDestinations(pipeline, 'CSS', destinations);
-    });
+    }));
 
-    gulp.watch(fullPath, [taskName]);
+    gulp.watch(fullPath, gulp.series([taskName]));
 
     return taskName;
 }
@@ -141,14 +141,14 @@ function createSharedJSTask(destinations) {
     const taskName = '_shared.JS';
     const fullPath = 'app/_shared/js/*.js';
 
-    gulp.task(taskName, () => {
+    gulp.task(taskName, gulp.series(() => {
         let pipeline = gulp.src(fullPath);
         // Is Rollup needed?
 
         queueDestinations(pipeline, 'JS', destinations);
-    });
+    }));
 
-    gulp.watch(fullPath, [taskName]);
+    gulp.watch(fullPath, gulp.series([taskName]));
 
     return taskName;
 }
@@ -157,13 +157,13 @@ function createSharedHTMLTask(destinations) {
     const taskName = '_shared.HTML';
     const fullPath = 'app/_shared/*.html';
 
-    gulp.task(taskName, () => {
+    gulp.task(taskName, gulp.series(() => {
         let pipeline = gulp.src(fullPath);
 
         queueDestinations(pipeline, 'HTML', destinations);
-    });
+    }));
 
-    gulp.watch(fullPath, [taskName]);
+    gulp.watch(fullPath, gulp.series([taskName]));
 
     return taskName;
 }
@@ -272,4 +272,4 @@ function getNameFromPath(appPath) {
     return appPath.replace('./', '').replace('/', '.');
 }
 
-gulp.task('default', getTasks());
+gulp.task('default', gulp.parallel(getTasks()));

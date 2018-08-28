@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/astaxie/beego"
+
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
@@ -20,7 +22,6 @@ var serviceMap map[string]Services
 
 func init() {
 	serviceMap = make(map[string]Services)
-	registerDatabases()
 }
 
 // AddService registers a new service and returns a key for that entry
@@ -81,27 +82,19 @@ func GetServicePath(serviceName string, appID string, clean bool) (string, error
 }
 
 func getCleanHost(env enums.Environment) string {
-	var result string
-	switch env {
-	case enums.LIVE:
-		result = ".avosa.co.za/"
-	case enums.UAT:
-		result = ".???.co.za/"
-	case enums.DEV:
-		result = ".localhost/"
-	default:
-		result = ".localhost/"
+	envHost := fmt.Sprintf("HOST_%s", env)
+
+	if len(envHost) == 0 {
+		envHost = "HOST_DEV"
 	}
 
-	return result
+	return beego.AppConfig.String(envHost)
 }
 
 func getAllowedCaller(serviceType enums.ServiceType) enums.ServiceType {
 	var result enums.ServiceType
 
 	switch serviceType {
-	case enums.DB:
-		result = enums.API
 	case enums.API:
 		result = enums.APP
 	case enums.APP:
@@ -143,22 +136,6 @@ func getRequestingService(appID string) *util.Service {
 	}
 
 	return result
-}
-
-func registerDatabases() {
-	settings := loadSettings()
-
-	for _, val := range *settings {
-		for _, envVal := range val.Environments {
-			db := util.Service{
-				Environment: enums.GetEnvironment(envVal.Name),
-				Name:        val.Name,
-				URL:         envVal.Value,
-				Type:        enums.DB}
-
-			AddService(db)
-		}
-	}
 }
 
 func getVersion() int {

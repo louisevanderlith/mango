@@ -8,8 +8,7 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
-	_ "github.com/lib/pq"
-	"github.com/louisevanderlith/mango/db/folio"
+	_ "github.com/louisevanderlith/mango/core/folio"
 )
 
 func main() {
@@ -30,7 +29,6 @@ func main() {
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
-		folio.NewDatabase()
 		beego.Run()
 	}
 }

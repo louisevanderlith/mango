@@ -3,14 +3,12 @@ package enums
 type ServiceType int
 
 const (
-	DB ServiceType = iota
-	API
+	API ServiceType = iota
 	APP
 	ANY
 )
 
 var servicetypes = [...]string{
-	"DB",
 	"API",
 	"APP",
 	"ANY"}

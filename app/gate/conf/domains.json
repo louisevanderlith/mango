@@ -45,8 +45,8 @@
         "Type": "Subdomain"
     },
     {
-        "Name": "Classifieds.APP",
-        "Address": "classifieds",
+        "Name": "Auto.APP",
+        "Address": "auto",
         "Type": "Subdomain"
     },
     {

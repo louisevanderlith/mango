@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"github.com/louisevanderlith/mango/api/artifact/logic"
-	"github.com/louisevanderlith/mango/db/artifact"
+	"github.com/louisevanderlith/mango/core/artifact"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -15,12 +15,13 @@ type UploadController struct {
 // @Title GetUploads
 // @Description Gets the uploads
 // @Success 200 {[]artifact.Upload} []artifact.Upload
-// @router / [get]
+// @router /:pageData(^[A-Z](?:_?[0-9]+)*$) [get]
 func (req *UploadController) Get() {
+	page, size := req.GetPageData()
 
-	var results artifact.Uploads
-	upl := artifact.Upload{}
-	err := artifact.Ctx.Uploads.Read(&upl, &results)
+	results, err := artifact.GetUploads(page, size, func(obj artifact.Upload) bool {
+		return true
+	})
 
 	req.Serve(err, results)
 }
@@ -29,14 +30,15 @@ func (req *UploadController) Get() {
 // @Description Gets the requested upload
 // @Param	uploadID			path	int64 	true		"ID of the file you require"
 // @Success 200 {artifact.Upload} artifact.Upload
-// @router /:uploadID [get]
+// @router /:uploadID([0-9]+) [get]
 func (req *UploadController) GetByID() {
-	var result *artifact.Upload
 	uploadID, err := strconv.ParseInt(req.Ctx.Input.Param(":uploadID"), 10, 64)
 
-	if err == nil {
-		result, err = logic.GetFile(uploadID)
+	if err != nil {
+		req.Serve(err, nil)
 	}
+
+	result, err := artifact.GetUpload(uploadID)
 
 	req.Serve(err, result)
 }
@@ -52,7 +54,7 @@ func (req *UploadController) GetFileBytes() {
 	uploadID, err := strconv.ParseInt(req.Ctx.Input.Param(":uploadID"), 10, 64)
 
 	if err == nil {
-		result, filename, err = logic.GetFileOnly(uploadID)
+		result, filename, err = artifact.GetUploadFile(uploadID)
 	}
 
 	if err != nil {
@@ -74,13 +76,21 @@ func (req *UploadController) Post() {
 	var id int64
 
 	info := req.GetString("info")
-	infoHead := logic.GetInfoHead(info)
+	infoHead, err := logic.GetInfoHead(info)
+
+	if err != nil {
+		req.Serve(err, id)
+	}
+
 	file, header, err := req.GetFile("file")
 
-	if err == nil {
-		defer file.Close()
-		id, err = logic.SaveFile(file, header, infoHead)
+	if err != nil {
+		req.Serve(err, id)
 	}
+
+	defer file.Close()
+
+	id, err = logic.SaveFile(file, header, infoHead)
 
 	req.Serve(err, id)
 }

@@ -3,7 +3,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/louisevanderlith/mango/db/folio"
+	"github.com/louisevanderlith/mango/core/folio"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -33,10 +33,9 @@ func (req *SocialController) Post() {
 // @Failure 403 body is empty
 // @router / [put]
 func (req *SocialController) Put() {
-	var social folio.SocialLink
-	json.Unmarshal(req.Ctx.Input.RequestBody, &social)
+	var prtfolio folio.Portfolio
 
-	err := folio.Ctx.SocialLinks.Update(&social)
+	folio.UpdateP(id, social)
 
 	req.Serve(err, "Social Link has been updated.")
 }

@@ -1,21 +1,28 @@
 package control
 
 import (
+	"encoding/json"
+	"errors"
+	"log"
 	"strings"
 
 	"github.com/astaxie/beego/context"
+	"github.com/louisevanderlith/husk"
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
 type tinyCtx struct {
-	Controller string
-	Method     string
-	SessionID  string
+	ApplicationName string
+	RequiredRole    enums.RoleType
+	Controller      string
+	Method          string
+	SessionID       string
 }
 
 const avosession = "avosession"
 
-func newTinyCtx(ctx *context.Context) tinyCtx {
+func newTinyCtx(ctx *context.Context) *tinyCtx {
 	result := tinyCtx{}
 
 	ctrl, sess := removeToken(ctx.Request.RequestURI)
@@ -24,26 +31,88 @@ func newTinyCtx(ctx *context.Context) tinyCtx {
 		sess = ctx.GetCookie(avosession)
 	}
 
+	actMethod := strings.ToUpper(ctx.Request.Method)
+
+	result.RequiredRole = GetRequiredRole(ctrl, actMethod)
+	result.ApplicationName = controllerMap.applicationName
 	result.Controller = ctrl
-	result.Method = strings.ToUpper(ctx.Request.Method)
+	result.Method = actMethod
 	result.SessionID = sess
+
+	return &result
+}
+
+func (ctx *tinyCtx) allowed() bool {
+	return ctx.hasRole(ctx.RequiredRole)
+}
+
+func (ctx *tinyCtx) getUserKey() husk.Key {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return husk.CrazyKey()
+	}
+
+	return cookie.UserKey
+}
+
+func (ctx *tinyCtx) getUsername() string {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return "Unknown"
+	}
+
+	return cookie.Username
+}
+
+func (ctx *tinyCtx) getRole() enums.RoleType {
+	result := enums.Unknown
+
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return result
+	}
+
+	appName := ctx.ApplicationName
+	if role, ok := cookie.UserRoles[appName]; ok {
+		result = role
+	}
 
 	return result
 }
 
-func (ctx tinyCtx) allowed() bool {
-	result := true
-	ctrlMap, hasCtrl := controllerMapping[ctx.Controller]
+func (ctx *tinyCtx) hasRole(actionRole enums.RoleType) bool {
+	role := ctx.getRole()
 
-	if hasCtrl {
-		methodMap, hasMethod := ctrlMap[ctx.Method]
+	return role < actionRole
+}
 
-		if hasMethod {
-			result = hasRole(methodMap, ctx.SessionID)
+//TODO: use channels
+//getAvoCookie also checks cookie validity, so repeated calls are required
+func (ctx *tinyCtx) getAvoCookie() (result Cookies, finalError error) {
+	contents, statusCode := util.GETMessage("Secure.API", "login", "avo", ctx.SessionID)
+	data := util.MarshalToMap(contents)
+
+	if statusCode != 200 {
+		var dataErr string
+		err := json.Unmarshal(*data["Error"], &dataErr)
+
+		if err != nil {
+			log.Println("getAvoCookie:", err)
+		}
+
+		finalError = errors.New(dataErr)
+	} else {
+		err := json.Unmarshal(*data["Data"], &result)
+
+		if err != nil {
+			log.Println("getAvoCookie:", err)
 		}
 	}
 
-	return result
+	return result, finalError
 }
 
 func removeToken(url string) (cleanURL, token string) {
@@ -60,23 +129,4 @@ func removeToken(url string) (cleanURL, token string) {
 	}
 
 	return cleanURL, token
-}
-
-func hasRole(funcRole enums.RoleType, sessionID string) bool {
-	result := false
-
-	if sessionID != "" {
-		roles, _ := GetRoles(sessionID)
-
-		if len(roles) > 0 {
-			for _, val := range roles {
-				if val <= funcRole {
-					result = true
-					break
-				}
-			}
-		}
-	}
-
-	return result
 }

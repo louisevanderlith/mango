@@ -1,3 +1,4 @@
+#Debug/Play file custom to mango for windows
 function startPlay() {
     $progs = getPrograms
     $wd = Convert-Path .

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strconv"
 
-	"github.com/louisevanderlith/mango/api/comment/logic"
-	"github.com/louisevanderlith/mango/db/comment"
+	"github.com/louisevanderlith/mango/api/comment/models"
+	"github.com/louisevanderlith/mango/core/comment"
 
 	"github.com/louisevanderlith/mango/util/control"
 )
@@ -22,14 +22,30 @@ type CommentController struct {
 // @Failure 403 body is empty
 // @router /:type/:nodeID[get]
 func (req *CommentController) Get() {
-	var result logic.CommentChain
+	result := models.CommentChain{}
 
 	commentType := comment.GetCommentType(req.Ctx.Input.Param(":type"))
 	nodeID, err := strconv.ParseInt(req.Ctx.Input.Param(":nodeID"), 10, 64)
 
-	if err == nil {
-		result, err = logic.GetCommentChain(nodeID, commentType)
+	if err != nil {
+		req.Serve(err, result)
+		return
 	}
+
+	parent, children, err := comment.GetCommentParts(nodeID, commentType)
+
+	if err != nil {
+		req.Serve(err, result)
+	}
+	parentData := parent.Data()
+
+	result = append(result)
+	parentData := parent.Data()
+
+	/*commentP := models.SimpleComment{
+		User: parentData.UserID
+		DatePosted:
+	}*/
 
 	req.Serve(err, result)
 }
@@ -41,15 +57,20 @@ func (req *CommentController) Get() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *CommentController) Post() {
-	var comment logic.MessageEntry
-	json.Unmarshal(req.Ctx.Input.RequestBody, &comment)
+	var entry models.MessageEntry
+	err := json.Unmarshal(req.Ctx.Input.RequestBody, &entry)
 
-	sessionID := req.Ctx.GetCookie("avosession")
-	userID, err := control.GetUserID(sessionID)
-
-	if err == nil {
-		err = logic.SubmitComment(userID, comment)
+	if err != nil {
+		req.Serve(err, "")
 	}
 
-	req.Serve(err, "Comment has been created.")
+	msg := comment.Message{}
+	msg.CommentType = entry.CommentType
+	msg.UserID = req.UserID()
+	msg.Text = entry.Text
+	msg.ItemID = entry.ParentID
+
+	rec, err := comment.SubmitMessage(msg)
+
+	req.Serve(err, rec)
 }

@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/louisevanderlith/mango/api/secure/logic"
-	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -27,15 +26,15 @@ func (req *LoginController) Get() {
 // @router /avo/:sessionID [get]
 func (req *LoginController) GetAvo() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
-	hasAvo := util.HasAvo(sessionID)
+	hasAvo := control.HasAvo(sessionID)
 
 	var err error
-	var result util.Cookies
+	var result control.Cookies
 
 	if !hasAvo {
 		err = errors.New("no data found")
 	} else {
-		result = util.FindAvo(sessionID)
+		result = control.FindAvo(sessionID)
 	}
 
 	req.Serve(err, result)
@@ -64,7 +63,9 @@ func (req *LoginController) Post() {
 // @router /logout/:sessionID [get]
 func (req *LoginController) Logout() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
-	util.DestroyAvo(sessionID)
+
+	// TODO: Create Trace for Logout...
+	control.DestroyAvo(sessionID)
 
 	req.Serve(nil, "Logout Success")
 }

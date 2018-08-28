@@ -14,6 +14,8 @@ import (
 )
 
 func init() {
+	setupMapping()
+
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/",
 			beego.NSInclude(
@@ -22,4 +24,8 @@ func init() {
 		),
 	)
 	beego.AddNamespace(ns)
+}
+
+func setupMapping() {
+
 }

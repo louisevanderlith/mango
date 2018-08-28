@@ -115,5 +115,5 @@ func getPublicIP(port string, env enums.Environment) string {
 		}
 	}
 
-	return fmt.Sprintf("http://%s:%s/", publicIP, port)
+	return fmt.Sprintf("https://%s:%s/", publicIP, port)
 }

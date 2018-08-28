@@ -4,12 +4,11 @@ import (
 	"log"
 
 	_ "github.com/louisevanderlith/mango/api/comment/routers"
-	"github.com/louisevanderlith/mango/db/comment"
+	_ "github.com/louisevanderlith/mango/core/comment"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
-	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -30,7 +29,6 @@ func main() {
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
-		comment.NewDatabase()
 		beego.Run()
 	}
 }

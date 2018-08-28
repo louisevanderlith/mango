@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/db/comms"
+	"github.com/louisevanderlith/mango/core/comms"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -36,9 +36,8 @@ func (req *MessageController) Post() {
 // @Success 200 {[]comms.Message]} []comms.Message]
 // @router / [get]
 func (req *MessageController) Get() {
-	var result comms.Messages
-	msg := comms.Message{}
-	err := comms.Ctx.Messages.Read(&msg, &result)
+	page, size := req.GetPageData()
+	result, err := comms.GetMessages(page, size)
 
 	req.Serve(err, result)
 }

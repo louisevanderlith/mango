@@ -1,7 +1,8 @@
+#Build file custom to mango for windows (able to compile to linux)
 function doBuild() {
     $goos = 'windows'
     
-    # All applications must be build to a central folder (./bin)
+    # All applications must be built to a central folder (./bin)
     $runPath = (Resolve-Path .\).Path
     $appPaths = "./app/", "./api/"
     
