@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/louisevanderlith/husk"
@@ -40,9 +41,11 @@ func (t messagesTable) FindFirst(filter messageFilter) (messageRecord, error) {
 
 	var result husk.Recorder
 
-	if err == nil {
-		result, err = t.tbl.FindFirst(huskFilter)
+	if err != nil {
+		return messageRecord{result}, err
 	}
+
+	result, err = t.tbl.FindFirst(huskFilter)
 
 	return messageRecord{result}, err
 }
@@ -52,9 +55,11 @@ func (t messagesTable) Exists(filter messageFilter) (bool, error) {
 
 	result := true
 
-	if err == nil {
-		result, err = t.tbl.Exists(huskFilter)
+	if err != nil {
+		return result, err
 	}
+
+	result, err = t.tbl.Exists(huskFilter)
 
 	return result, err
 }
@@ -71,8 +76,8 @@ func (t messagesTable) Update(record messageRecord) error {
 	return result
 }
 
-func (t messagesTable) Delete(id int64) error {
-	return t.tbl.Delete(id)
+func (t messagesTable) Delete(key husk.Key) error {
+	return t.tbl.Delete(key)
 }
 
 type messageRecord struct {
@@ -80,10 +85,11 @@ type messageRecord struct {
 }
 
 func (r messageRecord) CreateDate() time.Time {
-	return r.rec.Meta().CreateDate
+	return r.rec.GetKey().GetTimestamp()
 }
 
 func (r messageRecord) Data() *Message {
+	fmt.Printf("DATA() %+v\n", r)
 	return r.rec.Data().(*Message)
 }
 

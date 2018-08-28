@@ -22,11 +22,11 @@ func GetUploads(page, pagesize int, filterFunc uploadFilter) (uploadSet, error) 
 }
 
 func GetUpload(key husk.Key) (result uploadRecord, err error) {
-	return ctx.Uploads.FindByKey(id)
+	return ctx.Uploads.FindByKey(key)
 }
 
-func GetUploadFile(id int64) (result []byte, filename string, err error) {
-	upload, err := GetUpload(id)
+func GetUploadFile(key husk.Key) (result []byte, filename string, err error) {
+	upload, err := GetUpload(key)
 
 	if err != nil {
 		return nil, "", err

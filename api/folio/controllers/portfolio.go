@@ -21,7 +21,7 @@ func (req *PortfolioController) Post() {
 	var portfolio folio.Portfolio
 	json.Unmarshal(req.Ctx.Input.RequestBody, &portfolio)
 
-	_, err := folio.folio.Ctx.Portfolios.Create(&portfolio)
+	_, err := folio.C() //.Portfolios.Create(&portfolio)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

@@ -67,8 +67,8 @@ func (t uploadsTable) Update(record uploadRecord) error {
 	return result
 }
 
-func (t uploadsTable) Delete(id int64) error {
-	return t.tbl.Delete(id)
+func (t uploadsTable) Delete(key husk.Key) error {
+	return t.tbl.Delete(key)
 }
 
 type uploadRecord struct {

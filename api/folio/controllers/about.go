@@ -21,7 +21,8 @@ func (req *AboutController) Post() {
 	var about folio.About
 	json.Unmarshal(req.Ctx.Input.RequestBody, &about)
 
-	_, err := folio.GetPortfolio() folio.Ctx.Abouts.Create(&about)
+	_, err := folio.GetPortfolio()
+	//folio.Ctx.Abouts.Create(&about)
 
 	req.Serve(err, "About Section has been created.")
 }

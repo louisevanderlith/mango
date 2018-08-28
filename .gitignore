@@ -31,3 +31,6 @@ testData/
 **/views/_shared/
 **/static/js/_shared/
 **/static/css/_shared/
+
+# Husk db
+db/
