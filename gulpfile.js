@@ -29,6 +29,26 @@ function getEntryPoints(appPath) {
     return taskNames;
 }
 
+function getFontsPoints(appPath){
+    var taskNames = [];
+    var workingDirectory = path.join(appPath, 'static/fonts/glyphicons-halflings-regular.{eot,svg,ttf,woff,woff2}');
+
+    var entryPoints = glob.sync(workingDirectory)
+        .map((componentDir) => {
+            return path.basename(componentDir);
+        });
+
+    entryPoints.forEach((name) => {
+        const entry = path.join(appPath, `static/fonts/${name}`);
+        const tskName = createFontsTask(name, entry, appPath);
+
+        gulp.watch(entry, [tskName]);
+        taskNames.push(tskName);
+    });
+
+    return taskNames;
+}
+
 function createJSTask(name, entry, appPath) {
     const taskName = getJSTaskName(name, appPath);
     const dest = path.join(appPath, "static/dist/js");
@@ -81,12 +101,24 @@ function createColorTask(appPath) {
     return taskName;
 }
 
+function createFontsTask(appPath) {
+    const name = getNameFromPath(appPath);
+    const taskName = `glyphicons-halflings-regular`;
+    const fullPath = path.join(appPath, 'static/fonts/glyphicons-halflings-regular.{eot,svg,ttf,woff,woff2}');
+
+    gulp.task(taskName, () => {
+        gulp.src(fullPath)
+            .pipe(gulp.dest('static/_shared/fonts/'));
+    });
+}
+
 function createSharedTasks(destinations) {
     const cssTask = createSharedCSSTask(destinations);
     const jsTask = createSharedJSTask(destinations);
     const htmlTask = createSharedHTMLTask(destinations);
+    const fontsTask = createSharedFontsTasks(destinations);
 
-    return [cssTask, jsTask, htmlTask];
+    return [cssTask, jsTask, htmlTask, fontsTask];
 }
 
 function createSharedCSSTask(destinations) {
@@ -136,11 +168,27 @@ function createSharedHTMLTask(destinations) {
     return taskName;
 }
 
+function createSharedFontsTasks(destinations) {
+    const taskName = '_shared.FONTS';
+    const fullPath = 'app/_shared/fonts/glyphicons-halflings-regular.*';
+
+    gulp.task(taskName, () => {
+        let pipeline = gulp.src(fullPath);
+
+        queueDestinations(pipeline, 'FONTS', destinations);
+    });
+
+    gulp.watch(fullPath, [taskName]);
+
+    return taskName
+}
+
 function queueDestinations(pipeline, sectionName, destinations) {
     const sections = {
         'CSS': 'static/_shared/css',
         'JS': 'static/_shared/js',
-        'HTML': 'views/_shared'
+        'HTML': 'views/_shared',
+        'FONTS': 'static/_shared/fonts',
     };
 
     const currSection = sections[sectionName];
@@ -186,11 +234,11 @@ function getTasks() {
         const currFolder = appFolders[i];
         const children = glob.sync(currFolder + '*');
 
-        /*if (currFolder === './app/') {
+        if (currFolder === './app/') {
             children.push('./api/secure'); // it's not a app, but it has a UI.
             const sharedTasks = createSharedTasks(children);
             rollupTasks = rollupTasks.concat(sharedTasks);
-        }*/
+        }
 
         children.forEach((filePath) => {
             const staticPath = path.join(filePath, 'static');
@@ -198,6 +246,7 @@ function getTasks() {
 
             if (fs.existsSync(staticPath)) {
                 appTasks = getEntryPoints(filePath);
+                appTasks = getFontsPoints(filePath);
                 let cssTask = createCSSTask(filePath);
                 let colorTask = createColorTask(filePath);
 

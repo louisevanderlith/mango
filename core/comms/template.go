@@ -1,25 +1,23 @@
 package comms
 
-// Use Template Engine
+import (
+	"io/ioutil"
+)
 
 func populatTemplate(msg Message) string {
-	template := rawTemplate()
+	template, _ := rawTemplate()
 	render := template
 
 	return render
 }
 
-func rawTemplate() string {
-	result := `<!DOCTYPE html>
-	<html lang="en">
-	<head>
-		<title>Notification</title>
-	</head>
-	<body>
-		<h1>Notification</h1>
-		<p>{{.message}}</p>
-	</body>
-	</html>`
+func rawTemplate() (string, error) {
+	result := ""
+	file, err := ioutil.ReadFile("general.html")
 
-	return result
+	if err == nil {
+		result = string(file)
+	}
+
+	return result, err
 }

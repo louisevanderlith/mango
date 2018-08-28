@@ -28,9 +28,7 @@ node_modules/
 
 testData/
 
-**/views/_shared/
-**/static/js/_shared/
-**/static/css/_shared/
+_shared/
 
 # Husk db
 db/
