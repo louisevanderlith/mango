@@ -170,15 +170,15 @@ function createSharedHTMLTask(destinations) {
 
 function createSharedFontsTasks(destinations) {
     const taskName = '_shared.FONTS';
-    const fullPath = 'app/_shared/fonts/glyphicons-halflings-regular.*';
+    const fullPath = 'app/_shared/fonts/*';
 
-    gulp.task(taskName, () => {
+    gulp.task(taskName, gulp.series(() => {
         let pipeline = gulp.src(fullPath);
 
         queueDestinations(pipeline, 'FONTS', destinations);
-    });
+    }));
 
-    gulp.watch(fullPath, [taskName]);
+    gulp.watch(fullPath, gulp.series([taskName]));
 
     return taskName
 }
