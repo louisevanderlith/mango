@@ -28,17 +28,17 @@ func (req *UploadController) Get() {
 
 // @Title GetUpload
 // @Description Gets the requested upload
-// @Param	uploadID			path	int64 	true		"ID of the file you require"
+// @Param	uploadKey			path	husk.Key 	true		"Key of the file you require"
 // @Success 200 {artifact.Upload} artifact.Upload
 // @router /:uploadID([0-9]+) [get]
 func (req *UploadController) GetByID() {
-	uploadID, err := strconv.ParseInt(req.Ctx.Input.Param(":uploadID"), 10, 64)
+	uploadID, err := husk.() strconv.ParseInt(req.Ctx.Input.Param(":uploadKey"), 10, 64)
 
 	if err != nil {
 		req.Serve(err, nil)
 	}
 
-	result, err := artifact.GetUpload(uploadID)
+	result, err := artifact.GetUpload(uploadKey)
 
 	req.Serve(err, result)
 }

@@ -42,7 +42,7 @@ function getFontsPoints(appPath){
         const entry = path.join(appPath, `static/fonts/${name}`);
         const tskName = createFontsTask(name, entry, appPath);
 
-        gulp.watch(entry, [tskName]);
+        gulp.watch(entry, gulp.series([tskName]));
         taskNames.push(tskName);
     });
 
@@ -246,10 +246,12 @@ function getTasks() {
 
             if (fs.existsSync(staticPath)) {
                 appTasks = getEntryPoints(filePath);
-                appTasks = getFontsPoints(filePath);
+
+                let fontTask = getFontsPoints(filePath);
                 let cssTask = createCSSTask(filePath);
                 let colorTask = createColorTask(filePath);
 
+                appTasks.push(fontTask);
                 appTasks.push(cssTask);
                 appTasks.push(colorTask);
             }
