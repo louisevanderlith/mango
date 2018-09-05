@@ -10,13 +10,6 @@ import (
 	uuid "github.com/nu7hatch/gouuid"
 )
 
-type Login struct {
-	Identifier string
-	Password   string
-	IP         string
-	Location   string
-}
-
 func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err error) {
 	u4, _ := uuid.NewV4()
 	sessionID = u4.String()
@@ -25,7 +18,7 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 		return true, sessionID, nil
 	}
 
-	var authReq secure.AuthRequest
+	var authReq secure.Authentication
 	err = json.Unmarshal(ctx.Input.RequestBody, &authReq)
 
 	if err != nil {
@@ -41,16 +34,7 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 		return passed, sessionID, errMsg
 	}
 
-	session := control.Cookies{
-		UserKey:  auth.UserKey,
-		Username: auth.Username,
-		IP:       authReq.IP,
-		Location: authReq.Location,
-	}
-
-	session.UserRoles = auth.Application.Roles
-
-	control.CreateAvo(ctx, session, sessionID)
+	control.CreateAvo(ctx, auth, sessionID)
 
 	return passed, sessionID, err
 }

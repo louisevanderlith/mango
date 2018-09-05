@@ -6,11 +6,13 @@ import (
 
 type Application struct {
 	Name       string
+	IP         string
+	Location   string
 	InstanceID uuid.UUID
 	Roles      ActionMap
 }
 
-func NewApplication(appName string, instanceID uuid.UUID) *Application {
+func NewApplication(appName, ip, location string, instanceID uuid.UUID) *Application {
 	result := new(Application)
 	result.Name = appName
 	result.InstanceID = instanceID

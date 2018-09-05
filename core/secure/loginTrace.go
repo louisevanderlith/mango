@@ -18,18 +18,18 @@ func (o LoginTrace) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
 }
 
-func getRegistrationTrace(r AuthRequest) LoginTrace {
+func getRegistrationTrace(r Registration) LoginTrace {
 	return LoginTrace{
 		Allowed:         true,
-		ApplicationName: r.ApplicationName,
-		InstanceID:      r.InstanceID,
-		IP:              r.IP,
-		Location:        r.Location,
+		ApplicationName: r.App.Name,
+		InstanceID:      r.App.InstanceID,
+		IP:              r.App.IP,
+		Location:        r.App.Location,
 		TraceType:       TraceRegister,
 	}
 }
 
-func getLoginTrace(r AuthRequest, passed bool) LoginTrace {
+func getLoginTrace(r Authentication, passed bool) LoginTrace {
 	trace := TraceLogin
 
 	if !passed {
@@ -38,10 +38,10 @@ func getLoginTrace(r AuthRequest, passed bool) LoginTrace {
 
 	return LoginTrace{
 		Allowed:         passed,
-		ApplicationName: r.ApplicationName,
-		InstanceID:      r.InstanceID,
-		IP:              r.IP,
-		Location:        r.Location,
+		ApplicationName: r.App.Name,
+		InstanceID:      r.App.InstanceID,
+		IP:              r.App.IP,
+		Location:        r.App.Location,
 		TraceType:       trace,
 	}
 }

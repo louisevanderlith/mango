@@ -19,13 +19,13 @@ func TestCreateUser_MustHaveError(t *testing.T) {
 
 func TestCreateUser_PasswordLength_MustHaveError(t *testing.T) {
 	input := User{
-		ContactNumber: "0123457894",
-		Email:         "testing@mail.com",
-		Password:      "short"}
+		Email:    "testing@mail.com",
+		Password: "short",
+	}
 
-		input := NewUser("Jan", "testing@mail.com")
+	input := NewUser("Jan", "testing@mail.com")
 	err := NewUser(input)
-sfeUser.
+
 	if err == nil {
 		t.Error("Expecting 'Password must be atleast 6 characters'.")
 	}
