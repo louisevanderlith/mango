@@ -8,108 +8,134 @@ const cleanCSS = require('gulp-clean-css');
 const concatCSS = require('gulp-concat-css');
 const fs = require('fs');
 const ugh = require('uglify-es').minify;
+const flatten = require('gulp-flatten');
 
-function getEntryPoints(appPath) {
-    var taskNames = [];
-    var workingDirectory = path.join(appPath, 'static/js/*.entry.js');
+gulp.task("default", gulp.parallel(...watchApplications()));
 
-    var entryPoints = glob.sync(workingDirectory)
+//gather applications
+//create watchers for given applications
+
+//create _shared tasks
+// watcher for .html
+// watcher for .js
+// watcher for .css
+// write to applications found previously
+
+function watchApplications() {
+    var result = [];
+
+    const appFolder = "./app/";
+    const secureFolder = "./api/secure";
+
+    const children = glob.sync(appFolder + '*');
+    children.push(secureFolder); // it's not a app, but it has a UI.
+
+    children.forEach((filePath) => {
+        const staticPath = path.join(filePath, 'static');
+
+        if (fs.existsSync(staticPath)) {
+            var appjs = getEntries("js", "entry.js", staticPath);
+            result.push(appjs);
+        }
+    });
+
+    // _shared folder for every app
+    const sharedTasks = createSharedTasks(children);
+    result = result.concat(sharedTasks);
+
+    return result;
+}
+
+function getEntries(folder, taskType, staticPath) {
+    let results = [];
+
+    let pattrn = `${folder}/*.${taskType}`;
+    let pattrnPath = path.join(staticPath, pattrn);
+    let filenames = getFileNames(pattrnPath);
+
+    filenames.forEach((name) => {
+        const entry = path.join(staticPath, `${folder}/${name}`);
+        let taskName = getNameFromPath(staticPath, name);
+
+        switch (folder) {
+            case 'js':
+            createJSTask(name, entry, staticPath, taskName);
+            break;
+            case 'css':
+            createCSSTask(staticPath, pattrnPath, taskName);
+            break;
+            default:
+            console.error("I don't know %s", folder);
+        }
+
+        gulp.watch(entry, gulp.series(taskName));
+        results.push(taskName);
+    });
+
+    return results;
+}
+
+function getFileNames(pattern) {
+    return glob.sync(pattern)
         .map((componentDir) => {
             return path.basename(componentDir);
         });
-
-    entryPoints.forEach((name) => {
-        const entry = path.join(appPath, `static/js/${name}`);
-        const tskName = createJSTask(name, entry, appPath);
-
-        gulp.watch(entry, gulp.series([tskName]));
-        taskNames.push(tskName);
-    });
-
-    return taskNames;
 }
 
-function getFontsPoints(appPath){
-    var taskNames = [];
-    var workingDirectory = path.join(appPath, 'static/fonts/glyphicons-halflings-regular.{eot,svg,ttf,woff,woff2}');
+function createJSTask(name, entry, staticPath, taskName) {
+    const dest = path.join(staticPath, "dist/js");
+    let rollupOpts = getRollupOptions(entry, name);
 
-    var entryPoints = glob.sync(workingDirectory)
-        .map((componentDir) => {
-            return path.basename(componentDir);
-        });
-
-    entryPoints.forEach((name) => {
-        const entry = path.join(appPath, `static/fonts/${name}`);
-        const tskName = createFontsTask(name, entry, appPath);
-
-        gulp.watch(entry, gulp.series([tskName]));
-        taskNames.push(tskName);
-    });
-
-    return taskNames;
-}
-
-function createJSTask(name, entry, appPath) {
-    const taskName = getJSTaskName(name, appPath);
-    const dest = path.join(appPath, "static/dist/js");
-    const rollOptions = getRollupOptions(entry, name);
-
-    gulp.task(taskName, gulp.series(() => {
+    gulp.task(taskName, () => {
         gulp.src(entry)
-            .pipe(rollup(rollOptions, 'iife'))
+            .pipe(rollup(rollupOpts, 'iife'))
             .on('error', (err) => {
                 console.error("Entry: %s, Task: %s. Details: %s", entry, taskName, err);
             })
+            .pipe(flatten())
             .pipe(gulp.dest(dest));
-    }));
-
-    return taskName;
+    });
 }
 
-function createCSSTask(appPath) {
-    const name = getNameFromPath(appPath);
-    const taskName = `${name}-css`;
-    const fullPath = path.join(appPath, 'static/css/*.css');
-    const destPath = path.join(appPath, 'static/dist/css');
-
-    gulp.task(taskName, gulp.series(() => {
-        gulp.src(fullPath)
-            .pipe(concatCSS('bundle.css'))
-            .pipe(cleanCSS())
-            .pipe(gulp.dest(destPath))
-    }));
-
-    gulp.watch(fullPath, gulp.series([taskName]));
-
-    return taskName;
-}
-
-function createColorTask(appPath) {
-    const name = getNameFromPath(appPath);
-    const taskName = `${name}-colorcss`;
-    const fullPath = path.join(appPath, 'static/css/color/*.css');
-    const destPath = path.join(appPath, 'static/dist/css/color');
-
-    gulp.task(taskName, gulp.series(() => {
-        gulp.src(fullPath)
-            .pipe(cleanCSS())
-            .pipe(gulp.dest(destPath))
-    }));
-
-    gulp.watch(fullPath, gulp.series([taskName]));
-
-    return taskName;
-}
-
-function createFontsTask(appPath) {
-    const name = getNameFromPath(appPath);
-    const taskName = `glyphicons-halflings-regular`;
-    const fullPath = path.join(appPath, 'static/fonts/glyphicons-halflings-regular.{eot,svg,ttf,woff,woff2}');
+function createCSSTask(staticPath, pattrnPath, taskName) {
+    const dest = path.join(staticPath, "dist/css");
 
     gulp.task(taskName, () => {
-        gulp.src(fullPath)
-            .pipe(gulp.dest('static/_shared/fonts/'));
+        gulp.src(pattrnPath)
+            .pipe(concatCSS('bundle.css'))
+            .pipe(cleanCSS())
+            .pipe(gulp.dest(dest))
     });
+}
+
+function getNameFromPath(staticPath, file) {
+    const parts = staticPath.split('\\') || staticPath.split('/');
+
+    let folder = parts[0];
+    let app = parts[1];
+
+    return `${folder}.${app}-${file}`;
+}
+
+function getRollupOptions(entry, name) {
+    return {
+        entry: entry,
+        format: 'iife',
+        moduleName: name,
+        globals: {
+            jquery: 'jquery'
+        },
+        external: ['jquery'],
+        paths: {
+            jquery: 'https://code.jquery.com/jquery-3.2.1.min.js'
+        },
+        plugins: [
+            babel({
+                exclude: 'node_modules/**'
+            }),
+            uglify({}, ugh)
+        ]
+    };
 }
 
 function createSharedTasks(destinations) {
@@ -143,7 +169,6 @@ function createSharedJSTask(destinations) {
 
     gulp.task(taskName, gulp.series(() => {
         let pipeline = gulp.src(fullPath);
-        // Is Rollup needed?
 
         queueDestinations(pipeline, 'JS', destinations);
     }));
@@ -204,74 +229,3 @@ function queueDestinations(pipeline, sectionName, destinations) {
 
     return pipeline;
 }
-
-function getRollupOptions(entry, name) {
-    return {
-        entry: entry,
-        format: 'iife',
-        moduleName: name,
-        globals: {
-            jquery: 'jquery'
-        },
-        external: ['jquery'],
-        paths: {
-            jquery: 'https://code.jquery.com/jquery-3.2.1.min.js'
-        },
-        plugins: [
-            babel({
-                exclude: 'node_modules/**'
-            }),
-            uglify({}, ugh)
-        ]
-    };
-}
-
-function getTasks() {
-    var rollupTasks = [];
-    const appFolders = ['./app/', './api/'];
-
-    for (let i = 0; i < appFolders.length; i++) {
-        const currFolder = appFolders[i];
-        const children = glob.sync(currFolder + '*');
-
-        if (currFolder === './app/') {
-            children.push('./api/secure'); // it's not a app, but it has a UI.
-            const sharedTasks = createSharedTasks(children);
-            rollupTasks = rollupTasks.concat(sharedTasks);
-        }
-
-        children.forEach((filePath) => {
-            const staticPath = path.join(filePath, 'static');
-            var appTasks = [];
-
-            if (fs.existsSync(staticPath)) {
-                appTasks = getEntryPoints(filePath);
-
-                let fontTask = getFontsPoints(filePath);
-                let cssTask = createCSSTask(filePath);
-                let colorTask = createColorTask(filePath);
-
-                appTasks.push(fontTask);
-                appTasks.push(cssTask);
-                appTasks.push(colorTask);
-            }
-
-            rollupTasks = rollupTasks.concat(appTasks);
-        });
-    }
-
-    return rollupTasks;
-}
-
-function getJSTaskName(name, appPath) {
-    const appName = getNameFromPath(appPath);
-    const cleanName = name.replace('.entry.js', '');
-
-    return `${appName}-roll-${cleanName}`;
-}
-
-function getNameFromPath(appPath) {
-    return appPath.replace('./', '').replace('/', '.');
-}
-
-gulp.task('default', gulp.parallel(getTasks()));
