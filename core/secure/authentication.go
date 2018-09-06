@@ -1,6 +1,8 @@
 package secure
 
 import (
+	"errors"
+
 	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/control"
 	"golang.org/x/crypto/bcrypt"
@@ -15,13 +17,15 @@ type Authentication struct {
 const cost int = 11
 
 // Login will attempt to authenticate a user
-func Login(authReq Authentication) *control.Cookies {
+func Login(authReq Authentication) (*control.Cookies, error) {
 	passed := false
 	userKey := husk.NewKey(-1)
 	username := "Unknown"
+	ip := authReq.App.IP
+	location := authReq.App.Location
 
 	if len(authReq.Password) < 6 || len(authReq.Email) < 3 {
-		return control.N NewAuthResponse(passed, userKey, username, &authReq.App)
+		return nil, errors.New("login details invalid")
 	}
 
 	userRec := getUser(authReq.Email)
@@ -30,13 +34,13 @@ func Login(authReq Authentication) *control.Cookies {
 	user := userRec.Data()
 
 	if userRec.rec == nil {
-		return NewAuthResponse(passed, userKey, username, &authReq.App)
+		return nil, errors.New("record is nil")
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authReq.Password))
 
 	if err != nil {
-		return NewAuthResponse(passed, userKey, username, &authReq.App)
+		return nil, err
 	}
 
 	passed = err == nil
@@ -46,8 +50,8 @@ func Login(authReq Authentication) *control.Cookies {
 	user.AddTrace(getLoginTrace(authReq, passed))
 
 	if !passed {
-		return NewAuthResponse(passed, userKey, username, &authReq.App)
+		return nil, errors.New("login failed")
 	}
 
-	return NewAuthResponse(passed, userKey, username, &authReq.App)
+	return control.NewCookies(userKey, username, ip, location), nil
 }

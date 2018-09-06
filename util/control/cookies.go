@@ -21,7 +21,7 @@ type Cookies struct {
 	Location  string
 }
 
-func NewCookies(userkey husk.Key, username, ip, location string) Cookies {
+func NewCookies(userkey husk.Key, username, ip, location string) *Cookies {
 	result := Cookies{
 		UserKey:   userkey,
 		Username:  username,
@@ -30,7 +30,7 @@ func NewCookies(userkey husk.Key, username, ip, location string) Cookies {
 		UserRoles: make(map[string]enums.RoleType),
 	}
 
-	return result
+	return &result
 }
 
 var jar map[string]Cookies

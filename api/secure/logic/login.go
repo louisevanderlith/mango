@@ -2,7 +2,6 @@ package logic
 
 import (
 	"encoding/json"
-	"errors"
 
 	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/mango/core/secure"
@@ -25,16 +24,14 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 		return false, sessionID, err
 	}
 
-	auth := secure.Login(authReq)
-
-	passed = auth.Passed
+	auth, err := secure.Login(authReq)
+	passed = err == nil
 
 	if !passed {
-		errMsg := errors.New("login failed")
-		return passed, sessionID, errMsg
+		return passed, sessionID, err
 	}
 
-	control.CreateAvo(ctx, auth, sessionID)
+	control.CreateAvo(ctx, *auth, sessionID)
 
 	return passed, sessionID, err
 }
