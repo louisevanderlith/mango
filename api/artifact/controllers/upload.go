@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"strconv"
+	"github.com/louisevanderlith/husk"
 
 	"github.com/louisevanderlith/mango/api/artifact/logic"
 	"github.com/louisevanderlith/mango/core/artifact"
@@ -30,15 +30,11 @@ func (req *UploadController) Get() {
 // @Description Gets the requested upload
 // @Param	uploadKey			path	husk.Key 	true		"Key of the file you require"
 // @Success 200 {artifact.Upload} artifact.Upload
-// @router /:uploadID([0-9]+) [get]
+// @router /:uploadKey([0-9]+) [get]
 func (req *UploadController) GetByID() {
-	uploadID, err := husk.() strconv.ParseInt(req.Ctx.Input.Param(":uploadKey"), 10, 64)
+	key := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
 
-	if err != nil {
-		req.Serve(err, nil)
-	}
-
-	result, err := artifact.GetUpload(uploadKey)
+	result, err := artifact.GetUpload(key)
 
 	req.Serve(err, result)
 }
@@ -51,11 +47,9 @@ func (req *UploadController) GetByID() {
 func (req *UploadController) GetFileBytes() {
 	var result []byte
 	var filename string
-	uploadID, err := strconv.ParseInt(req.Ctx.Input.Param(":uploadID"), 10, 64)
+	key := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
 
-	if err == nil {
-		result, filename, err = artifact.GetUploadFile(uploadID)
-	}
+	result, filename, err := artifact.GetUploadFile(key)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

@@ -24,8 +24,20 @@ func getProfile(key husk.Key) (profileRecord, error) {
 	return ctx.Profiles.FindByKey(key)
 }
 
+func getProfileByName(name string) (profileRecord, error) {
+	return ctx.Profiles.FindFirst(func(obj Profile) bool {
+		return obj.Title == name
+	})
+}
+
 func GetProfile(key husk.Key) (*Profile, error) {
 	rec, err := getProfile(key)
+
+	return rec.Data(), err
+}
+
+func GetProfileByName(name string) (*Profile, error) {
+	rec, err := getProfileByName(name)
 
 	return rec.Data(), err
 }
@@ -36,20 +48,66 @@ func GetProfiles(page, size int) (profileSet, error) {
 	})
 }
 
+func (p Profile) Create() (profileRecord, error) {
+	return ctx.Profiles.Create(p)
+}
+
 func (p Profile) Update(key husk.Key) error {
-	prtfolio, err := getProfile(key)
+	profile, err := getProfile(key)
 
 	if err != nil {
 		return err
 	}
 
-	prtfolio.Set(p)
+	profile.Set(p)
 
-	return ctx.Profiles.Update(prtfolio)
+	return ctx.Profiles.Update(profile)
 }
 
-func (p *Profile) AddSocialLink(key husk.Key, socialLink SocialLink) error {
-	p.SocialLinks = append(p.SocialLinks, socialLink)
+func AddSocialLink(key husk.Key, socialLink SocialLink) error {
+	prRec, err := getProfile(key)
 
-	return p.Update(key)
+	if err != nil {
+		return err
+	}
+	profile := prRec.Data()
+	profile.SocialLinks = append(profile.SocialLinks, socialLink)
+
+	return ctx.Profiles.Update(prRec)
+}
+
+func AddAboutSection(key husk.Key, about About) error {
+	prRec, err := getProfile(key)
+
+	if err != nil {
+		return err
+	}
+	profile := prRec.Data()
+	profile.AboutSections = append(profile.AboutSections, about)
+
+	return ctx.Profiles.Update(prRec)
+}
+
+func AddHeaderSection(key husk.Key, header Header) error {
+	prRec, err := getProfile(key)
+
+	if err != nil {
+		return err
+	}
+	profile := prRec.Data()
+	profile.Headers = append(profile.Headers, header)
+
+	return ctx.Profiles.Update(prRec)
+}
+
+func AddPortfolioSection(key husk.Key, portfolio Portfolio) error {
+	prRec, err := getProfile(key)
+
+	if err != nil {
+		return err
+	}
+	profile := prRec.Data()
+	profile.PortfolioItems = append(profile.PortfolioItems, portfolio)
+
+	return ctx.Profiles.Update(prRec)
 }

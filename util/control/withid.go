@@ -1,6 +1,10 @@
 package control
 
-type WithID struct {
-	ID   int64
+import (
+	"github.com/louisevanderlith/husk"
+)
+
+type WithKey struct {
+	Key  husk.Key
 	Body interface{}
 }

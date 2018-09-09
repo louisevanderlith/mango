@@ -20,27 +20,27 @@ func init() {
 	setupMapping()
 
 	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/portfolio",
+		beego.NSNamespace("/profile",
 			beego.NSInclude(
-				&controllers.PortfolioController{},
+				&controllers.ProfileController{},
 			),
 		),
-		beego.NSNamespace("/portfolio/about",
+		beego.NSNamespace("/profile/about",
 			beego.NSInclude(
 				&controllers.AboutController{},
 			),
 		),
-		beego.NSNamespace("/portfolio/header",
+		beego.NSNamespace("/profile/header",
 			beego.NSInclude(
 				&controllers.HeaderController{},
 			),
 		),
-		beego.NSNamespace("/portfolio/site",
+		beego.NSNamespace("/profile/portfolio",
 			beego.NSInclude(
-				&controllers.SiteController{},
+				&controllers.PortfolioController{},
 			),
 		),
-		beego.NSNamespace("/portfolio/social",
+		beego.NSNamespace("/profile/social",
 			beego.NSInclude(
 				&controllers.SocialController{},
 			),
@@ -54,15 +54,15 @@ func setupMapping() {
 	appName := beego.BConfig.AppName
 	control.CreateControllerMap(appName)
 	emptyMap := make(control.ActionMap)
-	emptyMap["POST"] = enums.Admin
-	emptyMap["PUT"] = enums.Admin
+	emptyMap["POST"] = enums.Owner
+	emptyMap["PUT"] = enums.Owner
 
-	control.AddControllerMap("/portfolio", emptyMap)
+	control.AddControllerMap("/profile", emptyMap)
 
-	control.AddControllerMap("portfolio/about", emptyMap)
-	control.AddControllerMap("portfolio/header", emptyMap)
-	control.AddControllerMap("portfolio/site", emptyMap)
-	control.AddControllerMap("portfolio/social", emptyMap)
+	control.AddControllerMap("profile/about", emptyMap)
+	control.AddControllerMap("profile/header", emptyMap)
+	control.AddControllerMap("profile/portfolio", emptyMap)
+	control.AddControllerMap("profile/social", emptyMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
 

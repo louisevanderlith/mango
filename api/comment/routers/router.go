@@ -9,17 +9,20 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/comment/controllers"
+	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/plugins/cors"
 )
 
 func init() {
 	setupMapping()
 
 	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/",
+		beego.NSNamespace("/message",
 			beego.NSInclude(
-				&controllers.CommentController{},
+				&controllers.MessageController{},
 			),
 		),
 	)
@@ -27,5 +30,20 @@ func init() {
 }
 
 func setupMapping() {
+	appName := beego.BConfig.AppName
+	control.CreateControllerMap(appName)
+	emptyMap := make(control.ActionMap)
+	emptyMap["POST"] = enums.User
+	emptyMap["PUT"] = enums.User
 
+	control.AddControllerMap("/message", emptyMap)
+
+	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+
+	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
+		AllowAllOrigins: true,
+		AllowMethods:    []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
+		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
+	}))
 }

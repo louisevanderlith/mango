@@ -26,9 +26,9 @@ func (req *RegisterController) Get() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *RegisterController) Post() {
-	var authReq secure.AuthRequest
-	json.Unmarshal(req.Ctx.Input.RequestBody, &authReq)
+	var regis secure.Registration
+	json.Unmarshal(req.Ctx.Input.RequestBody, &regis)
 
-	result, err := authReq.CreateUser()
+	result, err := secure.Register(regis)
 	req.Serve(err, result)
 }

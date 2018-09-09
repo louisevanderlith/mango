@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
-
 	"github.com/louisevanderlith/mango/core/folio"
 	"github.com/louisevanderlith/mango/util/control"
 )
@@ -18,26 +16,14 @@ type AboutController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *AboutController) Post() {
-	var about folio.About
-	json.Unmarshal(req.Ctx.Input.RequestBody, &about)
+	with, err := req.GetKeyedRequest()
 
-	_, err := folio.GetPortfolio()
-	//folio.Ctx.Abouts.Create(&about)
+	if err != nil {
+		req.Serve(err, nil)
+		return
+	}
 
-	req.Serve(err, "About Section has been created.")
-}
+	err = folio.AddAboutSection(with.Key, with.Body.(folio.About))
 
-// @Title UpdateAbout
-// @Description Updates a About section on a current site
-// @Param	body		body 	folio.About	true		"body for service content"
-// @Success 200 {map[string]string} map[string]string
-// @Failure 403 body is empty
-// @router / [put]
-func (req *AboutController) Put() {
-	var about folio.About
-	json.Unmarshal(req.Ctx.Input.RequestBody, &about)
-
-	err := folio.Ctx.Abouts.Update(&about)
-
-	req.Serve(err, "About Section has been updated.")
+	req.Serve(err, nil)
 }

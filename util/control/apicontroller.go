@@ -59,8 +59,8 @@ func (ctrl *APIController) GetPageData() (page, pageSize int) {
 	return page, pageSize
 }
 
-func (ctrl *APIController) GetKeyedRequest() (WithID, error) {
-	result := WithID{}
+func (ctrl *APIController) GetKeyedRequest() (WithKey, error) {
+	result := WithKey{}
 	err := json.Unmarshal(ctrl.Ctx.Input.RequestBody, &result)
 
 	return result, err
