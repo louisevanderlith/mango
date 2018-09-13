@@ -9,6 +9,7 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/router/controllers"
+	"github.com/louisevanderlith/mango/util/control"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
@@ -28,6 +29,12 @@ func init() {
 }
 
 func setupMapping() {
+	appName := beego.BConfig.AppName
+	control.CreateControllerMap(appName)
+	emptyMap := make(control.ActionMap)
+
+	control.AddControllerMap("/discovery", emptyMap)
+
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
 		AllowMethods:    []string{"GET", "POST", "OPTIONS"},

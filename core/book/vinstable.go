@@ -15,9 +15,9 @@ func NewVINSTable() vinsTable {
 }
 
 func (t vinsTable) Create(obj VIN) (vinRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return vinRecord{result}, err
+	return vinRecord{set.Record}, set.Error
 }
 
 type vinRecord struct {

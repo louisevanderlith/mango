@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 	"strconv"
@@ -67,25 +66,22 @@ func GetProfileSite(name string) (result BasicSite, finalErr error) {
 		name = "avosa"
 	}
 
-	contents, statusCode := util.GETMessage("Folio.API", "site", name)
-	data := util.MarshalToMap(contents)
+	contents, err := util.GETMessage("Folio.API", "site", name)
 
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Println("getProfileSite: ", err)
-		}
-
-		finalErr = errors.New(dataErr)
-	} else {
-		finalErr = json.Unmarshal(*data["Data"], &result)
-
-		result.setImageURLs()
+	if err != nil {
+		return result, err
 	}
 
-	return result, finalErr
+	data := util.MarshalToResult(contents)
+
+	if len(data.Error) != 0 {
+		return result, errors.New(data.Error)
+	}
+
+	result = data.Data.(BasicSite)
+	result.setImageURLs()
+
+	return result, nil
 }
 
 func (obj *BasicSite) setImageURLs() {

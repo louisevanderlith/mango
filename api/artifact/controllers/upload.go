@@ -15,7 +15,7 @@ type UploadController struct {
 // @Title GetUploads
 // @Description Gets the uploads
 // @Success 200 {[]artifact.Upload} []artifact.Upload
-// @router /:pageData(^[A-Z](?:_?[0-9]+)*$) [get]
+// @router /:pageData[A-Z](?:_?[0-9]+)* [get]
 func (req *UploadController) Get() {
 	page, size := req.GetPageData()
 

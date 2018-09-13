@@ -58,9 +58,9 @@ func (t usersTable) Exists(filter userFilter) (bool, error) {
 }
 
 func (t usersTable) Create(obj *User) (userRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return userRecord{result}, err
+	return userRecord{set.Record}, set.Error
 }
 
 func (t usersTable) Update(record userRecord) error {

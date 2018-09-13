@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 	"strconv"
@@ -63,53 +62,40 @@ type headerItem struct {
 var uploadURL string
 
 func GetSites() (result []BasicSite, finalErr error) {
-	contents, statusCode := util.GETMessage("Folio.API", "site")
-	data := util.MarshalToMap(contents)
+	contents, err := util.GETMessage("Folio.API", "site")
 
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Print("getSites: ", err)
-		}
-
-		finalErr = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
-
-		if err != nil {
-			log.Print("getSites: ", err)
-		}
+	if err != nil {
+		return result, err
 	}
 
-	return result, finalErr
+	data := util.MarshalToResult(contents)
+
+	if len(data.Error) != 0 {
+		return result, errors.New(data.Error)
+	}
+
+	result = data.Data.([]BasicSite)
+
+	return result, nil
 }
 
 func GetSite(siteID int64) (result BasicSite, finalErr error) {
-	contents, statusCode := util.GETMessage("Folio.API", "site", strconv.FormatInt(siteID, 10))
-	data := util.MarshalToMap(contents)
+	contents, err := util.GETMessage("Folio.API", "site", strconv.FormatInt(siteID, 10))
 
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Println("getSite: ", err)
-		}
-
-		finalErr = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
-
-		if err != nil {
-			log.Println("getSite: ", err)
-		}
-
-		result.setImageURLs()
+	if err != nil {
+		return result, err
 	}
 
-	return result, finalErr
+	data := util.MarshalToResult(contents)
+
+	if len(data.Error) != 0 {
+		return result, errors.New(data.Error)
+	}
+
+	result = data.Data.(BasicSite)
+	result.setImageURLs()
+
+	return result, nil
 }
 
 func (obj *BasicSite) setImageURLs() {

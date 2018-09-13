@@ -23,7 +23,7 @@ func main() {
 		Environment: enums.GetEnvironment(beego.BConfig.RunMode),
 		Name:        beego.BConfig.AppName,
 		Type:        enums.API}
-
+	log.Printf("%+v\n", srv)
 	port := beego.AppConfig.String("httpport")
 	_, err := srv.Register(port)
 

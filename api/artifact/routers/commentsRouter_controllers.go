@@ -9,14 +9,6 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/artifact/controllers:UploadController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/artifact/controllers:UploadController"],
 		beego.ControllerComments{
-			Method: "Get",
-			Router: `/`,
-			AllowHTTPMethods: []string{"get"},
-			MethodParams: param.Make(),
-			Params: nil})
-
-	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/artifact/controllers:UploadController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/artifact/controllers:UploadController"],
-		beego.ControllerComments{
 			Method: "Post",
 			Router: `/`,
 			AllowHTTPMethods: []string{"post"},
@@ -25,8 +17,16 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/artifact/controllers:UploadController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/artifact/controllers:UploadController"],
 		beego.ControllerComments{
+			Method: "Get",
+			Router: `/:pageData[A-Z](?:_?[0-9]+)*`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
+	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/artifact/controllers:UploadController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/artifact/controllers:UploadController"],
+		beego.ControllerComments{
 			Method: "GetByID",
-			Router: `/:uploadID`,
+			Router: `/:uploadKey([0-9]+)`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})

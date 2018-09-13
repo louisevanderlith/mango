@@ -1,7 +1,6 @@
 package util
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -49,18 +48,21 @@ func GetInstanceKey() string {
 func (service Service) Register(port string) (string, error) {
 	service.URL = getPublicIP(port, service.Environment)
 
-	contents, _ := POSTMessage("Router.API", "discovery", service)
+	contents, err := POSTMessage("Router.API", "discovery", service)
 
-	var data struct{ AppID string }
-	jerr := json.Unmarshal(contents, &data)
-
-	if jerr != nil {
-		log.Print("json.Unmarshal: ", jerr)
+	if err != nil {
+		return "", err
 	}
 
-	instanceKey = data.AppID
+	data := MarshalToResult(contents)
 
-	return instanceKey, jerr
+	if len(data.Error) != 0 {
+		return "", errors.New(data.Error)
+	}
+
+	instanceKey = data.Data.(string)
+
+	return instanceKey, nil
 }
 
 func GetServiceURL(serviceName string, cleanURL bool) (string, error) {
@@ -72,21 +74,20 @@ func GetServiceURL(serviceName string, cleanURL bool) (string, error) {
 	if ok {
 		result = cacheService
 	} else {
-		contents, statusCode := GETMessage("Router.API", "discovery", instanceKey, serviceName, strconv.FormatBool(cleanURL))
-
-		var rawURL string
-		err := json.Unmarshal(contents, &rawURL)
+		contents, err := GETMessage("Router.API", "discovery", instanceKey, serviceName, strconv.FormatBool(cleanURL))
 
 		if err != nil {
-			log.Print("json.Unmarshal: ", err)
+			return "", err
 		}
 
-		if statusCode != 200 {
-			finalError = errors.New(rawURL)
-		} else {
-			result = rawURL
-			serviceKeys[k{serviceName, cleanURL}] = rawURL
+		data := MarshalToResult(contents)
+
+		if len(data.Error) != 0 {
+			return "", errors.New(data.Error)
 		}
+
+		result = data.Data.(string)
+		serviceKeys[k{serviceName, cleanURL}] = result
 	}
 
 	return result, finalError

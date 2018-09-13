@@ -51,7 +51,7 @@ func (req *ProfileController) Put() {
 // @Title GetSites
 // @Description Gets all sites
 // @Success 200 {[]folio.Profile} []folio.Portfolio]
-// @router /:pageData(^[A-Z](?:_?[0-9]+)*$) [get]
+// @router /:pageData[A-Z](?:_?[0-9]+)* [get]
 func (req *ProfileController) Get() {
 	page, size := req.GetPageData()
 

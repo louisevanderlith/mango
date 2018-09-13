@@ -58,9 +58,9 @@ func (t advertsTable) Exists(filter advertFilter) (bool, error) {
 }
 
 func (t advertsTable) Create(obj Advert) (advertRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return advertRecord{result}, err
+	return advertRecord{set.Record}, set.Error
 }
 
 func (t advertsTable) Update(record advertRecord) error {

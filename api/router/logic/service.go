@@ -25,9 +25,13 @@ func init() {
 }
 
 // AddService registers a new service and returns a key for that entry
-func AddService(service util.Service) string {
-	var result string
-	items := serviceMap[service.Name]
+func AddService(service util.Service) (result string, err error) {
+	items, ok := serviceMap[service.Name]
+
+	if !ok {
+		return "", errors.New(fmt.Sprintf("service.Name %s not found", service.Name))
+	}
+
 	duplicate := false
 
 	for _, value := range items {
@@ -39,7 +43,11 @@ func AddService(service util.Service) string {
 	}
 
 	if !duplicate {
-		u4, _ := uuid.NewV4()
+		u4, err := uuid.NewV4()
+
+		if err != nil {
+			return "", err
+		}
 
 		service.ID = u4.String()
 		service.Version = getVersion()
@@ -49,7 +57,7 @@ func AddService(service util.Service) string {
 		result = service.ID
 	}
 
-	return result
+	return result, err
 }
 
 // GetServicePath will return the correct URL for a requested service.

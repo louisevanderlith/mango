@@ -15,9 +15,9 @@ func NewVehiclesTable() vehiclesTable {
 }
 
 func (t vehiclesTable) Create(obj Vehicle) (vehicleRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return vehicleRecord{result}, err
+	return vehicleRecord{set.Record}, set.Error
 }
 
 type vehicleRecord struct {

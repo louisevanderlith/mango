@@ -35,11 +35,6 @@
         "Type": "Subdomain"
     },
     {
-        "Name": "Things.API",
-        "Address": "things",
-        "Type": "Subdomain"
-    },
-    {
         "Name": "Admin.APP",
         "Address": "admin",
         "Type": "Subdomain"

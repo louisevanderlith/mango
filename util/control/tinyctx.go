@@ -1,9 +1,7 @@
 package control
 
 import (
-	"encoding/json"
 	"errors"
-	"log"
 	"strings"
 
 	"github.com/astaxie/beego/context"
@@ -92,27 +90,21 @@ func (ctx *tinyCtx) hasRole(actionRole enums.RoleType) bool {
 //TODO: use channels
 //getAvoCookie also checks cookie validity, so repeated calls are required
 func (ctx *tinyCtx) getAvoCookie() (result Cookies, finalError error) {
-	contents, statusCode := util.GETMessage("Secure.API", "login", "avo", ctx.SessionID)
-	data := util.MarshalToMap(contents)
+	contents, err := util.GETMessage("Secure.API", "login", "avo", ctx.SessionID)
 
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Println("getAvoCookie:", err)
-		}
-
-		finalError = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
-
-		if err != nil {
-			log.Println("getAvoCookie:", err)
-		}
+	if err != nil {
+		return result, err
 	}
 
-	return result, finalError
+	data := util.MarshalToResult(contents)
+
+	if len(data.Error) != 0 {
+		return result, errors.New(data.Error)
+	}
+
+	result = data.Data.(Cookies)
+
+	return result, nil
 }
 
 func removeToken(url string) (cleanURL, token string) {

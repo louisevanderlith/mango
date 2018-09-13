@@ -65,9 +65,9 @@ func (t messagesTable) Exists(filter messageFilter) (bool, error) {
 }
 
 func (t messagesTable) Create(obj Message) (messageRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return messageRecord{result}, err
+	return messageRecord{set.Record}, set.Error
 }
 
 func (t messagesTable) Update(record messageRecord) error {

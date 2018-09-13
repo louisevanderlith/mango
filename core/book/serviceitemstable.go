@@ -50,9 +50,9 @@ func (t serviceItemsTable) Exists(filter serviceItemFilter) bool {
 }
 
 func (t serviceItemsTable) Create(obj ServiceItem) (serviceItemRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return serviceItemRecord{result}, err
+	return serviceItemRecord{set.Record}, set.Error
 }
 
 func (t serviceItemsTable) Update(record serviceItemRecord) error {
