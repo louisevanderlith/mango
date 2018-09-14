@@ -56,9 +56,9 @@ func (t uploadsTable) Exists(filter uploadFilter) (bool, error) {
 }
 
 func (t uploadsTable) Create(obj Upload) (uploadRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return uploadRecord{result}, err
+	return uploadRecord{set.Record}, set.Error
 }
 
 func (t uploadsTable) Update(record uploadRecord) error {
@@ -69,6 +69,10 @@ func (t uploadsTable) Update(record uploadRecord) error {
 
 func (t uploadsTable) Delete(key husk.Key) error {
 	return t.tbl.Delete(key)
+}
+
+func (t uploadsTable) Save() {
+	t.tbl.Save()
 }
 
 type uploadRecord struct {

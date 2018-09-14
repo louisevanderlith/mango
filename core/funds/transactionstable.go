@@ -15,9 +15,9 @@ func NewTransactionsTable() transactionsTable {
 }
 
 func (t transactionsTable) Create(obj Requisition) (transactionRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return transactionRecord{result}, err
+	return transactionRecord{set.Record}, set.Error
 }
 
 type transactionRecord struct {

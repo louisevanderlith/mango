@@ -15,9 +15,9 @@ func NewServicesTable() servicesTable {
 }
 
 func (t servicesTable) Create(obj Service) (serviceRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return serviceRecord{result}, err
+	return serviceRecord{set.Record}, set.Error
 }
 
 type serviceRecord struct {

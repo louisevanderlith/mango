@@ -58,9 +58,9 @@ func (t heroesTable) Exists(filter heroFilter) (bool, error) {
 }
 
 func (t heroesTable) Create(obj Hero) (heroRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return heroRecord{result}, err
+	return heroRecord{set.Record}, set.Error
 }
 
 func (t heroesTable) Update(record heroRecord) error {

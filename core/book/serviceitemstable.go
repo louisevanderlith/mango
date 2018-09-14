@@ -33,26 +33,39 @@ func (t serviceItemsTable) Find(page, pageSize int, filter serviceItemFilter) []
 	return t.tbl.Find(page, pageSize, hskFilter)
 }
 
-func (t serviceItemsTable) FindFirst(filter serviceItemFilter) serviceItemRecord {
+func (t serviceItemsTable) FindFirst(filter serviceItemFilter) (result serviceItemRecord) {
 	hskFilter, err := husk.MakeFilter(filter)
 
 	if err != nil {
 		log.Print(err)
+		return result
 	}
 
-	return serviceItemRecord{t.tbl.FindFirst(hskFilter)}
+	first, err := t.tbl.FindFirst(hskFilter)
+
+	if err != nil {
+		log.Print(err)
+		return result
+	}
+
+	return serviceItemRecord{first}
 }
 
-func (t serviceItemsTable) Exists(filter serviceItemFilter) bool {
-	result := t.tbl.Exists(filter)
+func (t serviceItemsTable) Exists(filter serviceItemFilter) (bool, error) {
+	huskFilter, err := husk.MakeFilter(filter)
+	result := true
 
-	return result
+	if err != nil {
+		return true, err
+	}
+
+	return t.tbl.Exists(huskFilter)
 }
 
 func (t serviceItemsTable) Create(obj ServiceItem) (serviceItemRecord, error) {
-	result, err := t.tbl.Create(obj)
+	set := t.tbl.Create(obj)
 
-	return serviceItemRecord{result}, err
+	return serviceItemRecord{set.Record}, set.Error
 }
 
 func (t serviceItemsTable) Update(record serviceItemRecord) error {
