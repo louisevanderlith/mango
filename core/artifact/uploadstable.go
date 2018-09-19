@@ -71,6 +71,10 @@ func (t uploadsTable) Delete(key husk.Key) error {
 	return t.tbl.Delete(key)
 }
 
+func (t uploadsTable) Save() {
+	t.tbl.Save()
+}
+
 type uploadRecord struct {
 	rec husk.Recorder
 }

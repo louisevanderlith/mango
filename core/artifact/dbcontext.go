@@ -11,3 +11,7 @@ func init() {
 		Uploads: NewUploadsTable(),
 	}
 }
+
+func Shutdown() {
+	ctx.Uploads.Save()
+}
