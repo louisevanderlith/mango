@@ -11,33 +11,37 @@ import (
 )
 
 // FilterUI is used to secure web pages.
-func FilterUI(ctx *context.Context) {
-	path := ctx.Input.URL()
-	if strings.HasPrefix(path, "/static") || strings.Contains(path, "favicon") {
-		return
-	}
+func FilterUI(service *util.Service) func(*context.Context) {
+	return func(ctx *context.Context) {
+		path := ctx.Input.URL()
 
-	tinyCtx := newTinyCtx(ctx)
+		if strings.HasPrefix(path, "/static") || strings.Contains(path, "favicon") {
+			return
+		}
 
-	if !tinyCtx.allowed() {
-		securityURL, err := util.GetServiceURL("Secure.API", true)
+		tiny := newTinyCtx(service, ctx, controlMap)
 
-		if err == nil {
-			req := ctx.Request
-			moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
-			loginURL := buildLoginURL(securityURL, moveURL)
+		if !tiny.allowed() {
+			securityURL, err := util.GetServiceURL(service.GetInstanceKey(), "Secure.API", true)
 
-			ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
+			if err == nil {
+				req := ctx.Request
+				moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
+				loginURL := buildLoginURL(securityURL, moveURL)
+
+				ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
+			}
 		}
 	}
 }
 
 // FilterAPI is used to secure API services.
-func FilterAPI(ctx *context.Context) {
-	tinyCtx := newTinyCtx(ctx)
-
-	if !tinyCtx.allowed() {
-		ctx.Abort(http.StatusUnauthorized, "User not authorized to access this content.")
+func FilterAPI(service *util.Service) func(*context.Context) {
+	return func(ctx *context.Context) {
+		tiny := newTinyCtx(service, ctx, controlMap)
+		if !tiny.allowed() {
+			ctx.Abort(http.StatusUnauthorized, "User not authorized to access this content.")
+		}
 	}
 }
 

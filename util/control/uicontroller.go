@@ -2,7 +2,6 @@ package control
 
 import (
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/util"
 )
 
 type UIController struct {
@@ -35,7 +34,7 @@ func (ctrl *UIController) Setup(name string) {
 	ctrl.Data["Title"] = name
 	ctrl.Data["HasScript"] = true
 	ctrl.Data["ScriptName"] = name + ".entry.js"
-	ctrl.Data["InstanceKey"] = util.GetInstanceKey()
+	ctrl.Data["InstanceKey"] = controlMap.GetInstanceKey()
 	ctrl.Data["RunModeDEV"] = beego.BConfig.RunMode == "dev"
 }
 

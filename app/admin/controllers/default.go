@@ -12,5 +12,4 @@ type DefaultController struct {
 func (c *DefaultController) Get() {
 	c.Setup("default")
 	c.CreateSideMenu(logic.GetMenu("/"))
-
 }

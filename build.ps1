@@ -32,8 +32,10 @@ function doBuild() {
                 copyFolder $outPath "static"
                 copyFolder $outPath "views"
 
-                copyFile $outPath "host.key"
-                copyFile $outPath "host.cert"
+                #key
+                copyFile $outPath "privkey.pem" 
+                #cert
+                copyFile $outPath "fullchain.pem"
             }
             else {
                 Write-Host 'No main.go found in' $appName -ForegroundColor "red"

@@ -30,10 +30,11 @@ func init() {
 
 func setupMapping() {
 	appName := beego.BConfig.AppName
-	control.CreateControllerMap(appName)
+	ctrlmap := control.CreateControlMap(appName)
+
 	emptyMap := make(control.ActionMap)
 
-	control.AddControllerMap("/discovery", emptyMap)
+	ctrlmap.Add("/discovery", emptyMap)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,

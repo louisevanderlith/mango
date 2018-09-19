@@ -52,17 +52,17 @@ func init() {
 
 func setupMapping() {
 	appName := beego.BConfig.AppName
-	control.CreateControllerMap(appName)
+	ctrlmap := control.CreateControlMap(appName)
+
 	emptyMap := make(control.ActionMap)
 	emptyMap["POST"] = enums.Owner
 	emptyMap["PUT"] = enums.Owner
 
-	control.AddControllerMap("/profile", emptyMap)
-
-	control.AddControllerMap("profile/about", emptyMap)
-	control.AddControllerMap("profile/header", emptyMap)
-	control.AddControllerMap("profile/portfolio", emptyMap)
-	control.AddControllerMap("profile/social", emptyMap)
+	ctrlmap.Add("/profile", emptyMap)
+	ctrlmap.Add("profile/about", emptyMap)
+	ctrlmap.Add("profile/header", emptyMap)
+	ctrlmap.Add("profile/portfolio", emptyMap)
+	ctrlmap.Add("profile/social", emptyMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
 

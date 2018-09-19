@@ -29,11 +29,12 @@ func init() {
 
 func setupMapping() {
 	appName := beego.BConfig.AppName
-	control.CreateControllerMap(appName)
+	ctrlmap := control.CreateControlMap(appName)
+
 	emptyMap := make(control.ActionMap)
 	emptyMap["GET"] = enums.Admin
 
-	control.AddControllerMap("/message", emptyMap)
+	ctrlmap.Add("/message", emptyMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
 

@@ -27,18 +27,15 @@ func init() {
 // AddService registers a new service and returns a key for that entry
 func AddService(service util.Service) (result string, err error) {
 	items, ok := serviceMap[service.Name]
-
-	if !ok {
-		return "", errors.New(fmt.Sprintf("service.Name %s not found", service.Name))
-	}
-
 	duplicate := false
 
-	for _, value := range items {
-		if value.URL == service.URL && value.Environment == service.Environment {
-			duplicate = true
-			result = value.ID
-			break
+	if !ok {
+		for _, value := range items {
+			if value.URL == service.URL && value.Environment == service.Environment {
+				duplicate = true
+				result = value.ID
+				break
+			}
 		}
 	}
 

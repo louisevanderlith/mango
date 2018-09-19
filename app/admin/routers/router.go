@@ -22,18 +22,18 @@ func init() {
 
 func setupMapping() {
 	appName := beego.BConfig.AppName
-	control.CreateControllerMap(appName)
+	ctrlmap := control.CreateControlMap(appName)
 	emptyMap := make(control.ActionMap)
 	emptyMap["POST"] = enums.Admin
 	emptyMap["GET"] = enums.Admin
 
-	control.AddControllerMap("/", emptyMap)
-	control.AddControllerMap("/category", emptyMap)
-	control.AddControllerMap("/comms", emptyMap)
-	control.AddControllerMap("/manufacturer", emptyMap)
-	control.AddControllerMap("/model", emptyMap)
-	control.AddControllerMap("/subcategory", emptyMap)
-	control.AddControllerMap("/site", emptyMap)
+	ctrlmap.Add("/", emptyMap)
+	ctrlmap.Add("/category", emptyMap)
+	ctrlmap.Add("/comms", emptyMap)
+	ctrlmap.Add("/manufacturer", emptyMap)
+	ctrlmap.Add("/model", emptyMap)
+	ctrlmap.Add("/subcategory", emptyMap)
+	ctrlmap.Add("/site", emptyMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterUI)
 }

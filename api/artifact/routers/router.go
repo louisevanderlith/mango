@@ -8,6 +8,7 @@
 package routers
 
 import (
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/api/artifact/controllers"
 
 	"github.com/astaxie/beego"
@@ -16,8 +17,8 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-func init() {
-	setupMapping()
+func Setup(instanceKey husk.Key) {
+	EnableFilters(instanceKey)
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/upload",
@@ -30,14 +31,15 @@ func init() {
 	beego.AddNamespace(ns)
 }
 
-func setupMapping() {
+func EnableFilters(instanceKey husk.Key) {
 	appName := beego.BConfig.AppName
 
-	control.CreateControllerMap(appName)
+	ctrlmap := control.CreateControlMap(appName)
+
 	emptyMap := make(control.ActionMap)
 	emptyMap["POST"] = enums.Owner
 
-	control.AddControllerMap("/upload", emptyMap)
+	ctrlmap.Add("/upload", emptyMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
 

@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+
+	"github.com/astaxie/beego"
 )
 
 type APIController struct {
-	IDController
+	beego.Controller
 }
 
 func (ctrl *APIController) Prepare() {
-	defer ctrl.IDController.Prepare()
 	output := ctrl.Ctx.Output
 
 	output.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")

@@ -1,7 +1,6 @@
 package control
 
 import (
-	"errors"
 	"strings"
 
 	"github.com/astaxie/beego/context"
@@ -13,29 +12,32 @@ import (
 type tinyCtx struct {
 	ApplicationName string
 	RequiredRole    enums.RoleType
-	Controller      string
+	URL             string
 	Method          string
 	SessionID       string
+	Service         *util.Service
 }
 
 const avosession = "avosession"
 
-func newTinyCtx(ctx *context.Context) *tinyCtx {
+func newTinyCtx(service *util.Service, ctx *context.Context, controlMap *ControllerMap) *tinyCtx {
 	result := tinyCtx{}
 
-	ctrl, sess := removeToken(ctx.Request.RequestURI)
+	url, token := removeToken(ctx.Request.RequestURI)
 
-	if sess == "" {
-		sess = ctx.GetCookie(avosession)
+	if token == "" {
+		token = ctx.GetCookie(avosession)
 	}
 
 	actMethod := strings.ToUpper(ctx.Request.Method)
+	required := controlMap.GetRequiredRole(url, actMethod)
 
-	result.RequiredRole = GetRequiredRole(ctrl, actMethod)
-	result.ApplicationName = controllerMap.applicationName
-	result.Controller = ctrl
+	result.RequiredRole = required
+	result.ApplicationName = service.Name
+	result.URL = url
 	result.Method = actMethod
-	result.SessionID = sess
+	result.SessionID = token
+	result.Service = service
 
 	return &result
 }
@@ -64,6 +66,26 @@ func (ctx *tinyCtx) getUsername() string {
 	return cookie.Username
 }
 
+func (ctx *tinyCtx) getIP() string {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return "-1.-1.-1.-1"
+	}
+
+	return cookie.IP
+}
+
+func (ctx *tinyCtx) getLocation() string {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return "Uknown"
+	}
+
+	return cookie.Location
+}
+
 func (ctx *tinyCtx) getRole() enums.RoleType {
 	result := enums.Unknown
 
@@ -81,44 +103,42 @@ func (ctx *tinyCtx) getRole() enums.RoleType {
 	return result
 }
 
-func (ctx *tinyCtx) hasRole(actionRole enums.RoleType) bool {
+func (ctx *tinyCtx) hasRole(required enums.RoleType) bool {
 	role := ctx.getRole()
 
-	return role < actionRole
+	return role <= required
 }
 
 //TODO: use channels
 //getAvoCookie also checks cookie validity, so repeated calls are required
-func (ctx *tinyCtx) getAvoCookie() (result Cookies, finalError error) {
+func (ctx *tinyCtx) getAvoCookie() (*Cookies, error) {
 	contents, err := util.GETMessage("Secure.API", "login", "avo", ctx.SessionID)
 
 	if err != nil {
-		return result, err
+		return nil, err
 	}
 
 	data := util.MarshalToResult(contents)
 
-	if len(data.Error) != 0 {
-		return result, errors.New(data.Error)
+	if data.Failed {
+		return nil, data
 	}
 
-	result = data.Data.(Cookies)
+	result := data.Data.(Cookies)
 
-	return result, nil
+	return &result, nil
 }
 
 func removeToken(url string) (cleanURL, token string) {
 	idx := strings.LastIndex(url, "?token")
 	tokenIdx := strings.LastIndex(url, "=") + 1
 
-	if idx != -1 {
-		token = url[tokenIdx:]
-		cleanURL = url[:idx]
+	if idx == -1 {
+		return "/", ""
 	}
 
-	if cleanURL == "" {
-		cleanURL = "/"
-	}
+	cleanURL = url[:idx]
+	token = url[tokenIdx:]
 
 	return cleanURL, token
 }

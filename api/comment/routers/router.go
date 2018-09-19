@@ -9,6 +9,7 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/comment/controllers"
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
 	"github.com/louisevanderlith/mango/util/enums"
 
@@ -16,8 +17,8 @@ import (
 	"github.com/astaxie/beego/plugins/cors"
 )
 
-func init() {
-	setupMapping()
+func Setup(service *util.Service) {
+	EnableFilters(service)
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/message",
@@ -26,19 +27,21 @@ func init() {
 			),
 		),
 	)
+
 	beego.AddNamespace(ns)
 }
 
-func setupMapping() {
+func EnableFilters(service *util.Service) {
 	appName := beego.BConfig.AppName
-	control.CreateControllerMap(appName)
+	ctrlmap := control.CreateControlMap(service, appName)
+
 	emptyMap := make(control.ActionMap)
 	emptyMap["POST"] = enums.User
 	emptyMap["PUT"] = enums.User
 
-	control.AddControllerMap("/message", emptyMap)
+	ctrlmap.Add("/message", emptyMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI())
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,

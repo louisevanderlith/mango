@@ -1,8 +1,11 @@
 package main
 
 import (
+	"crypto/tls"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/astaxie/beego"
 
@@ -35,6 +38,23 @@ func main() {
 func setupHost(httpPort, httpsPort string) {
 	registerSubdomains()
 
+	//serveTLS(httpsPort)
+	go serveHTTP2(httpsPort)
+
+	err := http.ListenAndServe(":"+httpPort, http.HandlerFunc(redirectTLS))
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func redirectTLS(w http.ResponseWriter, r *http.Request) {
+	moveURL := fmt.Sprintf("https://%s%s", r.Host, r.RequestURI)
+	log.Printf("redirect: %s\n", moveURL)
+	http.Redirect(w, r, moveURL, http.StatusPermanentRedirect)
+}
+
+func serveTLS(httpsPort string) {
 	var srv http.Server
 	srv.Addr = ":" + httpsPort
 	srv.Handler = subdomains
@@ -47,16 +67,70 @@ func setupHost(httpPort, httpsPort string) {
 
 	log.Println("Listening...")
 
-	go srv.ListenAndServeTLS("host.cert", "host.key")
+	certPath := beego.AppConfig.String("certpath")
+	hostCert := certPath + beego.AppConfig.String("hostCert")
+	hostKey := certPath + beego.AppConfig.String("hostKey")
 
-	err := http.ListenAndServe(":"+httpPort, http.HandlerFunc(redirectTLS))
+	err := srv.ListenAndServeTLS(hostCert, hostKey)
 
 	if err != nil {
-		log.Print("ListenAndServe: ", err)
+		panic(err)
 	}
 }
 
-func redirectTLS(w http.ResponseWriter, r *http.Request) {
-	moveURL := fmt.Sprintf("https://%s%s", r.Host, r.RequestURI)
-	http.Redirect(w, r, moveURL, http.StatusPermanentRedirect)
+func serveHTTP2(httpsPort string) {
+	certPath := beego.AppConfig.String("certpath")
+	certPem := readCertBlock(certPath)
+	keyPem := readKeyBlock(certPath)
+	cert, err := tls.X509KeyPair(certPem, keyPem)
+
+	if err != nil {
+		panic(err)
+	}
+
+	cfg := &tls.Config{Certificates: []tls.Certificate{cert}}
+
+	srv := &http.Server{
+		TLSConfig:    cfg,
+		ReadTimeout:  time.Minute,
+		WriteTimeout: time.Minute,
+		Addr:         ":" + httpsPort,
+		Handler:      domains,
+	}
+
+	err = http2.ConfigureServer(srv, nil)
+
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println("Listening...")
+
+	err = srv.ListenAndServeTLS("", "")
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+func readBlocks(filePath string) []byte {
+	file, err := ioutil.ReadFile(filePath)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return file
+}
+
+func readCertBlock(path string) []byte {
+	hostCert := path + beego.AppConfig.String("hostCert")
+
+	return readBlocks(hostCert)
+}
+
+func readKeyBlock(path string) []byte {
+	hostKey := path + beego.AppConfig.String("hostKey")
+
+	return readBlocks(hostKey)
 }
