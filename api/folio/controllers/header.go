@@ -9,6 +9,13 @@ type HeaderController struct {
 	control.APIController
 }
 
+func NewHeaderCtrl(ctrlMap *control.ControllerMap) *HeaderController {
+	result := &HeaderController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title CreateHeaderItem
 // @Description Creates a Portfolio Item on a current site
 // @Param	body		body 	folio.Portfolio	true		"body for service content"

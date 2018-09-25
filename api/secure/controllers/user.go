@@ -9,6 +9,13 @@ type UserController struct {
 	control.APIController
 }
 
+func NewUserCtrl(ctrlMap *control.ControllerMap) *UserController {
+	result := &UserController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title GetUsers
 // @Description Gets all Users
 // @Success 200 {[]logic.UserObject]} []logic.UserObject]

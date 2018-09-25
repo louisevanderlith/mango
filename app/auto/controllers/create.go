@@ -10,6 +10,13 @@ type CreateController struct {
 	control.UIController
 }
 
+func NewCreateCtrl(ctrlMap *control.ControllerMap) *CreateController {
+	result := &CreateController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 func (c *CreateController) Get() {
 	c.Setup("create")
 }

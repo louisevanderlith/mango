@@ -3,26 +3,26 @@ package routers
 import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/app/admin/controllers"
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-func init() {
-	setupMapping()
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilters(s)
 
-	beego.Router("/", &controllers.DefaultController{})
-	beego.Router("/category", &controllers.CategoryController{})
-	beego.Router("/comms", &controllers.CommsController{})
-	beego.Router("/manufacturer", &controllers.ManufacturerController{})
-	beego.Router("/model", &controllers.ModelController{})
-	beego.Router("/subcategory", &controllers.SubCategoryController{})
-	beego.Router("/site", &controllers.SiteController{})
-	beego.Router("/site/:id([0-9]+)", &controllers.SiteController{}, "get:GetEdit")
+	beego.Router("/", controllers.NewDefaultCtrl(ctrlmap))
+	beego.Router("/category", controllers.NewCategoryCtrl(ctrlmap))
+	beego.Router("/comms", controllers.NewCommsCtrl(ctrlmap))
+	beego.Router("/manufacturer", controllers.NewManufacturerCtrl(ctrlmap))
+	beego.Router("/model", controllers.NewModelCtrl(ctrlmap))
+	beego.Router("/subcategory", controllers.NewSubCategoryCtrl(ctrlmap))
+	beego.Router("/site", controllers.NewSiteCtrl(ctrlmap))
+	beego.Router("/site/:id([0-9]+)", controllers.NewSiteCtrl(ctrlmap), "get:GetEdit")
 }
 
-func setupMapping() {
-	appName := beego.BConfig.AppName
-	ctrlmap := control.CreateControlMap(appName)
+func EnableFilters(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 	emptyMap := make(control.ActionMap)
 	emptyMap["POST"] = enums.Admin
 	emptyMap["GET"] = enums.Admin
@@ -35,5 +35,7 @@ func setupMapping() {
 	ctrlmap.Add("/subcategory", emptyMap)
 	ctrlmap.Add("/site", emptyMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterUI)
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterUI)
+
+	return ctrlmap
 }

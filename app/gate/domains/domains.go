@@ -1,12 +1,21 @@
 package domains
 
 import (
+	"log"
 	"net/http"
-	"net/http/httputil"
 	"strings"
+
+	"github.com/astaxie/beego"
 )
 
-type Subdomains map[string]http.Handler
+type Subdomains struct {
+	subs map[string]http.Handler
+}
+
+func NewSubdomains() *Subdomains {
+	subs := make(map[string]http.Handler)
+	return &Subdomains{subs}
+}
 
 const (
 	token = "token"
@@ -14,27 +23,71 @@ const (
 	www   = "www"
 )
 
-var domains Subdomains
-
-func init() {
-	domains = make(Subdomains)
+func (s *Subdomains) Add(name string, handler http.Handler) {
+	s.subs[name] = handler
 }
 
-func (d Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	result := d[ssl]
+func RegisterSubdomains(instanceID string) *Subdomains {
+	result := NewSubdomains()
+	result.Add(ssl, sslMuxSetup())
 
-	// CertBot requires tests on well-known for SSL Certs
-	if !strings.Contains(r.URL.String(), "well-known") {
-		handleSession(*r.URL, w)
-		domainParts := strings.Split(r.Host, ".")
-		result = getMux(d, domainParts)
+	confDomains := loadSettings()
+
+	for _, v := range *confDomains {
+		handl, err := v.SetupMux(instanceID)
+
+		if err != nil {
+			log.Printf("Register Subdomains: %s - %s\n", v.Name, err.Error())
+		}
+
+		result.Add(v.Address, handl)
 	}
+
+	return result
+}
+
+func (d *Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// CertBot requires tests on well-known for SSL Certs
+	if strings.Contains(r.URL.String(), "well-known") {
+		sslHand, _ := d.GetDomainHandler(ssl)
+
+		sslHand.ServeHTTP(w, r)
+		return
+	}
+
+	handleSession(*r.URL, w)
+	domainParts := strings.Split(r.Host, ".")
+	sdomainName := domainParts[0]
+	log.Printf("ServeHTTP:%s\n", sdomainName)
+
+	result := d.GetMux(sdomainName)
 
 	result.ServeHTTP(w, r)
 }
 
-func domainHandler(p *httputil.ReverseProxy) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		p.ServeHTTP(w, r)
+func (d *Subdomains) GetDomainHandler(name string) (http.Handler, bool) {
+	res, ok := d.subs[name]
+	return res, ok
+}
+
+func (d *Subdomains) GetMux(subdomain string) http.Handler {
+	result, ok := d.GetDomainHandler(subdomain)
+
+	if !ok {
+		return d.subs[www]
 	}
+
+	return result
+}
+
+func sslMuxSetup() http.Handler {
+	sslMux := http.NewServeMux()
+	certPath := beego.AppConfig.String("certpath")
+	fullCertPath := http.FileSystem(http.Dir(certPath))
+	fs := http.FileServer(fullCertPath)
+	challengePath := "/.well-known/acme-challenge/"
+
+	sslMux.Handle(challengePath, fs)
+
+	return sslMux
 }

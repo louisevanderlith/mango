@@ -12,6 +12,13 @@ type MessageController struct {
 	control.APIController
 }
 
+func NewMessageCtrl(ctrlMap *control.ControllerMap) *MessageController {
+	result := &MessageController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title SendMessage
 // @Description Sends a Message
 // @Param	body	body	comms.Message	true	"body for message content"

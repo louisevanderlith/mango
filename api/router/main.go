@@ -1,16 +1,25 @@
 package main
 
 import (
-	_ "github.com/louisevanderlith/mango/api/router/routers"
+	"github.com/louisevanderlith/mango/api/router/routers"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
 )
 
 func main() {
+	mode := beego.BConfig.RunMode
+
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
 
+	// Register with router
+	appName := beego.BConfig.AppName
+	srv := util.NewService(mode, appName, enums.API)
+
+	routers.Setup(srv)
 	beego.Run()
 }

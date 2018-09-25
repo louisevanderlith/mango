@@ -1,8 +1,6 @@
 package logic
 
 import (
-	"errors"
-
 	"github.com/louisevanderlith/mango/util"
 )
 
@@ -14,9 +12,9 @@ type CommsObject struct {
 	Body  string
 }
 
-func GetCommsMessages() ([]CommsObject, error) {
+func GetCommsMessages(instanceID string) ([]CommsObject, error) {
 	var result []CommsObject
-	contents, err := util.GETMessage("Communication.API", "message")
+	contents, err := util.GETMessage(instanceID, "Communication.API", "message")
 
 	if err != nil {
 		return result, err
@@ -24,8 +22,8 @@ func GetCommsMessages() ([]CommsObject, error) {
 
 	data := util.MarshalToResult(contents)
 
-	if len(data.Error) != 0 {
-		return result, errors.New(data.Error)
+	if data.Failed() {
+		return result, data
 	}
 
 	result = data.Data.([]CommsObject)

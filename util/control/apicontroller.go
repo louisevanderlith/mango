@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
-
-	"github.com/astaxie/beego"
 )
 
 type APIController struct {
-	beego.Controller
+	InstanceController
 }
 
 func (ctrl *APIController) Prepare() {

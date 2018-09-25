@@ -11,35 +11,34 @@ import (
 
 	"fmt"
 
+	"github.com/louisevanderlith/mango/app/gate/domains"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
-	"golang.org/x/net/http2"
 )
 
 func main() {
+	mode := beego.AppConfig.String("runmode")
+	appName := beego.AppConfig.String("appname")
 	// Register with router
-	srv := util.Service{
-		Environment: enums.GetEnvironment(beego.AppConfig.String("runmode")),
-		Name:        beego.AppConfig.String("appname"),
-		Type:        enums.APP}
+	srv := util.NewService(mode, appName, enums.APP)
 
 	httpsPort := beego.AppConfig.String("httpsport")
 
-	_, err := srv.Register(httpsPort)
+	err := srv.Register(httpsPort)
 
 	if err != nil {
-		log.Print("Register: ", err)
-	} else {
-		httpPort := beego.AppConfig.String("httpport")
-		setupHost(httpPort, httpsPort)
+		panic(err)
 	}
+
+	httpPort := beego.AppConfig.String("httpport")
+	setupHost(httpPort, httpsPort, srv.ID)
 }
 
-func setupHost(httpPort, httpsPort string) {
-	registerSubdomains()
+func setupHost(httpPort, httpsPort string, instanceID string) {
+	subs := domains.RegisterSubdomains(instanceID)
 
 	//serveTLS(httpsPort)
-	go serveHTTP2(httpsPort)
+	go serveHTTP2(subs, httpsPort)
 
 	err := http.ListenAndServe(":"+httpPort, http.HandlerFunc(redirectTLS))
 
@@ -50,10 +49,11 @@ func setupHost(httpPort, httpsPort string) {
 
 func redirectTLS(w http.ResponseWriter, r *http.Request) {
 	moveURL := fmt.Sprintf("https://%s%s", r.Host, r.RequestURI)
-	log.Printf("redirect: %s\n", moveURL)
+	log.Printf("\tredirect: %s\n", moveURL)
 	http.Redirect(w, r, moveURL, http.StatusPermanentRedirect)
 }
 
+/*
 func serveTLS(httpsPort string) {
 	var srv http.Server
 	srv.Addr = ":" + httpsPort
@@ -77,8 +77,8 @@ func serveTLS(httpsPort string) {
 		panic(err)
 	}
 }
-
-func serveHTTP2(httpsPort string) {
+*/
+func serveHTTP2(domains *domains.Subdomains, httpsPort string) {
 	certPath := beego.AppConfig.String("certpath")
 	certPem := readCertBlock(certPath)
 	keyPem := readKeyBlock(certPath)
@@ -98,11 +98,11 @@ func serveHTTP2(httpsPort string) {
 		Handler:      domains,
 	}
 
-	err = http2.ConfigureServer(srv, nil)
+	/*err = http2.ConfigureServer(srv, nil)
 
 	if err != nil {
 		panic(err)
-	}
+	}*/
 
 	log.Println("Listening...")
 

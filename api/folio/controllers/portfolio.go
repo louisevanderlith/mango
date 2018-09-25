@@ -9,6 +9,13 @@ type PortfolioController struct {
 	control.APIController
 }
 
+func NewPortfolioCtrl(ctrlMap *control.ControllerMap) *PortfolioController {
+	result := &PortfolioController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title CreatePortfolioItem
 // @Description Creates a Portfolio Item on a current site
 // @Param	body		body 	folio.Portfolio	true		"body for service content"

@@ -14,6 +14,7 @@ type Authentication struct {
 	Password string
 }
 
+// password hashing cost
 const cost int = 11
 
 // Login will attempt to authenticate a user

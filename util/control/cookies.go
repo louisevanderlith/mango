@@ -39,8 +39,8 @@ func init() {
 	jar = make(map[string]Cookies)
 }
 
-func CreateAvo(ctx *context.Context, data Cookies, sessionID string) {
-	jar[sessionID] = data
+func CreateAvo(ctx *context.Context, data *Cookies, sessionID string) {
+	jar[sessionID] = *data
 }
 
 func FindAvo(sessionID string) Cookies {

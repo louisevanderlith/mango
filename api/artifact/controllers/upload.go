@@ -12,6 +12,13 @@ type UploadController struct {
 	control.APIController
 }
 
+func NewUploadCtrl(ctrlMap *control.ControllerMap) *UploadController {
+	result := &UploadController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title GetUploads
 // @Description Gets the uploads
 // @Success 200 {[]artifact.Upload} []artifact.Upload

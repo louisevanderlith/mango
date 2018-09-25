@@ -4,24 +4,25 @@ import (
 	"log"
 
 	"github.com/astaxie/beego"
-	_ "github.com/louisevanderlith/mango/app/admin/routers"
+	"github.com/louisevanderlith/mango/app/admin/routers"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
 func main() {
+	mode := beego.BConfig.RunMode
+
 	// Register with router
-	srv := util.Service{
-		Environment: enums.GetEnvironment(beego.BConfig.RunMode),
-		Name:        beego.BConfig.AppName,
-		Type:        enums.APP}
+	name := beego.BConfig.AppName
+	srv := util.NewService(mode, name, enums.APP)
 
 	port := beego.AppConfig.String("httpport")
-	_, err := srv.Register(port)
+	err := srv.Register(port)
 
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
+		routers.Setup(srv)
 		beego.Run()
 	}
 }

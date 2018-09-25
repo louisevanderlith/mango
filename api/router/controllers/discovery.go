@@ -15,6 +15,13 @@ type DiscoveryController struct {
 	control.APIController
 }
 
+func NewDiscoveryCtrl(ctrlMap *control.ControllerMap) *DiscoveryController {
+	result := &DiscoveryController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title RegisterAPI
 // @Description Register an API
 // @Param	body		body 	util.Service	true		"body for service content"
@@ -22,8 +29,8 @@ type DiscoveryController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *DiscoveryController) Post() {
-	var service util.Service
-	json.Unmarshal(req.Ctx.Input.RequestBody, &service)
+	service := &util.Service{}
+	json.Unmarshal(req.Ctx.Input.RequestBody, service)
 
 	appID, err := logic.AddService(service)
 

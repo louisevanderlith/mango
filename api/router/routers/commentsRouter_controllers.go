@@ -31,4 +31,12 @@ func init() {
 			MethodParams: param.Make(),
 			Params: nil})
 
+	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/router/controllers:MemoryController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/router/controllers:MemoryController"],
+		beego.ControllerComments{
+			Method: "Get",
+			Router: `/`,
+			AllowHTTPMethods: []string{"get"},
+			MethodParams: param.Make(),
+			Params: nil})
+
 }

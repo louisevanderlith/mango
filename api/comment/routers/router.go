@@ -18,12 +18,12 @@ import (
 )
 
 func Setup(service *util.Service) {
-	EnableFilters(service)
+	ctrlmap := EnableFilters(service)
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/message",
 			beego.NSInclude(
-				&controllers.MessageController{},
+				controllers.NewMessageCtrl(ctrlmap),
 			),
 		),
 	)
@@ -31,9 +31,8 @@ func Setup(service *util.Service) {
 	beego.AddNamespace(ns)
 }
 
-func EnableFilters(service *util.Service) {
-	appName := beego.BConfig.AppName
-	ctrlmap := control.CreateControlMap(service, appName)
+func EnableFilters(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 
 	emptyMap := make(control.ActionMap)
 	emptyMap["POST"] = enums.User
@@ -41,7 +40,7 @@ func EnableFilters(service *util.Service) {
 
 	ctrlmap.Add("/message", emptyMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI())
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterAPI)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -49,4 +48,6 @@ func EnableFilters(service *util.Service) {
 		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
+
+	return ctrlmap
 }

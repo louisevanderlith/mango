@@ -8,8 +8,8 @@
 package routers
 
 import (
-	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/api/artifact/controllers"
+	"github.com/louisevanderlith/mango/util"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
@@ -17,13 +17,13 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-func Setup(instanceKey husk.Key) {
-	EnableFilters(instanceKey)
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilters(s)
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/upload",
 			beego.NSInclude(
-				&controllers.UploadController{},
+				controllers.NewUploadCtrl(ctrlmap),
 			),
 		),
 	)
@@ -31,17 +31,15 @@ func Setup(instanceKey husk.Key) {
 	beego.AddNamespace(ns)
 }
 
-func EnableFilters(instanceKey husk.Key) {
-	appName := beego.BConfig.AppName
-
-	ctrlmap := control.CreateControlMap(appName)
+func EnableFilters(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 
 	emptyMap := make(control.ActionMap)
 	emptyMap["POST"] = enums.Owner
 
 	ctrlmap.Add("/upload", emptyMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterAPI)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -49,4 +47,6 @@ func EnableFilters(instanceKey husk.Key) {
 		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
+
+	return ctrlmap
 }

@@ -9,6 +9,7 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/secure/controllers"
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
@@ -16,27 +17,26 @@ import (
 	"github.com/louisevanderlith/mango/util/control"
 )
 
-func init() {
-	setupMapping()
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilter(s)
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/login",
 			beego.NSInclude(
-				&controllers.LoginController{},
+				controllers.NewLoginCtrl(ctrlmap),
 			),
 		),
 		beego.NSNamespace("/register",
 			beego.NSInclude(
-				&controllers.RegisterController{},
+				controllers.NewRegisterCtrl(ctrlmap),
 			),
 		),
 	)
 	beego.AddNamespace(ns)
 }
 
-func setupMapping() {
-	appName := beego.BConfig.AppName
-	ctrlmap := control.CreateControlMap(appName)
+func EnableFilter(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 
 	emptyMap := make(control.ActionMap)
 
@@ -48,7 +48,7 @@ func setupMapping() {
 
 	ctrlmap.Add("/user", userMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterAPI)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -56,4 +56,6 @@ func setupMapping() {
 		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
+
+	return ctrlmap
 }

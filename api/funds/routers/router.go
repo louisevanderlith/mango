@@ -9,6 +9,7 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/funds/controllers"
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
@@ -16,27 +17,26 @@ import (
 	"github.com/louisevanderlith/mango/util/control"
 )
 
-func init() {
-	setupMapping()
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilter(s)
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/credit",
 			beego.NSInclude(
-				&controllers.CreditController{},
+				controllers.NewCreditCtrl(ctrlmap),
 			),
 		),
 		beego.NSNamespace("/requisition",
 			beego.NSInclude(
-				&controllers.RequisitionController{},
+				controllers.NewRequisitionCtrl(ctrlmap),
 			),
 		),
 	)
 	beego.AddNamespace(ns)
 }
 
-func setupMapping() {
-	appName := beego.BConfig.AppName
-	ctrlmap := control.CreateControlMap(appName)
+func EnableFilter(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 
 	emptyMap := make(control.ActionMap)
 	emptyMap["GET"] = enums.User
@@ -46,7 +46,7 @@ func setupMapping() {
 	ctrlmap.Add("/credit", emptyMap)
 	ctrlmap.Add("/register", emptyMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterAPI)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -54,4 +54,6 @@ func setupMapping() {
 		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
+
+	return ctrlmap
 }

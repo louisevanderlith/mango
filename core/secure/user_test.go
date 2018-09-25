@@ -51,10 +51,10 @@ func TestLoginUser_Email_NoError(t *testing.T) {
 
 	CreateUser(input)
 
-	loginPass, _ := Login(input.Email, []byte(input.Password), "", "")
+	_, err := Login(input.Email, []byte(input.Password), "", "")
 
-	if !loginPass {
-		t.Error("Couldn't Login")
+	if err != nil {
+		t.Error(err)
 	}
 
 	dropUser(input)
@@ -69,10 +69,10 @@ func TestLoginUser_Contact_NoError(t *testing.T) {
 
 	CreateUser(input)
 
-	loginPass, _ := Login(input.ContactNumber, []byte(input.Password), "", "")
+	_, err := Login(input.ContactNumber, []byte(input.Password), "", "")
 
-	if !loginPass {
-		t.Error("Couldn't Login")
+	if err != nil {
+		t.Error(err)
 	}
 
 	dropUser(input)

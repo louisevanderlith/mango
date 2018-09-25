@@ -13,11 +13,18 @@ type SiteController struct {
 	control.UIController
 }
 
+func NewSiteCtrl(ctrlMap *control.ControllerMap) *SiteController {
+	result := &SiteController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 func (c *SiteController) Get() {
 	c.Setup("site")
 	c.CreateSideMenu(logic.GetMenu("/site"))
 
-	data, err := logic.GetSites()
+	data, err := logic.GetSites(c.GetInstanceID())
 
 	c.Serve(err, data)
 }
@@ -30,7 +37,7 @@ func (c *SiteController) GetEdit() {
 		log.Print("GetEdit:", err)
 	}
 
-	data, err := logic.GetSite(id)
+	data, err := logic.GetSite(id, c.GetInstanceID())
 
 	c.Serve(err, data)
 }

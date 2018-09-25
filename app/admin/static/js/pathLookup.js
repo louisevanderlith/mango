@@ -5,7 +5,7 @@ let pastNames = {
 async function getRouterPath(serviceName) {
     const routerURL = await getServiceURL("Router.API");
 
-    return `${routerURL}${instanceKey}/${serviceName}/true`;
+    return `${routerURL}${instanceID}/${serviceName}/true`;
 }
 
 function doLookup(serviceName) {

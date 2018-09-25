@@ -13,6 +13,13 @@ type ProfileController struct {
 	control.APIController
 }
 
+func NewProfileCtrl(ctrlMap *control.ControllerMap) *ProfileController {
+	result := &ProfileController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title RegisterWebsite
 // @Description Register a Website
 // @Param	body		body 	folio.Profile	true		"body for service content"

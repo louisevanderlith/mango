@@ -58,10 +58,5 @@
         "Name": "Funds.API",
         "Address": "funds",
         "Type": "Subdomain"
-    },
-    {
-        "Name": "example",
-        "Address": "example.co.za",
-        "Type": "Static"
     }
 ]

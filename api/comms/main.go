@@ -6,6 +6,7 @@ import (
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
+	"github.com/louisevanderlith/mango/api/comment/routers"
 	_ "github.com/louisevanderlith/mango/api/comms/routers"
 	_ "github.com/louisevanderlith/mango/core/comms"
 
@@ -13,23 +14,26 @@ import (
 )
 
 func main() {
-	if beego.BConfig.RunMode == "dev" {
+	mode := beego.BConfig.RunMode
+
+	if mode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
 
 	// Register with router
-	srv := util.Service{
-		Environment: enums.GetEnvironment(beego.BConfig.RunMode),
-		Name:        beego.BConfig.AppName,
-		Type:        enums.API}
+	name := beego.BConfig.AppName
+	srv := util.NewService(mode, name, enums.API)
+
 	log.Printf("%+v\n", srv)
+
 	port := beego.AppConfig.String("httpport")
-	_, err := srv.Register(port)
+	err := srv.Register(port)
 
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
+		routers.Setup(srv)
 		showSMTPInfo()
 		beego.Run()
 	}

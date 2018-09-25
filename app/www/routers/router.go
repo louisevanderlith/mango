@@ -3,9 +3,12 @@ package routers
 import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/app/www/controllers"
+	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
-func init() {
-	beego.Router("/", &controllers.DefaultController{})
-	beego.Router("/:siteName", &controllers.DefaultController{})
+func Setup(s *util.Service) {
+	ctrlmap := control.CreateControlMap(s)
+	beego.Router("/", controllers.NewDefaultCtrl(ctrlmap))
+	beego.Router("/:siteName", controllers.NewDefaultCtrl(ctrlmap))
 }

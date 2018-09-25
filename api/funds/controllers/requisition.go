@@ -1,15 +1,18 @@
 package controllers
 
 import (
-	"encoding/json"
-	"strconv"
-
-	"github.com/louisevanderlith/mango/core/funds"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
 type RequisitionController struct {
 	control.APIController
+}
+
+func NewRequisitionCtrl(ctrlMap *control.ControllerMap) *RequisitionController {
+	result := &RequisitionController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
 }
 
 // @Title GetUserRequisitions
@@ -18,11 +21,11 @@ type RequisitionController struct {
 // @Failure 403 body is empty
 // @router / [get]
 func (req *RequisitionController) Get() {
-	filter := funds.Requisition{}
-	var container []*funds.Requisition
-	err := funds.Ctx.Requisition.Read(&filter, &container)
+	/*filter := funds.Requisition{}
+	var container []*funds.Requisition*/
+	//err := funds.Get .Read(&filter, &container)
 
-	req.Serve(err, container)
+	//req.Serve(err, container)
 }
 
 // @Title GetRequisitionDetail
@@ -32,7 +35,7 @@ func (req *RequisitionController) Get() {
 // @Failure 403 body is empty
 // @router /:requisitionID [get]
 func (req *RequisitionController) GetByID() {
-	var result db.IRecord
+	/*var result db.IRecord
 
 	reqID, err := strconv.ParseInt(req.Ctx.Input.Param(":requisitionID"), 10, 64)
 
@@ -43,7 +46,7 @@ func (req *RequisitionController) GetByID() {
 		result, err = funds.Ctx.Requisition.ReadOne(&filter)
 	}
 
-	req.Serve(err, result)
+	req.Serve(err, result)*/
 }
 
 // @Title CreateRequisition
@@ -53,12 +56,12 @@ func (req *RequisitionController) GetByID() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *RequisitionController) Post() {
-	var requisition funds.Requisition
+	/*var requisition funds.Requisition
 	json.Unmarshal(req.Ctx.Input.RequestBody, &requisition)
 
 	_, err := funds.Ctx.Requisition.Create(&requisition)
 
-	req.Serve(err, "Requisition has been created.")
+	req.Serve(err, "Requisition has been created.")*/
 }
 
 // @Title UpdateRequisition
@@ -68,10 +71,10 @@ func (req *RequisitionController) Post() {
 // @Failure 403 body is empty
 // @router / [put]
 func (req *RequisitionController) Put() {
-	var requisition funds.Requisition
+	/*var requisition funds.Requisition
 	json.Unmarshal(req.Ctx.Input.RequestBody, &requisition)
 
 	err := funds.Ctx.Requisition.Update(&requisition)
 
-	req.Serve(err, "Requisition has been updated.")
+	req.Serve(err, "Requisition has been updated.")*/
 }

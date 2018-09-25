@@ -9,6 +9,7 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/comms/controllers"
+	"github.com/louisevanderlith/mango/util"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
@@ -16,27 +17,26 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-func init() {
-	setupMapping()
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilters(s)
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/message",
 			beego.NSInclude(
-				&controllers.MessageController{})))
+				controllers.NewMessageCtrl(ctrlmap))))
 
 	beego.AddNamespace(ns)
 }
 
-func setupMapping() {
-	appName := beego.BConfig.AppName
-	ctrlmap := control.CreateControlMap(appName)
+func EnableFilters(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 
 	emptyMap := make(control.ActionMap)
 	emptyMap["GET"] = enums.Admin
 
 	ctrlmap.Add("/message", emptyMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterAPI)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -44,4 +44,6 @@ func setupMapping() {
 		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
+
+	return ctrlmap
 }

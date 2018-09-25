@@ -21,15 +21,15 @@ func main() {
 
 	// Register with router
 	name := beego.BConfig.AppName
-	srv := util.NewService(mode, enums.API)
+	srv := util.NewService(mode, name, enums.API)
 
 	port := beego.AppConfig.String("httpport")
-	instKey, err := srv.Register(port)
+	err := srv.Register(port)
 
 	if err != nil {
 		log.Print("Register: ", err)
 	} else {
-		routers.Setup(instKey)
+		routers.Setup(srv)
 		beego.Run()
 	}
 }

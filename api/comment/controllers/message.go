@@ -13,6 +13,13 @@ type MessageController struct {
 	control.APIController
 }
 
+func NewMessageCtrl(ctrlMap *control.ControllerMap) *MessageController {
+	result := &MessageController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title GetMessages
 // @Description Gets all comments related to a node.
 // @Param	typeID			path 	string 	true		"comment's type"

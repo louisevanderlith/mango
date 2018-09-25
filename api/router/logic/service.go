@@ -24,8 +24,12 @@ func init() {
 	serviceMap = make(map[string]Services)
 }
 
+func GetServiceMap() map[string]Services {
+	return serviceMap
+}
+
 // AddService registers a new service and returns a key for that entry
-func AddService(service util.Service) (result string, err error) {
+func AddService(service *util.Service) (result string, err error) {
 	items, ok := serviceMap[service.Name]
 	duplicate := false
 
@@ -49,7 +53,8 @@ func AddService(service util.Service) (result string, err error) {
 		service.ID = u4.String()
 		service.Version = getVersion()
 		service.AllowedCaller = getAllowedCaller(service.Type)
-		serviceMap[service.Name] = append(items, &service)
+
+		serviceMap[service.Name] = append(items, service)
 
 		result = service.ID
 	}
@@ -58,7 +63,7 @@ func AddService(service util.Service) (result string, err error) {
 }
 
 // GetServicePath will return the correct URL for a requested service.
-func GetServicePath(serviceName string, appID string, clean bool) (string, error) {
+func GetServicePath(serviceName, appID string, clean bool) (string, error) {
 	var result string
 	var err error
 	requestingApp := getRequestingService(appID)

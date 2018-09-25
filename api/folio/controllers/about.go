@@ -9,6 +9,13 @@ type AboutController struct {
 	control.APIController
 }
 
+func NewAboutCtrl(ctrlMap *control.ControllerMap) *AboutController {
+	result := &AboutController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title CreateAboutSection
 // @Description Creates an about section for a current site.
 // @Param	body		body 	folio.About	true		"body for service content"

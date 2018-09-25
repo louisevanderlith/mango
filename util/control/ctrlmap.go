@@ -3,8 +3,11 @@ package control
 import (
 	"fmt"
 	"log"
+	"net/http"
+	"net/url"
+	"strings"
 
-	"github.com/louisevanderlith/husk"
+	"github.com/astaxie/beego/context"
 
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
@@ -19,14 +22,10 @@ type ControllerMap struct {
 	mapping map[string]ActionMap
 }
 
-var controlMap *ControllerMap
-
-func CreateControlMap(service *util.Service, appName string) *ControllerMap {
+func CreateControlMap(service *util.Service) *ControllerMap {
 	result := &ControllerMap{}
 	result.service = service
 	result.mapping = make(map[string]ActionMap)
-
-	controlMap = result
 
 	return result
 }
@@ -54,6 +53,63 @@ func (m *ControllerMap) GetRequiredRole(path, action string) enums.RoleType {
 	return result
 }
 
-func (m *ControllerMap) GetInstanceKey() husk.Key {
-	return m.service.InstanceKey
+func (m *ControllerMap) GetInstanceID() string {
+	return m.service.ID
+}
+
+// FilterUI is used to secure web pages.
+// When a user is not allowed to access a Page, they are redirected to secure.login
+func (m *ControllerMap) FilterUI(ctx *context.Context) {
+	path := ctx.Input.URL()
+
+	if strings.HasPrefix(path, "/static") || strings.Contains(path, "favicon") {
+		return
+	}
+
+	tiny := newTinyCtx(m, ctx)
+
+	if tiny.allowed() {
+		return
+	}
+
+	instanceID := m.GetInstanceID()
+	securityURL, err := util.GetServiceURL(instanceID, "Secure.API", true)
+
+	if err != nil {
+		log.Printf("FilterUI Failed: %+v\n", err)
+		return
+	}
+
+	req := ctx.Request
+	moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
+	loginURL := buildLoginURL(securityURL, moveURL)
+
+	// Redirect to login if not allowed.
+	ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
+}
+
+// FilterAPI is used to secure API services.
+// When a user is not allowed to access a resource, they will get the Unauthorized Status.
+func (m *ControllerMap) FilterAPI(ctx *context.Context) {
+	tiny := newTinyCtx(m, ctx)
+
+	if !tiny.allowed() {
+		ctx.Abort(http.StatusUnauthorized, "User not authorized to access this content.")
+	}
+}
+
+func buildLoginURL(securityURL, returnURL string) string {
+	cleanReturn := removeQueries(returnURL)
+	escURL := url.QueryEscape(cleanReturn)
+	return fmt.Sprintf("%sv1/login?return=%s", securityURL, escURL)
+}
+
+func removeQueries(url string) string {
+	idxOfQuery := strings.Index(url, "?")
+
+	if idxOfQuery != -1 {
+		url = url[:idxOfQuery]
+	}
+
+	return url
 }

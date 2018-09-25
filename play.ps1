@@ -22,7 +22,7 @@ function startPlay() {
 
             if($progName -eq 'router'){
                 Write-Host 'Giving router some time to spin up.' -ForegroundColor "green"
-                Start-Sleep -s 2
+                Start-Sleep -s 3
             }
         } else {
             Write-Host 'Directory' $progPath 'not Found. Please ensure "./build" has been run.' -ForegroundColor "red"

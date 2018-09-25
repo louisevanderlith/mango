@@ -1,6 +1,9 @@
 package util
 
 import (
+	"errors"
+	"fmt"
+	"log"
 	"strconv"
 )
 
@@ -18,11 +21,12 @@ func init() {
 	serviceKeys[k{"Router.API", false}] = "http://localhost:8080/"
 }
 
-func GetServiceURL(instanceKey, serviceName string, cleanURL bool) (string, error) {
+func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error) {
+	log.Printf("GetServiceURL:\tI:%s\tName:%s\n", instanceID, serviceName)
 	cacheService, ok := serviceKeys[k{serviceName, cleanURL}]
 
 	if !ok {
-		contents, err := GETMessage("Router.API", "discovery", instanceKey, serviceName, strconv.FormatBool(cleanURL))
+		contents, err := GETMessage(instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
 
 		if err != nil {
 			return "", err
@@ -30,8 +34,13 @@ func GetServiceURL(instanceKey, serviceName string, cleanURL bool) (string, erro
 
 		data := MarshalToResult(contents)
 
-		if data.Failed {
+		if data.Failed() {
 			return "", data
+		}
+
+		if data.Data == nil {
+			msg := fmt.Sprintf("data.Data is nil: %+v\n", data)
+			return "", errors.New(msg)
 		}
 
 		result := data.Data.(string)

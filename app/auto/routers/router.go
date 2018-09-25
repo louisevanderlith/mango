@@ -3,22 +3,24 @@ package routers
 import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/app/auto/controllers"
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
-func init() {
-	setupMapping()
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilter(s)
 
-	beego.Router("/", &controllers.HomeController{})
+	beego.Router("/", controllers.NewHomeCtrl(ctrlmap))
 }
 
-func setupMapping() {
-	appName := beego.BConfig.AppName
-	ctrlmap := control.CreateControlMap(appName)
+func EnableFilter(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 
 	emptyMap := make(control.ActionMap)
 
 	ctrlmap.Add("/", emptyMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterUI)
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterUI)
+
+	return ctrlmap
 }

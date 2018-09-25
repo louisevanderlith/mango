@@ -9,11 +9,18 @@ type DefaultController struct {
 	control.UIController
 }
 
+func NewDefaultCtrl(ctrlMap *control.ControllerMap) *DefaultController {
+	result := &DefaultController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 func (c *DefaultController) Get() {
 	c.Setup("default")
 	c.CreateTopMenu(getTopMenu())
 	siteName := c.Ctx.Input.Param(":siteName")
-	data, err := logic.GetProfileSite(siteName)
+	data, err := logic.GetProfileSite(c.GetInstanceID(), siteName)
 
 	c.Serve(err, data)
 }

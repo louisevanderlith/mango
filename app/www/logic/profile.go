@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"errors"
 	"log"
 	"strconv"
 
@@ -61,12 +60,12 @@ type headerItem struct {
 
 var uploadURL string
 
-func GetProfileSite(name string) (result BasicSite, finalErr error) {
+func GetProfileSite(instanceID, name string) (result BasicSite, finalErr error) {
 	if name == "" {
 		name = "avosa"
 	}
 
-	contents, err := util.GETMessage("Folio.API", "site", name)
+	contents, err := util.GETMessage(instanceID, "Folio.API", "site", name)
 
 	if err != nil {
 		return result, err
@@ -74,19 +73,19 @@ func GetProfileSite(name string) (result BasicSite, finalErr error) {
 
 	data := util.MarshalToResult(contents)
 
-	if len(data.Error) != 0 {
-		return result, errors.New(data.Error)
+	if data.Failed() {
+		return result, data
 	}
 
 	result = data.Data.(BasicSite)
-	result.setImageURLs()
+	result.setImageURLs(instanceID)
 
 	return result, nil
 }
 
-func (obj *BasicSite) setImageURLs() {
+func (obj *BasicSite) setImageURLs(instanceID string) {
 	if uploadURL == "" {
-		setUploadURL()
+		setUploadURL(instanceID)
 	}
 
 	obj.ImageURL = uploadURL + strconv.FormatInt(obj.ImageID, 10)
@@ -102,8 +101,8 @@ func (obj *BasicSite) setImageURLs() {
 	}
 }
 
-func setUploadURL() {
-	url, err := util.GetServiceURL("Artifact.API", true)
+func setUploadURL(instanceID string) {
+	url, err := util.GetServiceURL(instanceID, "Artifact.API", true)
 
 	if err != nil {
 		log.Print("setImageURLs:", err)

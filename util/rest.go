@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-func GETMessage(instanceKey, serviceName, controller string, params ...string) ([]byte, error) {
-	url, err := GetServiceURL(instanceKey, serviceName, false)
+func GETMessage(instanceID, serviceName, controller string, params ...string) ([]byte, error) {
+	url, err := GetServiceURL(instanceID, serviceName, false)
 
 	if err != nil {
 		return []byte{}, err
@@ -18,11 +18,11 @@ func GETMessage(instanceKey, serviceName, controller string, params ...string) (
 
 	fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))
 
-	return jsonRequest("GET", fullURL, nil)
+	return jsonRequest("GET", fullURL, "")
 }
 
-func POSTMessage(instanceKey, serviceName, controller string, obj interface{}) ([]byte, error) {
-	url, err := GetServiceURL(instanceKey, serviceName, false)
+func POSTMessage(instanceID, serviceName, controller string, obj interface{}) ([]byte, error) {
+	url, err := GetServiceURL(instanceID, serviceName, false)
 
 	if err != nil {
 		return []byte{}, err
@@ -34,9 +34,8 @@ func POSTMessage(instanceKey, serviceName, controller string, obj interface{}) (
 }
 
 func jsonRequest(action, url string, obj interface{}) ([]byte, error) {
-	var buff *bytes.Buffer
-	var req *http.Request
-
+	buff := &bytes.Buffer{}
+	req := &http.Request{}
 	err := json.NewEncoder(buff).Encode(obj)
 
 	if err != nil {
@@ -68,19 +67,21 @@ func jsonRequest(action, url string, obj interface{}) ([]byte, error) {
 }
 
 type RESTResult struct {
-	Failed bool
-	Reason string
+	Reason string `json:"Error"`
 	Data   interface{}
 }
 
 func NewRESTResult(reason string, data interface{}) *RESTResult {
 	result := &RESTResult{
-		Failed: len(reason) > 0,
 		Reason: reason,
 		Data:   data,
 	}
 
 	return result
+}
+
+func (r *RESTResult) Failed() bool {
+	return len(r.Reason) > 0
 }
 
 func MarshalToResult(content []byte) *RESTResult {

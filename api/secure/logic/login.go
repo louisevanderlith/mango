@@ -24,14 +24,14 @@ func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err erro
 		return false, sessionID, err
 	}
 
-	auth, err := secure.Login(authReq)
+	cooki, err := secure.Login(authReq)
 	passed = err == nil
 
 	if !passed {
 		return passed, sessionID, err
 	}
 
-	control.CreateAvo(ctx, *auth, sessionID)
+	control.CreateAvo(ctx, cooki, sessionID)
 
 	return passed, sessionID, err
 }

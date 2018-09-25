@@ -20,7 +20,7 @@ type tinyCtx struct {
 
 const avosession = "avosession"
 
-func newTinyCtx(service *util.Service, ctx *context.Context, controlMap *ControllerMap) *tinyCtx {
+func newTinyCtx(m *ControllerMap, ctx *context.Context) *tinyCtx {
 	result := tinyCtx{}
 
 	url, token := removeToken(ctx.Request.RequestURI)
@@ -30,14 +30,14 @@ func newTinyCtx(service *util.Service, ctx *context.Context, controlMap *Control
 	}
 
 	actMethod := strings.ToUpper(ctx.Request.Method)
-	required := controlMap.GetRequiredRole(url, actMethod)
+	required := m.GetRequiredRole(url, actMethod)
 
 	result.RequiredRole = required
-	result.ApplicationName = service.Name
+	result.ApplicationName = m.service.Name
 	result.URL = url
 	result.Method = actMethod
 	result.SessionID = token
-	result.Service = service
+	result.Service = m.service
 
 	return &result
 }
@@ -112,7 +112,7 @@ func (ctx *tinyCtx) hasRole(required enums.RoleType) bool {
 //TODO: use channels
 //getAvoCookie also checks cookie validity, so repeated calls are required
 func (ctx *tinyCtx) getAvoCookie() (*Cookies, error) {
-	contents, err := util.GETMessage("Secure.API", "login", "avo", ctx.SessionID)
+	contents, err := util.GETMessage(ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
 
 	if err != nil {
 		return nil, err
@@ -120,7 +120,7 @@ func (ctx *tinyCtx) getAvoCookie() (*Cookies, error) {
 
 	data := util.MarshalToResult(contents)
 
-	if data.Failed {
+	if data.Failed() {
 		return nil, data
 	}
 

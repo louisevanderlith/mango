@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"errors"
 	"log"
 	"strconv"
 
@@ -61,8 +60,8 @@ type headerItem struct {
 
 var uploadURL string
 
-func GetSites() (result []BasicSite, finalErr error) {
-	contents, err := util.GETMessage("Folio.API", "site")
+func GetSites(instanceID string) (result []BasicSite, finalErr error) {
+	contents, err := util.GETMessage(instanceID, "Folio.API", "site")
 
 	if err != nil {
 		return result, err
@@ -70,8 +69,8 @@ func GetSites() (result []BasicSite, finalErr error) {
 
 	data := util.MarshalToResult(contents)
 
-	if len(data.Error) != 0 {
-		return result, errors.New(data.Error)
+	if data.Failed() {
+		return result, data
 	}
 
 	result = data.Data.([]BasicSite)
@@ -79,8 +78,8 @@ func GetSites() (result []BasicSite, finalErr error) {
 	return result, nil
 }
 
-func GetSite(siteID int64) (result BasicSite, finalErr error) {
-	contents, err := util.GETMessage("Folio.API", "site", strconv.FormatInt(siteID, 10))
+func GetSite(siteID int64, instanceID string) (result BasicSite, finalErr error) {
+	contents, err := util.GETMessage(instanceID, "Folio.API", "site", strconv.FormatInt(siteID, 10))
 
 	if err != nil {
 		return result, err
@@ -88,19 +87,19 @@ func GetSite(siteID int64) (result BasicSite, finalErr error) {
 
 	data := util.MarshalToResult(contents)
 
-	if len(data.Error) != 0 {
-		return result, errors.New(data.Error)
+	if data.Failed() {
+		return result, data
 	}
 
 	result = data.Data.(BasicSite)
-	result.setImageURLs()
+	result.setImageURLs(instanceID)
 
 	return result, nil
 }
 
-func (obj *BasicSite) setImageURLs() {
+func (obj *BasicSite) setImageURLs(instanceID string) {
 	if uploadURL == "" {
-		setUploadURL()
+		setUploadURL(instanceID)
 	}
 
 	if obj.ImageID != 0 {
@@ -124,8 +123,8 @@ func (obj *BasicSite) setImageURLs() {
 	}
 }
 
-func setUploadURL() {
-	url, err := util.GetServiceURL("Artifact.API", true)
+func setUploadURL(instanceID string) {
+	url, err := util.GetServiceURL(instanceID, "Artifact.API", true)
 
 	if err != nil {
 		log.Print("setImageURLs:", err)

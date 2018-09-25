@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
@@ -18,10 +17,9 @@ type Service struct {
 	Environment   enums.Environment
 	AllowedCaller enums.ServiceType
 	Type          enums.ServiceType
-	InstanceKey   husk.Key
 }
 
-func NewService(env string, name string, serviceType enums.ServiceType) *Service {
+func NewService(env, name string, serviceType enums.ServiceType) *Service {
 	result := &Service{
 		Environment: enums.GetEnvironment(env),
 		Name:        name,
@@ -31,33 +29,29 @@ func NewService(env string, name string, serviceType enums.ServiceType) *Service
 	return result
 }
 
-func (s *Service) GetInstanceKey() string {
-	return s.InstanceKey.String()
-}
-
 // Register is used to register an application with the router service
-func (s *Service) Register(port string) (string, error) {
+func (s *Service) Register(port string) error {
 	err := s.setURL(port)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	contents, err := POSTMessage(s.GetInstanceKey(), "Router.API", "discovery", s)
+	contents, err := POSTMessage(s.ID, "Router.API", "discovery", s)
 
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	data := MarshalToResult(contents)
 
-	if data.Failed {
-		return "", data
+	if data.Failed() {
+		return data
 	}
 
-	s.InstanceKey = husk.ParseKey(data.Data.(string))
+	s.ID = data.Data.(string)
 
-	return s.GetInstanceKey(), nil
+	return nil
 }
 
 func (s *Service) setURL(port string) error {
@@ -74,7 +68,7 @@ func (s *Service) setURL(port string) error {
 
 func getPublicIP(port string, env enums.Environment) (string, error) {
 	if env == enums.DEV {
-		return "localhost", nil
+		return makeURL("localhost", port), nil
 	}
 
 	resp, err := http.Get("http://myexternalip.com/raw")
@@ -93,5 +87,15 @@ func getPublicIP(port string, env enums.Environment) (string, error) {
 
 	result := strings.Replace(string(ip), "\n", "", -1)
 
-	return fmt.Sprintf("https://%s:%s/", result, port), nil
+	return makeURL(result, port), nil
+}
+
+func makeURL(domain, port string) string {
+	schema := "https"
+
+	if domain == "localhost" {
+		schema = "http"
+	}
+
+	return fmt.Sprintf("%s://%s:%s/", schema, domain, port)
 }
