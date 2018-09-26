@@ -33,13 +33,21 @@ func getProfileByName(name string) (profileRecord, error) {
 func GetProfile(key husk.Key) (*Profile, error) {
 	rec, err := getProfile(key)
 
-	return rec.Data(), err
+	if err != nil {
+		return nil, err
+	}
+
+	return rec.Data(), nil
 }
 
 func GetProfileByName(name string) (*Profile, error) {
 	rec, err := getProfileByName(name)
 
-	return rec.Data(), err
+	if err != nil {
+		return nil, err
+	}
+
+	return rec.Data(), nil
 }
 
 func GetProfiles(page, size int) (profileSet, error) {
@@ -70,6 +78,7 @@ func AddSocialLink(key husk.Key, socialLink SocialLink) error {
 	if err != nil {
 		return err
 	}
+
 	profile := prRec.Data()
 	profile.SocialLinks = append(profile.SocialLinks, socialLink)
 
@@ -82,6 +91,7 @@ func AddAboutSection(key husk.Key, about About) error {
 	if err != nil {
 		return err
 	}
+
 	profile := prRec.Data()
 	profile.AboutSections = append(profile.AboutSections, about)
 
@@ -94,6 +104,7 @@ func AddHeaderSection(key husk.Key, header Header) error {
 	if err != nil {
 		return err
 	}
+
 	profile := prRec.Data()
 	profile.Headers = append(profile.Headers, header)
 
@@ -106,6 +117,7 @@ func AddPortfolioSection(key husk.Key, portfolio Portfolio) error {
 	if err != nil {
 		return err
 	}
+
 	profile := prRec.Data()
 	profile.PortfolioItems = append(profile.PortfolioItems, portfolio)
 

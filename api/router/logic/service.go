@@ -30,6 +30,10 @@ func GetServiceMap() map[string]Services {
 
 // AddService registers a new service and returns a key for that entry
 func AddService(service *util.Service) (string, error) {
+	if !strings.Contains(service.Name, ".") {
+		return "", errors.New("invalid service Name")
+	}
+
 	val, duplicate := isDuplicate(service)
 
 	if duplicate {

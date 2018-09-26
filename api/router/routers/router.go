@@ -30,7 +30,7 @@ func Setup(s *util.Service) {
 				controllers.NewMemoryCtrl(ctrlmap),
 			),
 		),
-	)
+	) 
 
 	beego.AddNamespace(ns)
 }

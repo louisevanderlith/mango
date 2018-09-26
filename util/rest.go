@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -110,7 +109,6 @@ func jsonRequest(action, url string, obj interface{}) *RESTResult {
 }
 
 func MarshalToResult(content []byte) *RESTResult {
-	log.Printf("TResult: %+v\n", content)
 	result := &RESTResult{}
 	err := json.Unmarshal(content, result)
 

@@ -41,9 +41,9 @@ func (ctrl *UIController) Setup(name string) {
 func (ctrl *UIController) Serve(data interface{}, err error) {
 	if err != nil {
 		ctrl.Ctx.Output.SetStatus(500)
-		ctrl.Data["Error"] = err
 	}
-
+	
+	ctrl.Data["Error"] = err
 	ctrl.Data["Data"] = data
 }
 

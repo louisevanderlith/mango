@@ -63,7 +63,7 @@ var uploadURL string
 func GetSites(instanceID string) ([]BasicSite, error) {
 	var result []BasicSite
 
-	resp := util.GETMessage(instanceID, "Folio.API", "site")
+	resp := util.GETMessage(instanceID, "Folio.API", "profile")
 
 	if resp.Failed() {
 		return result, resp
@@ -76,7 +76,7 @@ func GetSites(instanceID string) ([]BasicSite, error) {
 
 func GetSite(siteID int64, instanceID string) (BasicSite, error) {
 	result := BasicSite{}
-	resp := util.GETMessage(instanceID, "Folio.API", "site", strconv.FormatInt(siteID, 10))
+	resp := util.GETMessage(instanceID, "Folio.API", "profile", strconv.FormatInt(siteID, 10))
 
 	if resp.Failed() {
 		return result, resp

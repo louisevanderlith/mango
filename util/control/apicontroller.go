@@ -3,7 +3,6 @@ package control
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/louisevanderlith/mango/util"
@@ -41,7 +40,6 @@ func (ctrl *APIController) Serve(result interface{}, err error) {
 		ctrl.Ctx.Output.SetStatus(500)
 	}
 
-	log.Printf("JSON-%+v\n", resp)
 	ctrl.Data["json"] = *resp
 	ctrl.ServeJSON()
 }
