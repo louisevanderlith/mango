@@ -26,11 +26,11 @@ func (req *PortfolioController) Post() {
 	with, err := req.GetKeyedRequest()
 
 	if err != nil {
-		req.Serve(err, nil)
+		req.Serve(nil, err)
 		return
 	}
 
 	err = folio.AddPortfolioSection(with.Key, with.Body.(folio.Portfolio))
 
-	req.Serve(err, nil)
+	req.Serve(nil, err)
 }

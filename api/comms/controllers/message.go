@@ -35,7 +35,7 @@ func (req *MessageController) Post() {
 
 	err := message.SendMessage()
 
-	req.Serve(err, "Message has been sent.")
+	req.Serve("Message has been sent.", err)
 }
 
 // @Title GetMessages
@@ -46,5 +46,5 @@ func (req *MessageController) Get() {
 	page, size := req.GetPageData()
 	result, err := comms.GetMessages(page, size)
 
-	req.Serve(err, result)
+	req.Serve(result, err)
 }

@@ -26,11 +26,11 @@ func (req *HeaderController) Post() {
 	with, err := req.GetKeyedRequest()
 
 	if err != nil {
-		req.Serve(err, nil)
+		req.Serve(nil, err)
 		return
 	}
 
 	err = folio.AddHeaderSection(with.Key, with.Body.(folio.Header))
 
-	req.Serve(err, nil)
+	req.Serve(nil, err)
 }

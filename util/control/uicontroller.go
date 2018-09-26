@@ -38,13 +38,13 @@ func (ctrl *UIController) Setup(name string) {
 	ctrl.Data["RunModeDEV"] = beego.BConfig.RunMode == "dev"
 }
 
-func (ctrl *UIController) Serve(err error, data interface{}) {
+func (ctrl *UIController) Serve(data interface{}, err error) {
 	if err != nil {
 		ctrl.Ctx.Output.SetStatus(500)
 		ctrl.Data["Error"] = err
-	} else {
-		ctrl.Data["Data"] = data
 	}
+
+	ctrl.Data["Data"] = data
 }
 
 func (ctrl *UIController) CreateTopMenu(menu *Menu) {

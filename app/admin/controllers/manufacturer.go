@@ -22,5 +22,5 @@ func (c *ManufacturerController) Get() {
 
 	data, err := logic.GetManufacturers(c.GetInstanceID())
 
-	c.Serve(err, data)
+	c.Serve(data, err)
 }

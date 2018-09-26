@@ -22,5 +22,5 @@ func (c *ModelController) Get() {
 
 	data, err := logic.GetModels(c.GetInstanceID())
 
-	c.Serve(err, data)
+	c.Serve(data, err)
 }

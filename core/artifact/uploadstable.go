@@ -57,12 +57,14 @@ func (t uploadsTable) Exists(filter uploadFilter) (bool, error) {
 
 func (t uploadsTable) Create(obj Upload) (uploadRecord, error) {
 	set := t.tbl.Create(obj)
+	defer t.tbl.Save()
 
 	return uploadRecord{set.Record}, set.Error
 }
 
 func (t uploadsTable) Update(record uploadRecord) error {
 	result := t.tbl.Update(record.rec)
+	defer t.tbl.Save()
 
 	return result
 }

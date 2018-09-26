@@ -30,7 +30,7 @@ func (req *UploadController) Get() {
 		return true
 	})
 
-	req.Serve(err, results)
+	req.Serve(results, err)
 }
 
 // @Title GetUpload
@@ -41,9 +41,7 @@ func (req *UploadController) Get() {
 func (req *UploadController) GetByID() {
 	key := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
 
-	result, err := artifact.GetUpload(key)
-
-	req.Serve(err, result)
+	req.Serve(artifact.GetUpload(key))
 }
 
 // @Title GetFile
@@ -80,18 +78,18 @@ func (req *UploadController) Post() {
 	infoHead, err := logic.GetInfoHead(info)
 
 	if err != nil {
-		req.Serve(err, id)
+		req.Serve(id, err)
 	}
 
 	file, header, err := req.GetFile("file")
 
 	if err != nil {
-		req.Serve(err, id)
+		req.Serve(id, err)
 	}
 
 	defer file.Close()
 
 	id, err = logic.SaveFile(file, header, infoHead)
 
-	req.Serve(err, id)
+	req.Serve(id, err)
 }

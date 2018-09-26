@@ -44,7 +44,7 @@ func (req *LoginController) GetAvo() {
 		result = control.FindAvo(sessionID)
 	}
 
-	req.Serve(err, result)
+	req.APIController.Serve(result, err)
 }
 
 // @Title Login
@@ -60,7 +60,7 @@ func (req *LoginController) Post() {
 		err = errors.New("Login Failed. Incorrect details")
 	}
 
-	req.Serve(err, sessionID)
+	req.APIController.Serve(sessionID, err)
 }
 
 // @Title Logout
@@ -74,5 +74,5 @@ func (req *LoginController) Logout() {
 	// TODO: Create Trace for Logout...
 	control.DestroyAvo(sessionID)
 
-	req.Serve(nil, "Logout Success")
+	req.APIController.Serve("Logout Success", nil)
 }

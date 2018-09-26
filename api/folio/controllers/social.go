@@ -26,11 +26,11 @@ func (req *SocialController) Post() {
 	with, err := req.GetKeyedRequest()
 
 	if err != nil {
-		req.Serve(err, nil)
+		req.Serve(nil, err)
 		return
 	}
 
 	err = folio.AddSocialLink(with.Key, with.Body.(folio.SocialLink))
 
-	req.Serve(err, nil)
+	req.Serve(nil, err)
 }

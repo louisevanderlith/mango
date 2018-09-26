@@ -26,11 +26,11 @@ func (req *AboutController) Post() {
 	with, err := req.GetKeyedRequest()
 
 	if err != nil {
-		req.Serve(err, nil)
+		req.Serve(nil, err)
 		return
 	}
 
 	err = folio.AddAboutSection(with.Key, with.Body.(folio.About))
 
-	req.Serve(err, nil)
+	req.Serve(nil, err)
 }

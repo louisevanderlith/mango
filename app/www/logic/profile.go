@@ -60,24 +60,19 @@ type headerItem struct {
 
 var uploadURL string
 
-func GetProfileSite(instanceID, name string) (result BasicSite, finalErr error) {
+func GetProfileSite(instanceID, name string) (BasicSite, error) {
+	result := BasicSite{}
 	if name == "" {
 		name = "avosa"
 	}
 
-	contents, err := util.GETMessage(instanceID, "Folio.API", "site", name)
+	resp := util.GETMessage(instanceID, "Folio.API", "site", name)
 
-	if err != nil {
-		return result, err
+	if resp.Failed() {
+		return result, resp
 	}
 
-	data := util.MarshalToResult(contents)
-
-	if data.Failed() {
-		return result, data
-	}
-
-	result = data.Data.(BasicSite)
+	result = resp.Data.(BasicSite)
 	result.setImageURLs(instanceID)
 
 	return result, nil

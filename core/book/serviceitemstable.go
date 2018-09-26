@@ -64,12 +64,14 @@ func (t serviceItemsTable) Exists(filter serviceItemFilter) (bool, error) {
 
 func (t serviceItemsTable) Create(obj ServiceItem) (serviceItemRecord, error) {
 	set := t.tbl.Create(obj)
+	defer t.tbl.Save()
 
 	return serviceItemRecord{set.Record}, set.Error
 }
 
 func (t serviceItemsTable) Update(record serviceItemRecord) error {
 	result := t.tbl.Update(record)
+	defer t.tbl.Save()
 
 	return result
 }

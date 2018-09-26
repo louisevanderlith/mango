@@ -22,7 +22,7 @@ func (c *DefaultController) Get() {
 	siteName := c.Ctx.Input.Param(":siteName")
 	data, err := logic.GetProfileSite(c.GetInstanceID(), siteName)
 
-	c.Serve(err, data)
+	c.Serve(data, err)
 }
 
 func getTopMenu() *control.Menu {

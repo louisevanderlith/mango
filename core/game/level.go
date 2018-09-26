@@ -14,16 +14,8 @@ func (o Level) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
 }
 
-func getLevel(xp int) husk.Recorder {
-	// return level based on xp given
-	return ctx.Levels.FindFirst(func(o husk.Dataer) bool {
-		item := o.(*Level)
-		return xp <= item.Required
-	})
-}
-
 func seedLevel() {
-	exists := ctx.Levels.Exists(func(o husk.Dataer) bool {
+	/*exists := ctx.Levels.Exists(func(o husk.Dataer) bool {
 		return true
 	})
 
@@ -31,7 +23,7 @@ func seedLevel() {
 		for i := 75; i >= 0; i-- {
 			ctx.Levels.Create(createLevel(i))
 		}
-	}
+	}*/
 }
 
 func createLevel(lvl int) Level {

@@ -112,19 +112,13 @@ func (ctx *tinyCtx) hasRole(required enums.RoleType) bool {
 //TODO: use channels
 //getAvoCookie also checks cookie validity, so repeated calls are required
 func (ctx *tinyCtx) getAvoCookie() (*Cookies, error) {
-	contents, err := util.GETMessage(ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
+	resp := util.GETMessage(ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
 
-	if err != nil {
-		return nil, err
+	if resp.Failed() {
+		return nil, resp
 	}
 
-	data := util.MarshalToResult(contents)
-
-	if data.Failed() {
-		return nil, data
-	}
-
-	result := data.Data.(Cookies)
+	result := resp.Data.(Cookies)
 
 	return &result, nil
 }

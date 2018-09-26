@@ -32,7 +32,7 @@ func (req *ProfileController) Post() {
 
 	rec, err := site.Create()
 
-	req.Serve(err, rec)
+	req.Serve(rec, err)
 }
 
 // @Title UpdateWebsite
@@ -45,14 +45,14 @@ func (req *ProfileController) Put() {
 	with, err := req.GetKeyedRequest()
 
 	if err != nil {
-		req.Serve(err, nil)
+		req.Serve(nil, err)
 		return
 	}
 
 	body := with.Body.(folio.Profile)
 	err = body.Update(with.Key)
 
-	req.Serve(err, nil)
+	req.Serve(nil, err)
 }
 
 // @Title GetSites
@@ -64,7 +64,7 @@ func (req *ProfileController) Get() {
 
 	results, err := folio.GetProfiles(page, size)
 
-	req.Serve(err, results)
+	req.Serve(results, err)
 }
 
 // @Title GetSite
@@ -84,5 +84,5 @@ func (req *ProfileController) GetOne() {
 		result, err = folio.GetProfileByName(siteParam)
 	}
 
-	req.Serve(err, result)
+	req.Serve(result, err)
 }

@@ -13,55 +13,37 @@ type LookupObj struct {
 }
 
 func GetCategories(instanceID string) ([]LookupObj, error) {
-	contents, err := util.GETMessage(instanceID, "Things.API", "category")
+	resp := util.GETMessage(instanceID, "Things.API", "category")
 
-	if err != nil {
-		return []LookupObj{}, err
-	}
-
-	return toDTO(contents)
+	return toDTO(resp)
 }
 
 func GetManufacturers(instanceID string) ([]LookupObj, error) {
-	contents, err := util.GETMessage(instanceID, "Things.API", "message")
+	resp := util.GETMessage(instanceID, "Things.API", "message")
 
-	if err != nil {
-		return []LookupObj{}, err
-	}
-
-	return toDTO(contents)
+	return toDTO(resp)
 }
 
 func GetModels(instanceID string) ([]LookupObj, error) {
-	contents, err := util.GETMessage(instanceID, "Things.API", "model")
+	resp := util.GETMessage(instanceID, "Things.API", "model")
 
-	if err != nil {
-		return []LookupObj{}, err
-	}
-
-	return toDTO(contents)
+	return toDTO(resp)
 }
 
 func GetSubCategories(instanceID string) ([]LookupObj, error) {
-	contents, err := util.GETMessage(instanceID, "Things.API", "subcategory")
+	resp := util.GETMessage(instanceID, "Things.API", "subcategory")
 
-	if err != nil {
-		return []LookupObj{}, err
-	}
-
-	return toDTO(contents)
+	return toDTO(resp)
 }
 
-func toDTO(contents []byte) ([]LookupObj, error) {
+func toDTO(resp *util.RESTResult) ([]LookupObj, error) {
 	var result []LookupObj
 
-	data := util.MarshalToResult(contents)
-
-	if data.Failed() {
-		return result, data
+	if resp.Failed() {
+		return result, resp
 	}
 
-	result, ok := data.Data.([]LookupObj)
+	result, ok := resp.Data.([]LookupObj)
 
 	if !ok {
 		return result, errors.New("not a []LookupObj")

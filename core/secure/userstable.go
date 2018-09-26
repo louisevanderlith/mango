@@ -59,12 +59,14 @@ func (t usersTable) Exists(filter userFilter) (bool, error) {
 
 func (t usersTable) Create(obj *User) (userRecord, error) {
 	set := t.tbl.Create(obj)
+	defer t.tbl.Save()
 
 	return userRecord{set.Record}, set.Error
 }
 
 func (t usersTable) Update(record userRecord) error {
 	result := t.tbl.Update(record.rec)
+	defer t.tbl.Save()
 
 	return result
 }

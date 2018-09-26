@@ -20,7 +20,7 @@ const cost int = 11
 // Login will attempt to authenticate a user
 func Login(authReq Authentication) (*control.Cookies, error) {
 	passed := false
-	userKey := husk.NewKey(-1)
+	userKey := husk.CrazyKey()
 	username := "Unknown"
 	ip := authReq.App.IP
 	location := authReq.App.Location

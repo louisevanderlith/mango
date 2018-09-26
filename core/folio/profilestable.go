@@ -59,12 +59,14 @@ func (t profilesTable) Exists(filter profileFilter) (bool, error) {
 
 func (t profilesTable) Create(obj Profile) (profileRecord, error) {
 	set := t.tbl.Create(obj)
+	defer t.tbl.Save()
 
 	return profileRecord{set.Record}, set.Error
 }
 
 func (t profilesTable) Update(record profileRecord) error {
 	result := t.tbl.Update(record.rec)
+	defer t.tbl.Save()
 
 	return result
 }

@@ -29,66 +29,64 @@ func GetServiceMap() map[string]Services {
 }
 
 // AddService registers a new service and returns a key for that entry
-func AddService(service *util.Service) (result string, err error) {
-	items, ok := serviceMap[service.Name]
-	duplicate := false
+func AddService(service *util.Service) (string, error) {
+	val, duplicate := isDuplicate(service)
 
-	if !ok {
-		for _, value := range items {
-			if value.URL == service.URL && value.Environment == service.Environment {
-				duplicate = true
-				result = value.ID
-				break
-			}
+	if duplicate {
+		val.Version++
+		return val.ID, nil
+	}
+
+	u4, err := uuid.NewV4()
+
+	if err != nil {
+		return "", err
+	}
+
+	service.ID = u4.String()
+	service.Version = getVersion()
+	service.AllowedCaller = getAllowedCaller(service.Type)
+
+	serviceMap[service.Name] = append(serviceMap[service.Name], service)
+
+	return service.ID, nil
+}
+
+func isDuplicate(s *util.Service) (*util.Service, bool) {
+	items, _ := serviceMap[s.Name]
+
+	for _, value := range items {
+		if value.URL == s.URL && value.Environment == s.Environment {
+			return value, true
 		}
 	}
 
-	if !duplicate {
-		u4, err := uuid.NewV4()
-
-		if err != nil {
-			return "", err
-		}
-
-		service.ID = u4.String()
-		service.Version = getVersion()
-		service.AllowedCaller = getAllowedCaller(service.Type)
-
-		serviceMap[service.Name] = append(items, service)
-
-		result = service.ID
-	}
-
-	return result, err
+	return nil, false
 }
 
 // GetServicePath will return the correct URL for a requested service.
 func GetServicePath(serviceName, appID string, clean bool) (string, error) {
-	var result string
-	var err error
 	requestingApp := getRequestingService(appID)
 
-	if requestingApp != nil {
-		if !clean {
-			service := getService(serviceName, requestingApp.Environment, requestingApp.Type)
-
-			if service != nil {
-				result = service.URL
-			} else {
-				msg := fmt.Sprintf("%s wasn't found for the requesting application", serviceName)
-				err = errors.New(msg)
-			}
-		} else {
-			keyName := strings.Split(serviceName, ".")[0]
-			cleanHost := getCleanHost(requestingApp.Environment)
-
-			result = "https://" + strings.ToLower(keyName) + cleanHost
-		}
-	} else {
-		err = errors.New("Couldn't find an application with the given appID")
+	if requestingApp == nil {
+		return "", errors.New("Couldn't find an application with the given appID")
 	}
 
-	return result, err
+	if clean {
+		keyName := strings.Split(serviceName, ".")[0]
+		cleanHost := getCleanHost(requestingApp.Environment)
+
+		return "https://" + strings.ToLower(keyName) + cleanHost, nil
+	}
+
+	service := getService(serviceName, requestingApp.Environment, requestingApp.Type)
+
+	if service == nil {
+		msg := fmt.Sprintf("%s wasn't found for the requesting application", serviceName)
+		return "", errors.New(msg)
+	}
+
+	return service.URL, nil
 }
 
 func getCleanHost(env enums.Environment) string {

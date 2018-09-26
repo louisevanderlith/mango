@@ -22,5 +22,5 @@ func NewMemoryCtrl(ctrlMap *control.ControllerMap) *MemoryController {
 // @router / [get]
 func (req *MemoryController) Get() {
 	srvMap := logic.GetServiceMap()
-	req.Serve(nil, srvMap)
+	req.Serve(srvMap, nil)
 }

@@ -22,5 +22,5 @@ func (c *CommsController) Get() {
 
 	data, err := logic.GetCommsMessages(c.GetInstanceID())
 
-	c.Serve(err, data)
+	c.Serve(data, err)
 }

@@ -59,12 +59,14 @@ func (t messagesTable) Exists(filter messageFilter) (bool, error) {
 
 func (t messagesTable) Create(obj Message) (messageRecord, error) {
 	set := t.tbl.Create(obj)
+	defer t.tbl.Save()
 
 	return messageRecord{set.Record}, set.Error
 }
 
 func (t messagesTable) Update(record messageRecord) error {
 	result := t.tbl.Update(record.rec)
+	defer t.tbl.Save()
 
 	return result
 }

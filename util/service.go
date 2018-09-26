@@ -37,19 +37,13 @@ func (s *Service) Register(port string) error {
 		return err
 	}
 
-	contents, err := POSTMessage(s.ID, "Router.API", "discovery", s)
+	resp := POSTMessage(s.ID, "Router.API", "discovery", s)
 
-	if err != nil {
-		return err
+	if resp.Failed() {
+		return resp
 	}
 
-	data := MarshalToResult(contents)
-
-	if data.Failed() {
-		return data
-	}
-
-	s.ID = data.Data.(string)
+	s.ID = resp.Data.(string)
 
 	return nil
 }

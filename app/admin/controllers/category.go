@@ -22,5 +22,5 @@ func (c *CategoryController) Get() {
 
 	data, err := logic.GetCategories(c.GetInstanceID())
 
-	c.Serve(err, data)
+	c.Serve(data, err)
 }

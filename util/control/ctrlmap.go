@@ -32,17 +32,13 @@ func CreateControlMap(service *util.Service) *ControllerMap {
 
 // AddControllerMap is used to specify the permissions required for a controller's actions.
 func (m *ControllerMap) Add(path string, actionMap ActionMap) {
-	log.Printf("Add(%s, %+v)\n", path, actionMap)
 	m.mapping[path] = actionMap
 }
 
 func (m *ControllerMap) GetRequiredRole(path, action string) enums.RoleType {
-	fmt.Printf("path: %s, actions: %s", path, action)
-
 	result := enums.Unknown
 
 	if actionMap, hasCtrl := m.mapping[path]; hasCtrl {
-		log.Printf("Action map: %+v\n", actionMap)
 		roleType, hasAction := actionMap[action]
 
 		if hasAction {

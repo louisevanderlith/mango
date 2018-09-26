@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"log"
 
 	"strconv"
 
@@ -32,9 +33,10 @@ func (req *DiscoveryController) Post() {
 	service := &util.Service{}
 	json.Unmarshal(req.Ctx.Input.RequestBody, service)
 
+	log.Printf("SERV:%+v\n", service)
 	appID, err := logic.AddService(service)
 
-	req.Serve(err, appID)
+	req.Serve(appID, err)
 }
 
 // @Title GetService
@@ -51,7 +53,7 @@ func (req *DiscoveryController) Get() {
 
 	if appID == "" || serviceName == "" {
 		err := errors.New("appID AND serviceName must be populated")
-		req.Serve(err, nil)
+		req.Serve(nil, err)
 		return
 	}
 
@@ -62,7 +64,7 @@ func (req *DiscoveryController) Get() {
 	}
 
 	url, err := logic.GetServicePath(serviceName, appID, clean)
-	req.Serve(err, url)
+	req.Serve(url, err)
 }
 
 // @Title GetDirtyService
@@ -78,11 +80,11 @@ func (req *DiscoveryController) GetDirty() {
 
 	if appID == "" || serviceName == "" {
 		err := errors.New("appID AND serviceName must be populated")
-		req.Serve(err, nil)
+		req.Serve(nil, err)
 		return
 	}
 
 	url, err := logic.GetServicePath(serviceName, appID, false)
 
-	req.Serve(err, url)
+	req.Serve(url, err)
 }

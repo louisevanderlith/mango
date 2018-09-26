@@ -13,20 +13,13 @@ type CommsObject struct {
 }
 
 func GetCommsMessages(instanceID string) ([]CommsObject, error) {
-	var result []CommsObject
-	contents, err := util.GETMessage(instanceID, "Communication.API", "message")
+	resp := util.GETMessage(instanceID, "Communication.API", "message")
 
-	if err != nil {
-		return result, err
+	if resp.Failed() {
+		return []CommsObject{}, resp
 	}
 
-	data := util.MarshalToResult(contents)
-
-	if data.Failed() {
-		return result, data
-	}
-
-	result = data.Data.([]CommsObject)
+	result := resp.Data.([]CommsObject)
 
 	return result, nil
 }

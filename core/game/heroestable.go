@@ -59,12 +59,14 @@ func (t heroesTable) Exists(filter heroFilter) (bool, error) {
 
 func (t heroesTable) Create(obj Hero) (heroRecord, error) {
 	set := t.tbl.Create(obj)
+	defer t.tbl.Save()
 
 	return heroRecord{set.Record}, set.Error
 }
 
 func (t heroesTable) Update(record heroRecord) error {
 	result := t.tbl.Update(record.rec)
+	defer t.tbl.Save()
 
 	return result
 }

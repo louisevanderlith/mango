@@ -3,7 +3,10 @@ package control
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
+
+	"github.com/louisevanderlith/mango/util"
 )
 
 type APIController struct {
@@ -31,15 +34,15 @@ func (ctrl *APIController) ServeBinary(data []byte, filename string) {
 	output.Body(data)
 }
 
-func (ctrl *APIController) Serve(err error, data interface{}) {
+func (ctrl *APIController) Serve(result interface{}, err error) {
+	resp := util.NewRESTResult(err, result)
 
-	if err != nil {
+	if resp.Failed() {
 		ctrl.Ctx.Output.SetStatus(500)
-		ctrl.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		ctrl.Data["json"] = map[string]interface{}{"Data": data}
 	}
 
+	log.Printf("JSON-%+v\n", resp)
+	ctrl.Data["json"] = *resp
 	ctrl.ServeJSON()
 }
 

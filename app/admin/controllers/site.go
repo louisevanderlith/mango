@@ -26,7 +26,7 @@ func (c *SiteController) Get() {
 
 	data, err := logic.GetSites(c.GetInstanceID())
 
-	c.Serve(err, data)
+	c.Serve(data, err)
 }
 
 func (c *SiteController) GetEdit() {
@@ -39,5 +39,5 @@ func (c *SiteController) GetEdit() {
 
 	data, err := logic.GetSite(id, c.GetInstanceID())
 
-	c.Serve(err, data)
+	c.Serve(data, err)
 }

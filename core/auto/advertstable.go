@@ -59,12 +59,14 @@ func (t advertsTable) Exists(filter advertFilter) (bool, error) {
 
 func (t advertsTable) Create(obj Advert) (advertRecord, error) {
 	set := t.tbl.Create(obj)
+	defer t.tbl.Save()
 
 	return advertRecord{set.Record}, set.Error
 }
 
 func (t advertsTable) Update(record advertRecord) error {
 	result := t.tbl.Update(record.rec)
+	defer t.tbl.Save()
 
 	return result
 }

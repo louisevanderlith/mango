@@ -22,5 +22,5 @@ func (c *SubCategoryController) Get() {
 
 	data, err := logic.GetSubCategories(c.GetInstanceID())
 
-	c.Serve(err, data)
+	c.Serve(data, err)
 }

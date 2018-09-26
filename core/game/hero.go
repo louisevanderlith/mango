@@ -9,7 +9,7 @@ import (
 type Hero struct {
 	UserID      int64
 	Credits     int
-	Experiences []Experience
+	Experiences []*Experience
 	Level       *Level
 	TotalXP     int
 	LastUpdated time.Time //update on save???

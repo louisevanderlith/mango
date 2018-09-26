@@ -33,7 +33,7 @@ func (req *MessageController) Get() {
 
 	result, err := comment.GetMessage(nodeKey, commentType)
 
-	req.Serve(err, result)
+	req.Serve(result, err)
 }
 
 // @Title CreateMessage
@@ -47,12 +47,13 @@ func (req *MessageController) Post() {
 	err := json.Unmarshal(req.Ctx.Input.RequestBody, &entry)
 
 	if err != nil {
-		req.Serve(err, "")
+		req.Serve(nil, err)
+		return
 	}
 
 	rec, err := comment.SubmitMessage(entry)
 
-	req.Serve(err, rec)
+	req.Serve(rec, err)
 }
 
 // @Title CreateMessage
@@ -65,10 +66,11 @@ func (req *MessageController) Put() {
 	entry, err := req.GetKeyedRequest()
 
 	if err != nil {
-		req.Serve(err, nil)
+		req.Serve(nil, err)
+		return
 	}
 
 	err = comment.UpdateMessage(entry.Key, entry.Body.(comment.Message))
 
-	req.Serve(err, nil)
+	req.Serve(nil, err)
 }
