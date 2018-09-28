@@ -9,8 +9,6 @@ const form = {
 };
 
 var fs = {};
-var location = '';
-var ip = '';
 
 $(document).ready(() => {
     fs = new FormState(form.loginButton);
@@ -64,8 +62,8 @@ function submitLogin() {
         data: JSON.stringify({
             Identifier: form.identity.val(),
             Password: form.password.val(),
-            IP: ip,
-            Location: location,
+            IP: localStorage.getItem('ip'),
+            Location: localStorage.getItem('location'),
             ReturnURL: localStorage.getItem('return')
         }),
         cache: false,
@@ -92,17 +90,18 @@ function submitLogin() {
 
 function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(setPosition);
+        navigator.geolocation.getCurrentPosition(setLocation);
     }
 }
 
-function setPosition(position) {
-    location = position.coords.latitude + ", " + position.coords.longitude;
+function setLocation(position) {
+    let location = position.coords.latitude + ", " + position.coords.longitude;
+    localStorage.setItem('location', location);
 }
 
 function getIP() {
     $.getJSON('//jsonip.com/?callback=?', function (data) {
-        ip = data.ip;
+        localStorage.setItem('ip', data.ip);
     });
 }
 

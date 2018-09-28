@@ -45,6 +45,21 @@ function tryRegister() {
     }
 }
 
+function getApp() { 
+    let appUrl = localStorage.getItem('return');
+    let ip = localStorage.getItem('ip');
+    let location = localStorage.getItem('location');
+
+    let result = {
+        Name: appUrl,
+        IP: ip,     
+        Location: location, 
+        InstanceID: instanceID   
+    };
+
+    return result;
+}
+
 function submitRegister() {
     fs.submitDisabled(true);
 
@@ -53,6 +68,7 @@ function submitRegister() {
         type: "POST",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
+            App: getApp(),
             Name: form.name.val(),
             Email: form.email.val(),
             ContactNumber: form.contact.val(),

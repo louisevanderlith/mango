@@ -1,6 +1,8 @@
 package folio
 
 import (
+	"log"
+
 	"github.com/louisevanderlith/husk"
 )
 
@@ -36,25 +38,24 @@ func (t profilesTable) Find(page, pageSize int, filter profileFilter) (profileSe
 func (t profilesTable) FindFirst(filter profileFilter) (profileRecord, error) {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	var result husk.Recorder
-
-	if err == nil {
-		result, err = t.tbl.FindFirst(huskFilter)
+	if err != nil {
+		return profileRecord{}, err
 	}
+
+	result := t.tbl.FindFirst(huskFilter)
 
 	return profileRecord{result}, err
 }
 
-func (t profilesTable) Exists(filter profileFilter) (bool, error) {
+func (t profilesTable) Exists(filter profileFilter) bool {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	result := true
-
-	if err == nil {
-		result, err = t.tbl.Exists(huskFilter)
+	if err != nil {
+		log.Println(err)
+		return true
 	}
 
-	return result, err
+	return t.tbl.Exists(huskFilter)
 }
 
 func (t profilesTable) Create(obj Profile) (profileRecord, error) {

@@ -19,7 +19,7 @@ func init() {
 }
 
 func createDefaultWebsite() {
-	any, _ := ctx.Profiles.Exists(func(obj Profile) bool {
+	any := ctx.Profiles.Exists(func(obj Profile) bool {
 		return true
 	})
 

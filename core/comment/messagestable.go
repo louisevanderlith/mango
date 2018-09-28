@@ -2,6 +2,7 @@ package comment
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/louisevanderlith/husk"
@@ -39,29 +40,24 @@ func (t messagesTable) Find(page, pageSize int, filter messageFilter) (messageSe
 func (t messagesTable) FindFirst(filter messageFilter) (messageRecord, error) {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	var result husk.Recorder
-
 	if err != nil {
-		return messageRecord{result}, err
+		return messageRecord{}, err
 	}
 
-	result, err = t.tbl.FindFirst(huskFilter)
+	result := t.tbl.FindFirst(huskFilter)
 
-	return messageRecord{result}, err
+	return messageRecord{result}, nil
 }
 
-func (t messagesTable) Exists(filter messageFilter) (bool, error) {
+func (t messagesTable) Exists(filter messageFilter) bool {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	result := true
-
 	if err != nil {
-		return result, err
+		log.Println(err)
+		return true
 	}
 
-	result, err = t.tbl.Exists(huskFilter)
-
-	return result, err
+	return t.tbl.Exists(huskFilter)
 }
 
 func (t messagesTable) Create(obj Message) (messageRecord, error) {

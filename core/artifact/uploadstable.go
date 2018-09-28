@@ -1,6 +1,10 @@
 package artifact
 
-import "github.com/louisevanderlith/husk"
+import (
+	"log"
+
+	"github.com/louisevanderlith/husk"
+)
 
 type uploadsTable struct {
 	tbl husk.Tabler
@@ -34,25 +38,24 @@ func (t uploadsTable) Find(page, pageSize int, filter uploadFilter) (uploadSet, 
 func (t uploadsTable) FindFirst(filter uploadFilter) (uploadRecord, error) {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	var result husk.Recorder
-
-	if err == nil {
-		result, err = t.tbl.FindFirst(huskFilter)
+	if err != nil {
+		return uploadRecord{}, err
 	}
 
-	return uploadRecord{result}, err
+	result := t.tbl.FindFirst(huskFilter)
+
+	return uploadRecord{result}, nil
 }
 
-func (t uploadsTable) Exists(filter uploadFilter) (bool, error) {
+func (t uploadsTable) Exists(filter uploadFilter) bool {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	result := true
-
-	if err == nil {
-		result, err = t.tbl.Exists(huskFilter)
+	if err != nil {
+		log.Println(err.Error())
+		return true
 	}
 
-	return result, err
+	return t.tbl.Exists(huskFilter)
 }
 
 func (t uploadsTable) Create(obj Upload) (uploadRecord, error) {

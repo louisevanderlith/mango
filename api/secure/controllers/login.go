@@ -54,11 +54,7 @@ func (req *LoginController) GetAvo() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *LoginController) Post() {
-	loggedIn, sessionID, err := logic.AttemptLogin(req.Ctx)
-
-	if !loggedIn {
-		err = errors.New("Login Failed. Incorrect details")
-	}
+	sessionID, err := logic.AttemptLogin(req.Ctx)
 
 	req.APIController.Serve(sessionID, err)
 }

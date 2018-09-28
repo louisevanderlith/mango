@@ -9,29 +9,26 @@ import (
 	uuid "github.com/nu7hatch/gouuid"
 )
 
-func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err error) {
-	u4, _ := uuid.NewV4()
-	sessionID = u4.String()
+// AttemptLogin returns SessionID, if error is not nil
+func AttemptLogin(ctx *context.Context) (string, error) {
 
-	if control.HasAvo(sessionID) {
-		return true, sessionID, nil
-	}
-
-	var authReq secure.Authentication
-	err = json.Unmarshal(ctx.Input.RequestBody, &authReq)
+	authReq := secure.Authentication{}
+	err := json.Unmarshal(ctx.Input.RequestBody, &authReq)
 
 	if err != nil {
-		return false, sessionID, err
+		return "", err
 	}
 
 	cooki, err := secure.Login(authReq)
-	passed = err == nil
 
-	if !passed {
-		return passed, sessionID, err
+	if err != nil {
+		return "", err
 	}
+
+	u4, _ := uuid.NewV4()
+	sessionID := u4.String()
 
 	control.CreateAvo(ctx, cooki, sessionID)
 
-	return passed, sessionID, err
+	return sessionID, nil
 }

@@ -19,7 +19,7 @@ func (ctrl *UIController) Prepare() {
 
 	output := ctrl.Ctx.Output
 
-	output.Header("Content-Security-Policy", "default-src https:")
+	//output.Header("Content-Security-Policy", "script-src 'self' https:")
 	output.Header("X-Frame-Options", "SAMEORIGIN")
 	output.Header("X-XSS-Protection", "1; mode=block")
 	output.Header("X-Content-Type-Options", "nosniff")
@@ -42,7 +42,7 @@ func (ctrl *UIController) Serve(data interface{}, err error) {
 	if err != nil {
 		ctrl.Ctx.Output.SetStatus(500)
 	}
-	
+
 	ctrl.Data["Error"] = err
 	ctrl.Data["Data"] = data
 }

@@ -1,6 +1,8 @@
 package auto
 
 import (
+	"log"
+
 	"github.com/louisevanderlith/husk"
 )
 
@@ -36,25 +38,24 @@ func (t advertsTable) Find(page, pageSize int, filter advertFilter) (advertSet, 
 func (t advertsTable) FindFirst(filter advertFilter) (advertRecord, error) {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	var result husk.Recorder
-
-	if err == nil {
-		result, err = t.tbl.FindFirst(huskFilter)
+	if err != nil {
+		return advertRecord{}, err
 	}
 
-	return advertRecord{result}, err
+	result := t.tbl.FindFirst(huskFilter)
+
+	return advertRecord{result}, nil
 }
 
-func (t advertsTable) Exists(filter advertFilter) (bool, error) {
+func (t advertsTable) Exists(filter advertFilter) bool {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	result := true
-
-	if err == nil {
-		result, err = t.tbl.Exists(huskFilter)
+	if err != nil {
+		log.Println(err)
+		return true
 	}
 
-	return result, err
+	return t.tbl.Exists(huskFilter)
 }
 
 func (t advertsTable) Create(obj Advert) (advertRecord, error) {

@@ -1,6 +1,8 @@
 package game
 
 import (
+	"log"
+
 	"github.com/louisevanderlith/husk"
 )
 
@@ -36,25 +38,24 @@ func (t heroesTable) Find(page, pageSize int, filter heroFilter) (heroSet, error
 func (t heroesTable) FindFirst(filter heroFilter) (heroRecord, error) {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	var result husk.Recorder
-
-	if err == nil {
-		result, err = t.tbl.FindFirst(huskFilter)
+	if err != nil {
+		return heroRecord{}, err
 	}
+
+	result := t.tbl.FindFirst(huskFilter)
 
 	return heroRecord{result}, err
 }
 
-func (t heroesTable) Exists(filter heroFilter) (bool, error) {
+func (t heroesTable) Exists(filter heroFilter) bool {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	result := true
-
-	if err == nil {
-		result, err = t.tbl.Exists(huskFilter)
+	if err != nil {
+		log.Println(err)
+		return true
 	}
 
-	return result, err
+	return t.tbl.Exists(huskFilter)
 }
 
 func (t heroesTable) Create(obj Hero) (heroRecord, error) {

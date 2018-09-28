@@ -36,11 +36,7 @@ func GetUsers(page, size int) (result []SafeUser, err error) {
 	}
 
 	for users.MoveNext() {
-		currUser, err := users.Current()
-
-		if err != nil {
-			return result, err
-		}
+		currUser := users.Current()
 
 		sfeUser := createSafeUser(userRecord{currUser})
 		result = append(result, sfeUser)

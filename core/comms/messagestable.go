@@ -1,6 +1,8 @@
 package comms
 
 import (
+	"log"
+
 	"github.com/louisevanderlith/husk"
 )
 
@@ -36,25 +38,24 @@ func (t messagesTable) Find(page, pageSize int, filter messageFilter) (messageSe
 func (t messagesTable) FindFirst(filter messageFilter) (messageRecord, error) {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	var result husk.Recorder
-
-	if err == nil {
-		result, err = t.tbl.FindFirst(huskFilter)
+	if err != nil {
+		return messageRecord{}, err
 	}
+
+	result := t.tbl.FindFirst(huskFilter)
 
 	return messageRecord{result}, err
 }
 
-func (t messagesTable) Exists(filter messageFilter) (bool, error) {
+func (t messagesTable) Exists(filter messageFilter) bool {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	result := true
-
-	if err == nil {
-		result, err = t.tbl.Exists(huskFilter)
+	if err != nil {
+		log.Println(err)
+		return true
 	}
 
-	return result, err
+	return t.tbl.Exists(huskFilter)
 }
 
 func (t messagesTable) Create(obj Message) (messageRecord, error) {

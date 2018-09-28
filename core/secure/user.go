@@ -88,13 +88,7 @@ func getUser(email string) userRecord {
 }
 
 func emailExists(email string) bool {
-	exists, err := ctx.Users.Exists(func(obj User) bool {
+	return ctx.Users.Exists(func(obj User) bool {
 		return obj.Email == email
 	})
-
-	if err != nil {
-		return true
-	}
-
-	return exists
 }

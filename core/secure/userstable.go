@@ -1,6 +1,8 @@
 package secure
 
 import (
+	"log"
+
 	"github.com/louisevanderlith/husk"
 )
 
@@ -36,25 +38,24 @@ func (t usersTable) Find(page, pageSize int, filter userFilter) (userSet, error)
 func (t usersTable) FindFirst(filter userFilter) (userRecord, error) {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	var result husk.Recorder
-
-	if err == nil {
-		result, err = t.tbl.FindFirst(huskFilter)
+	if err != nil {
+		return userRecord{}, err
 	}
+
+	result := t.tbl.FindFirst(huskFilter)
 
 	return userRecord{result}, err
 }
 
-func (t usersTable) Exists(filter userFilter) (bool, error) {
+func (t usersTable) Exists(filter userFilter) bool {
 	huskFilter, err := husk.MakeFilter(filter)
 
-	result := true
-
-	if err == nil {
-		result, err = t.tbl.Exists(huskFilter)
+	if err != nil {
+		log.Println(err)
+		return true
 	}
 
-	return result, err
+	return t.tbl.Exists(huskFilter)
 }
 
 func (t usersTable) Create(obj *User) (userRecord, error) {
