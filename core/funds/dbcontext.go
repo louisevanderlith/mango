@@ -1,13 +1,17 @@
 package funds
 
+import (
+	"github.com/louisevanderlith/husk"
+)
+
 type context struct {
-	Transactions transactionsTable
+	Transactions husk.Tabler
 }
 
 var ctx context
 
 func init() {
 	ctx = context{
-		Transactions: NewTransactionsTable(),
+		Transactions: husk.NewTable(new(Transaction)),
 	}
 }

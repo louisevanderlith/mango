@@ -30,9 +30,9 @@ func (req *ProfileController) Post() {
 	var site folio.Profile
 	json.Unmarshal(req.Ctx.Input.RequestBody, &site)
 
-	rec, err := site.Create()
+	rec := site.Create()
 
-	req.Serve(rec, err)
+	req.Serve(rec, nil)
 }
 
 // @Title UpdateWebsite
@@ -62,9 +62,9 @@ func (req *ProfileController) Put() {
 func (req *ProfileController) Get() {
 	page, size := req.GetPageData()
 
-	results, err := folio.GetProfiles(page, size)
+	results := folio.GetProfiles(page, size)
 
-	req.Serve(results, err)
+	req.Serve(results, nil)
 }
 
 // @Title GetSite
@@ -75,13 +75,13 @@ func (req *ProfileController) Get() {
 func (req *ProfileController) GetOne() {
 	siteParam := req.Ctx.Input.Param(":site")
 
-	var result *folio.Profile
+	result := &folio.Profile{}
 	var err error
 
 	if key := husk.ParseKey(siteParam); key != husk.CrazyKey() {
 		result, err = folio.GetProfile(key)
 	} else {
-		result, err = folio.GetProfileByName(siteParam)
+		result = folio.GetProfileByName(siteParam)
 	}
 
 	req.Serve(result, err)

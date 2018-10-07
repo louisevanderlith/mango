@@ -44,7 +44,7 @@ func (req *MessageController) Post() {
 // @router /:pageData[A-Z](?:_?[0-9]+)* [get]
 func (req *MessageController) Get() {
 	page, size := req.GetPageData()
-	result, err := comms.GetMessages(page, size)
+	result := comms.GetMessages(page, size)
 
-	req.Serve(result, err)
+	req.Serve(result, nil)
 }

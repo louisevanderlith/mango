@@ -5,8 +5,8 @@ import (
 )
 
 type Message struct {
-	UserKey     husk.Key
-	ItemKey     husk.Key
+	UserKey     *husk.Key
+	ItemKey     *husk.Key
 	UpVotes     int64
 	DownVotes   int64
 	Text        string `hsk:"size(512)"`
@@ -19,27 +19,25 @@ func (o Message) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
 }
 
-func SubmitMessage(msg Message) (messageRecord, error) {
+func SubmitMessage(msg Message) husk.CreateSet {
 	msg.UpVotes = 0
 	msg.DownVotes = 0
 
 	return ctx.Messages.Create(msg)
 }
 
-func GetMessage(itemKey husk.Key, commentType CommentType) (messageRecord, error) {
-	return ctx.Messages.FindFirst(func(obj Message) bool {
-		return obj.ItemKey == itemKey && obj.CommentType == commentType
-	})
+func GetMessage(itemKey *husk.Key, commentType CommentType) husk.Recorder {
+	return ctx.Messages.FindFirst(byItemKeyCommentType(itemKey, commentType))
 }
 
-func UpdateMessage(key husk.Key, data Message) error {
+func UpdateMessage(key *husk.Key, data Message) error {
 	rec, err := ctx.Messages.FindByKey(key)
 
 	if err != nil {
 		return err
 	}
 
-	err = rec.rec.Set(data)
+	err = rec.Set(data)
 
 	if err != nil {
 		return err

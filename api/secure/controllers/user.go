@@ -22,6 +22,6 @@ func NewUserCtrl(ctrlMap *control.ControllerMap) *UserController {
 // @router /:pageData[A-Z](?:_?[0-9]+)* [get]
 func (req *UserController) Get() {
 	page, size := req.GetPageData()
-	result, err := secure.GetUsers(page, size)
-	req.Serve(result, err)
+	result := secure.GetUsers(page, size)
+	req.Serve(result, nil)
 }

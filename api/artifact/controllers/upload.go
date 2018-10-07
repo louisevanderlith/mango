@@ -26,11 +26,9 @@ func NewUploadCtrl(ctrlMap *control.ControllerMap) *UploadController {
 func (req *UploadController) Get() {
 	page, size := req.GetPageData()
 
-	results, err := artifact.GetUploads(page, size, func(obj artifact.Upload) bool {
-		return true
-	})
+	results := artifact.GetUploads(page, size)
 
-	req.Serve(results, err)
+	req.Serve(results, nil)
 }
 
 // @Title GetUpload
@@ -72,24 +70,26 @@ func (req *UploadController) GetFileBytes() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *UploadController) Post() {
-	var id int64
+	key := husk.CrazyKey()
 
 	info := req.GetString("info")
 	infoHead, err := logic.GetInfoHead(info)
 
 	if err != nil {
-		req.Serve(id, err)
+		req.Serve(key, err)
+		return
 	}
 
 	file, header, err := req.GetFile("file")
 
 	if err != nil {
-		req.Serve(id, err)
+		req.Serve(key, err)
+		return
 	}
 
 	defer file.Close()
 
-	id, err = logic.SaveFile(file, header, infoHead)
+	key, err = logic.SaveFile(file, header, infoHead)
 
-	req.Serve(id, err)
+	req.Serve(key, err)
 }

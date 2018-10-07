@@ -31,9 +31,9 @@ func (req *MessageController) Get() {
 	commentType := comment.GetCommentType(req.Ctx.Input.Param(":type"))
 	nodeKey := husk.ParseKey(req.Ctx.Input.Param(":nodeID"))
 
-	result, err := comment.GetMessage(nodeKey, commentType)
+	result := comment.GetMessage(nodeKey, commentType)
 
-	req.Serve(result, err)
+	req.Serve(result, nil)
 }
 
 // @Title CreateMessage
@@ -51,9 +51,9 @@ func (req *MessageController) Post() {
 		return
 	}
 
-	rec, err := comment.SubmitMessage(entry)
+	rec := comment.SubmitMessage(entry)
 
-	req.Serve(rec, err)
+	req.Serve(rec, nil)
 }
 
 // @Title CreateMessage

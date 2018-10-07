@@ -1,0 +1,77 @@
+{
+    "environment": {
+        "bin": "./bin",
+        "mode": "DEV"
+    },
+    "programs": [
+        {
+            "type": "api",
+            "name": "artifact",
+            "play": true
+        },
+        {
+            "type": "api",
+            "name": "comment",
+            "play": false
+        },
+        {
+            "type": "api",
+            "name": "comms",
+            "play": false
+        },
+        {
+            "type": "api",
+            "name": "folio",
+            "play": true
+        },
+        {
+            "type": "api",
+            "name": "funds",
+            "play": false
+        },
+        {
+            "priority": 10,
+            "type": "api",
+            "name": "router",
+            "play": true
+        },
+        {
+            "priority": 9,
+            "type": "api",
+            "name": "secure",
+            "play": true
+        },
+        {
+            "type": "app",
+            "name": "admin",
+            "play": true
+        },
+        {
+            "type": "app",
+            "name": "auto",
+            "play": true
+        },
+        {
+            "priority": -1,
+            "type": "app",
+            "name": "gate",
+            "play": true
+        },
+        {
+            "type": "app",
+            "name": "logbook",
+            "play": false
+        },
+        {
+            "type": "app",
+            "name": "shop",
+            "play": false
+        },
+        {
+            "priority": 0,
+            "type": "app",
+            "name": "www",
+            "play": true
+        }
+    ]
+}

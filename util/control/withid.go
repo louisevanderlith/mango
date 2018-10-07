@@ -5,6 +5,6 @@ import (
 )
 
 type WithKey struct {
-	Key  husk.Key
+	Key *husk.Key
 	Body interface{}
 }

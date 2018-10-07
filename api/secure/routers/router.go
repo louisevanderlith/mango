@@ -10,7 +10,6 @@ package routers
 import (
 	"github.com/louisevanderlith/mango/api/secure/controllers"
 	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
@@ -31,6 +30,11 @@ func Setup(s *util.Service) {
 				controllers.NewRegisterCtrl(ctrlmap),
 			),
 		),
+		beego.NSNamespace("/user",
+			beego.NSInclude(
+				controllers.NewRegisterCtrl(ctrlmap),
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
@@ -44,7 +48,7 @@ func EnableFilter(s *util.Service) *control.ControllerMap {
 	ctrlmap.Add("/register", emptyMap)
 
 	userMap := make(control.ActionMap)
-	userMap["GET"] = enums.Admin
+	//userMap["GET"] = enums.Admin
 
 	ctrlmap.Add("/user", userMap)
 

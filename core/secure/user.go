@@ -3,6 +3,7 @@ package secure
 import (
 	"errors"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/louisevanderlith/mango/util/enums"
@@ -16,22 +17,22 @@ type User struct {
 	Name        string `hsk:"size(75)"`
 	Verified    bool   `hsk:"default(false)"`
 	Email       string `hsk:"size(128)"`
-	Password    string `hsk:"min(6)`
+	Password    string `hsk:"min(6)"`
 	LoginDate   time.Time
 	LoginTraces []LoginTrace
 	Roles       []Role
 }
 
-func (user User) Valid() (bool, error) {
-
-	if len(user.Password) < 6 {
-		return false, errors.New("password must be atleast 6 characters")
-	}
-
-	valid, common := husk.ValidateStruct(&user)
+func (user *User) Valid() (bool, error) {
+	valid, common := husk.ValidateStruct(user)
 
 	if !valid {
 		return false, common
+	}
+
+	if !strings.Contains(user.Email, "@") {
+		// #falsehood
+		return false, errors.New("email is invalid")
 	}
 
 	if emailExists(user.Email) {
@@ -41,13 +42,13 @@ func (user User) Valid() (bool, error) {
 	return true, nil
 }
 
-func NewUser(name, email string) *User {
+func NewUser(name, email string) (*User, error) {
 	result := new(User)
 	result.Name = name
 	result.Email = email
 	result.Verified = false
 
-	return result
+	return result, nil
 }
 
 func (user *User) SecurePassword(plainPassword string) {
@@ -73,22 +74,14 @@ func (user *User) AddTrace(trace LoginTrace) {
 	user.LoginTraces = append(user.LoginTraces, trace)
 }
 
-func getUsers(page, size int) (userSet, error) {
-	return ctx.Users.Find(page, size, func(o User) bool {
-		return true
-	})
+func getUsers(page, size int) husk.Collection {
+	return ctx.Users.Find(page, size, husk.Everything())
 }
 
-func getUser(email string) userRecord {
-	record, _ := ctx.Users.FindFirst(func(o User) bool {
-		return o.Email == email
-	})
-
-	return record
+func getUser(email string) husk.Recorder {
+	return ctx.Users.FindFirst(emailFilter(email))
 }
 
 func emailExists(email string) bool {
-	return ctx.Users.Exists(func(obj User) bool {
-		return obj.Email == email
-	})
+	return ctx.Users.Exists(emailFilter(email))
 }

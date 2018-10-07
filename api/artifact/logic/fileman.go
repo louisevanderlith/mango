@@ -6,6 +6,8 @@ import (
 	"io"
 	"mime/multipart"
 
+	"github.com/louisevanderlith/husk"
+
 	"github.com/louisevanderlith/mango/core/artifact"
 )
 
@@ -22,18 +24,18 @@ func GetInfoHead(header string) (InfoHead, error) {
 	return result, err
 }
 
-func SaveFile(file multipart.File, header *multipart.FileHeader, info InfoHead) (id int64, err error) {
+func SaveFile(file multipart.File, header *multipart.FileHeader, info InfoHead) (key *husk.Key, err error) {
 	var b bytes.Buffer
 	copied, err := io.Copy(&b, file)
 
 	if err != nil {
-		return -1, err
+		return husk.CrazyKey(), err
 	}
 
 	blob, mime, err := artifact.NewBLOB(b.Bytes(), info.For)
 
 	if err != nil {
-		return -1, err
+		return husk.CrazyKey(), err
 	}
 
 	upload := artifact.Upload{
@@ -45,11 +47,11 @@ func SaveFile(file multipart.File, header *multipart.FileHeader, info InfoHead) 
 		MimeType: mime,
 	}
 
-	rec, err := upload.Create()
+	rec := upload.Create()
 
-	if err != nil {
-		return -1, err
+	if rec.Error != nil {
+		return husk.CrazyKey(), rec.Error
 	}
 
-	return rec.GetID(), nil
+	return rec.Record.GetKey(), nil
 }

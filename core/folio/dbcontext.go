@@ -2,26 +2,26 @@ package folio
 
 import (
 	"log"
+
+	"github.com/louisevanderlith/husk"
 )
 
 type context struct {
-	Profiles profilesTable
+	Profiles husk.Tabler
 }
 
 var ctx context
 
 func init() {
 	ctx = context{
-		Profiles: NewProfilesTable(),
+		Profiles: husk.NewTable(new(Profile)),
 	}
 
 	createDefaultWebsite()
 }
 
 func createDefaultWebsite() {
-	any := ctx.Profiles.Exists(func(obj Profile) bool {
-		return true
-	})
+	any := ctx.Profiles.Exists(husk.Everything())
 
 	if any {
 		return
@@ -36,10 +36,10 @@ func createDefaultWebsite() {
 		StyleSheet:   "avosa.css",
 	}
 
-	rec, err := vosa.Create()
+	rec := vosa.Create()
 
-	if err != nil {
-		panic(err)
+	if rec.Error != nil {
+		panic(rec.Error)
 	}
 
 	log.Printf("Default Website Loaded:\n%+v\n", rec)

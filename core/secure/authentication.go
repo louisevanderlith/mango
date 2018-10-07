@@ -2,6 +2,7 @@ package secure
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/control"
@@ -25,19 +26,24 @@ func Login(authReq Authentication) (*control.Cookies, error) {
 	ip := authReq.App.IP
 	location := authReq.App.Location
 
-	if len(authReq.Password) < 6 || len(authReq.Email) < 3 {
-		return nil, errors.New("login details invalid")
+	if len(authReq.Password) < 6 {
+		return nil, errors.New("password must be longer than 6 characters")
+	}
+
+	if !strings.Contains(authReq.Email, "@") {
+		return nil, errors.New("email is invalid")
 	}
 
 	userRec := getUser(authReq.Email)
-	defer ctx.Users.Update(userRec)
 
-	user := userRec.Data()
-
-	if userRec.rec == nil {
-		return nil, errors.New("record is nil")
+	if userRec == nil {
+		return nil, errors.New("user not found")
 	}
 
+	ctx.Users.Update(userRec)
+	defer ctx.Users.Save()
+
+	user := userRec.Data().(*User)
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authReq.Password))
 
 	if err != nil {
@@ -45,7 +51,7 @@ func Login(authReq Authentication) (*control.Cookies, error) {
 	}
 
 	passed = err == nil
-	userKey = userRec.rec.GetKey()
+	userKey = userRec.GetKey()
 	username = user.Name
 
 	user.AddTrace(getLoginTrace(authReq, passed))

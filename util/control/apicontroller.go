@@ -44,6 +44,7 @@ func (ctrl *APIController) Serve(result interface{}, err error) {
 	ctrl.ServeJSON()
 }
 
+//GetPageData turns /A1
 func (ctrl *APIController) GetPageData() (page, pageSize int) {
 	pageData := ctrl.Ctx.Input.Param(":pageData")
 	page = 0

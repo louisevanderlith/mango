@@ -1,13 +1,17 @@
 package secure
 
+import (
+	"github.com/louisevanderlith/husk"
+)
+
 type context struct {
-	Users usersTable
+	Users husk.Tabler
 }
 
 var ctx context
 
 func init() {
 	ctx = context{
-		Users: NewUsersTable(),
+		Users: husk.NewTable(new(User)),
 	}
 }

@@ -88,13 +88,12 @@ function submitRegister() {
             //clear all fields
             form.id.trigger("reset");
         },
-        error: function (err) {
-            console.error(err);
+        error: function (res) {
             // Fail message
             $('#success').html("<div class='alert alert-danger'>");
             $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
                 .append("</button>");
-            $('#success > .alert-danger').append($("<strong>").text("Sorry, it seems something went wrong. Please try again."));
+            $('#success > .alert-danger').append($("<strong>").text(res.Error));
             $('#success > .alert-danger').append('</div>');
             //clear all fields
             form.id.trigger("reset");

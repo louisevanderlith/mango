@@ -1,13 +1,17 @@
 package comment
 
+import (
+	"github.com/louisevanderlith/husk"
+)
+
 type context struct {
-	Messages messagesTable
+	Messages husk.Tabler
 }
 
 var ctx context
 
 func init() {
 	ctx = context{
-		Messages: NewMessagesTable(),
+		Messages: husk.NewTable(new(Message)),
 	}
 }

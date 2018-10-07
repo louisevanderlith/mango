@@ -6,8 +6,7 @@ import (
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
-	"github.com/louisevanderlith/mango/api/comment/routers"
-	_ "github.com/louisevanderlith/mango/api/comms/routers"
+	"github.com/louisevanderlith/mango/api/comms/routers"
 	_ "github.com/louisevanderlith/mango/core/comms"
 
 	"github.com/astaxie/beego"

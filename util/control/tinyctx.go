@@ -46,7 +46,7 @@ func (ctx *tinyCtx) allowed() bool {
 	return ctx.hasRole(ctx.RequiredRole)
 }
 
-func (ctx *tinyCtx) getUserKey() husk.Key {
+func (ctx *tinyCtx) getUserKey() *husk.Key {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {

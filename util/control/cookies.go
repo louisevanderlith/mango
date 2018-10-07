@@ -7,6 +7,7 @@ import (
 
 	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/enums"
+	uuid "github.com/nu7hatch/gouuid"
 
 	"github.com/astaxie/beego/context"
 )
@@ -14,14 +15,14 @@ import (
 const cookieName = "_avocookie"
 
 type Cookies struct {
-	UserKey   husk.Key
+	UserKey   *husk.Key
 	Username  string
 	UserRoles map[string]enums.RoleType
 	IP        string
 	Location  string
 }
 
-func NewCookies(userkey husk.Key, username, ip, location string) *Cookies {
+func NewCookies(userkey *husk.Key, username, ip, location string) *Cookies {
 	result := Cookies{
 		UserKey:   userkey,
 		Username:  username,
@@ -39,8 +40,14 @@ func init() {
 	jar = make(map[string]Cookies)
 }
 
-func CreateAvo(ctx *context.Context, data *Cookies, sessionID string) {
+//Creates an Avo(cookie) & returns the session ID
+func CreateAvo(ctx *context.Context, data *Cookies) string {
+	u4, _ := uuid.NewV4()
+	sessionID := u4.String()
+
 	jar[sessionID] = *data
+
+	return sessionID
 }
 
 func FindAvo(sessionID string) Cookies {

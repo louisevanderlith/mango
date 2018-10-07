@@ -23,10 +23,8 @@ func (m Message) Valid() (bool, error) {
 	return husk.ValidateStruct(&m)
 }
 
-func GetMessages(page, size int) (messageSet, error) {
-	return ctx.Messages.Find(page, size, func(obj Message) bool {
-		return true
-	})
+func GetMessages(page, size int) husk.Collection {
+	return ctx.Messages.Find(page, size, husk.Everything())
 }
 
 func (m Message) SendMessage() error {
@@ -42,9 +40,9 @@ func (m Message) SendMessage() error {
 		}
 	}
 
-	_, err := ctx.Messages.Create(m)
+	set := ctx.Messages.Create(m)
 
-	return err
+	return set.Error
 }
 
 func sendEmail(body, name, to string) error {

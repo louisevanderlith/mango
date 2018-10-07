@@ -1,18 +1,14 @@
 package control
 
-import (
-	uuid "github.com/nu7hatch/gouuid"
-)
-
 type Application struct {
 	Name       string
 	IP         string
 	Location   string
-	InstanceID uuid.UUID
+	InstanceID string
 	Roles      ActionMap
 }
 
-func NewApplication(appName, ip, location string, instanceID uuid.UUID) *Application {
+func NewApplication(appName, ip, location string, instanceID string) *Application {
 	result := new(Application)
 	result.Name = appName
 	result.InstanceID = instanceID

@@ -3,7 +3,6 @@ Mango monorepo for all of avosa's applications and services.
 Please note that this repo is currently maintained on Windows, and all scripts and settings are setup as such.
 
 ## Project Requirements
-* PostgreSQL v9.6
 * GO v1.7.3 and above
 * Beego v1.8.3 and above
 

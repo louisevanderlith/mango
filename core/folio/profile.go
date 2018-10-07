@@ -20,47 +20,39 @@ func (p Profile) Valid() (bool, error) {
 	return husk.ValidateStruct(&p)
 }
 
-func getProfile(key husk.Key) (profileRecord, error) {
+func getProfile(key *husk.Key) (husk.Recorder, error) {
 	return ctx.Profiles.FindByKey(key)
 }
 
-func getProfileByName(name string) (profileRecord, error) {
-	return ctx.Profiles.FindFirst(func(obj Profile) bool {
-		return obj.Title == name
-	})
+func getProfileByName(name string) husk.Recorder {
+	return ctx.Profiles.FindFirst(byName(name))
 }
 
-func GetProfile(key husk.Key) (*Profile, error) {
+func GetProfile(key *husk.Key) (*Profile, error) {
 	rec, err := getProfile(key)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return rec.Data(), nil
+	return rec.Data().(*Profile), nil
 }
 
-func GetProfileByName(name string) (*Profile, error) {
-	rec, err := getProfileByName(name)
+func GetProfileByName(name string) *Profile {
+	rec := getProfileByName(name)
 
-	if err != nil {
-		return nil, err
-	}
-
-	return rec.Data(), nil
+	return rec.Data().(*Profile)
 }
 
-func GetProfiles(page, size int) (profileSet, error) {
-	return ctx.Profiles.Find(page, size, func(o Profile) bool {
-		return true
-	})
+func GetProfiles(page, size int) husk.Collection {
+	return ctx.Profiles.Find(page, size, husk.Everything())
 }
 
-func (p Profile) Create() (profileRecord, error) {
+func (p Profile) Create() husk.CreateSet {
 	return ctx.Profiles.Create(p)
 }
 
-func (p Profile) Update(key husk.Key) error {
+func (p Profile) Update(key *husk.Key) error {
 	profile, err := getProfile(key)
 
 	if err != nil {
@@ -72,53 +64,53 @@ func (p Profile) Update(key husk.Key) error {
 	return ctx.Profiles.Update(profile)
 }
 
-func AddSocialLink(key husk.Key, socialLink SocialLink) error {
+func AddSocialLink(key *husk.Key, socialLink SocialLink) error {
 	prRec, err := getProfile(key)
 
 	if err != nil {
 		return err
 	}
 
-	profile := prRec.Data()
+	profile := prRec.Data().(*Profile)
 	profile.SocialLinks = append(profile.SocialLinks, socialLink)
 
 	return ctx.Profiles.Update(prRec)
 }
 
-func AddAboutSection(key husk.Key, about About) error {
+func AddAboutSection(key *husk.Key, about About) error {
 	prRec, err := getProfile(key)
 
 	if err != nil {
 		return err
 	}
 
-	profile := prRec.Data()
+	profile := prRec.Data().(*Profile)
 	profile.AboutSections = append(profile.AboutSections, about)
 
 	return ctx.Profiles.Update(prRec)
 }
 
-func AddHeaderSection(key husk.Key, header Header) error {
+func AddHeaderSection(key *husk.Key, header Header) error {
 	prRec, err := getProfile(key)
 
 	if err != nil {
 		return err
 	}
 
-	profile := prRec.Data()
+	profile := prRec.Data().(*Profile)
 	profile.Headers = append(profile.Headers, header)
 
 	return ctx.Profiles.Update(prRec)
 }
 
-func AddPortfolioSection(key husk.Key, portfolio Portfolio) error {
+func AddPortfolioSection(key *husk.Key, portfolio Portfolio) error {
 	prRec, err := getProfile(key)
 
 	if err != nil {
 		return err
 	}
 
-	profile := prRec.Data()
+	profile := prRec.Data().(*Profile)
 	profile.PortfolioItems = append(profile.PortfolioItems, portfolio)
 
 	return ctx.Profiles.Update(prRec)

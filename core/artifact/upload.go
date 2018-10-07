@@ -17,34 +17,32 @@ func (o Upload) Valid() (bool, error) {
 	return husk.ValidateStruct(&o)
 }
 
-func GetUploads(page, pagesize int, filterFunc uploadFilter) (uploadSet, error) {
-	return ctx.Uploads.Find(page, pagesize, filterFunc)
+func GetUploads(page, pagesize int) husk.Collection {
+	return ctx.Uploads.Find(page, pagesize, husk.Everything())
 }
 
-func GetUpload(key husk.Key) (result uploadRecord, err error) {
+func GetUpload(key *husk.Key) (result husk.Recorder, err error) {
 	return ctx.Uploads.FindByKey(key)
 }
 
-func GetUploadFile(key husk.Key) (result []byte, filename string, err error) {
+func GetUploadFile(key *husk.Key) (result []byte, filename string, err error) {
 	upload, err := GetUpload(key)
 
 	if err != nil {
 		return nil, "", err
 	}
 
-	uploadData := upload.Data()
+	uploadData := upload.Data().(*Upload)
 	blob := uploadData.BLOB.Data
 
 	return blob, uploadData.Name, err
 }
 
 //GetUploadsBySize returns the first 50 records larger than @size bytes.
-func GetUploadsBySize(size int64) (uploadSet, error) {
-	return ctx.Uploads.Find(1, 50, func(o Upload) bool {
-		return o.Size >= size
-	})
+func GetUploadsBySize(size int64) husk.Collection {
+	return ctx.Uploads.Find(1, 50, bySize(size))
 }
 
-func (upload Upload) Create() (uploadRecord, error) {
+func (upload Upload) Create() husk.CreateSet {
 	return ctx.Uploads.Create(upload)
 }
