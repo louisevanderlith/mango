@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"log"
 	"encoding/json"
 
 	"github.com/astaxie/beego/context"
@@ -18,7 +17,6 @@ func AttemptLogin(ctx *context.Context) (string, error) {
 		return "", err
 	}
 
-	log.Printf("Authre:- %+v\n", authReq)
 	cooki, err := secure.Login(authReq)
 
 	if err != nil {

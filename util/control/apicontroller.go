@@ -8,6 +8,7 @@ import (
 	"github.com/louisevanderlith/mango/util"
 )
 
+//APIController serves JSON data.
 type APIController struct {
 	InstanceController
 }

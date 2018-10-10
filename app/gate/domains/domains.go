@@ -49,7 +49,7 @@ func RegisterSubdomains(instanceID string) *Subdomains {
 func (d *Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// CertBot requires tests on well-known for SSL Certs
 	if strings.Contains(r.URL.String(), "well-known") {
-		sslHand, _ := d.GetDomainHandler(ssl)
+		sslHand, _ := d.subs[ssl]
 
 		sslHand.ServeHTTP(w, r)
 		return
@@ -58,20 +58,14 @@ func (d *Subdomains) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	handleSession(*r.URL, w)
 	domainParts := strings.Split(r.Host, ".")
 	sdomainName := domainParts[0]
-	log.Printf("ServeHTTP:%s\n", sdomainName)
 
 	result := d.GetMux(sdomainName)
 
 	result.ServeHTTP(w, r)
 }
 
-func (d *Subdomains) GetDomainHandler(name string) (http.Handler, bool) {
-	res, ok := d.subs[name]
-	return res, ok
-}
-
 func (d *Subdomains) GetMux(subdomain string) http.Handler {
-	result, ok := d.GetDomainHandler(subdomain)
+	result, ok := d.subs[subdomain]
 
 	if !ok {
 		return d.subs[www]

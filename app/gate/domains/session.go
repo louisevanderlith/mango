@@ -7,19 +7,21 @@ import (
 )
 
 func handleSession(url url.URL, w http.ResponseWriter) {
-	if strings.Contains(url.String(), "?"+token+"=") {
-		sessionID := url.Query().Get(token)
+	if !strings.Contains(url.String(), "?token=") {
+		return
+	}
 
-		if sessionID != "" {
-			cookie := http.Cookie{
-				Name:     "avosession",
-				Path:     "/",
-				Value:    sessionID,
-				HttpOnly: true,
-				MaxAge:   0,
-			}
+	sessionID := url.Query().Get(token)
 
-			http.SetCookie(w, &cookie)
+	if sessionID != "" {
+		cookie := http.Cookie{
+			Name:     "avosession",
+			Path:     "/",
+			Value:    sessionID,
+			HttpOnly: true,
+			MaxAge:   0,
 		}
+
+		http.SetCookie(w, &cookie)
 	}
 }

@@ -1,6 +1,7 @@
 package control
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/astaxie/beego/context"
@@ -118,7 +119,11 @@ func (ctx *tinyCtx) getAvoCookie() (*Cookies, error) {
 		return nil, resp
 	}
 
-	result := resp.Data.(Cookies)
+	result, ok := resp.Data.(Cookies)
+
+	if !ok {
+		return nil, fmt.Errorf("result not Cookies %+v", resp)
+	}
 
 	return &result, nil
 }

@@ -32,6 +32,7 @@ func GetUsers(page, size int) []SafeUser {
 	var result []SafeUser
 	users := getUsers(page, size)
 	itor := users.GetEnumerator()
+
 	for itor.MoveNext() {
 		currUser := itor.Current()
 

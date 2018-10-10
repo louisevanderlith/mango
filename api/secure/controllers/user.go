@@ -19,7 +19,7 @@ func NewUserCtrl(ctrlMap *control.ControllerMap) *UserController {
 // @Title GetUsers
 // @Description Gets all Users
 // @Success 200 {[]logic.UserObject]} []logic.UserObject]
-// @router /:pageData[A-Z](?:_?[0-9]+)* [get]
+// @router /:pageData [get]
 func (req *UserController) Get() {
 	page, size := req.GetPageData()
 	result := secure.GetUsers(page, size)

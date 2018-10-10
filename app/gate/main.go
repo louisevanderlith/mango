@@ -37,7 +37,6 @@ func main() {
 func setupHost(httpPort, httpsPort string, instanceID string) {
 	subs := domains.RegisterSubdomains(instanceID)
 
-	//serveTLS(httpsPort)
 	go serveHTTP2(subs, httpsPort)
 
 	err := http.ListenAndServe(":"+httpPort, http.HandlerFunc(redirectTLS))
@@ -49,35 +48,9 @@ func setupHost(httpPort, httpsPort string, instanceID string) {
 
 func redirectTLS(w http.ResponseWriter, r *http.Request) {
 	moveURL := fmt.Sprintf("https://%s%s", r.Host, r.RequestURI)
-	log.Printf("\tredirect: %s\n", moveURL)
 	http.Redirect(w, r, moveURL, http.StatusPermanentRedirect)
 }
 
-/*
-func serveTLS(httpsPort string) {
-	var srv http.Server
-	srv.Addr = ":" + httpsPort
-	srv.Handler = subdomains
-
-	cerr := http2.ConfigureServer(&srv, nil)
-
-	if cerr != nil {
-		log.Print("ConfigureServer: ", cerr)
-	}
-
-	log.Println("Listening...")
-
-	certPath := beego.AppConfig.String("certpath")
-	hostCert := certPath + beego.AppConfig.String("hostCert")
-	hostKey := certPath + beego.AppConfig.String("hostKey")
-
-	err := srv.ListenAndServeTLS(hostCert, hostKey)
-
-	if err != nil {
-		panic(err)
-	}
-}
-*/
 func serveHTTP2(domains *domains.Subdomains, httpsPort string) {
 	certPath := beego.AppConfig.String("certpath")
 	certPem := readCertBlock(certPath)
@@ -97,12 +70,6 @@ func serveHTTP2(domains *domains.Subdomains, httpsPort string) {
 		Addr:         ":" + httpsPort,
 		Handler:      domains,
 	}
-
-	/*err = http2.ConfigureServer(srv, nil)
-
-	if err != nil {
-		panic(err)
-	}*/
 
 	log.Println("Listening...")
 

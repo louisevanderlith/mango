@@ -30,6 +30,10 @@ func Register(r Registration) (husk.Recorder, error) {
 		return nil, errors.New("instance id can not be empty")
 	}
 
+	if emailExists(r.Email) {
+		return nil, errors.New("email already in use")
+	}
+
 	user, err := NewUser(r.Name, r.Email)
 
 	if err != nil {

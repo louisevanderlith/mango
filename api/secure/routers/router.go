@@ -32,7 +32,7 @@ func Setup(s *util.Service) {
 		),
 		beego.NSNamespace("/user",
 			beego.NSInclude(
-				controllers.NewRegisterCtrl(ctrlmap),
+				controllers.NewUserCtrl(ctrlmap),
 			),
 		),
 	)

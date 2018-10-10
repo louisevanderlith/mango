@@ -47,6 +47,13 @@ func (ctrl *UIController) Serve(data interface{}, err error) {
 	ctrl.Data["Data"] = data
 }
 
+func (ctrl *UIController) ServeJSON(data interface{}, err error) {
+	ctrl.EnableRender = false
+
+	ctrl.APIController.Serve(data, err)
+	ctrl.EnableRender = true
+}
+
 func (ctrl *UIController) CreateTopMenu(menu *Menu) {
 	ctrl.createMenu("TopMenu", menu)
 }

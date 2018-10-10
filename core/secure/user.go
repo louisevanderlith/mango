@@ -23,20 +23,15 @@ type User struct {
 	Roles       []Role
 }
 
-func (user *User) Valid() (bool, error) {
-	valid, common := husk.ValidateStruct(user)
+func (u *User) Valid() (bool, error) {
+	valid, common := husk.ValidateStruct(u)
 
 	if !valid {
 		return false, common
 	}
 
-	if !strings.Contains(user.Email, "@") {
-		// #falsehood
+	if !strings.Contains(u.Email, "@") {
 		return false, errors.New("email is invalid")
-	}
-
-	if emailExists(user.Email) {
-		return false, errors.New("email already in use")
 	}
 
 	return true, nil
@@ -51,27 +46,37 @@ func NewUser(name, email string) (*User, error) {
 	return result, nil
 }
 
-func (user *User) SecurePassword(plainPassword string) {
+func (u *User) SecurePassword(plainPassword string) {
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(plainPassword), cost)
 
 	if err != nil {
 		log.Print("securePassword: ", err)
 	}
 
-	user.Password = string(hashedPwd)
+	u.Password = string(hashedPwd)
 }
 
-func (user *User) AddRole(appName string, role enums.RoleType) {
+func (u *User) AddRole(appName string, role enums.RoleType) {
 	appRole := Role{appName, role}
-	user.Roles = append(user.Roles, appRole)
+	u.Roles = append(u.Roles, appRole)
 }
 
-func (user *User) AddTrace(trace LoginTrace) {
+func (u *User) AddTrace(trace LoginTrace) {
 	if trace.TraceType == TraceLogin {
-		user.LoginDate = time.Now()
+		u.LoginDate = time.Now()
 	}
 
-	user.LoginTraces = append(user.LoginTraces, trace)
+	u.LoginTraces = append(u.LoginTraces, trace)
+}
+
+func (u *User) RoleMap() map[string]enums.RoleType {
+	result := make(map[string]enums.RoleType)
+
+	for _, v := range u.Roles {
+		result[v.ApplicationName] = v.Description
+	}
+
+	return result
 }
 
 func getUsers(page, size int) husk.Collection {

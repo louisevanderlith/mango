@@ -52,16 +52,16 @@ function gotoRegister() {
     window.location.replace('/v1/register');
 }
 
-function getApp() { 
+function getApp() {
     let appUrl = localStorage.getItem('return');
     let ip = localStorage.getItem('ip');
     let location = localStorage.getItem('location');
 
     let result = {
         Name: appUrl,
-        IP: ip,     
-        Location: location, 
-        InstanceID: instanceID   
+        IP: ip,
+        Location: location,
+        InstanceID: instanceID
     };
 
     return result;
@@ -80,8 +80,9 @@ function submitLogin() {
             Password: form.password.val()
         }),
         cache: false,
-        success: function (sessionID) {
-            afterLogin(sessionID);
+        success: function (res) {
+            console.info(res);
+            afterLogin(res.Data);
         },
         error: function (res) {
             // Fail message
@@ -121,6 +122,7 @@ function getIP() {
 function afterLogin(sessionID) {
     let finalURL = localStorage.getItem('return') || 'https://avosa.co.za';
     finalURL += "?token=" + sessionID
+
     window.location.replace(finalURL);
 }
 
@@ -130,7 +132,8 @@ function getParameterByName(name, url) {
 
     name = name.replace(/[\[\]]/g, "\\$&");
 
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+    const results = regex.exec(url);
 
     if (!results)
         return null;

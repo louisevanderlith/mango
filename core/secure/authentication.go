@@ -4,7 +4,6 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util/control"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -20,9 +19,6 @@ const cost int = 11
 
 // Login will attempt to authenticate a user
 func Login(authReq Authentication) (*control.Cookies, error) {
-	passed := false
-	userKey := husk.CrazyKey()
-	username := "Unknown"
 	ip := authReq.App.IP
 	location := authReq.App.Location
 
@@ -40,9 +36,6 @@ func Login(authReq Authentication) (*control.Cookies, error) {
 		return nil, errors.New("user not found")
 	}
 
-	ctx.Users.Update(userRec)
-	defer ctx.Users.Save()
-
 	user := userRec.Data().(*User)
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authReq.Password))
 
@@ -50,15 +43,19 @@ func Login(authReq Authentication) (*control.Cookies, error) {
 		return nil, err
 	}
 
-	passed = err == nil
-	userKey = userRec.GetKey()
-	username = user.Name
-
+	passed := err == nil
 	user.AddTrace(getLoginTrace(authReq, passed))
+	err = ctx.Users.Update(userRec)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer ctx.Users.Save()
 
 	if !passed {
 		return nil, errors.New("login failed")
 	}
 
-	return control.NewCookies(userKey, username, ip, location), nil
+	return control.NewCookies(userRec.GetKey(), user.Name, ip, location, user.RoleMap()), nil
 }
