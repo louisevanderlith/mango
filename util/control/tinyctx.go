@@ -2,6 +2,7 @@ package control
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/astaxie/beego/context"
@@ -93,10 +94,12 @@ func (ctx *tinyCtx) getRole() enums.RoleType {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
+		log.Printf("getAvoCookie FAILED %s\n", err.Error())
 		return result
 	}
 
 	appName := ctx.ApplicationName
+	log.Printf("%s Cookie-- %#v\n", appName, cookie)
 	if role, ok := cookie.UserRoles[appName]; ok {
 		result = role
 	}
@@ -119,13 +122,13 @@ func (ctx *tinyCtx) getAvoCookie() (*Cookies, error) {
 		return nil, resp
 	}
 
-	result, ok := resp.Data.(Cookies)
+	result, ok := resp.Data.(*Cookies)
 
 	if !ok {
 		return nil, fmt.Errorf("result not Cookies %+v", resp)
 	}
 
-	return &result, nil
+	return result, nil
 }
 
 func removeToken(url string) (cleanURL, token string) {

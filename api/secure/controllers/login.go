@@ -33,18 +33,16 @@ func (req *LoginController) Get() {
 // @router /avo/:sessionID [get]
 func (req *LoginController) GetAvo() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
-	hasAvo := control.HasAvo(sessionID)
-
-	var err error
-	var result control.Cookies
+	hasAvo := logic.HasAvo(sessionID)
 
 	if !hasAvo {
-		err = errors.New("no data found")
-	} else {
-		result = control.FindAvo(sessionID)
+		req.APIController.Serve(nil, errors.New("no avo found"))
+		return
 	}
 
-	req.APIController.Serve(result, err)
+	result := logic.FindAvo(sessionID)
+
+	req.APIController.Serve(result, nil)
 }
 
 // @Title Login
@@ -68,7 +66,7 @@ func (req *LoginController) Logout() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
 
 	// TODO: Create Trace for Logout...
-	control.DestroyAvo(sessionID)
+	logic.DestroyAvo(sessionID)
 
 	req.APIController.Serve("Logout Success", nil)
 }

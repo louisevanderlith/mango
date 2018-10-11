@@ -36,17 +36,19 @@ func (m *ControllerMap) Add(path string, actionMap ActionMap) {
 }
 
 func (m *ControllerMap) GetRequiredRole(path, action string) enums.RoleType {
-	result := enums.Unknown
+	actionMap, hasCtrl := m.mapping[path]
 
-	if actionMap, hasCtrl := m.mapping[path]; hasCtrl {
-		roleType, hasAction := actionMap[action]
-
-		if hasAction {
-			result = roleType
-		}
+	if !hasCtrl {
+		return enums.Unknown
 	}
 
-	return result
+	roleType, hasAction := actionMap[action]
+
+	if !hasAction {
+		return enums.Unknown
+	}
+
+	return roleType
 }
 
 func (m *ControllerMap) GetInstanceID() string {
@@ -63,7 +65,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	}
 
 	tiny := newTinyCtx(m, ctx)
-
+	log.Printf("Tiny: %v allowed %+v\n", tiny.allowed(), tiny)
 	if tiny.allowed() {
 		return
 	}

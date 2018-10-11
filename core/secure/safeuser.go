@@ -1,6 +1,7 @@
 package secure
 
 import (
+	"log"
 	"time"
 
 	"github.com/louisevanderlith/husk"
@@ -32,7 +33,7 @@ func GetUsers(page, size int) []SafeUser {
 	var result []SafeUser
 	users := getUsers(page, size)
 	itor := users.GetEnumerator()
-
+	log.Printf("itor: %+v\n", itor)
 	for itor.MoveNext() {
 		currUser := itor.Current()
 

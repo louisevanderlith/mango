@@ -5,7 +5,6 @@ import (
 
 	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/mango/core/secure"
-	"github.com/louisevanderlith/mango/util/control"
 )
 
 // AttemptLogin returns SessionID, if error is not nil
@@ -23,7 +22,7 @@ func AttemptLogin(ctx *context.Context) (string, error) {
 		return "", err
 	}
 
-	sessionID := control.CreateAvo(ctx, cooki)
+	sessionID := CreateAvo(ctx, cooki)
 
 	return sessionID, nil
 }
