@@ -22,7 +22,11 @@ func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error
 	cacheService, ok := serviceKeys[k{serviceName, cleanURL}]
 
 	if !ok {
-		resp := GETMessage(instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
+		resp, err := GETMessage(instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
+
+		if err != nil {
+			return "", err
+		}
 
 		if resp.Failed() {
 			return "", resp

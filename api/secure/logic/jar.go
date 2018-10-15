@@ -1,8 +1,6 @@
 package logic
 
 import (
-	"log"
-
 	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/mango/util/control"
 	uuid "github.com/nu7hatch/gouuid"
@@ -14,7 +12,7 @@ func init() {
 	jar = make(map[string]control.Cookies)
 }
 
-//Creates an Avo(cookie) & returns the session ID
+//CreateAvo creates an Avo(cookie) & returns the session ID
 func CreateAvo(ctx *context.Context, data *control.Cookies) string {
 	u4, _ := uuid.NewV4()
 	sessionID := u4.String()
@@ -35,7 +33,6 @@ func DestroyAvo(sessionID string) {
 }
 
 func HasAvo(sessionID string) bool {
-	log.Printf("Jar: %#v\n", jar)
 	_, ok := jar[sessionID]
 
 	return ok

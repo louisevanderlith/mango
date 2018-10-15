@@ -37,5 +37,6 @@ func (req *RegisterController) Post() {
 	json.Unmarshal(req.Ctx.Input.RequestBody, &regis)
 
 	result, err := secure.Register(regis)
-	req.APIController.Serve(result, err)
+
+	req.ServeJSON(result, err)
 }

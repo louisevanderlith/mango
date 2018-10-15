@@ -38,11 +38,6 @@ func Login(authReq Authentication) (*control.Cookies, error) {
 
 	user := userRec.Data().(*User)
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authReq.Password))
-
-	if err != nil {
-		return nil, err
-	}
-
 	passed := err == nil
 	user.AddTrace(getLoginTrace(authReq, passed))
 	err = ctx.Users.Update(userRec)

@@ -9,6 +9,7 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/secure/controllers"
+	"github.com/louisevanderlith/mango/api/secure/logic"
 	"github.com/louisevanderlith/mango/util"
 
 	"github.com/astaxie/beego"
@@ -40,7 +41,7 @@ func Setup(s *util.Service) {
 }
 
 func EnableFilter(s *util.Service) *control.ControllerMap {
-	ctrlmap := control.CreateControlMap(s)
+	ctrlmap := logic.NewMasterMap(s)
 
 	emptyMap := make(control.ActionMap)
 
@@ -52,7 +53,7 @@ func EnableFilter(s *util.Service) *control.ControllerMap {
 
 	ctrlmap.Add("/user", userMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterAPI)
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterMaster)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -61,5 +62,5 @@ func EnableFilter(s *util.Service) *control.ControllerMap {
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
 
-	return ctrlmap
+	return ctrlmap.ControllerMap
 }

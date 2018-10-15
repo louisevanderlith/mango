@@ -1,9 +1,7 @@
 package util
 
 import (
-	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -36,55 +34,19 @@ func (r *RESTResult) Failed() bool {
 }
 
 // GETMessage does a GET Request
-func GETMessage(instanceID, serviceName, controller string, params ...string) *RESTResult {
+func GETMessage(instanceID, serviceName, controller string, params ...string) (*RESTResult, error) {
 	url, err := GetServiceURL(instanceID, serviceName, false)
 
 	if err != nil {
-		return NewRESTResult(err, nil)
+		return nil, NewRESTResult(err, nil)
 	}
 
 	fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))
 
-	return jsonRequest("GET", fullURL, "")
-}
-
-// POSTMessage does a POST Request
-func POSTMessage(instanceID, serviceName, controller string, obj interface{}) *RESTResult {
-	url, err := GetServiceURL(instanceID, serviceName, false)
+	resp, err := http.Get(fullURL)
 
 	if err != nil {
-		return NewRESTResult(err, nil)
-	}
-
-	fullURL := fmt.Sprintf("%sv1/%s", url, controller)
-
-	return jsonRequest("POST", fullURL, obj)
-}
-
-func jsonRequest(action, url string, obj interface{}) *RESTResult {
-	buff := &bytes.Buffer{}
-	req := &http.Request{}
-	err := json.NewEncoder(buff).Encode(obj)
-
-	if err != nil {
-		return NewRESTResult(err, nil)
-	}
-
-	req, err = http.NewRequest(action, url, buff)
-
-	if err != nil {
-		return NewRESTResult(err, nil)
-	}
-
-	if action == "POST" {
-		req.Header.Set("Content-Type", "application/json")
-	}
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-
-	if err != nil {
-		return NewRESTResult(err, nil)
+		return nil, err
 	}
 
 	defer resp.Body.Close()
@@ -92,31 +54,23 @@ func jsonRequest(action, url string, obj interface{}) *RESTResult {
 	contents, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return NewRESTResult(err, nil)
+		return nil, err
 	}
 
-	data := MarshalToResult(contents)
+	data, err := MarshalToResult(contents)
 
-	if data.Failed() {
-		return NewRESTResult(data, nil)
-	}
-
-	if data.Data == nil {
-		return NewRESTResult(errors.New("data.Data is nil"), nil)
-	}
-
-	return data
+	return data, err
 }
 
-func MarshalToResult(content []byte) *RESTResult {
+func MarshalToResult(content []byte) (*RESTResult, error) {
 	result := &RESTResult{}
 	err := json.Unmarshal(content, result)
 
 	if err != nil {
-		return NewRESTResult(err, result)
+		return nil, err
 	}
 
-	return result
+	return result, nil
 }
 
 func (r *RESTResult) Error() string {

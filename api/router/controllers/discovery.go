@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"log"
 
 	"strconv"
 
@@ -33,7 +32,6 @@ func (req *DiscoveryController) Post() {
 	service := &util.Service{}
 	json.Unmarshal(req.Ctx.Input.RequestBody, service)
 
-	log.Printf("SERV:%+v\n", service)
 	appID, err := logic.AddService(service)
 
 	req.Serve(appID, err)

@@ -13,31 +13,35 @@ type LookupObj struct {
 }
 
 func GetCategories(instanceID string) ([]LookupObj, error) {
-	resp := util.GETMessage(instanceID, "Things.API", "category")
+	resp, err := util.GETMessage(instanceID, "Things.API", "category")
 
-	return toDTO(resp)
+	return toDTO(resp, err)
 }
 
 func GetManufacturers(instanceID string) ([]LookupObj, error) {
-	resp := util.GETMessage(instanceID, "Things.API", "message")
+	resp, err := util.GETMessage(instanceID, "Things.API", "message")
 
-	return toDTO(resp)
+	return toDTO(resp, err)
 }
 
 func GetModels(instanceID string) ([]LookupObj, error) {
-	resp := util.GETMessage(instanceID, "Things.API", "model")
+	resp, err := util.GETMessage(instanceID, "Things.API", "model")
 
-	return toDTO(resp)
+	return toDTO(resp, err)
 }
 
 func GetSubCategories(instanceID string) ([]LookupObj, error) {
-	resp := util.GETMessage(instanceID, "Things.API", "subcategory")
+	resp, err := util.GETMessage(instanceID, "Things.API", "subcategory")
 
-	return toDTO(resp)
+	return toDTO(resp, err)
 }
 
-func toDTO(resp *util.RESTResult) ([]LookupObj, error) {
+func toDTO(resp *util.RESTResult, err error) ([]LookupObj, error) {
 	var result []LookupObj
+
+	if err != nil {
+		return result, err
+	}
 
 	if resp.Failed() {
 		return result, resp

@@ -36,13 +36,13 @@ func (req *LoginController) GetAvo() {
 	hasAvo := logic.HasAvo(sessionID)
 
 	if !hasAvo {
-		req.APIController.Serve(nil, errors.New("no avo found"))
+		req.ServeJSON(nil, errors.New("no avo found"))
 		return
 	}
 
 	result := logic.FindAvo(sessionID)
 
-	req.APIController.Serve(result, nil)
+	req.ServeJSON(result, nil)
 }
 
 // @Title Login
@@ -54,7 +54,7 @@ func (req *LoginController) GetAvo() {
 func (req *LoginController) Post() {
 	sessionID, err := logic.AttemptLogin(req.Ctx)
 
-	req.APIController.Serve(sessionID, err)
+	req.ServeJSON(sessionID, err)
 }
 
 // @Title Logout
@@ -68,5 +68,5 @@ func (req *LoginController) Logout() {
 	// TODO: Create Trace for Logout...
 	logic.DestroyAvo(sessionID)
 
-	req.APIController.Serve("Logout Success", nil)
+	req.ServeJSON("Logout Success", nil)
 }

@@ -66,7 +66,11 @@ func GetProfileSite(instanceID, name string) (BasicSite, error) {
 		name = "avosa"
 	}
 
-	resp := util.GETMessage(instanceID, "Folio.API", "profile", name)
+	resp, err := util.GETMessage(instanceID, "Folio.API", "profile", name)
+
+	if err != nil {
+		return result, err
+	}
 
 	if resp.Failed() {
 		return result, resp

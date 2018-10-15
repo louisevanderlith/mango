@@ -2,7 +2,6 @@ package control
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -55,6 +54,10 @@ func (m *ControllerMap) GetInstanceID() string {
 	return m.service.ID
 }
 
+func (m *ControllerMap) GetServiceName() string {
+	return m.service.Name
+}
+
 // FilterUI is used to secure web pages.
 // When a user is not allowed to access a Page, they are redirected to secure.login
 func (m *ControllerMap) FilterUI(ctx *context.Context) {
@@ -64,8 +67,8 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		return
 	}
 
-	tiny := newTinyCtx(m, ctx)
-	log.Printf("Tiny: %v allowed %+v\n", tiny.allowed(), tiny)
+	tiny := NewTinyCtx(m, ctx)
+	fmt.Printf("Tiny: %v allowed %#v\n", tiny.allowed(), tiny)
 	if tiny.allowed() {
 		return
 	}
@@ -74,7 +77,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	securityURL, err := util.GetServiceURL(instanceID, "Secure.API", true)
 
 	if err != nil {
-		log.Printf("FilterUI Failed: %+v\n", err)
+		fmt.Printf("FilterUI Failed: %+v\n", err)
 		return
 	}
 
@@ -89,7 +92,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 // FilterAPI is used to secure API services.
 // When a user is not allowed to access a resource, they will get the Unauthorized Status.
 func (m *ControllerMap) FilterAPI(ctx *context.Context) {
-	tiny := newTinyCtx(m, ctx)
+	tiny := NewTinyCtx(m, ctx)
 
 	if !tiny.allowed() {
 		ctx.Abort(http.StatusUnauthorized, "User not authorized to access this content.")

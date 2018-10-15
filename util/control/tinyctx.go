@@ -1,7 +1,8 @@
 package control
 
 import (
-	"fmt"
+	"encoding/json"
+	"errors"
 	"log"
 	"strings"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-type tinyCtx struct {
+type TinyCtx struct {
 	ApplicationName string
 	RequiredRole    enums.RoleType
 	URL             string
@@ -22,20 +23,26 @@ type tinyCtx struct {
 
 const avosession = "avosession"
 
-func newTinyCtx(m *ControllerMap, ctx *context.Context) *tinyCtx {
-	result := tinyCtx{}
-
+func findURLToken(ctx *context.Context) (string, string) {
 	url, token := removeToken(ctx.Request.RequestURI)
 
 	if token == "" {
 		token = ctx.GetCookie(avosession)
 	}
 
+	return url, token
+}
+
+func NewTinyCtx(m *ControllerMap, ctx *context.Context) *TinyCtx {
+	result := TinyCtx{}
+
+	url, token := findURLToken(ctx)
+
 	actMethod := strings.ToUpper(ctx.Request.Method)
 	required := m.GetRequiredRole(url, actMethod)
 
 	result.RequiredRole = required
-	result.ApplicationName = m.service.Name
+	result.ApplicationName = m.GetServiceName()
 	result.URL = url
 	result.Method = actMethod
 	result.SessionID = token
@@ -44,21 +51,21 @@ func newTinyCtx(m *ControllerMap, ctx *context.Context) *tinyCtx {
 	return &result
 }
 
-func (ctx *tinyCtx) allowed() bool {
+func (ctx *TinyCtx) allowed() bool {
 	return ctx.hasRole(ctx.RequiredRole)
 }
 
-func (ctx *tinyCtx) getUserKey() *husk.Key {
+func (ctx *TinyCtx) getUserKey() *husk.Key {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
 		return husk.CrazyKey()
 	}
 
-	return cookie.UserKey
+	return &cookie.UserKey
 }
 
-func (ctx *tinyCtx) getUsername() string {
+func (ctx *TinyCtx) getUsername() string {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
@@ -68,7 +75,7 @@ func (ctx *tinyCtx) getUsername() string {
 	return cookie.Username
 }
 
-func (ctx *tinyCtx) getIP() string {
+func (ctx *TinyCtx) getIP() string {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
@@ -78,7 +85,7 @@ func (ctx *tinyCtx) getIP() string {
 	return cookie.IP
 }
 
-func (ctx *tinyCtx) getLocation() string {
+func (ctx *TinyCtx) getLocation() string {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
@@ -88,7 +95,7 @@ func (ctx *tinyCtx) getLocation() string {
 	return cookie.Location
 }
 
-func (ctx *tinyCtx) getRole() enums.RoleType {
+func (ctx *TinyCtx) getRole() enums.RoleType {
 	result := enums.Unknown
 
 	cookie, err := ctx.getAvoCookie()
@@ -107,7 +114,7 @@ func (ctx *tinyCtx) getRole() enums.RoleType {
 	return result
 }
 
-func (ctx *tinyCtx) hasRole(required enums.RoleType) bool {
+func (ctx *TinyCtx) hasRole(required enums.RoleType) bool {
 	role := ctx.getRole()
 
 	return role <= required
@@ -115,20 +122,56 @@ func (ctx *tinyCtx) hasRole(required enums.RoleType) bool {
 
 //TODO: use channels
 //getAvoCookie also checks cookie validity, so repeated calls are required
-func (ctx *tinyCtx) getAvoCookie() (*Cookies, error) {
-	resp := util.GETMessage(ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
+func (ctx *TinyCtx) getAvoCookie() (*Cookies, error) {
+	if ctx.ApplicationName == "Secure.API" { //used to be a bug.
+		return nil, errors.New("calling Secure.API from Secure.API")
+	}
+
+	if len(ctx.SessionID) == 0 {
+		return nil, errors.New("SessionID empty")
+	}
+
+	resp, err := util.GETMessage(ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
+
+	if err != nil {
+		return nil, err
+	}
 
 	if resp.Failed() {
 		return nil, resp
 	}
 
-	result, ok := resp.Data.(*Cookies)
+	//inception?...
+	/*restResp := resp.Data.(*util.RESTResult)
 
-	if !ok {
-		return nil, fmt.Errorf("result not Cookies %+v", resp)
+	if restResp.Failed() {
+		return nil, restResp
+	}*/
+
+	log.Printf("Not Cookie== %#v\n", resp.Data)
+
+	result := Cookies{}
+
+	switch resp.Data.(type) {
+	case map[string]interface{}:
+		dirty, err := json.Marshal(resp.Data)
+
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal(dirty, &result)
+
+		if err != nil {
+			return nil, err
+		}
+	case Cookies:
+		result = resp.Data.(Cookies)
+	default:
+		log.Printf("Dont Know: %v\n", resp)
 	}
 
-	return result, nil
+	return &result, nil
 }
 
 func removeToken(url string) (cleanURL, token string) {

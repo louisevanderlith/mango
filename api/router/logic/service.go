@@ -86,8 +86,7 @@ func GetServicePath(serviceName, appID string, clean bool) (string, error) {
 	service := getService(serviceName, requestingApp.Environment, requestingApp.Type)
 
 	if service == nil {
-		msg := fmt.Sprintf("%s wasn't found for the requesting application", serviceName)
-		return "", errors.New(msg)
+		return "", fmt.Errorf("%s wasn't found for the requesting application", serviceName)
 	}
 
 	return service.URL, nil

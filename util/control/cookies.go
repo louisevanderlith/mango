@@ -6,7 +6,7 @@ import (
 )
 
 type Cookies struct {
-	UserKey   *husk.Key
+	UserKey   husk.Key
 	Username  string
 	UserRoles map[string]enums.RoleType
 	IP        string
@@ -15,7 +15,7 @@ type Cookies struct {
 
 func NewCookies(userkey *husk.Key, username, ip, location string, roles map[string]enums.RoleType) *Cookies {
 	return &Cookies{
-		UserKey:   userkey,
+		UserKey:   *userkey,
 		Username:  username,
 		IP:        ip,
 		Location:  location,

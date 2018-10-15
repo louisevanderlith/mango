@@ -97,3 +97,19 @@ func TestGetServicePath_FakeRequestorID_ShouldHaveError(t *testing.T) {
 		t.Error("Expecting an error message: Couldn't find an application with the given appID")
 	}
 }
+
+func TestGetServicePath_SameService__CantCallSelf_ShouldHaveError(t *testing.T) {
+	requestor := dummyService("Test.API")
+	requestor.Type = enums.API
+	requestorID, err := AddService(requestor)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = GetServicePath("Test.Api", requestorID, false)
+
+	if err == nil {
+		t.Error("Expecting 'Test.Api wasn't found for the requesting application'")
+	}
+}

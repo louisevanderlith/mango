@@ -13,7 +13,11 @@ type CommsObject struct {
 }
 
 func GetCommsMessages(instanceID string) ([]CommsObject, error) {
-	resp := util.GETMessage(instanceID, "Communication.API", "message")
+	resp, err := util.GETMessage(instanceID, "Communication.API", "message")
+
+	if err != nil {
+		return []CommsObject{}, err
+	}
 
 	if resp.Failed() {
 		return []CommsObject{}, resp
