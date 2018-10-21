@@ -52,6 +52,10 @@ func NewTinyCtx(m *ControllerMap, ctx *context.Context) *TinyCtx {
 }
 
 func (ctx *TinyCtx) allowed() bool {
+	if ctx.RequiredRole == enums.Unknown {
+		return true
+	}
+
 	return ctx.hasRole(ctx.RequiredRole)
 }
 
