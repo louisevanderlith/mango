@@ -145,15 +145,6 @@ func (ctx *TinyCtx) getAvoCookie() (*Cookies, error) {
 		return nil, resp
 	}
 
-	//inception?...
-	/*restResp := resp.Data.(*util.RESTResult)
-
-	if restResp.Failed() {
-		return nil, restResp
-	}*/
-
-	log.Printf("Not Cookie== %#v\n", resp.Data)
-
 	result := Cookies{}
 
 	switch resp.Data.(type) {

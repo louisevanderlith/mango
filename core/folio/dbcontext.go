@@ -33,7 +33,6 @@ func createDefaultWebsite() {
 		Description:  "software for the automotive industry",
 		ContactPhone: "0893523423",
 		URL:          "https://www.localhost.co.za",
-		StyleSheet:   "avosa.css",
 	}
 
 	rec := vosa.Create()

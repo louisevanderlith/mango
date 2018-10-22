@@ -26,11 +26,6 @@ func Setup(s *util.Service) {
 				controllers.NewProfileCtrl(ctrlmap),
 			),
 		),
-		beego.NSNamespace("/profile/about",
-			beego.NSInclude(
-				controllers.NewAboutCtrl(ctrlmap),
-			),
-		),
 		beego.NSNamespace("/profile/header",
 			beego.NSInclude(
 				controllers.NewHeaderCtrl(ctrlmap),

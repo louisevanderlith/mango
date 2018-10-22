@@ -20,6 +20,39 @@ func NewProfileCtrl(ctrlMap *control.ControllerMap) *ProfileController {
 	return result
 }
 
+// @Title GetSites
+// @Description Gets all sites
+// @Success 200 {[]folio.Profile} []folio.Portfolio]
+// @router /:pageData^[A-Z]+:[0-9]+$ [get]
+func (req *ProfileController) Get() {
+	page, size := req.GetPageData()
+
+	results := folio.GetProfiles(page, size)
+
+	req.Serve(results, nil)
+}
+
+// @Title GetSite
+// @Description Gets customer website/profile
+// @Param	site			path	string 	true		"customer website name OR ID"
+// @Success 200 {folio.Profile} folio.Profile
+// @router /:site [get]
+func (req *ProfileController) GetOne() {
+	siteParam := req.Ctx.Input.Param(":site")
+
+	key, err := husk.ParseKey(siteParam)
+
+	if err != nil && key == nil {
+		byName, err := folio.GetProfileByName(siteParam)
+		req.Serve(byName, err)
+		return
+	}
+
+	result, err := folio.GetProfile(key)
+
+	req.Serve(result, err)
+}
+
 // @Title RegisterWebsite
 // @Description Register a Website
 // @Param	body		body 	folio.Profile	true		"body for service content"
@@ -53,36 +86,4 @@ func (req *ProfileController) Put() {
 	err = body.Update(with.Key)
 
 	req.Serve(nil, err)
-}
-
-// @Title GetSites
-// @Description Gets all sites
-// @Success 200 {[]folio.Profile} []folio.Portfolio]
-// @router /:pageData[A-Z](?:_?[0-9]+)* [get]
-func (req *ProfileController) Get() {
-	page, size := req.GetPageData()
-
-	results := folio.GetProfiles(page, size)
-
-	req.Serve(results, nil)
-}
-
-// @Title GetSite
-// @Description Gets customer website/profile
-// @Param	site			path	string 	true		"customer website name OR ID"
-// @Success 200 {folio.Profile} folio.Profile
-// @router /:site [get]
-func (req *ProfileController) GetOne() {
-	siteParam := req.Ctx.Input.Param(":site")
-
-	result := &folio.Profile{}
-	var err error
-
-	if key := husk.ParseKey(siteParam); key != husk.CrazyKey() {
-		result, err = folio.GetProfile(key)
-	} else {
-		result = folio.GetProfileByName(siteParam)
-	}
-
-	req.Serve(result, err)
 }

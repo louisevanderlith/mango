@@ -2,6 +2,7 @@ package control
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -68,7 +69,8 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	}
 
 	tiny := NewTinyCtx(m, ctx)
-	fmt.Printf("Tiny: %v allowed %#v\n", tiny.allowed(), tiny)
+	log.Printf("Tiny: %v allowed %#v\n", tiny.allowed(), tiny)
+
 	if tiny.allowed() {
 		return
 	}
@@ -77,7 +79,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	securityURL, err := util.GetServiceURL(instanceID, "Secure.API", true)
 
 	if err != nil {
-		fmt.Printf("FilterUI Failed: %+v\n", err)
+		log.Printf("FilterUI Failed: %+v\n", err)
 		return
 	}
 

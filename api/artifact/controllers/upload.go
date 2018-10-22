@@ -22,7 +22,7 @@ func NewUploadCtrl(ctrlMap *control.ControllerMap) *UploadController {
 // @Title GetUploads
 // @Description Gets the uploads
 // @Success 200 {[]artifact.Upload} []artifact.Upload
-// @router /:pageData[A-Z](?:_?[0-9]+)* [get]
+// @router /:pageData^[A-Z]+:[0-9]+$ [get]
 func (req *UploadController) Get() {
 	page, size := req.GetPageData()
 
@@ -37,7 +37,12 @@ func (req *UploadController) Get() {
 // @Success 200 {artifact.Upload} artifact.Upload
 // @router /:uploadKey([0-9]+) [get]
 func (req *UploadController) GetByID() {
-	key := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
+	key, err := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
+
+	if err != nil {
+		req.Serve(nil, err)
+		return
+	}
 
 	req.Serve(artifact.GetUpload(key))
 }
@@ -50,9 +55,15 @@ func (req *UploadController) GetByID() {
 func (req *UploadController) GetFileBytes() {
 	var result []byte
 	var filename string
-	key := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
+	key, err := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
 
-	result, filename, err := artifact.GetUploadFile(key)
+	if err != nil {
+		req.Ctx.Output.SetStatus(500)
+		req.ServeBinary([]byte(err.Error()), "")
+		return
+	}
+
+	result, filename, err = artifact.GetUploadFile(key)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)

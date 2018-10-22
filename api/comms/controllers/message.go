@@ -41,7 +41,7 @@ func (req *MessageController) Post() {
 // @Title GetMessages
 // @Description Gets all Messages
 // @Success 200 {[]comms.Message]} []comms.Message]
-// @router /:pageData[A-Z](?:_?[0-9]+)* [get]
+// @router /:pageData^[A-Z]+:[0-9]+$ [get]
 func (req *MessageController) Get() {
 	page, size := req.GetPageData()
 	result := comms.GetMessages(page, size)

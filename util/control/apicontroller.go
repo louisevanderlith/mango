@@ -3,6 +3,7 @@ package control
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/louisevanderlith/mango/util"
@@ -38,6 +39,7 @@ func (ctrl *APIController) Serve(result interface{}, err error) {
 	resp := util.NewRESTResult(err, result)
 
 	if resp.Failed() {
+		log.Printf("\t [API Error]: %s\n", resp.Reason)
 		ctrl.Ctx.Output.SetStatus(500)
 	}
 

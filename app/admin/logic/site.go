@@ -4,30 +4,27 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/louisevanderlith/husk"
+
 	"github.com/louisevanderlith/mango/util"
 )
 
 type BasicSite struct {
-	ID             int64
+	Key            husk.Key
 	Title          string
 	Description    string
 	ContactEmail   string
 	ContactPhone   string
 	URL            string
-	ImageID        int64
-	ImageURL       string
-	StyleSheet     string
 	SocialLinks    SocialLinks
 	PortfolioItems PortfolioItems
-	AboutSections  AboutSections
+	AboutSections  []string
 	Headers        HeaderItems
 }
 
 type SocialLinks []socialLink
 
 type PortfolioItems []portfolioItem
-
-type AboutSections []aboutSection
 
 type HeaderItems []headerItem
 
@@ -78,9 +75,9 @@ func GetSites(instanceID string) ([]BasicSite, error) {
 	return result, nil
 }
 
-func GetSite(siteID int64, instanceID string) (BasicSite, error) {
+func GetSite(siteKey *husk.Key, instanceID string) (BasicSite, error) {
 	result := BasicSite{}
-	resp, err := util.GETMessage(instanceID, "Folio.API", "profile", strconv.FormatInt(siteID, 10))
+	resp, err := util.GETMessage(instanceID, "Folio.API", "profile", siteKey.String())
 
 	if err != nil {
 		return result, err
@@ -99,10 +96,6 @@ func GetSite(siteID int64, instanceID string) (BasicSite, error) {
 func (obj *BasicSite) setImageURLs(instanceID string) {
 	if uploadURL == "" {
 		setUploadURL(instanceID)
-	}
-
-	if obj.ImageID != 0 {
-		obj.ImageURL = uploadURL + strconv.FormatInt(obj.ImageID, 10)
 	}
 
 	for i := 0; i < len(obj.PortfolioItems); i++ {

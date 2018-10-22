@@ -14,6 +14,8 @@ func getItems(path string) *control.Menu {
 	result.AddItem("#", "Artifact API", "fa-cloud", artifactChlidren(path))
 	result.AddItem("#", "Comms API", "fa-fax", commsChildren(path))
 	result.AddItem("#", "Folio API", "fa-users", folioChildren(path))
+	result.AddItem("#", "Funds API", "fa-money", fundsChildren(path))
+	result.AddItem("#", "Router API", "fa-modem", routerChildren(path))
 	result.AddItem("#", "Secure API", "fa-user-secret", secureChildren(path))
 
 	return result
@@ -35,7 +37,21 @@ func commsChildren(path string) *control.Menu {
 
 func folioChildren(path string) *control.Menu {
 	children := control.NewMenu(path)
-	children.AddItem("/sites", "Sites", "fa-globe", nil)
+	children.AddItem("/profiles", "Profiles", "fa-user", nil)
+
+	return children
+}
+
+func fundsChildren(path string) *control.Menu {
+	children := control.NewMenu(path)
+	children.AddItem("/heroes", "Heroes", "fa-sword", nil)
+
+	return children
+}
+
+func routerChildren(path string) *control.Menu {
+	children := control.NewMenu(path)
+	children.AddItem("/memory", "Memory", "fa-memory", nil)
 
 	return children
 }

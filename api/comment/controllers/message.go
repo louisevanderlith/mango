@@ -31,9 +31,9 @@ func (req *MessageController) Get() {
 	commentType := comment.GetCommentType(req.Ctx.Input.Param(":type"))
 	nodeKey := husk.ParseKey(req.Ctx.Input.Param(":nodeID"))
 
-	result := comment.GetMessage(nodeKey, commentType)
+	result, err := comment.GetMessage(nodeKey, commentType)
 
-	req.Serve(result, nil)
+	req.Serve(result, err)
 }
 
 // @Title CreateMessage

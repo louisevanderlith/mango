@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"fmt"
-
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -24,7 +22,6 @@ func (c *CreateController) Get() {
 func (c *CreateController) GetStep() {
 	step := c.Ctx.Input.Param(":step")
 	c.Setup(step)
-	fmt.Printf("GETTING A STEP! On step %s\n", step)
 
 	c.Data["StepNo"] = step
 }

@@ -30,14 +30,14 @@ func Login(authReq Authentication) (*control.Cookies, error) {
 		return nil, errors.New("email is invalid")
 	}
 
-	userRec := getUser(authReq.Email)
+	userRec, err := getUser(authReq.Email)
 
-	if userRec == nil {
-		return nil, errors.New("user not found")
+	if err != nil {
+		return nil, err
 	}
 
 	user := userRec.Data().(*User)
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authReq.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authReq.Password))
 	passed := err == nil
 	user.AddTrace(getLoginTrace(authReq, passed))
 	err = ctx.Users.Update(userRec)

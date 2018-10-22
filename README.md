@@ -82,3 +82,12 @@ We require 1(one) instance of Gate running for every environment we have.
   This application is our central e-commerce platform.
 - ### WWW
   WWW is as the name suggests, the default website for this repo.
+
+# Feature Testing Users:
+* admin@mango.avo : Admin4v0
+
+## On Paged Data
+Every GET request, where the intention is to get many results, you have to specify the PAGE Data.
+/:pageData^[A-Z]+:[0-9]+$
+/A:6
+/<Page A>:<6 per Page>

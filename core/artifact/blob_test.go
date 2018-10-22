@@ -1,8 +1,8 @@
 package artifact
 
 import (
-	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"testing"
 
@@ -13,7 +13,7 @@ func getImage(location string) []byte {
 	dat, err := ioutil.ReadFile(location)
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	return dat

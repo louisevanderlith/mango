@@ -62,7 +62,8 @@ function getEntries(folder, taskType, staticPath) {
             createJSTask(name, entry, staticPath, taskName);
             break;
             case 'css':
-            createCSSTask(staticPath, pattrnPath, taskName);
+            //The only CSS should be in ./app/_shared
+            //createCSSTask(staticPath, pattrnPath, taskName);
             break;
             default:
             console.error("I don't know %s", folder);

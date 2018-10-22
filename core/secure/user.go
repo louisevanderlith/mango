@@ -83,7 +83,7 @@ func getUsers(page, size int) husk.Collection {
 	return ctx.Users.Find(page, size, husk.Everything())
 }
 
-func getUser(email string) husk.Recorder {
+func getUser(email string) (husk.Recorder, error) {
 	return ctx.Users.FindFirst(emailFilter(email))
 }
 
