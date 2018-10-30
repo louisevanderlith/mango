@@ -76,6 +76,8 @@ func GetProfileSite(instanceID, name string) (BasicSite, error) {
 		return result, resp
 	}
 
+	log.Printf("GetProfileSite- %#v\n", resp.Data)
+
 	result = resp.Data.(BasicSite)
 	result.setImageURLs(instanceID)
 

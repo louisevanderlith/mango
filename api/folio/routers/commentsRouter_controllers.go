@@ -7,14 +7,6 @@ import (
 
 func init() {
 
-	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:AboutController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:AboutController"],
-		beego.ControllerComments{
-			Method: "Post",
-			Router: `/`,
-			AllowHTTPMethods: []string{"post"},
-			MethodParams: param.Make(),
-			Params: nil})
-
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:HeaderController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:HeaderController"],
 		beego.ControllerComments{
 			Method: "Post",
@@ -49,16 +41,16 @@ func init() {
 
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:ProfileController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:ProfileController"],
 		beego.ControllerComments{
-			Method: "Get",
-			Router: `/:pageData[A-Z](?:_?[0-9]+)*`,
+			Method: "GetOne",
+			Router: `/:site`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})
 
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:ProfileController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/folio/controllers:ProfileController"],
 		beego.ControllerComments{
-			Method: "GetOne",
-			Router: `/:site`,
+			Method: "Get",
+			Router: `/all/:pagesize`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})

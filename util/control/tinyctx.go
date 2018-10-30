@@ -110,7 +110,7 @@ func (ctx *TinyCtx) getRole() enums.RoleType {
 	}
 
 	appName := ctx.ApplicationName
-	log.Printf("%s Cookie-- %#v\n", appName, cookie)
+
 	if role, ok := cookie.UserRoles[appName]; ok {
 		result = role
 	}
@@ -127,10 +127,6 @@ func (ctx *TinyCtx) hasRole(required enums.RoleType) bool {
 //TODO: use channels
 //getAvoCookie also checks cookie validity, so repeated calls are required
 func (ctx *TinyCtx) getAvoCookie() (*Cookies, error) {
-	if ctx.ApplicationName == "Secure.API" { //used to be a bug.
-		return nil, errors.New("calling Secure.API from Secure.API")
-	}
-
 	if len(ctx.SessionID) == 0 {
 		return nil, errors.New("SessionID empty")
 	}

@@ -89,5 +89,6 @@ We require 1(one) instance of Gate running for every environment we have.
 ## On Paged Data
 Every GET request, where the intention is to get many results, you have to specify the PAGE Data.
 /:pageData^[A-Z]+:[0-9]+$
-/A:6
-/<Page A>:<6 per Page>
+/:page/:size
+/A/6
+/<Page A>/<6 per Page>

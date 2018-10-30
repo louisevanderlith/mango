@@ -2,11 +2,16 @@ package control
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"strconv"
 
 	"github.com/louisevanderlith/mango/util"
+)
+
+// default paging values
+const (
+	_page = 1
+	_size = 5
 )
 
 //APIController serves JSON data.
@@ -47,17 +52,30 @@ func (ctrl *APIController) Serve(result interface{}, err error) {
 	ctrl.ServeJSON()
 }
 
-//GetPageData turns /A1
+//GetPageData turns /B1 into page 1. size 1
 func (ctrl *APIController) GetPageData() (page, pageSize int) {
-	pageData := ctrl.Ctx.Input.Param(":pageData")
-	page = 0
-	pageSize = 10
+	pageData := ctrl.Ctx.Input.Param(":pagesize")
+	return getPageData(pageData)
+}
 
-	if len(pageData) >= 2 {
-		pChar, _ := strconv.Atoi(fmt.Sprintf("%c", pageData[0]))
+func getPageData(pageData string) (int, int) {
 
-		page = pChar % 32
-		pageSize, _ = strconv.Atoi(pageData[1:])
+	if len(pageData) < 2 {
+		return _page, _size
+	}
+
+	pChar := []rune(pageData[:1])
+	//pChar, err := strconv.Atoi(pageData[:1][0])
+
+	if len(pChar) != 1 {
+		return _page, _size
+	}
+
+	page := int(pChar[0]) % 32
+	pageSize, err := strconv.Atoi(pageData[1:])
+
+	if err != nil {
+		return _page, _size
 	}
 
 	return page, pageSize

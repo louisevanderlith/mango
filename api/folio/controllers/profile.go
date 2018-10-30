@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/louisevanderlith/husk"
 
@@ -23,12 +24,11 @@ func NewProfileCtrl(ctrlMap *control.ControllerMap) *ProfileController {
 // @Title GetSites
 // @Description Gets all sites
 // @Success 200 {[]folio.Profile} []folio.Portfolio]
-// @router /:pageData^[A-Z]+:[0-9]+$ [get]
+// @router /all/:pagesize [get]
 func (req *ProfileController) Get() {
 	page, size := req.GetPageData()
-
 	results := folio.GetProfiles(page, size)
-
+	log.Printf("Profiles: %#v\n", results)
 	req.Serve(results, nil)
 }
 

@@ -38,7 +38,7 @@ func GETMessage(instanceID, serviceName, controller string, params ...string) (*
 	url, err := GetServiceURL(instanceID, serviceName, false)
 
 	if err != nil {
-		return nil, NewRESTResult(err, nil)
+		return nil, err
 	}
 
 	fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))

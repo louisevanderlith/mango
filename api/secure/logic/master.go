@@ -1,7 +1,6 @@
 package logic
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/astaxie/beego/context"
@@ -35,7 +34,6 @@ func allowed(t *control.TinyCtx) bool {
 	}
 
 	cooki := FindAvo(t.SessionID)
-	log.Printf("Cookie %#v\n", cooki)
 	role, ok := cooki.UserRoles[t.Service.Name]
 
 	if ok {

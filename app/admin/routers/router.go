@@ -17,7 +17,7 @@ func Setup(s *util.Service) {
 	beego.Router("/manufacturer", controllers.NewManufacturerCtrl(ctrlmap))
 	beego.Router("/model", controllers.NewModelCtrl(ctrlmap))
 	beego.Router("/subcategory", controllers.NewSubCategoryCtrl(ctrlmap))
-	beego.Router("/profile", controllers.NewProfileCtrl(ctrlmap))
+	beego.Router("/profiles", controllers.NewProfileCtrl(ctrlmap))
 	beego.Router("/profile/:key", controllers.NewProfileCtrl(ctrlmap), "get:GetEdit")
 }
 
@@ -33,7 +33,7 @@ func EnableFilters(s *util.Service) *control.ControllerMap {
 	ctrlmap.Add("/manufacturer", emptyMap)
 	ctrlmap.Add("/model", emptyMap)
 	ctrlmap.Add("/subcategory", emptyMap)
-	ctrlmap.Add("/profile", emptyMap)
+	ctrlmap.Add("/profiles", emptyMap)
 
 	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterUI)
 

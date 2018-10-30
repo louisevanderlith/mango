@@ -22,7 +22,7 @@ func NewUploadCtrl(ctrlMap *control.ControllerMap) *UploadController {
 // @Title GetUploads
 // @Description Gets the uploads
 // @Success 200 {[]artifact.Upload} []artifact.Upload
-// @router /:pageData^[A-Z]+:[0-9]+$ [get]
+// @router /all/:pagesize [get]
 func (req *UploadController) Get() {
 	page, size := req.GetPageData()
 
@@ -35,7 +35,7 @@ func (req *UploadController) Get() {
 // @Description Gets the requested upload
 // @Param	uploadKey			path	husk.Key 	true		"Key of the file you require"
 // @Success 200 {artifact.Upload} artifact.Upload
-// @router /:uploadKey([0-9]+) [get]
+// @router /:uploadKey [get]
 func (req *UploadController) GetByID() {
 	key, err := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
 
@@ -51,7 +51,7 @@ func (req *UploadController) GetByID() {
 // @Description Gets the requested file only
 // @Param	uploadID			path	int64 	true		"ID of the file you require"
 // @Success 200 {[]byte} []byte
-// @router /file/:uploadID [get]
+// @router /file/:uploadKey [get]
 func (req *UploadController) GetFileBytes() {
 	var result []byte
 	var filename string

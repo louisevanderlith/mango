@@ -58,7 +58,7 @@ func init() {
 	beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/secure/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/louisevanderlith/mango/api/secure/controllers:UserController"],
 		beego.ControllerComments{
 			Method: "Get",
-			Router: `/:pageData`,
+			Router: `/all/:pagesize`,
 			AllowHTTPMethods: []string{"get"},
 			MethodParams: param.Make(),
 			Params: nil})

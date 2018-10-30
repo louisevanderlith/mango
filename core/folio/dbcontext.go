@@ -13,17 +13,15 @@ type context struct {
 var ctx context
 
 func init() {
+	defer createDefaultWebsite()
+
 	ctx = context{
 		Profiles: husk.NewTable(new(Profile)),
 	}
-
-	createDefaultWebsite()
 }
 
 func createDefaultWebsite() {
-	any := ctx.Profiles.Exists(husk.Everything())
-
-	if any {
+	if ctx.Profiles.Exists(husk.Everything()) {
 		return
 	}
 
@@ -36,10 +34,11 @@ func createDefaultWebsite() {
 	}
 
 	rec := vosa.Create()
-
+	log.Printf("Default: %#v\n", rec)
 	if rec.Error != nil {
 		panic(rec.Error)
 	}
 
-	log.Printf("Default Website Loaded:\n%+v\n", rec)
+	defer ctx.Profiles.Save()
+	log.Printf("Default Website Loaded:\n%+v\n", rec.Record.Data())
 }
