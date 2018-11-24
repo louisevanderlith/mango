@@ -9,15 +9,18 @@ type ModelController struct {
 	control.UIController
 }
 
+func NewModelCtrl(ctrlMap *control.ControllerMap) *ModelController {
+	result := &ModelController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 func (c *ModelController) Get() {
 	c.Setup("model")
+	c.CreateSideMenu(logic.GetMenu("/model"))
 
-	data, err := logic.GetModels()
+	data, err := logic.GetModels(c.GetInstanceID())
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Data["error"] = err
-	} else {
-		c.Data["data"] = data
-	}
+	c.Serve(data, err)
 }

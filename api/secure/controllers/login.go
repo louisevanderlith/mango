@@ -1,13 +1,21 @@
 package controllers
 
 import (
+	"errors"
+
 	"github.com/louisevanderlith/mango/api/secure/logic"
-	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
 type LoginController struct {
 	control.UIController
+}
+
+func NewLoginCtrl(ctrlMap *control.ControllerMap) *LoginController {
+	result := &LoginController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
 }
 
 // @Title GetLoginPage
@@ -25,17 +33,16 @@ func (req *LoginController) Get() {
 // @router /avo/:sessionID [get]
 func (req *LoginController) GetAvo() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
-	hasAvo := util.HasAvo(sessionID)
+	hasAvo := logic.HasAvo(sessionID)
 
 	if !hasAvo {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": "No data found."}
-	} else {
-		data := util.FindAvo(sessionID)
-		req.Data["json"] = map[string]interface{}{"Data": data}
+		req.ServeJSON(nil, errors.New("no avo found"))
+		return
 	}
 
-	req.ServeJSON()
+	result := logic.FindAvo(sessionID)
+
+	req.ServeJSON(result, nil)
 }
 
 // @Title Login
@@ -45,19 +52,9 @@ func (req *LoginController) GetAvo() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *LoginController) Post() {
-	loggedIn, sessionID, err := logic.AttemptLogin(req.Ctx)
+	sessionID, err := logic.AttemptLogin(req.Ctx)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = "Login Error " + err.Error()
-	} else if !loggedIn {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = "Login Failed"
-	} else {
-		req.Data["json"] = sessionID
-	}
-
-	req.ServeJSON()
+	req.ServeJSON(sessionID, err)
 }
 
 // @Title Logout
@@ -67,8 +64,9 @@ func (req *LoginController) Post() {
 // @router /logout/:sessionID [get]
 func (req *LoginController) Logout() {
 	sessionID := req.Ctx.Input.Param(":sessionID")
-	util.DestroyAvo(sessionID)
 
-	req.Data["json"] = "Logout Success"
-	req.ServeJSON()
+	// TODO: Create Trace for Logout...
+	logic.DestroyAvo(sessionID)
+
+	req.ServeJSON("Logout Success", nil)
 }

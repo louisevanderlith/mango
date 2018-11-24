@@ -10,12 +10,14 @@ const (
 	Admin RoleType = iota
 	Owner
 	User
+	Unknown
 )
 
 var roleTypes = [...]string{
 	"Admin",
 	"Owner",
-	"User"}
+	"User",
+	"Unknown"}
 
 /*
 func (r RoleType) String() string {

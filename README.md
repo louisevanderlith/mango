@@ -3,9 +3,15 @@ Mango monorepo for all of avosa's applications and services.
 Please note that this repo is currently maintained on Windows, and all scripts and settings are setup as such.
 
 ## Project Requirements
-* PostgreSQL v9.6
 * GO v1.7.3 and above
 * Beego v1.8.3 and above
+
+## Fun Facts:
+1. Current target Hardware;
+  CPU: Intel(R) Xeon(R) X5675@3.07GHz (1 Socket, 1 Core)
+  RAM: 2GiB
+  HDD: 50GiB
+  NET: 1x10Gbit/s Physical Ethernet
 
 ## Running the Project
 * $ npm install
@@ -66,13 +72,23 @@ We require 1(one) instance of Gate running for every environment we have.
 ## APP Folder
 - ### Admin
   We should be able to control and monitor every application and it's data from this application.
-- ### Classifieds
-  Classifieds will act as the central platform for advertising products and services.
+- ### Auto
+  Auto will act as the central platform for advertising vehicles.
   ### Gate
   See the description for Gate above.
 - ### Logbook
-  Logbook is an application that will be built to provide added value to the Classifieds application.
+  Logbook is an application that will be built to provide added value to the Auto application.
 - ### Shop
   This application is our central e-commerce platform.
 - ### WWW
   WWW is as the name suggests, the default website for this repo.
+
+# Feature Testing Users:
+* admin@mango.avo : Admin4v0
+
+## On Paged Data
+Every GET request, where the intention is to get many results, you have to specify the PAGE Data.
+/:pageData^[A-Z]+:[0-9]+$
+/:page/:size
+/A/6
+/<Page A>/<6 per Page>

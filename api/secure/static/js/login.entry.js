@@ -9,8 +9,6 @@ const form = {
 };
 
 var fs = {};
-var location = '';
-var ip = '';
 
 $(document).ready(() => {
     fs = new FormState(form.loginButton);
@@ -54,6 +52,21 @@ function gotoRegister() {
     window.location.replace('/v1/register');
 }
 
+function getApp() {
+    let appUrl = localStorage.getItem('return');
+    let ip = localStorage.getItem('ip');
+    let location = localStorage.getItem('location');
+
+    let result = {
+        Name: appUrl,
+        IP: ip,
+        Location: location,
+        InstanceID: instanceID
+    };
+
+    return result;
+}
+
 function submitLogin() {
     fs.submitDisabled(true);
 
@@ -62,22 +75,21 @@ function submitLogin() {
         type: "POST",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
-            Identifier: form.identity.val(),
-            Password: form.password.val(),
-            IP: ip,
-            Location: location,
-            ReturnURL: localStorage.getItem('return')
+            App: getApp(),
+            Email: form.identity.val(),
+            Password: form.password.val()
         }),
         cache: false,
-        success: function (sessionID) {
-            afterLogin(sessionID);
+        success: function (res) {
+            console.info(res);
+            afterLogin(res.Data);
         },
-        error: function (err) {
+        error: function (res) {
             // Fail message
             $('#success').html("<div class='alert alert-danger'>");
             $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
                 .append("</button>");
-            $('#success > .alert-danger').append($("<strong>").text(err));
+            $('#success > .alert-danger').append($("<strong>").text(res.Error));
             $('#success > .alert-danger').append('</div>');
             //clear all fields
             form.id.trigger("reset");
@@ -92,23 +104,25 @@ function submitLogin() {
 
 function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(setPosition);
+        navigator.geolocation.getCurrentPosition(setLocation);
     }
 }
 
-function setPosition(position) {
-    location = position.coords.latitude + ", " + position.coords.longitude;
+function setLocation(position) {
+    let location = position.coords.latitude + ", " + position.coords.longitude;
+    localStorage.setItem('location', location);
 }
 
 function getIP() {
     $.getJSON('//jsonip.com/?callback=?', function (data) {
-        ip = data.ip;
+        localStorage.setItem('ip', data.ip);
     });
 }
 
 function afterLogin(sessionID) {
     let finalURL = localStorage.getItem('return') || 'https://avosa.co.za';
     finalURL += "?token=" + sessionID
+
     window.location.replace(finalURL);
 }
 
@@ -118,7 +132,8 @@ function getParameterByName(name, url) {
 
     name = name.replace(/[\[\]]/g, "\\$&");
 
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+    const results = regex.exec(url);
 
     if (!results)
         return null;

@@ -2,15 +2,24 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
+
+	"strconv"
 
 	"github.com/louisevanderlith/mango/api/router/logic"
 	"github.com/louisevanderlith/mango/util"
-	"strconv"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
 type DiscoveryController struct {
 	control.APIController
+}
+
+func NewDiscoveryCtrl(ctrlMap *control.ControllerMap) *DiscoveryController {
+	result := &DiscoveryController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
 }
 
 // @Title RegisterAPI
@@ -20,13 +29,12 @@ type DiscoveryController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *DiscoveryController) Post() {
-	var service util.Service
-	json.Unmarshal(req.Ctx.Input.RequestBody, &service)
+	service := &util.Service{}
+	json.Unmarshal(req.Ctx.Input.RequestBody, service)
 
-	appID := logic.AddService(service)
+	appID, err := logic.AddService(service)
 
-	req.Data["json"] = map[string]string{"AppID": appID}
-	req.ServeJSON()
+	req.Serve(appID, err)
 }
 
 // @Title GetService
@@ -40,24 +48,21 @@ func (req *DiscoveryController) Post() {
 func (req *DiscoveryController) Get() {
 	appID := req.Ctx.Input.Param(":appID")
 	serviceName := req.Ctx.Input.Param(":serviceName")
+
+	if appID == "" || serviceName == "" {
+		err := errors.New("appID AND serviceName must be populated")
+		req.Serve(nil, err)
+		return
+	}
+
 	clean, cleanErr := strconv.ParseBool(req.Ctx.Input.Param(":clean"))
 
 	if cleanErr != nil {
 		clean = false
 	}
 
-	if appID != "" && serviceName != "" {
-		url, err := logic.GetServicePath(serviceName, appID, clean)
-
-		if err != nil {
-			req.Ctx.Output.SetStatus(500)
-			req.Data["json"] = err.Error()
-		} else {
-			req.Data["json"] = url
-		}
-	}
-
-	req.ServeJSON()
+	url, err := logic.GetServicePath(serviceName, appID, clean)
+	req.Serve(url, err)
 }
 
 // @Title GetDirtyService
@@ -71,16 +76,13 @@ func (req *DiscoveryController) GetDirty() {
 	appID := req.Ctx.Input.Param(":appID")
 	serviceName := req.Ctx.Input.Param(":serviceName")
 
-	if appID != "" && serviceName != "" {
-		url, err := logic.GetServicePath(serviceName, appID, false)
-
-		if err != nil {
-			req.Ctx.Output.SetStatus(500)
-			req.Data["json"] = err.Error()
-		} else {
-			req.Data["json"] = url
-		}
+	if appID == "" || serviceName == "" {
+		err := errors.New("appID AND serviceName must be populated")
+		req.Serve(nil, err)
+		return
 	}
 
-	req.ServeJSON()
+	url, err := logic.GetServicePath(serviceName, appID, false)
+
+	req.Serve(url, err)
 }

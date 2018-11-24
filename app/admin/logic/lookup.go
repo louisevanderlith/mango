@@ -1,10 +1,9 @@
 package logic
 
 import (
-	"encoding/json"
-	"log"
-	"github.com/louisevanderlith/mango/util"
 	"errors"
+
+	"github.com/louisevanderlith/mango/util"
 )
 
 type LookupObj struct {
@@ -13,52 +12,46 @@ type LookupObj struct {
 	Description string
 }
 
-func GetCategories() ([]LookupObj, error) {
-	contents, statusCode := util.GETMessage("Things.API", "category")
+func GetCategories(instanceID string) ([]LookupObj, error) {
+	resp, err := util.GETMessage(instanceID, "Things.API", "category")
 
-	return toDTO(contents, statusCode)
+	return toDTO(resp, err)
 }
 
-func GetManufacturers() ([]LookupObj, error) {
-	contents, statusCode := util.GETMessage("Things.API", "message")
+func GetManufacturers(instanceID string) ([]LookupObj, error) {
+	resp, err := util.GETMessage(instanceID, "Things.API", "message")
 
-	return toDTO(contents, statusCode)
+	return toDTO(resp, err)
 }
 
-func GetModels() ([]LookupObj, error) {
-	contents, statusCode := util.GETMessage("Things.API", "model")
+func GetModels(instanceID string) ([]LookupObj, error) {
+	resp, err := util.GETMessage(instanceID, "Things.API", "model")
 
-	return toDTO(contents, statusCode)
+	return toDTO(resp, err)
 }
 
-func GetSubCategories() ([]LookupObj, error) {
-	contents, statusCode := util.GETMessage("Things.API", "subcategory")
+func GetSubCategories(instanceID string) ([]LookupObj, error) {
+	resp, err := util.GETMessage(instanceID, "Things.API", "subcategory")
 
-	return toDTO(contents, statusCode)
+	return toDTO(resp, err)
 }
 
-func toDTO(contents []byte, statusCode int) ([]LookupObj, error) {
+func toDTO(resp *util.RESTResult, err error) ([]LookupObj, error) {
 	var result []LookupObj
-	var finalErr error
 
-	data := util.MarshalToMap(contents)
-
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Printf("toDTO: ", err)
-		}
-
-		finalErr = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
-
-		if err != nil {
-			log.Printf("toDTO: ", err)
-		}
+	if err != nil {
+		return result, err
 	}
 
-	return result, finalErr
+	if resp.Failed() {
+		return result, resp
+	}
+
+	result, ok := resp.Data.([]LookupObj)
+
+	if !ok {
+		return result, errors.New("not a []LookupObj")
+	}
+
+	return result, nil
 }

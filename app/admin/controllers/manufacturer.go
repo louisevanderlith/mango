@@ -9,15 +9,18 @@ type ManufacturerController struct {
 	control.UIController
 }
 
+func NewManufacturerCtrl(ctrlMap *control.ControllerMap) *ManufacturerController {
+	result := &ManufacturerController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 func (c *ManufacturerController) Get() {
 	c.Setup("manufacturer")
+	c.CreateSideMenu(logic.GetMenu("/manufacturer"))
 
-	data, err := logic.GetManufacturers()
+	data, err := logic.GetManufacturers(c.GetInstanceID())
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Data["error"] = err
-	} else {
-		c.Data["data"] = data
-	}
+	c.Serve(data, err)
 }

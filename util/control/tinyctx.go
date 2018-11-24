@@ -7,107 +7,174 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego/context"
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-type tinyCtx struct {
-	Controller string
-	Method     string
-	SessionID  string
+type TinyCtx struct {
+	ApplicationName string
+	RequiredRole    enums.RoleType
+	URL             string
+	Method          string
+	SessionID       string
+	Service         *util.Service
 }
 
 const avosession = "avosession"
 
-func newTinyCtx(ctx *context.Context) tinyCtx {
-	result := tinyCtx{}
+func findURLToken(ctx *context.Context) (string, string) {
+	url, token := removeToken(ctx.Request.RequestURI)
 
-	ctrl, sess := removeToken(ctx.Request.RequestURI)
-
-	if sess == "" {
-		sess = ctx.GetCookie(avosession)
+	if token == "" {
+		token = ctx.GetCookie(avosession)
 	}
 
-	result.Controller = ctrl
-	result.Method = strings.ToUpper(ctx.Request.Method)
-	result.SessionID = sess
+	return url, token
+}
+
+func NewTinyCtx(m *ControllerMap, ctx *context.Context) *TinyCtx {
+	result := TinyCtx{}
+
+	url, token := findURLToken(ctx)
+
+	actMethod := strings.ToUpper(ctx.Request.Method)
+	required := m.GetRequiredRole(url, actMethod)
+
+	result.RequiredRole = required
+	result.ApplicationName = m.GetServiceName()
+	result.URL = url
+	result.Method = actMethod
+	result.SessionID = token
+	result.Service = m.service
+
+	return &result
+}
+
+func (ctx *TinyCtx) allowed() bool {
+	if ctx.RequiredRole == enums.Unknown {
+		return true
+	}
+
+	return ctx.hasRole(ctx.RequiredRole)
+}
+
+func (ctx *TinyCtx) getUserKey() *husk.Key {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return husk.CrazyKey()
+	}
+
+	return &cookie.UserKey
+}
+
+func (ctx *TinyCtx) getUsername() string {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return "Unknown"
+	}
+
+	return cookie.Username
+}
+
+func (ctx *TinyCtx) getIP() string {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return "-1.-1.-1.-1"
+	}
+
+	return cookie.IP
+}
+
+func (ctx *TinyCtx) getLocation() string {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return "Uknown"
+	}
+
+	return cookie.Location
+}
+
+func (ctx *TinyCtx) getRole() enums.RoleType {
+	result := enums.Unknown
+
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		log.Printf("getAvoCookie FAILED %s\n", err.Error())
+		return result
+	}
+
+	appName := ctx.ApplicationName
+
+	if role, ok := cookie.UserRoles[appName]; ok {
+		result = role
+	}
 
 	return result
 }
 
-func (ctx tinyCtx) allowed() bool {
-	result := true
-	ctrlMap, hasCtrl := controllerMapping[ctx.Controller]
+func (ctx *TinyCtx) hasRole(required enums.RoleType) bool {
+	role := ctx.getRole()
 
-	if hasCtrl {
-		methodMap, hasMethod := ctrlMap[ctx.Method]
+	return role <= required
+}
 
-		if hasMethod {
-			result = hasRole(methodMap, ctx.SessionID)
-		}
+//TODO: use channels
+//getAvoCookie also checks cookie validity, so repeated calls are required
+func (ctx *TinyCtx) getAvoCookie() (*Cookies, error) {
+	if len(ctx.SessionID) == 0 {
+		return nil, errors.New("SessionID empty")
 	}
 
-	return result
+	resp, err := util.GETMessage(ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Failed() {
+		return nil, resp
+	}
+
+	result := Cookies{}
+
+	switch resp.Data.(type) {
+	case map[string]interface{}:
+		dirty, err := json.Marshal(resp.Data)
+
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal(dirty, &result)
+
+		if err != nil {
+			return nil, err
+		}
+	case Cookies:
+		result = resp.Data.(Cookies)
+	default:
+		log.Printf("Dont Know: %v\n", resp)
+	}
+
+	return &result, nil
 }
 
 func removeToken(url string) (cleanURL, token string) {
 	idx := strings.LastIndex(url, "?token")
 	tokenIdx := strings.LastIndex(url, "=") + 1
 
-	if idx != -1 {
-		token = url[tokenIdx:]
-		cleanURL = url[:idx]
+	if idx == -1 {
+		return "/", ""
 	}
 
-	if cleanURL == "" {
-		cleanURL = "/"
-	}
+	cleanURL = url[:idx]
+	token = url[tokenIdx:]
 
 	return cleanURL, token
-}
-
-func hasRole(funcRole enums.RoleType, sessionID string) bool {
-	result := false
-
-	if sessionID != "" {
-		roles, _ := loadRoles(sessionID)
-
-		if len(roles) > 0 {
-			for _, val := range roles {
-				if val <= funcRole {
-					result = true
-					break
-				}
-			}
-		}
-	}
-
-	return result
-}
-
-func loadRoles(sessionID string) ([]enums.RoleType, error) {
-	var result util.Cookies
-	var finalError error
-
-	contents, statusCode := util.GETMessage("Secure.API", "login", "avo", sessionID)
-	data := util.MarshalToMap(contents)
-
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Println("loadRoles:", err)
-		}
-
-		finalError = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
-
-		if err != nil {
-			log.Println("loadRoles:", err)
-		}
-	}
-
-	return result.Roles, finalError
 }

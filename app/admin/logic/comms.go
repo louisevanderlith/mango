@@ -2,9 +2,6 @@ package logic
 
 import (
 	"github.com/louisevanderlith/mango/util"
-	"encoding/json"
-	"log"
-	"errors"
 )
 
 type CommsObject struct {
@@ -15,28 +12,18 @@ type CommsObject struct {
 	Body  string
 }
 
-func GetCommsMessages() ([]CommsObject, error) {
-	var result []CommsObject
-	var finalError error
-	contents, statusCode := util.GETMessage("Communication.API", "message")
-	data := util.MarshalToMap(contents)
+func GetCommsMessages(instanceID string) ([]CommsObject, error) {
+	resp, err := util.GETMessage(instanceID, "Communication.API", "message")
 
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Printf("GetCommsMessages: ", err)
-		}
-
-		finalError = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
-
-		if err != nil {
-			log.Printf("GetCommsMessages: ", err)
-		}
+	if err != nil {
+		return []CommsObject{}, err
 	}
 
-	return result, finalError
+	if resp.Failed() {
+		return []CommsObject{}, resp
+	}
+
+	result := resp.Data.([]CommsObject)
+
+	return result, nil
 }

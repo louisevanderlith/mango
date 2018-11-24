@@ -1,0 +1,47 @@
+<section id="Register">
+    <div class="container">
+        <h2 class="text-center blue">Registration</h2>
+        <hr class="star-primary">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <form id="frmRegister" role="form" data-toggle="validator">
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label for="txtName">Name</label>
+                            <input class="form-control" id="txtName" minlength="3" maxlength="75" type="text" placeholder="Name" required data-validation-required-message="Please enter your Name">
+                            <p class="help-block with-errors text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label for="txtEmail">E-mail Address</label>
+                            <input class="form-control" id="txtEmail" type="email" placeholder="E-mail Address" required data-validation-required-message="Please enter your E-mail Address"
+                                data-error="E-mail Address is invalid.">
+                            <p class="help-block with-errors text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label for="txtPassword">Password</label>
+                            <input class="form-control" id="txtPassword" type="password" placeholder="Password" required data-validation-required-message="Please enter your Password">
+                            <p class="help-block with-errors text-danger"></p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="form-group floating-label-form-group controls">
+                            <label for="txtConfirmPass">Confirm Password</label>
+                            <input class="form-control" id="txtConfirmPass" type="password" placeholder="Confirm Password" required data-validation-required-message="Please confirm your Password"
+                                data-match="#txtPassword" data-match-error="The Passwords don't match.">
+                            <p class="help-block with-errors text-danger"></p>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success btn-lg" id="btnRegister">Register</button>
+                    </div>
+                </form>
+                <div id="success"></div>
+            </div>
+        </div>
+    </div>
+</section>

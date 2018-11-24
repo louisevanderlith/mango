@@ -9,15 +9,18 @@ type CommsController struct {
 	control.UIController
 }
 
+func NewCommsCtrl(ctrlMap *control.ControllerMap) *CommsController {
+	result := &CommsController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 func (c *CommsController) Get() {
 	c.Setup("comms")
+	c.CreateSideMenu(logic.GetMenu("/comms"))
 
-	data, err := logic.GetCommsMessages()
+	data, err := logic.GetCommsMessages(c.GetInstanceID())
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Data["error"] = err
-	} else {
-		c.Data["data"] = data
-	}
+	c.Serve(data, err)
 }

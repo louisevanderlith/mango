@@ -2,14 +2,20 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 
-	"github.com/louisevanderlith/mango/api/secure/logic"
+	"github.com/louisevanderlith/mango/core/secure"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
 type RegisterController struct {
 	control.UIController
+}
+
+func NewRegisterCtrl(ctrlMap *control.ControllerMap) *RegisterController {
+	result := &RegisterController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
 }
 
 // @Title GetRegisterPage
@@ -22,22 +28,15 @@ func (req *RegisterController) Get() {
 
 // @Title Register
 // @Description Registers a new user
-// @Param	body		body 	logic.Registration		true		"body for message content"
+// @Param	body		body 	secure.AuthRequest		true		"body for message content"
 // @Success 200 {string} string
 // @Failure 403 body is empty
 // @router / [post]
 func (req *RegisterController) Post() {
-	var user logic.Registration
-	json.Unmarshal(req.Ctx.Input.RequestBody, &user)
+	var regis secure.Registration
+	json.Unmarshal(req.Ctx.Input.RequestBody, &regis)
 
-	err := logic.SaveRegistration(user)
+	result, err := secure.Register(regis)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = err.Error()
-	} else {
-		req.Data["json"] = fmt.Sprintf("User %s created Successfully.", user.Name)
-	}
-
-	req.ServeJSON()
+	req.ServeJSON(result, err)
 }

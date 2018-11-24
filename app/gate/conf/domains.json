@@ -35,18 +35,13 @@
         "Type": "Subdomain"
     },
     {
-        "Name": "Things.API",
-        "Address": "things",
-        "Type": "Subdomain"
-    },
-    {
         "Name": "Admin.APP",
         "Address": "admin",
         "Type": "Subdomain"
     },
     {
-        "Name": "Classifieds.APP",
-        "Address": "classifieds",
+        "Name": "Auto.APP",
+        "Address": "auto",
         "Type": "Subdomain"
     },
     {
@@ -60,8 +55,8 @@
         "Type": "Subdomain"
     },
     {
-        "Name": "example",
-        "Address": "example.co.za",
-        "Type": "Static"
+        "Name": "Funds.API",
+        "Address": "funds",
+        "Type": "Subdomain"
     }
 ]

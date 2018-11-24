@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"strconv"
+	"github.com/louisevanderlith/husk"
 
 	"github.com/louisevanderlith/mango/api/artifact/logic"
-	"github.com/louisevanderlith/mango/db/artifact"
+	"github.com/louisevanderlith/mango/core/artifact"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
@@ -12,63 +12,58 @@ type UploadController struct {
 	control.APIController
 }
 
+func NewUploadCtrl(ctrlMap *control.ControllerMap) *UploadController {
+	result := &UploadController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 // @Title GetUploads
 // @Description Gets the uploads
 // @Success 200 {[]artifact.Upload} []artifact.Upload
-// @router / [get]
+// @router /all/:pagesize [get]
 func (req *UploadController) Get() {
+	page, size := req.GetPageData()
 
-	var results []*artifact.Upload
-	upl := artifact.Upload{}
-	err := artifact.Ctx.Upload.Read(&upl, &results)
+	results := artifact.GetUploads(page, size)
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]interface{}{"Data": results}
-	}
-
-	req.ServeJSON()
+	req.Serve(results, nil)
 }
 
 // @Title GetUpload
 // @Description Gets the requested upload
-// @Param	uploadID			path	int64 	true		"ID of the file you require"
+// @Param	uploadKey			path	husk.Key 	true		"Key of the file you require"
 // @Success 200 {artifact.Upload} artifact.Upload
-// @router /:uploadID [get]
+// @router /:uploadKey [get]
 func (req *UploadController) GetByID() {
-	uploadID, err := strconv.ParseInt(req.Ctx.Input.Param(":uploadID"), 10, 64)
-
-	if err == nil {
-		file, err := logic.GetFile(uploadID)
-
-		if err == nil {
-			req.Data["json"] = map[string]interface{}{"Data": file}
-		}
-	}
+	key, err := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
 
 	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
+		req.Serve(nil, err)
+		return
 	}
 
-	req.ServeJSON()
+	req.Serve(artifact.GetUpload(key))
 }
 
 // @Title GetFile
 // @Description Gets the requested file only
 // @Param	uploadID			path	int64 	true		"ID of the file you require"
 // @Success 200 {[]byte} []byte
-// @router /file/:uploadID [get]
+// @router /file/:uploadKey [get]
 func (req *UploadController) GetFileBytes() {
 	var result []byte
 	var filename string
-	uploadID, err := strconv.ParseInt(req.Ctx.Input.Param(":uploadID"), 10, 64)
+	key, err := husk.ParseKey(req.Ctx.Input.Param(":uploadKey"))
 
-	if err == nil {
-		result, filename, err = logic.GetFileOnly(uploadID)
+	if err != nil {
+		req.Ctx.Output.SetStatus(500)
+		req.ServeBinary([]byte(err.Error()), "")
+		return
 	}
+
+	result, filename, err = artifact.GetUploadFile(key)
 
 	if err != nil {
 		req.Ctx.Output.SetStatus(500)
@@ -86,24 +81,26 @@ func (req *UploadController) GetFileBytes() {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *UploadController) Post() {
-	var id int64
+	key := husk.CrazyKey()
 
 	info := req.GetString("info")
-	infoHead := logic.GetInfoHead(info)
+	infoHead, err := logic.GetInfoHead(info)
+
+	if err != nil {
+		req.Serve(key, err)
+		return
+	}
 
 	file, header, err := req.GetFile("file")
 
-	if err == nil {
-		defer file.Close()
-		id, err = logic.SaveFile(file, header, infoHead)
-	}
-
 	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]interface{}{"Data": id}
+		req.Serve(key, err)
+		return
 	}
 
-	req.ServeJSON()
+	defer file.Close()
+
+	key, err = logic.SaveFile(file, header, infoHead)
+
+	req.Serve(key, err)
 }

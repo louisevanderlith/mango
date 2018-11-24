@@ -1,8 +1,6 @@
 package logic
 
 import (
-	"encoding/json"
-	"errors"
 	"log"
 	"strconv"
 
@@ -62,35 +60,33 @@ type headerItem struct {
 
 var uploadURL string
 
-func GetProfileSite(name string) (result BasicSite, finalErr error) {
+func GetProfileSite(instanceID, name string) (BasicSite, error) {
+	result := BasicSite{}
 	if name == "" {
 		name = "avosa"
 	}
 
-	contents, statusCode := util.GETMessage("Folio.API", "site", name)
-	data := util.MarshalToMap(contents)
+	resp, err := util.GETMessage(instanceID, "Folio.API", "profile", name)
 
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Println("getProfileSite: ", err)
-		}
-
-		finalErr = errors.New(dataErr)
-	} else {
-		finalErr = json.Unmarshal(*data["Data"], &result)
-
-		result.setImageURLs()
+	if err != nil {
+		return result, err
 	}
 
-	return result, finalErr
+	if resp.Failed() {
+		return result, resp
+	}
+
+	log.Printf("GetProfileSite- %#v\n", resp.Data)
+
+	result = resp.Data.(BasicSite)
+	result.setImageURLs(instanceID)
+
+	return result, nil
 }
 
-func (obj *BasicSite) setImageURLs() {
+func (obj *BasicSite) setImageURLs(instanceID string) {
 	if uploadURL == "" {
-		setUploadURL()
+		setUploadURL(instanceID)
 	}
 
 	obj.ImageURL = uploadURL + strconv.FormatInt(obj.ImageID, 10)
@@ -106,8 +102,8 @@ func (obj *BasicSite) setImageURLs() {
 	}
 }
 
-func setUploadURL() {
-	url, err := util.GetServiceURL("Artifact.API", true)
+func setUploadURL(instanceID string) {
+	url, err := util.GetServiceURL(instanceID, "Artifact.API", true)
 
 	if err != nil {
 		log.Print("setImageURLs:", err)

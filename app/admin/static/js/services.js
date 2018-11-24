@@ -38,13 +38,13 @@ function doMultipartRequest(url, data, success, fail, complete) {
 }
 
 export function createSite(data, success, fail, complete) {
-    lookup.buildPath('Folio.API', "site").then((buildPath) => {
+    lookup.buildPath('Folio.API', "profile").then((buildPath) => {
         doRequest(buildPath, "POST", data, success, fail, complete);
     });
 }
 
 export function updateSite(data, success, fail, complete) {
-    lookup.buildPath('Folio.API', "site").then((buildPath) => {
+    lookup.buildPath('Folio.API', "profile").then((buildPath) => {
         doRequest(buildPath, "PUT", data, success, fail, complete);
     });
 }

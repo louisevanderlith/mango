@@ -9,15 +9,18 @@ type CategoryController struct {
 	control.UIController
 }
 
+func NewCategoryCtrl(ctrlMap *control.ControllerMap) *CategoryController {
+	result := &CategoryController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 func (c *CategoryController) Get() {
 	c.Setup("category")
+	c.CreateSideMenu(logic.GetMenu("/category"))
 
-	data, err := logic.GetCategories()
+	data, err := logic.GetCategories(c.GetInstanceID())
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Data["error"] = err
-	} else {
-		c.Data["data"] = data
-	}
+	c.Serve(data, err)
 }

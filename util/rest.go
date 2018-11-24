@@ -1,92 +1,78 @@
 package util
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strings"
 )
 
-func GETMessage(serviceName, controller string, params ...string) ([]byte, int) {
-	var result []byte
-	var statusCode int
-	url, err := GetServiceURL(serviceName, false)
-
-	if err == nil {
-		fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))
-
-		client := &http.Client{}
-		req, _ := http.NewRequest("GET", fullURL, nil)
-
-		resp, err := client.Do(req)
-
-		if err != nil {
-			log.Printf("http.Get: ", err)
-		} else {
-			defer resp.Body.Close()
-			statusCode = resp.StatusCode
-			contents, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				log.Printf("ioutil.ReadAll: ", err)
-			}
-
-			result = contents
-		}
-	} else {
-		statusCode = 500
-		result = []byte(err.Error())
-	}
-
-	return result, statusCode
+type RESTResult struct {
+	Reason string      `json:"Error"`
+	Data   interface{} `json:"Data"`
 }
 
-func POSTMessage(serviceName, controller string, obj interface{}) (result []byte, statusCode int) {
-	url, err := GetServiceURL(serviceName, false)
+func NewRESTResult(reason error, data interface{}) *RESTResult {
+	result := &RESTResult{}
 
-	if err == nil {
-		fullURL := fmt.Sprintf("%sv1/%s", url, controller)
-
-		buff := new(bytes.Buffer)
-		json.NewEncoder(buff).Encode(obj)
-
-		client := &http.Client{}
-		req, _ := http.NewRequest("POST", fullURL, buff)
-		req.Header.Set("Content-Type", "application/json")
-
-		resp, err := client.Do(req)
-
-		if err != nil {
-			log.Printf("http.Post: ", err)
-		} else {
-			defer resp.Body.Close()
-			statusCode = resp.StatusCode
-			contents, err := ioutil.ReadAll(resp.Body)
-
-			if err != nil {
-				log.Printf("ioutil.ReadAll: ", err)
-			}
-
-			result = contents
-		}
-	} else {
-		statusCode = 500
-		result = []byte(err.Error())
+	if reason != nil {
+		result.Reason = reason.Error()
 	}
 
-	return result, statusCode
+	if data == nil {
+		data = "Nothing bad happened..."
+	}
+
+	result.Data = data
+
+	return result
 }
 
-func MarshalToMap(content []byte) map[string]*json.RawMessage {
-	var objmap map[string]*json.RawMessage
-	err := json.Unmarshal(content, &objmap)
+func (r *RESTResult) Failed() bool {
+	return len(r.Reason) > 0
+}
+
+// GETMessage does a GET Request
+func GETMessage(instanceID, serviceName, controller string, params ...string) (*RESTResult, error) {
+	url, err := GetServiceURL(instanceID, serviceName, false)
 
 	if err != nil {
-		log.Printf("MarshalToMap: ", err)
+		return nil, err
 	}
 
-	return objmap
+	fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))
+
+	resp, err := http.Get(fullURL)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	contents, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := MarshalToResult(contents)
+
+	return data, err
+}
+
+func MarshalToResult(content []byte) (*RESTResult, error) {
+	result := &RESTResult{}
+	err := json.Unmarshal(content, result)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
+}
+
+func (r *RESTResult) Error() string {
+	return r.Reason
 }

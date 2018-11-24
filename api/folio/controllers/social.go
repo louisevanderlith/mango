@@ -1,14 +1,19 @@
 package controllers
 
 import (
-	"encoding/json"
-
-	"github.com/louisevanderlith/mango/db/folio"
+	"github.com/louisevanderlith/mango/core/folio"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
 type SocialController struct {
 	control.APIController
+}
+
+func NewSocialCtrl(ctrlMap *control.ControllerMap) *SocialController {
+	result := &SocialController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
 }
 
 // @Title CreateSocialLink
@@ -18,39 +23,14 @@ type SocialController struct {
 // @Failure 403 body is empty
 // @router / [post]
 func (req *SocialController) Post() {
-	var link folio.SocialLink
-	json.Unmarshal(req.Ctx.Input.RequestBody, &link)
-
-	_, err := folio.Ctx.SocialLink.Create(&link)
+	with, err := req.GetKeyedRequest()
 
 	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Social Media Item has been created."}
+		req.Serve(nil, err)
+		return
 	}
 
-	req.ServeJSON()
-}
+	err = folio.AddSocialLink(with.Key, with.Body.(folio.SocialLink))
 
-// @Title UpdateSocialLink
-// @Description Updates a Social Link on a current site
-// @Param	body		body 	folio.SocialLink	true		"body for service content"
-// @Success 200 {map[string]string} map[string]string
-// @Failure 403 body is empty
-// @router / [put]
-func (req *SocialController) Put() {
-	var social folio.SocialLink
-	json.Unmarshal(req.Ctx.Input.RequestBody, &social)
-
-	err := folio.Ctx.SocialLink.Update(&social)
-
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Social link has been updated."}
-	}
-
-	req.ServeJSON()
+	req.Serve(nil, err)
 }

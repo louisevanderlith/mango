@@ -9,15 +9,18 @@ type SubCategoryController struct {
 	control.UIController
 }
 
+func NewSubCategoryCtrl(ctrlMap *control.ControllerMap) *SubCategoryController {
+	result := &SubCategoryController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
+}
+
 func (c *SubCategoryController) Get() {
 	c.Setup("subcategory")
+	c.CreateSideMenu(logic.GetMenu("/subcategory"))
 
-	data, err := logic.GetSubCategories()
+	data, err := logic.GetSubCategories(c.GetInstanceID())
 
-	if err != nil {
-		c.Ctx.Output.SetStatus(500)
-		c.Data["error"] = err
-	} else {
-		c.Data["data"] = data
-	}
+	c.Serve(data, err)
 }

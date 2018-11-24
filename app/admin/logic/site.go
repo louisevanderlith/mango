@@ -1,124 +1,65 @@
 package logic
 
 import (
-	"encoding/json"
-	"errors"
-	"log"
-	"strconv"
+	"github.com/louisevanderlith/mango/core/folio"
+
+	"github.com/louisevanderlith/husk"
 
 	"github.com/louisevanderlith/mango/util"
 )
 
-type BasicSite struct {
-	ID             int64
-	Title          string
-	Description    string
-	ContactEmail   string
-	ContactPhone   string
-	URL            string
-	ImageID        int64
-	ImageURL       string
-	StyleSheet     string
-	SocialLinks    SocialLinks
-	PortfolioItems PortfolioItems
-	AboutSections  AboutSections
-	Headers        HeaderItems
-}
-
-type SocialLinks []socialLink
-
-type PortfolioItems []portfolioItem
-
-type AboutSections []aboutSection
-
-type HeaderItems []headerItem
-
-type socialLink struct {
-	ID   int64
-	Icon string
-	URL  string
-}
-
-type portfolioItem struct {
-	ID       int64
-	ImageID  int64
-	ImageURL string
-	URL      string
-	Name     string
-}
-
-type aboutSection struct {
-	ID          int64
-	SectionText string
-}
-
-type headerItem struct {
-	ID       int64
-	Heading  string
-	Text     string
-	ImageID  int64
-	ImageURL string
-}
-
 var uploadURL string
 
-func GetSites() (result []BasicSite, finalErr error) {
-	contents, statusCode := util.GETMessage("Folio.API", "site")
-	data := util.MarshalToMap(contents)
+func GetSites(instanceID string) ([]folio.Profile, error) {
+	var result []folio.Profile
 
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
+	resp, err := util.GETMessage(instanceID, "Folio.API", "profile", "all", "A10")
 
-		if err != nil {
-			log.Print("getSites: ", err)
-		}
+	if err != nil {
+		return result, err
+	}
 
-		finalErr = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
+	if resp.Failed() {
+		return result, resp
+	}
 
-		if err != nil {
-			log.Print("getSites: ", err)
+	coll, ok := resp.Data.(husk.Collection)
+
+	if ok && coll.Any() {
+		itor := coll.GetEnumerator()
+
+		if itor.MoveNext() {
+			curr := itor.Current()
+
+			result = append(result, curr.Data().(folio.Profile))
 		}
 	}
 
-	return result, finalErr
+	return result, nil
 }
 
-func GetSite(siteID int64) (result BasicSite, finalErr error) {
-	contents, statusCode := util.GETMessage("Folio.API", "site", strconv.FormatInt(siteID, 10))
-	data := util.MarshalToMap(contents)
+func GetSite(siteKey *husk.Key, instanceID string) (folio.Profile, error) {
+	result := folio.Profile{}
+	resp, err := util.GETMessage(instanceID, "Folio.API", "profile", siteKey.String())
 
-	if statusCode != 200 {
-		var dataErr string
-		err := json.Unmarshal(*data["Error"], &dataErr)
-
-		if err != nil {
-			log.Println("getSite: ", err)
-		}
-
-		finalErr = errors.New(dataErr)
-	} else {
-		err := json.Unmarshal(*data["Data"], &result)
-
-		if err != nil {
-			log.Println("getSite: ", err)
-		}
-
-		result.setImageURLs()
+	if err != nil {
+		return result, err
 	}
 
-	return result, finalErr
+	if resp.Failed() {
+		return result, resp
+	}
+
+	result = resp.Data.(folio.Profile)
+	//result.setImageURLs(instanceID)
+
+	return result, nil
 }
 
-func (obj *BasicSite) setImageURLs() {
+/*
+func setImageURLs(instanceID string) {
 	if uploadURL == "" {
-		setUploadURL()
-	}
-
-	if obj.ImageID != 0 {
-		obj.ImageURL = uploadURL + strconv.FormatInt(obj.ImageID, 10)
+		setUploadURL(instanceID)
 	}
 
 	for i := 0; i < len(obj.PortfolioItems); i++ {
@@ -138,8 +79,8 @@ func (obj *BasicSite) setImageURLs() {
 	}
 }
 
-func setUploadURL() {
-	url, err := util.GetServiceURL("Artifact.API", true)
+func setUploadURL(instanceID string) {
+	url, err := util.GetServiceURL(instanceID, "Artifact.API", true)
 
 	if err != nil {
 		log.Print("setImageURLs:", err)
@@ -147,3 +88,4 @@ func setUploadURL() {
 
 	uploadURL = url + "v1/upload/file/"
 }
+*/

@@ -1,23 +1,28 @@
 package routers
 
 import (
-	"github.com/louisevanderlith/mango/app/logbook/controllers"
 	"github.com/astaxie/beego"
+	"github.com/louisevanderlith/mango/app/logbook/controllers"
+	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/control"
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-func init() {
-	setupMapping()
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilter(s)
 
-	beego.Router("/", &controllers.DefaultController{})
+	beego.Router("/", controllers.NewDefaultCtrl(ctrlmap))
 }
 
-func setupMapping() {
-	uploadMap := make(control.MethodMap)
-	uploadMap["GET"] = enums.User
+func EnableFilter(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 
-	control.AddControllerMap("/", uploadMap)
+	emptyMap := make(control.ActionMap)
+	emptyMap["GET"] = enums.User
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterUI)
+	ctrlmap.Add("/", emptyMap)
+
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterUI)
+
+	return ctrlmap
 }

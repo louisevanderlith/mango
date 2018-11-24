@@ -1,0 +1,80 @@
+<div class="navbar navbar-blue navbar-static-top">
+    <div class="navbar-header">
+        <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a href="#" class="navbar-brand logo glyphicon glyphicon-font"></a>
+    </div>
+    <nav class="collapse navbar-collapse" role="navigation">
+        <form class="navbar-form navbar-left">
+            <div class="input-group input-group-sm" style="max-width:360px;">
+                <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
+                <div class="input-group-btn">
+                    <button class="btn btn-default" type="submit">
+                        <i class="glyphicon glyphicon-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+        <ul class="nav navbar-nav">
+            {{range $key, $val := .TopMenu}}
+            <li {{if $val.Children}}class="dropdown" {{end}}>
+                <a href="{{if $val.Link }}{{$val.Link}} {{else}} # {{end}}" {{if $val.Children}}class="dropdown-toggle" data-toggle="dropdown"
+                    {{end}}>
+                    <i class="{{$val.Class}}"></i>{{$val.Name}}
+                </a>
+            </li>
+
+            <!--{{if $val.Children}}
+                <ul class="dropdown-menu">
+                    {{range $ckey, $cval := $val.Children }}
+                        <li>
+                            <a href="{{if $cval.Link }}{{$cval.Link}} {{else}} # {{end}}">
+                                <i class="{{$cval.Class}}"></i>{{$cval.Name}}
+                            </a>
+                        </li>
+                    {{end}}
+                </ul>
+                {{end}}-->
+            {{end}}
+        </ul>
+
+
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="glyphicon glyphicon-user"></i>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="">More</a>
+                    </li>
+                    <li>
+                        <a href="">More</a>
+                    </li>
+                    <li>
+                        <a href="">More</a>
+                    </li>
+                    <li>
+                        <a href="">More</a>
+                    </li>
+                    <li>
+                        <a href="">More</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <form class="navbar-form navbar-nav navbar-right" action="/create">
+            <div class="input-group input-group-sm" style="max-width:360px;">
+                <button class="btn btn-default" type="submit">
+                    <a href="/create">Sell</a>
+                </button>
+            </div>
+        </form>
+
+    </nav>
+</div>

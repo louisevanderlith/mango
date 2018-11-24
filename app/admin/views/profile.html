@@ -1,0 +1,46 @@
+<div class="row">
+    <div class="col-12">
+        <h1>Sites</h1>
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-table"></i> Profiles
+                <button type="button" class="btn btn-info btn-sm" id="btnAddSite">Create Site</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Key</th>
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            {{range $key, $val := .data}}
+                            <tr>
+                                <td>{{$val.Key}}</td>
+                                <td>{{$val.Title}}</td>
+                                <td>{{$val.Description}}</td>
+                                <td>
+                                    <a href="/profile/{{$val.Key}}" class="btn btn-primary">Edit</a>
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer small text-muted">Updated a while ago.</div>
+        </div>
+    </div>
+</div>
