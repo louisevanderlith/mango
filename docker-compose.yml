@@ -1,0 +1,107 @@
+version: '3.1'
+#This docker-compose file should only be used for building and pushing to the avosa/hub
+services:
+  # api
+  artifact:
+    build: 
+      context: api/artifact/
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: ${PWD}
+    depends_on:
+      - router
+  comment:
+    build: 
+      context: api/comment
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+  comms:
+    build: 
+      context: api/comms
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+  folio:
+    build: 
+      context: api/folio
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+  funds:
+    build: 
+      context: api/funds
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+  router:
+    build: 
+      context: api/router
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: api/router
+  secure:
+    build: 
+      context: api/secure
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+
+  # web
+  admin:
+    build: 
+      context: web/admin
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+  cars:
+    build: 
+      context: web/cars
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+  gate:
+    build: 
+      context: web/gate
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+  logbook:
+    build: 
+      context: web/logbook
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+  shop:
+    build: 
+      context: web/shop
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+  www:
+    build: 
+      context: web/www
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    depends_on:
+      - router
+

@@ -8,15 +8,6 @@ import (
 	"path/filepath"
 )
 
-type Config struct {
-	Host           string
-	MaxConnections int
-	MaxWaiting     int
-	Discovery      string
-	Key            string
-	Environment    string
-}
-
 func GetFileContent(configPath string) []byte {
 	dat, err := ioutil.ReadFile(configPath)
 
