@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/astaxie/beego/context"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango/pkg/control"
 )
 
 type MasterMap struct {

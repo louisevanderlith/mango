@@ -1,7 +1,7 @@
 package folio
 
 import (
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/pkg"
 )
 
 type SocialLink struct {

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/louisevanderlith/mango/api/secure/logic"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg/control"
 )
 
 type LoginController struct {

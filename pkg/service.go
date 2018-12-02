@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg/enums"
 )
 
 type Service struct {

@@ -9,8 +9,8 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/router/controllers"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango/pkg/control"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"

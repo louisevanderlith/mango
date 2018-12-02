@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg/control"
 	"golang.org/x/crypto/bcrypt"
 )
 

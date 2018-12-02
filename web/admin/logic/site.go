@@ -5,7 +5,7 @@ import (
 
 	"github.com/louisevanderlith/husk"
 
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/pkg"
 )
 
 var uploadURL string

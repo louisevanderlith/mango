@@ -3,7 +3,7 @@ package logic
 import (
 	"errors"
 
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/pkg"
 )
 
 type LookupObj struct {

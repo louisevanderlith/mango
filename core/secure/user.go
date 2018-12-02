@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg/enums"
 
 	"github.com/louisevanderlith/husk"
 

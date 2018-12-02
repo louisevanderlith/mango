@@ -3,7 +3,7 @@ package secure_test
 import (
 	"testing"
 
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg/control"
 	"github.com/nu7hatch/gouuid"
 
 	"github.com/louisevanderlith/mango/core/secure"

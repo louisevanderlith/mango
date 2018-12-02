@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/pkg"
 )
 
 type CommsObject struct {

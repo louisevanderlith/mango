@@ -3,8 +3,8 @@ package logic
 import (
 	"testing"
 
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango/pkg/enums"
 
 	uuid "github.com/nu7hatch/gouuid"
 )

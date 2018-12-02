@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango/pkg/enums"
 
 	"github.com/louisevanderlith/mango/api/comms/routers"
 	_ "github.com/louisevanderlith/mango/core/comms"

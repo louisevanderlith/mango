@@ -7,8 +7,8 @@ import (
 	"strconv"
 
 	"github.com/louisevanderlith/mango/api/router/logic"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango/pkg/control"
 )
 
 type DiscoveryController struct {

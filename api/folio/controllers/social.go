@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/louisevanderlith/mango/core/folio"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg/control"
 )
 
 type SocialController struct {

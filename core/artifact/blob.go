@@ -7,7 +7,7 @@ import (
 	"image"
 
 	"github.com/disintegration/imaging"
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg/enums"
 )
 
 type Blob struct {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/louisevanderlith/mango/api/artifact/logic"
 	"github.com/louisevanderlith/mango/core/artifact"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg/control"
 )
 
 type UploadController struct {

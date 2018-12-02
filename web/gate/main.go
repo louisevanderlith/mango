@@ -12,8 +12,8 @@ import (
 	"fmt"
 
 	"github.com/louisevanderlith/mango/app/gate/domains"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango/pkg/enums"
 )
 
 func main() {

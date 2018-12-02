@@ -5,8 +5,8 @@ import (
 
 	"github.com/louisevanderlith/husk"
 
-	"github.com/louisevanderlith/mango/util/control"
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg/control"
+	"github.com/louisevanderlith/mango/pkg/enums"
 )
 
 type Registration struct {

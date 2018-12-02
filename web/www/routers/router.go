@@ -3,8 +3,8 @@ package routers
 import (
 	"github.com/astaxie/beego"
 	"github.com/louisevanderlith/mango/app/www/controllers"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango/pkg/control"
 )
 
 func Setup(s *util.Service) {

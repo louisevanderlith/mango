@@ -4,7 +4,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/pkg"
 )
 
 type BasicSite struct {

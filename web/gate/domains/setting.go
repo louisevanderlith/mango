@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/pkg"
 )
 
 type DomainSetting struct {

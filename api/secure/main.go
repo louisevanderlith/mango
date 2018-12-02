@@ -5,8 +5,8 @@ import (
 
 	"github.com/louisevanderlith/mango/api/secure/routers"
 	_ "github.com/louisevanderlith/mango/core/secure"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango/pkg/enums"
 
 	"github.com/astaxie/beego"
 )

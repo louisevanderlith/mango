@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"github.com/louisevanderlith/mango/api/router/logic"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg/control"
 )
 
 type MemoryController struct {

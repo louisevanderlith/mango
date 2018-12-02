@@ -10,11 +10,11 @@ package routers
 import (
 	"github.com/louisevanderlith/mango/api/secure/controllers"
 	"github.com/louisevanderlith/mango/api/secure/logic"
-	"github.com/louisevanderlith/mango/util"
+	"github.com/louisevanderlith/mango/pkg"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
-	"github.com/louisevanderlith/mango/util/control"
+	"github.com/louisevanderlith/mango/pkg/control"
 )
 
 func Setup(s *util.Service) {

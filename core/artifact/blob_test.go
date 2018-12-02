@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/pkg/enums"
 )
 
 func getImage(location string) []byte {
