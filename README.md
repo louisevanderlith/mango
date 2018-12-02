@@ -2,22 +2,31 @@
 Mango monorepo for all of avosa's applications and services.
 Please note that this repo is currently maintained on Windows, and all scripts and settings are setup as such.
 
+[![CodeFactor](https://www.codefactor.io/repository/github/louisevanderlith/mango/badge)](https://www.codefactor.io/repository/github/louisevanderlith/mango)
+[![Build Status](https://travis-ci.org/louisevanderlith/mango.svg?branch=master)](https://travis-ci.org/louisevanderlith/mango)
+
 ## Project Requirements
-* PostgreSQL v9.6
-* GO v1.7.3 and above
-* Beego v1.8.3 and above
+* GO v1.11.2
+* Beego v1.10 and above
+
+## Fun Facts:
+1. Current target Hardware;
+  CPU: Intel(R) Xeon(R) X5675@3.07GHz (1 Socket, 1 Core)
+  RAM: 2GiB
+  HDD: 50GiB
+  NET: 1x10Gbit/s Physical Ethernet
 
 ## Running the Project
 * $ npm install
 * $ gulp (Watchers have been setup for JS & CSS changes.)
-* $ To build all projects, run 'build.ps1' and compiled files will be copied to /mango/bin
-* $ To run the application, run `play.ps1'. You can configure applications in 'play.json'
+* $ docker-compose build
+* $ docker-compose up
 
 ## Project Layout
 * The API folder contains all micro-services and APIs.
-* The APP folder contains all websites and applications.
-* The DB folder contains all database models and their logic.
-* The UTIL folder contains logic used by most applications.
+* The Web folder contains all websites and applications.
+* The Core folder contains all data models and their logic.
+* The Pkg folder contains logic used by most applications.
 
 The 'Router' and 'Gate' applications are key to running any of the other products found within this repo.
 If you don't require fancy named URLs, then running 'Router' is all you need to get up and running.
@@ -40,7 +49,7 @@ This function is used to register an application.
 
 ### Gate (/APP/gate)
 The Gate application acts as the main entry point for all applications, as we can assign names to every registered application.
-So, when debugging we can call 'https://comms.localhost:80/' instead of 'http://localhost:8085' for the 'Comms.API'.
+So, when debugging we can call 'https://comms.localhost(:80)/' instead of 'http://localhost:8085' for the 'Comms.API'.
 This avoids the need to remember the specific port for every application running and also removes the need to store URLs within every application.
 The front-end also relies on the Gate to determine the correct environment's URL when calling services.
 
@@ -56,23 +65,33 @@ We require 1(one) instance of Gate running for every environment we have.
   Email, SMS and other Messages are all to handled by Comms.
   ### Folio
   The default website's (WWW's) data store.
+- ### Funds
+  Transaction and payment processing.
 - ### Router
   See the description for Router above.
 - ### Secure
   User authentication and session control is all done by the Secure API.
-- ### Things
-  This API will act as a central lookup database.
 
-## APP Folder
+## Web Folder
 - ### Admin
   We should be able to control and monitor every application and it's data from this application.
-- ### Classifieds
-  Classifieds will act as the central platform for advertising products and services.
+- ### Cars
+  Cars will act as the central platform for advertising vehicles.
   ### Gate
   See the description for Gate above.
 - ### Logbook
-  Logbook is an application that will be built to provide added value to the Classifieds application.
+  Logbook is an application that will be built to provide added value to the Auto application.
 - ### Shop
   This application is our central e-commerce platform.
 - ### WWW
   WWW is as the name suggests, the default website for this repo.
+
+# Feature Testing Users:
+* admin@mango.avo : Admin4v0
+
+## On Paged Data
+Every GET request, where the intention is to get many results, you have to specify the PAGE Data.
+/:pageData^[A-Z]+:[0-9]+$
+/:page/:size
+/A/6
+/<Page A>/<6 per Page>

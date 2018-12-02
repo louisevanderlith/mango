@@ -3,34 +3,33 @@ package main
 import (
 	"log"
 
-	_ "github.com/louisevanderlith/mango/api/secure/routers"
-	"github.com/louisevanderlith/mango/db/secure"
+	"github.com/louisevanderlith/mango/api/secure/routers"
+	_ "github.com/louisevanderlith/mango/core/secure"
 	"github.com/louisevanderlith/mango/util"
 	"github.com/louisevanderlith/mango/util/enums"
 
 	"github.com/astaxie/beego"
-	_ "github.com/lib/pq"
 )
 
 func main() {
-	if beego.BConfig.RunMode == "dev" {
+	mode := beego.BConfig.RunMode
+
+	if mode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
 		beego.BConfig.WebConfig.StaticDir["/swagger"] = "swagger"
 	}
 
 	// Register with router
-	srv := util.Service{
-		Environment: enums.GetEnvironment(beego.BConfig.RunMode),
-		Name:        beego.BConfig.AppName,
-		Type:        enums.API}
+	appName := beego.BConfig.AppName
+	srv := util.NewService(mode, appName, enums.API)
 
 	port := beego.AppConfig.String("httpport")
-	_, err := srv.Register(port)
+	err := srv.Register(port)
 
 	if err != nil {
-		log.Printf("Register: ", err)
+		log.Print("Register: ", err)
 	} else {
-		secure.NewDatabase()
+		routers.Setup(srv)
 		beego.Run()
 	}
 }

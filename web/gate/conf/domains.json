@@ -1,0 +1,62 @@
+[
+    {
+        "Name": "WWW.APP",
+        "Address": "www",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Artifact.API",
+        "Address": "artifact",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Comment.API",
+        "Address": "comment",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Communication.API",
+        "Address": "comms",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Folio.API",
+        "Address": "folio",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Router.API",
+        "Address": "router",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Secure.API",
+        "Address": "secure",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Admin.APP",
+        "Address": "admin",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Auto.APP",
+        "Address": "auto",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Logbook.APP",
+        "Address": "logbook",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Shop.APP",
+        "Address": "shop",
+        "Type": "Subdomain"
+    },
+    {
+        "Name": "Funds.API",
+        "Address": "funds",
+        "Type": "Subdomain"
+    }
+]

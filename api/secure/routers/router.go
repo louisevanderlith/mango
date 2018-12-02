@@ -9,37 +9,51 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/secure/controllers"
+	"github.com/louisevanderlith/mango/api/secure/logic"
+	"github.com/louisevanderlith/mango/util"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/util/control"
 	"github.com/astaxie/beego/plugins/cors"
+	"github.com/louisevanderlith/mango/util/control"
 )
 
-func init() {
-	setupMapping()
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilter(s)
 
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/login",
 			beego.NSInclude(
-				&controllers.LoginController{},
+				controllers.NewLoginCtrl(ctrlmap),
 			),
 		),
 		beego.NSNamespace("/register",
 			beego.NSInclude(
-				&controllers.RegisterController{},
+				controllers.NewRegisterCtrl(ctrlmap),
+			),
+		),
+		beego.NSNamespace("/user",
+			beego.NSInclude(
+				controllers.NewUserCtrl(ctrlmap),
 			),
 		),
 	)
 	beego.AddNamespace(ns)
 }
 
-func setupMapping() {
-	uploadMap := make(control.MethodMap)
+func EnableFilter(s *util.Service) *control.ControllerMap {
+	ctrlmap := logic.NewMasterMap(s)
 
-	control.AddControllerMap("/login", uploadMap)
-	control.AddControllerMap("/register", uploadMap)
+	emptyMap := make(control.ActionMap)
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+	ctrlmap.Add("/login", emptyMap)
+	ctrlmap.Add("/register", emptyMap)
+
+	userMap := make(control.ActionMap)
+	//userMap["GET"] = enums.Admin
+
+	ctrlmap.Add("/user", userMap)
+
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterMaster)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -47,4 +61,6 @@ func setupMapping() {
 		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
+
+	return ctrlmap.ControllerMap
 }

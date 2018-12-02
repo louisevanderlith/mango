@@ -9,6 +9,7 @@ package routers
 
 import (
 	"github.com/louisevanderlith/mango/api/folio/controllers"
+	"github.com/louisevanderlith/mango/util"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/plugins/cors"
@@ -16,33 +17,28 @@ import (
 	"github.com/louisevanderlith/mango/util/enums"
 )
 
-func init() {
-	setupMapping()
+func Setup(s *util.Service) {
+	ctrlmap := EnableFilters(s)
 
 	ns := beego.NewNamespace("/v1",
-		beego.NSNamespace("/about",
+		beego.NSNamespace("/profile",
 			beego.NSInclude(
-				&controllers.AboutController{},
+				controllers.NewProfileCtrl(ctrlmap),
 			),
 		),
-		beego.NSNamespace("/header",
+		beego.NSNamespace("/profile/header",
 			beego.NSInclude(
-				&controllers.HeaderController{},
+				controllers.NewHeaderCtrl(ctrlmap),
 			),
 		),
-		beego.NSNamespace("/portfolio",
+		beego.NSNamespace("/profile/portfolio",
 			beego.NSInclude(
-				&controllers.PortfolioController{},
+				controllers.NewPortfolioCtrl(ctrlmap),
 			),
 		),
-		beego.NSNamespace("/site",
+		beego.NSNamespace("/profile/social",
 			beego.NSInclude(
-				&controllers.SiteController{},
-			),
-		),
-		beego.NSNamespace("/social",
-			beego.NSInclude(
-				&controllers.SocialController{},
+				controllers.NewSocialCtrl(ctrlmap),
 			),
 		),
 	)
@@ -50,18 +46,20 @@ func init() {
 	beego.AddNamespace(ns)
 }
 
-func setupMapping() {
-	uploadMap := make(control.MethodMap)
-	uploadMap["POST"] = enums.Admin
-	uploadMap["PUT"] = enums.Admin
+func EnableFilters(s *util.Service) *control.ControllerMap {
+	ctrlmap := control.CreateControlMap(s)
 
-	control.AddControllerMap("/about", uploadMap)
-	control.AddControllerMap("/header", uploadMap)
-	control.AddControllerMap("/portfolio", uploadMap)
-	control.AddControllerMap("/site", uploadMap)
-	control.AddControllerMap("/social", uploadMap)
+	emptyMap := make(control.ActionMap)
+	emptyMap["POST"] = enums.Owner
+	emptyMap["PUT"] = enums.Owner
 
-	beego.InsertFilter("/*", beego.BeforeRouter, control.FilterAPI)
+	ctrlmap.Add("/profile", emptyMap)
+	ctrlmap.Add("profile/about", emptyMap)
+	ctrlmap.Add("profile/header", emptyMap)
+	ctrlmap.Add("profile/portfolio", emptyMap)
+	ctrlmap.Add("profile/social", emptyMap)
+
+	beego.InsertFilter("/*", beego.BeforeRouter, ctrlmap.FilterAPI)
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowAllOrigins: true,
@@ -69,4 +67,6 @@ func setupMapping() {
 		AllowHeaders:    []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Content-Type"},
 		ExposeHeaders:   []string{"Content-Length", "Access-Control-Allow-Origin"},
 	}))
+
+	return ctrlmap
 }

@@ -4,44 +4,25 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego/context"
-	"github.com/louisevanderlith/mango/db/secure"
-	"github.com/louisevanderlith/mango/util"
-	"github.com/nu7hatch/gouuid"
+	"github.com/louisevanderlith/mango/core/secure"
 )
 
-type Login struct {
-	Identifier string
-	Password   string
-	IP         string
-	Location   string
-}
+// AttemptLogin returns SessionID, if error is not nil
+func AttemptLogin(ctx *context.Context) (string, error) {
+	authReq := secure.Authentication{}
+	err := json.Unmarshal(ctx.Input.RequestBody, &authReq)
 
-func AttemptLogin(ctx *context.Context) (passed bool, sessionID string, err error) {
-	u4, _ := uuid.NewV4()
-	sessionID = u4.String()
-
-	if util.HasAvo(sessionID) {
-		passed = true
-	} else {
-		var l Login
-		err = json.Unmarshal(ctx.Input.RequestBody, &l)
-
-		if err == nil {
-			loggedIn, userID, roles := secure.Login(l.Identifier, []byte(l.Password), l.IP, l.Location)
-
-			if loggedIn {
-				passed = true
-
-				session := util.Cookies{
-					UserID:   userID,
-					IP:       l.IP,
-					Location: l.Location,
-					Roles:    roles}
-
-				util.CreateAvo(ctx, session, sessionID)
-			}
-		}
+	if err != nil {
+		return "", err
 	}
 
-	return passed, sessionID, err
+	cooki, err := secure.Login(authReq)
+
+	if err != nil {
+		return "", err
+	}
+
+	sessionID := CreateAvo(ctx, cooki)
+
+	return sessionID, nil
 }

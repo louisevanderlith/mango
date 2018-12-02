@@ -45,6 +45,21 @@ function tryRegister() {
     }
 }
 
+function getApp() { 
+    let appUrl = localStorage.getItem('return');
+    let ip = localStorage.getItem('ip');
+    let location = localStorage.getItem('location');
+
+    let result = {
+        Name: appUrl,
+        IP: ip,     
+        Location: location, 
+        InstanceID: instanceID   
+    };
+
+    return result;
+}
+
 function submitRegister() {
     fs.submitDisabled(true);
 
@@ -53,6 +68,7 @@ function submitRegister() {
         type: "POST",
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
+            App: getApp(),
             Name: form.name.val(),
             Email: form.email.val(),
             ContactNumber: form.contact.val(),
@@ -60,25 +76,24 @@ function submitRegister() {
             PasswordRepeat: form.confirmPass.val()
         }),
         cache: false,
-        success: function () {
+        success: function (res) {
             // Success message
             $('#success').html("<div class='alert alert-success'>");
             $('#success > .alert-success').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
                 .append("</button>");
             $('#success > .alert-success')
-                .append("<strong>Thank you. You have been successfully registered.</strong>");
+                .append("<strong>"+res.Data+"</strong>");
             $('#success > .alert-success')
                 .append('</div>');
             //clear all fields
             form.id.trigger("reset");
         },
-        error: function (err) {
-            console.error(err);
+        error: function (res) {
             // Fail message
             $('#success').html("<div class='alert alert-danger'>");
             $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
                 .append("</button>");
-            $('#success > .alert-danger').append($("<strong>").text("Sorry, it seems something went wrong. Please try again."));
+            $('#success > .alert-danger').append($("<strong>").text(res.Error));
             $('#success > .alert-danger').append('</div>');
             //clear all fields
             form.id.trigger("reset");

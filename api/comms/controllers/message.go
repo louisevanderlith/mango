@@ -4,12 +4,19 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
-	"github.com/louisevanderlith/mango/db/comms"
+	"github.com/louisevanderlith/mango/core/comms"
 	"github.com/louisevanderlith/mango/util/control"
 )
 
 type MessageController struct {
 	control.APIController
+}
+
+func NewMessageCtrl(ctrlMap *control.ControllerMap) *MessageController {
+	result := &MessageController{}
+	result.SetInstanceMap(ctrlMap)
+
+	return result
 }
 
 // @Title SendMessage
@@ -28,34 +35,16 @@ func (req *MessageController) Post() {
 
 	err := message.SendMessage()
 
-	if err != nil {
-		req.Ctx.Output.SetStatus(500)
-		req.Data["json"] = map[string]string{"Error": err.Error()}
-	} else {
-		req.Data["json"] = map[string]string{"Data": "Message has been sent."}
-	}
-
-	req.ServeJSON()
+	req.Serve("Message has been sent.", err)
 }
 
 // @Title GetMessages
 // @Description Gets all Messages
 // @Success 200 {[]comms.Message]} []comms.Message]
-// @router / [get]
+// @router /all/:pagesize [get]
 func (req *MessageController) Get() {
+	page, size := req.GetPageData()
+	result := comms.GetMessages(page, size)
 
-	if req.Ctx.Output.Status != 401 {
-		var result []*comms.Message
-		msg := comms.Message{}
-		err := comms.Ctx.Message.Read(&msg, &result)
-
-		if err != nil {
-			req.Ctx.Output.SetStatus(500)
-			req.Data["json"] = map[string]string{"Error": err.Error()}
-		} else {
-			req.Data["json"] = map[string]interface{}{"Data": result}
-		}
-	}
-
-	req.ServeJSON()
+	req.Serve(result, nil)
 }
