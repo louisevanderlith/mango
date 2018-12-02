@@ -1,0 +1,7 @@
+language: go
+
+services:
+  - docker
+  - docker-compose
+script:
+  - docker-compose build 
