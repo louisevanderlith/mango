@@ -1,4 +1,4 @@
-package util
+package mango
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/louisevanderlith/mango/util/enums"
+	"github.com/louisevanderlith/mango/enums"
 )
 
 type Service struct {
