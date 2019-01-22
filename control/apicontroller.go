@@ -41,7 +41,7 @@ func (ctrl *APIController) ServeBinary(data []byte, filename string) {
 }
 
 func (ctrl *APIController) Serve(result interface{}, err error) {
-	resp := util.NewRESTResult(err, result)
+	resp := mango.NewRESTResult(err, result)
 
 	if resp.Failed() {
 		log.Printf("\t [API Error]: %s\n", resp.Reason)

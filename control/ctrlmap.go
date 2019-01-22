@@ -18,11 +18,11 @@ type ActionMap map[string]enums.RoleType
 
 //ControllerMap is used to assign Priveliges to Actions
 type ControllerMap struct {
-	service *util.Service
+	service *mango.Service
 	mapping map[string]ActionMap
 }
 
-func CreateControlMap(service *util.Service) *ControllerMap {
+func CreateControlMap(service *mango.Service) *ControllerMap {
 	result := &ControllerMap{}
 	result.service = service
 	result.mapping = make(map[string]ActionMap)
@@ -76,7 +76,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	}
 
 	instanceID := m.GetInstanceID()
-	securityURL, err := util.GetServiceURL(instanceID, "Secure.API", true)
+	securityURL, err := mango.GetServiceURL(instanceID, "Secure.API", true)
 
 	if err != nil {
 		log.Printf("FilterUI Failed: %+v\n", err)
