@@ -5,7 +5,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/louisevanderlith/mango/pkg"
+	"github.com/louisevanderlith/mango"
 )
 
 // default paging values

@@ -8,8 +8,8 @@ import (
 
 	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/husk"
-	"github.com/louisevanderlith/mango/pkg"
-	"github.com/louisevanderlith/mango/pkg/enums"
+	"github.com/louisevanderlith/mango"
+	"github.com/louisevanderlith/mango/enums"
 )
 
 type TinyCtx struct {
