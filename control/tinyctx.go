@@ -59,14 +59,14 @@ func (ctx *TinyCtx) allowed() bool {
 	return ctx.hasRole(ctx.RequiredRole)
 }
 
-func (ctx *TinyCtx) getUserKey() *husk.Key {
+func (ctx *TinyCtx) getUserKey() husk.Key {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
 		return husk.CrazyKey()
 	}
 
-	return &cookie.UserKey
+	return cookie.UserKey
 }
 
 func (ctx *TinyCtx) getUsername() string {
