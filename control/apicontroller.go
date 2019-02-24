@@ -26,12 +26,10 @@ func (ctrl *APIController) Prepare() {
 	output.Header("Server", "kettle")
 }
 
-func (ctrl *APIController) ServeBinary(data []byte, filename, mimetype string) {
+func (ctrl *APIController) ServeBinary(data []byte, filename string) {
 	output := ctrl.Ctx.Output
 
-	if mimetype == "" {
-		mimetype = "application/octet-stream"
-	}
+	mimetype := http.DetectContentType(data[:512])
 
 	output.Header("Content-Description", "File Transfer")
 	output.Header("Content-Type", mimetype)
@@ -90,4 +88,21 @@ func (ctrl *APIController) GetKeyedRequest() (WithKey, error) {
 	err := json.Unmarshal(ctrl.Ctx.Input.RequestBody, &result)
 
 	return result, err
+}
+
+func GetFileContentType(firstBits []byte) (string, error) {
+
+    // Only the first 512 bytes are used to sniff the content type.
+    buffer := make([]byte, 512)
+
+    _, err := out.Read(buffer)
+    if err != nil {
+        return "", err
+    }
+
+    // Use the net/http package's handy DectectContentType function. Always returns a valid 
+    // content-type by returning "application/octet-stream" if no others seemed to match.
+    contentType := 
+
+    return contentType, nil
 }
