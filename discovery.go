@@ -15,7 +15,8 @@ func init() {
 	serviceKeys = make(map[k]string)
 
 	//this is hard coded for a reason, keep it that way.
-	serviceKeys[k{"Router.API", false}] = "http://localhost:8080/"
+	//serviceKeys[k{"Router.API", false}] = "http://localhost:8080/"
+	serviceKeys[k{"Router.API", false}] = "http://theRouter/"
 }
 
 func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error) {
