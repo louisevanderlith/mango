@@ -16,7 +16,7 @@ func init() {
 
 	//this is hard coded for a reason, keep it that way.
 	//serviceKeys[k{"Router.API", false}] = "http://localhost:8080/"
-	serviceKeys[k{"Router.API", false}] = "http://theRouter/"
+	serviceKeys[k{"Router.API", false}] = "http://theRouter:8080/"
 }
 
 func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error) {
