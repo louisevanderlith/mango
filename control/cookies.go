@@ -13,9 +13,9 @@ type Cookies struct {
 	Location  string
 }
 
-func NewCookies(userkey *husk.Key, username, ip, location string, roles map[string]enums.RoleType) *Cookies {
+func NewCookies(userkey husk.Key, username, ip, location string, roles map[string]enums.RoleType) *Cookies {
 	return &Cookies{
-		UserKey:   *userkey,
+		UserKey:   userkey,
 		Username:  username,
 		IP:        ip,
 		Location:  location,
