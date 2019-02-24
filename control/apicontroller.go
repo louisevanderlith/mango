@@ -28,9 +28,13 @@ func (ctrl *APIController) Prepare() {
 }
 
 func (ctrl *APIController) ServeBinary(data []byte, filename string) {
-	output := ctrl.Ctx.Output
-
 	mimetype := http.DetectContentType(data[:512])
+
+	ctrl.ServeBinaryWithMIME(data, filename, mimetype)
+}
+
+func (ctrl *APIController) ServeBinaryWithMIME(data []byte, filename, mimetype string) {
+	output := ctrl.Ctx.Output
 
 	output.Header("Content-Description", "File Transfer")
 	output.Header("Content-Type", mimetype)
