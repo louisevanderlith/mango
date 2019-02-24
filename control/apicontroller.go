@@ -26,11 +26,15 @@ func (ctrl *APIController) Prepare() {
 	output.Header("Server", "kettle")
 }
 
-func (ctrl *APIController) ServeBinary(data []byte, filename string) {
+func (ctrl *APIController) ServeBinary(data []byte, filename, mimetype string) {
 	output := ctrl.Ctx.Output
 
+	if mimetype == "" {
+		mimetype = "application/octet-stream"
+	}
+
 	output.Header("Content-Description", "File Transfer")
-	output.Header("Content-Type", "application/octet-stream")
+	output.Header("Content-Type", mimetype)
 	output.Header("Content-Disposition", "attachment; filename="+filename)
 	output.Header("Content-Transfer-Encoding", "binary")
 	output.Header("Expires", "0")
