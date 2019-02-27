@@ -88,7 +88,7 @@ func sendRegistration(s *Service) (*RESTResult, error) {
 }
 
 func (s *Service) setURL(port string) error {
-	url, err := getPublicIP(port, s.Environment)
+	url, err := getNetworkIP(port, s.Environment)
 
 	if err != nil {
 		return err
@@ -99,9 +99,13 @@ func (s *Service) setURL(port string) error {
 	return nil
 }
 
+func getNetworkIP(port string, env enums.Environment) (string, error) {
+	return makeURL("theRouter", port), nil
+}
+
 func getPublicIP(port string, env enums.Environment) (string, error) {
 	if env == enums.DEV {
-		return makeURL("localhost", port), nil
+		return makeURL("theRouter", port), nil
 	}
 
 	resp, err := http.Get("http://myexternalip.com/raw")
@@ -125,10 +129,6 @@ func getPublicIP(port string, env enums.Environment) (string, error) {
 
 func makeURL(domain, port string) string {
 	schema := "https"
-
-	if domain == "localhost" {
-		schema = "http"
-	}
 
 	return fmt.Sprintf("%s://%s:%s/", schema, domain, port)
 }
