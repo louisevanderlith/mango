@@ -16,7 +16,7 @@ var serviceKeys map[k]string
 func init() {
 	serviceKeys = make(map[k]string)
 
-	serviceKeys[k{"Router.API", false}] = fmt.Sprintf("http://router%s:8080/", os.Getenv("RUNMODE"))
+	serviceKeys[k{"Router.API", false}] = fmt.Sprintf("http://Router%s:8080/", os.Getenv("RUNMODE"))
 }
 
 func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error) {
