@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/louisevanderlith/mango/enums"
 )
@@ -99,7 +100,9 @@ func (s *Service) setURL(port string) error {
 }
 
 func getNetworkIP(name, port string, env enums.Environment) (string, error) {
-	uniqueName := name + env.String()
+	keyName := strings.Split(name, ".")[0]
+	uniqueName := keyName + env.String()
+
 	return makeURL(uniqueName, port), nil
 }
 
