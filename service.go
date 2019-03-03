@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"github.com/louisevanderlith/mango/enums"
 )
@@ -88,7 +87,7 @@ func sendRegistration(s *Service) (*RESTResult, error) {
 }
 
 func (s *Service) setURL(port string) error {
-	url, err := getNetworkIP(port, s.Environment)
+	url, err := getNetworkIP(s.Name, port, s.Environment)
 
 	if err != nil {
 		return err
@@ -99,32 +98,9 @@ func (s *Service) setURL(port string) error {
 	return nil
 }
 
-func getNetworkIP(port string, env enums.Environment) (string, error) {
-	return makeURL("theRouter", port), nil
-}
-
-func getPublicIP(port string, env enums.Environment) (string, error) {
-	if env == enums.DEV {
-		return makeURL("theRouter", port), nil
-	}
-
-	resp, err := http.Get("http://myexternalip.com/raw")
-
-	if err != nil {
-		return "error", err
-	}
-
-	defer resp.Body.Close()
-
-	ip, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		return "error", err
-	}
-
-	result := strings.Replace(string(ip), "\n", "", -1)
-
-	return makeURL(result, port), nil
+func getNetworkIP(name, port string, env enums.Environment) (string, error) {
+	uniqueName := name + env.String()
+	return makeURL(uniqueName, port), nil
 }
 
 func makeURL(domain, port string) string {

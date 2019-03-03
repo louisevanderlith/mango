@@ -1,8 +1,6 @@
 package control
 
-import (
-	"github.com/astaxie/beego"
-)
+import "os"
 
 type UIController struct {
 	APIController
@@ -35,7 +33,7 @@ func (ctrl *UIController) Setup(name string) {
 	ctrl.Data["HasScript"] = true
 	ctrl.Data["ScriptName"] = name + ".entry.js"
 	ctrl.Data["InstanceID"] = ctrl.GetInstanceID()
-	ctrl.Data["RunModeDEV"] = beego.BConfig.RunMode == "dev"
+	ctrl.Data["RunModeDEV"] = os.Getenv("RUNMODE") == "DEV"
 }
 
 func (ctrl *UIController) Serve(data interface{}, err error) {
