@@ -107,7 +107,7 @@ func getNetworkIP(name, port string, env enums.Environment) (string, error) {
 }
 
 func makeURL(domain, port string) string {
-	schema := "https"
+	schema := "http"
 
 	return fmt.Sprintf("%s://%s:%s/", schema, domain, port)
 }
