@@ -1,6 +1,8 @@
 package control
 
-import "os"
+import (
+	"os"
+)
 
 type UIController struct {
 	APIController
