@@ -1,6 +1,7 @@
 package mango
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -16,7 +17,7 @@ func UpdateTheme(instanceID string) error {
 	}
 
 	for _, v := range lst {
-		err := downloadTemplate(instanceID, v)
+		err = downloadTemplate(instanceID, v)
 
 		if err != nil {
 			return err
@@ -37,7 +38,13 @@ func findTemplates(instanceID string) ([]string, error) {
 		return []string{}, resp
 	}
 
-	return resp.Data.([]string), nil
+	result, ok := resp.Data.([]string)
+
+	if !ok {
+		return []string{}, errors.New("Data is not []string")
+	}
+
+	return result, nil
 }
 
 func downloadTemplate(instanceID, template string) error {
