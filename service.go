@@ -82,7 +82,7 @@ func sendRegistration(s *Service) (*RESTResult, error) {
 		return nil, err
 	}
 
-	data, err := MarshalToResult(contents)
+	data, err := MarshalToResult(contents, "")
 
 	return data, err
 }

@@ -34,7 +34,7 @@ func (r *RESTResult) Failed() bool {
 }
 
 // GETMessage does a GET Request
-func GETMessage(instanceID, serviceName, controller string, params ...string) (*RESTResult, error) {
+func GETMessage(instanceID string, dataObj interface{}, serviceName, controller string, params ...string) (*RESTResult, error) {
 	url, err := GetServiceURL(instanceID, serviceName, false)
 
 	if err != nil {
@@ -57,13 +57,13 @@ func GETMessage(instanceID, serviceName, controller string, params ...string) (*
 		return nil, err
 	}
 
-	data, err := MarshalToResult(contents)
+	data, err := MarshalToResult(contents, dataObj)
 
 	return data, err
 }
 
-func MarshalToResult(content []byte) (*RESTResult, error) {
-	result := &RESTResult{}
+func MarshalToResult(content []byte, dataObj interface{}) (*RESTResult, error) {
+	result := &RESTResult{Data: dataObj}
 	err := json.Unmarshal(content, result)
 
 	if err != nil {
