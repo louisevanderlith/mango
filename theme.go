@@ -4,19 +4,24 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 )
 
 //UpdateTheme downloads the latest master templates from Theme.API
 func UpdateTheme(instanceID string) error {
+	log.Println("Updating theme")
 	lst, err := findTemplates(instanceID)
 
 	if err != nil {
 		return err
 	}
 
+	log.Printf("Found %v Templates\n", len(lst))
+
 	for _, v := range lst {
+		log.Println("Finding", v)
 		err = downloadTemplate(instanceID, v)
 
 		if err != nil {
@@ -24,6 +29,7 @@ func UpdateTheme(instanceID string) error {
 		}
 	}
 
+	log.Println("Completed")
 	return nil
 }
 
