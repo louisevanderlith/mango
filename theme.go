@@ -16,8 +16,14 @@ func UpdateTheme(instanceID string) error {
 		return err
 	}
 
+	url, err := GetServiceURL(instanceID, "Theme.API", false)
+
+	if err != nil {
+		return err
+	}
+
 	for _, v := range lst {
-		err = downloadTemplate(instanceID, v)
+		err = downloadTemplate(instanceID, v, url)
 
 		if err != nil {
 			return err
@@ -28,7 +34,7 @@ func UpdateTheme(instanceID string) error {
 }
 
 func findTemplates(instanceID string) ([]string, error) {
-	resp, err := GETMessage(instanceID, "Theme.API", "asset", "html")
+	resp, err := GETMessage(instanceID, []string{}, "Theme.API", "asset", "html")
 
 	if err != nil {
 		return []string{}, err
@@ -47,14 +53,8 @@ func findTemplates(instanceID string) ([]string, error) {
 	return result, nil
 }
 
-func downloadTemplate(instanceID, template string) error {
-	url, err := GetServiceURL(instanceID, "Theme.API", false)
-
-	if err != nil {
-		return err
-	}
-
-	fullURL := fmt.Sprintf("%sv1/%s/%s/%s", url, "asset", "html", template)
+func downloadTemplate(instanceID, template, themeURL string) error {
+	fullURL := fmt.Sprintf("%sv1/%s/%s/%s", themeURL, "asset", "html", template)
 	resp, err := http.Get(fullURL)
 
 	if err != nil {

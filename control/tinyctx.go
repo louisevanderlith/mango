@@ -131,7 +131,7 @@ func (ctx *TinyCtx) getAvoCookie() (*Cookies, error) {
 		return nil, errors.New("SessionID empty")
 	}
 
-	resp, err := mango.GETMessage(ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
+	resp, err := mango.GETMessage(ctx.Service.ID, Cookies{}, "Secure.API", "login", "avo", ctx.SessionID)
 
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@ package mango
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 )
@@ -21,9 +22,10 @@ func init() {
 
 func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error) {
 	cacheService, ok := serviceKeys[k{serviceName, cleanURL}]
+	log.Printf("[%t] Inst:\t%s\tService:%s\tClean:%t\n", ok, instanceID, serviceName, cleanURL)
 
 	if !ok {
-		resp, err := GETMessage(instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
+		resp, err := GETMessage(instanceID, "", "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
 
 		if err != nil {
 			return "", err
