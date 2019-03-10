@@ -13,6 +13,10 @@ type RESTResult struct {
 	Data   interface{} `json:"Data"`
 }
 
+func NewRESTValue(container interface{}) *RESTResult {
+	return &RESTResult{Data: container}
+}
+
 func NewRESTResult(reason error, data interface{}) *RESTResult {
 	result := &RESTResult{}
 
@@ -33,8 +37,8 @@ func (r *RESTResult) Failed() bool {
 	return len(r.Reason) > 0
 }
 
-// GETMessage does a GET Request
-func GETMessage(instanceID string, dataObj interface{}, serviceName, controller string, params ...string) (*RESTResult, error) {
+//DoGET does a GET request and will update the container with the reponse's values.
+func DoGET(container interface{}, instanceID, serviceName, controller string, params ...string) (apiErr error, err error) {
 	url, err := GetServiceURL(instanceID, serviceName, false)
 
 	if err != nil {
@@ -57,13 +61,21 @@ func GETMessage(instanceID string, dataObj interface{}, serviceName, controller 
 		return nil, err
 	}
 
-	data, err := MarshalToResult(contents, dataObj)
+	rest, err := marshalToResult(contents, container)
 
-	return data, err
+	if err != nil {
+		return nil, err
+	}
+
+	if rest.Failed() {
+		return rest, nil
+	}
+
+	return nil, nil
 }
 
-func MarshalToResult(content []byte, dataObj interface{}) (*RESTResult, error) {
-	result := &RESTResult{Data: dataObj}
+func marshalToResult(content []byte, dataObj interface{}) (*RESTResult, error) {
+	result := NewRESTValue(dataObj)
 	err := json.Unmarshal(content, result)
 
 	if err != nil {

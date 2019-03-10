@@ -1,7 +1,6 @@
 package control
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 	"strings"
@@ -131,38 +130,18 @@ func (ctx *TinyCtx) getAvoCookie() (*Cookies, error) {
 		return nil, errors.New("SessionID empty")
 	}
 
-	resp, err := mango.GETMessage(ctx.Service.ID, Cookies{}, "Secure.API", "login", "avo", ctx.SessionID)
+	result := &Cookies{}
+	fail, err := mango.DoGET(result, ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if resp.Failed() {
-		return nil, resp
+	if fail != nil {
+		return nil, fail
 	}
 
-	result := Cookies{}
-
-	switch resp.Data.(type) {
-	case map[string]interface{}:
-		dirty, err := json.Marshal(resp.Data)
-
-		if err != nil {
-			return nil, err
-		}
-
-		err = json.Unmarshal(dirty, &result)
-
-		if err != nil {
-			return nil, err
-		}
-	case Cookies:
-		result = resp.Data.(Cookies)
-	default:
-		log.Printf("Dont Know: %v\n", resp)
-	}
-
-	return &result, nil
+	return result, nil
 }
 
 func removeToken(url string) (cleanURL, token string) {

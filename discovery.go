@@ -20,22 +20,23 @@ func init() {
 	serviceKeys[k{"Router.API", false}] = fmt.Sprintf("http://Router%s:8080/", os.Getenv("RUNMODE"))
 }
 
+//GetServiceURL returns the correct URL for a service according to the caller's environment.
 func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error) {
 	cacheService, ok := serviceKeys[k{serviceName, cleanURL}]
 	log.Printf("[%t] Inst:\t%s\tService:%s\tClean:%t\n", ok, instanceID, serviceName, cleanURL)
 
 	if !ok {
-		resp, err := GETMessage(instanceID, "", "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
+		result := ""
+		fail, err := DoGET(&result, instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
 
 		if err != nil {
 			return "", err
 		}
 
-		if resp.Failed() {
-			return "", resp
+		if fail != nil {
+			return "", fail
 		}
 
-		result := resp.Data.(string)
 		serviceKeys[k{serviceName, cleanURL}] = result
 
 		return result, nil

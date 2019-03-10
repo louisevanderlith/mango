@@ -1,7 +1,6 @@
 package mango
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -34,20 +33,15 @@ func UpdateTheme(instanceID string) error {
 }
 
 func findTemplates(instanceID string) ([]string, error) {
-	resp, err := GETMessage(instanceID, []string{}, "Theme.API", "asset", "html")
+	result := []string{}
+	fail, err := DoGET(&result, instanceID, "Theme.API", "asset", "html")
 
 	if err != nil {
-		return []string{}, err
+		return result, err
 	}
 
-	if resp.Failed() {
-		return []string{}, resp
-	}
-
-	result, ok := resp.Data.([]string)
-
-	if !ok {
-		return []string{}, errors.New("Data is not []string")
+	if fail != nil {
+		return result, fail
 	}
 
 	return result, nil
