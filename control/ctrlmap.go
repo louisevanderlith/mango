@@ -2,7 +2,6 @@ package control
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -69,7 +68,6 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	}
 
 	tiny := NewTinyCtx(m, ctx)
-	log.Printf("Tiny: %v allowed %#v\n", tiny.allowed(), tiny)
 
 	if tiny.allowed() {
 		return
@@ -79,7 +77,6 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	securityURL, err := mango.GetServiceURL(instanceID, "Secure.API", true)
 
 	if err != nil {
-		log.Printf("FilterUI Failed: %+v\n", err)
 		return
 	}
 

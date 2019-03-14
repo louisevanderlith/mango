@@ -2,7 +2,6 @@ package control
 
 import (
 	"errors"
-	"log"
 	"strings"
 
 	"github.com/astaxie/beego/context"
@@ -104,7 +103,6 @@ func (ctx *TinyCtx) getRole() enums.RoleType {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
-		log.Printf("getAvoCookie FAILED %s\n", err.Error())
 		return result
 	}
 

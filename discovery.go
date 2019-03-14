@@ -2,7 +2,6 @@ package mango
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 )
@@ -23,7 +22,6 @@ func init() {
 //GetServiceURL returns the correct URL for a service according to the caller's environment.
 func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error) {
 	cacheService, ok := serviceKeys[k{serviceName, cleanURL}]
-	log.Printf("[%t] Inst:\t%s\tService:%s\tClean:%t\n", ok, instanceID, serviceName, cleanURL)
 
 	if !ok {
 		result := ""
