@@ -74,7 +74,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	}
 
 	instanceID := m.GetInstanceID()
-	securityURL, err := mango.GetServiceURL(instanceID, "Secure.API", true)
+	securityURL, err := mango.GetServiceURL(instanceID, "Auth.APP", true)
 
 	if err != nil {
 		return
@@ -101,7 +101,7 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 func buildLoginURL(securityURL, returnURL string) string {
 	cleanReturn := removeQueries(returnURL)
 	escURL := url.QueryEscape(cleanReturn)
-	return fmt.Sprintf("%sv1/login?return=%s", securityURL, escURL)
+	return fmt.Sprintf("%slogin?return=%s", securityURL, escURL)
 }
 
 func removeQueries(url string) string {
