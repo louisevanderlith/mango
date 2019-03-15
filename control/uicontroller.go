@@ -36,6 +36,7 @@ func (ctrl *UIController) Setup(name string) {
 	ctrl.Data["ScriptName"] = name + ".entry.js"
 	ctrl.Data["InstanceID"] = ctrl.GetInstanceID()
 	ctrl.Data["RunModeDEV"] = os.Getenv("RUNMODE") == "DEV"
+	ctrl.Data["Host"] = os.Getenv("HOST")
 }
 
 func (ctrl *UIController) Serve(data interface{}, err error) {
