@@ -1,120 +1,148 @@
-version: '3.1'
-#This docker-compose file should only be used for building and pushing to the avosa/hub
+version: "3.7"
+
 services:
-  # api
-  artifact:
-    build: 
-      context: api/artifact/
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: ${PWD}
-    image: avosa/artifact:latest
-    depends_on:
-      - router
-  comment:
-    build: 
-      context: api/comment
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/comment:latest
-    depends_on:
-      - router
-  comms:
-    build: 
-      context: api/comms
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/comms
-    depends_on:
-      - router
-  folio:
-    build: 
-      context: api/folio
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/folio:latest
-    depends_on:
-      - router
-  funds:
-    build: 
-      context: api/funds
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/funds:latest
-    depends_on:
-      - router
-  router:
-    build: 
-      context: api/router
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: api/router
-    image: avosa/router:latest
-  secure:
-    build: 
-      context: api/secure
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/secure:latest
-    depends_on:
-      - router
-
-  # web
-  admin:
-    build: 
-      context: web/admin
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/admin:latest
-  cars:
-    build: 
-      context: web/cars
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/cars:latest
-    depends_on:
-      - router
-  gate:
-    build: 
-      context: web/gate
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/gate:latest
-    depends_on:
-      - router
-  logbook:
-    build: 
-      context: web/logbook
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa:/logbook:latest
-    depends_on:
-      - router
-  shop:
-    build: 
-      context: web/shop
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
-    image: avosa/shop:latest
-    depends_on:
-      - router
-  www:
-    build: 
-      context: web/www
-      dockerfile: ../../Dockerfile
-      args:
-        WRKDIR: .
+  WWWLIVE:
     image: avosa/www:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
     depends_on:
-      - router
+      - RouterLIVE
+      - FolioLIVE
+      - ThemeLIVE
+      - CommsLIVE
+    networks:
+      - mango_net
+    ports:
+      - "8091:8091"
+    command: ["./wait-for-it.sh", "ThemeLIVE:8093", "--", "python", "app.py"]
 
+  RouterLIVE:
+    image: avosa/router:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "8080:8080"
+    networks:
+      - mango_net
+
+  FolioLIVE:
+    image: avosa/folio:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "8090:8090"
+    networks:
+      - mango_net
+    volumes: 
+      - /var/db/:/db
+    depends_on:
+      - RouterLIVE
+      - SecureLIVE
+    command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
+
+  AuthLIVE:
+    image: avosa/auth:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "8094:8094"
+    networks:
+      - mango_net
+    depends_on:
+      - SecureLIVE
+
+  SecureLIVE:
+    image: avosa/secure:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "8086:8086"
+    networks:
+      - mango_net
+    depends_on:
+      - RouterLIVE
+    command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
+
+  ThemeLIVE:
+    image: avosa/theme:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "8093:8093"
+    networks:
+      - mango_net
+    depends_on:
+      - RouterLIVE
+    command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
+
+  CommsLIVE:
+    image: avosa/comms:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "8085:8085"
+    networks:
+      - mango_net
+    volumes: 
+      - /var/db/:/db
+    depends_on:
+      - RouterLIVE
+    command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
+
+  GateLIVE:
+    image: avosa/gate:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - mango_net
+    depends_on:
+      - WWWLIVE
+    volumes:
+      - /etc/letsencrypt/live/${HOST}/fullchain.pem:/certs/fullchain.pem
+      - /etc/letsencrypt/live/${HOST}/privkey.pem:/certs/privkey.pem
+      - /etc/letsencrypt/live/${HOST}/:/certs
+    command: ["./wait-for-it.sh", "WWWLIVE:8091", "--", "python", "app.py"]
+
+  AdminLIVE:
+    image: avosa/admin:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "8088:8088"
+    networks:
+      - "mango_net"
+    depends_on:
+    - "RouterLIVE"
+    command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
+
+  ArtifactLIVE:
+    image: avosa/artifact:latest
+    environment:
+      - RUNMODE=${RUNMODE}
+      - HOST=${HOST}
+    ports:
+      - "8082:8082"
+    networks:
+      - "mango_net"
+    volumes: 
+      - /var/db/:/db
+    depends_on:
+    - "RouterLIVE"
+    command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
+
+networks:
+  mango_net:
+    driver: bridge
+    name: mango_net
