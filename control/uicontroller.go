@@ -25,17 +25,16 @@ func (ctrl *UIController) Prepare() {
 	output.Header("X-Content-Type-Options", "nosniff")
 }
 
-func (ctrl *UIController) Setup(name string) {
-	//ctrl.ViewPath = "views"
+func (ctrl *UIController) Setup(name, title string, hasScript bool) {
 	ctrl.TplName = "" + name + ".html"
 
 	// By default we want to include scripts
 	// Set this to false in your controller, when scripts aren't needed
-	ctrl.Data["Title"] = name
-	ctrl.Data["HasScript"] = true
+	ctrl.Data["Title"] = title
+	ctrl.Data["HasScript"] = hasScript
 	ctrl.Data["ScriptName"] = name + ".entry.js"
 	ctrl.Data["InstanceID"] = ctrl.GetInstanceID()
-	ctrl.Data["RunModeDEV"] = beego.BConfig.RunMode == "dev"
+	ctrl.Data["Host"] = os.Getenv("HOST")
 }
 
 func (ctrl *UIController) Serve(data interface{}, err error) {
