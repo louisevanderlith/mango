@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango"
 )
 
@@ -88,9 +89,19 @@ func getPageData(pageData string) (int, int) {
 	return page, pageSize
 }
 
-func (ctrl *APIController) GetKeyedRequest() (WithKey, error) {
-	result := WithKey{}
+func (ctrl *APIController) GetKeyedRequest(target interface{}) (husk.Key, error) {
+	result := struct {
+		Key  husk.Key
+		Body interface{}
+	}{
+		Body: target,
+	}
+
 	err := json.Unmarshal(ctrl.Ctx.Input.RequestBody, &result)
 
-	return result, err
+	if err != nil {
+		return husk.CrazyKey(), err
+	}
+
+	return result.Key, nil
 }
