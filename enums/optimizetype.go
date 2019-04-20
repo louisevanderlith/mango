@@ -17,7 +17,8 @@ var optimizeTypes = [...]string{
 	"Logo",
 	"Banner",
 	"Ad",
-	"Thumb"}
+	"Thumb",
+}
 
 func (r OptimizeType) String() string {
 	return roleTypes[r]
