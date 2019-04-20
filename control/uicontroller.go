@@ -1,15 +1,16 @@
 package control
 
 import (
-	"github.com/astaxie/beego"
+	"fmt"
 )
 
 type UIController struct {
 	APIController
-	HasScript  bool
-	ScriptName string
-	TopMenu    []Menu
-	SideMenu   []Menu
+	settings ThemeSetting
+}
+
+func (ctrl *UIController) SetTheme(settings ThemeSetting) {
+	ctrl.settings = settings
 }
 
 func (ctrl *UIController) Prepare() {
@@ -26,15 +27,20 @@ func (ctrl *UIController) Prepare() {
 }
 
 func (ctrl *UIController) Setup(name, title string, hasScript bool) {
-	ctrl.TplName = "" + name + ".html"
+	ctrl.TplName = fmt.Sprintf("%s.html", name)
+	ctrl.applySettings(title)
 
 	// By default we want to include scripts
 	// Set this to false in your controller, when scripts aren't needed
-	ctrl.Data["Title"] = title
 	ctrl.Data["HasScript"] = hasScript
-	ctrl.Data["ScriptName"] = name + ".entry.js"
-	ctrl.Data["InstanceID"] = ctrl.GetInstanceID()
-	ctrl.Data["Host"] = os.Getenv("HOST")
+	ctrl.Data["ScriptName"] = fmt.Sprintf("%s.entry.js", name)
+}
+
+func (ctrl *UIController) applySettings(title string) {
+	ctrl.Data["Title"] = fmt.Sprintf("%s: %s", ctrl.settings.Name, title)
+	ctrl.Data["LogoKey"] = ctrl.settings.LogoKey
+	ctrl.Data["InstanceID"] = ctrl.settings.InstanceID
+	ctrl.Data["Host"] = ctrl.settings.Host
 }
 
 func (ctrl *UIController) Serve(data interface{}, err error) {
