@@ -6,6 +6,7 @@ import (
 	"github.com/louisevanderlith/husk"
 )
 
+//ThemeSetting is the basic controls variables accessed by the Front-end
 type ThemeSetting struct {
 	LogoKey    husk.Key
 	Name       string

@@ -82,13 +82,13 @@ func sendRegistration(s *Service) (*RESTResult, error) {
 		return nil, err
 	}
 
-	data, err := MarshalToResult(contents)
+	data, err := marshalToResult(contents, "")
 
 	return data, err
 }
 
 func (s *Service) setURL(port string) error {
-	url, err := getPublicIP(port, s.Environment)
+	url, err := getNetworkIP(s.Name, port, s.Environment)
 
 	if err != nil {
 		return err
@@ -99,36 +99,15 @@ func (s *Service) setURL(port string) error {
 	return nil
 }
 
-func getPublicIP(port string, env enums.Environment) (string, error) {
-	if env == enums.DEV {
-		return makeURL("localhost", port), nil
-	}
+func getNetworkIP(name, port string, env enums.Environment) (string, error) {
+	keyName := strings.Split(name, ".")[0]
+	uniqueName := keyName + env.String()
 
-	resp, err := http.Get("http://myexternalip.com/raw")
-
-	if err != nil {
-		return "error", err
-	}
-
-	defer resp.Body.Close()
-
-	ip, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		return "error", err
-	}
-
-	result := strings.Replace(string(ip), "\n", "", -1)
-
-	return makeURL(result, port), nil
+	return makeURL(uniqueName, port), nil
 }
 
 func makeURL(domain, port string) string {
-	schema := "https"
-
-	if domain == "localhost" {
-		schema = "http"
-	}
+	schema := "http"
 
 	return fmt.Sprintf("%s://%s:%s/", schema, domain, port)
 }

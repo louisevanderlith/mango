@@ -2,9 +2,10 @@ package control
 
 import (
 	"encoding/json"
-	"log"
+	"net/http"
 	"strconv"
 
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango"
 )
 
@@ -26,12 +27,14 @@ func (ctrl *APIController) Prepare() {
 	output.Header("Server", "kettle")
 }
 
-func (ctrl *APIController) ServeBinary(data []byte, filename, mimetype string) {
-	output := ctrl.Ctx.Output
+func (ctrl *APIController) ServeBinary(data []byte, filename string) {
+	mimetype := http.DetectContentType(data[:512])
 
-	if mimetype == "" {
-		mimetype = "application/octet-stream"
-	}
+	ctrl.ServeBinaryWithMIME(data, filename, mimetype)
+}
+
+func (ctrl *APIController) ServeBinaryWithMIME(data []byte, filename, mimetype string) {
+	output := ctrl.Ctx.Output
 
 	output.Header("Content-Description", "File Transfer")
 	output.Header("Content-Type", mimetype)
@@ -48,7 +51,6 @@ func (ctrl *APIController) Serve(result interface{}, err error) {
 	resp := mango.NewRESTResult(err, result)
 
 	if resp.Failed() {
-		log.Printf("\t [API Error]: %s\n", resp.Reason)
 		ctrl.Ctx.Output.SetStatus(500)
 	}
 
@@ -69,7 +71,6 @@ func getPageData(pageData string) (int, int) {
 	}
 
 	pChar := []rune(pageData[:1])
-	//pChar, err := strconv.Atoi(pageData[:1][0])
 
 	if len(pChar) != 1 {
 		return _page, _size
@@ -85,9 +86,19 @@ func getPageData(pageData string) (int, int) {
 	return page, pageSize
 }
 
-func (ctrl *APIController) GetKeyedRequest() (WithKey, error) {
-	result := WithKey{}
+func (ctrl *APIController) GetKeyedRequest(target interface{}) (husk.Key, error) {
+	result := struct {
+		Key  husk.Key
+		Body interface{}
+	}{
+		Body: target,
+	}
+
 	err := json.Unmarshal(ctrl.Ctx.Input.RequestBody, &result)
 
-	return result, err
+	if err != nil {
+		return husk.CrazyKey(), err
+	}
+
+	return result.Key, nil
 }
