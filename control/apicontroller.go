@@ -3,8 +3,10 @@ package control
 import (
 	"encoding/json"
 	"log"
+	"net/http"
 	"strconv"
 
+	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango"
 )
 
@@ -26,12 +28,14 @@ func (ctrl *APIController) Prepare() {
 	output.Header("Server", "kettle")
 }
 
-func (ctrl *APIController) ServeBinary(data []byte, filename, mimetype string) {
-	output := ctrl.Ctx.Output
+func (ctrl *APIController) ServeBinary(data []byte, filename string) {
+	mimetype := http.DetectContentType(data[:512])
 
-	if mimetype == "" {
-		mimetype = "application/octet-stream"
-	}
+	ctrl.ServeBinaryWithMIME(data, filename, mimetype)
+}
+
+func (ctrl *APIController) ServeBinaryWithMIME(data []byte, filename, mimetype string) {
+	output := ctrl.Ctx.Output
 
 	output.Header("Content-Description", "File Transfer")
 	output.Header("Content-Type", mimetype)
@@ -85,9 +89,19 @@ func getPageData(pageData string) (int, int) {
 	return page, pageSize
 }
 
-func (ctrl *APIController) GetKeyedRequest() (WithKey, error) {
-	result := WithKey{}
+func (ctrl *APIController) GetKeyedRequest(target interface{}) (husk.Key, error) {
+	result := struct {
+		Key  husk.Key
+		Body interface{}
+	}{
+		Body: target,
+	}
+
 	err := json.Unmarshal(ctrl.Ctx.Input.RequestBody, &result)
 
-	return result, err
+	if err != nil {
+		return husk.CrazyKey(), err
+	}
+
+	return result.Key, nil
 }
