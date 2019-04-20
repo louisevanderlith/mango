@@ -2,7 +2,6 @@ package control
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -52,7 +51,6 @@ func (ctrl *APIController) Serve(result interface{}, err error) {
 	resp := mango.NewRESTResult(err, result)
 
 	if resp.Failed() {
-		log.Printf("\t [API Error]: %s\n", resp.Reason)
 		ctrl.Ctx.Output.SetStatus(500)
 	}
 
@@ -73,7 +71,6 @@ func getPageData(pageData string) (int, int) {
 	}
 
 	pChar := []rune(pageData[:1])
-	//pChar, err := strconv.Atoi(pageData[:1][0])
 
 	if len(pChar) != 1 {
 		return _page, _size
