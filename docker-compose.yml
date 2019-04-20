@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   WWWLIVE:
-    image: avosa/www:latest
+    image: avosa/www:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -18,7 +18,7 @@ services:
     command: ["./wait-for-it.sh", "ThemeLIVE:8093", "--", "python", "app.py"]
 
   RouterLIVE:
-    image: avosa/router:latest
+    image: avosa/router:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -28,7 +28,7 @@ services:
       - mango_net
 
   FolioLIVE:
-    image: avosa/folio:latest
+    image: avosa/folio:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -44,7 +44,7 @@ services:
     command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
 
   AuthLIVE:
-    image: avosa/auth:latest
+    image: avosa/auth:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -56,7 +56,7 @@ services:
       - SecureLIVE
 
   SecureLIVE:
-    image: avosa/secure:latest
+    image: avosa/secure:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -65,11 +65,10 @@ services:
     networks:
       - mango_net
     depends_on:
-      - RouterLIVE
-    command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
+      - router
 
   ThemeLIVE:
-    image: avosa/theme:latest
+    image: avosa/theme:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -82,7 +81,7 @@ services:
     command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
 
   CommsLIVE:
-    image: avosa/comms:latest
+    image: avosa/comms:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -97,7 +96,7 @@ services:
     command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
 
   GateLIVE:
-    image: avosa/gate:latest
+    image: avosa/gate:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -115,7 +114,7 @@ services:
     command: ["./wait-for-it.sh", "WWWLIVE:8091", "--", "python", "app.py"]
 
   AdminLIVE:
-    image: avosa/admin:latest
+    image: avosa/admin:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -128,7 +127,7 @@ services:
     command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
 
   ArtifactLIVE:
-    image: avosa/artifact:latest
+    image: avosa/artifact:dev
     environment:
       - RUNMODE=${RUNMODE}
       - HOST=${HOST}
@@ -139,8 +138,16 @@ services:
     volumes: 
       - /var/db/:/db
     depends_on:
-    - "RouterLIVE"
-    command: ["./wait-for-it.sh", "RouterLIVE:8080", "--", "python", "app.py"]
+      - router
+  www:
+    build: 
+      context: web/www
+      dockerfile: ../../Dockerfile
+      args:
+        WRKDIR: .
+    image: avosa/www:latest
+    depends_on:
+      - router
 
 networks:
   mango_net:
