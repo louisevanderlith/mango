@@ -8,6 +8,7 @@ import (
 	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango"
 	secure "github.com/louisevanderlith/secure/core"
+	"github.com/louisevanderlith/secure/core/roletype"
 )
 
 type TinyCtx struct {
@@ -123,7 +124,7 @@ func (ctx *TinyCtx) hasRole(required roletype.Enum) bool {
 
 //TODO: use channels
 //getAvoCookie also checks cookie validity, so repeated calls are required
-func (ctx *TinyCtx) getAvoCookie() (*Cookies, error) {
+func (ctx *TinyCtx) getAvoCookie() (*secure.Cookies, error) {
 	if len(ctx.SessionID) == 0 {
 		return nil, errors.New("SessionID empty")
 	}
