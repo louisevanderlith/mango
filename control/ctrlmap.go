@@ -12,7 +12,7 @@ import (
 	"github.com/louisevanderlith/mango/enums"
 )
 
-//Action map[:action]:roleType
+//ActionMap maps URL Actions [GET, POST, PUT, DELETE] to required RoleType
 type ActionMap map[string]enums.RoleType
 
 //ControllerMap is used to assign Priveliges to Actions
@@ -29,31 +29,34 @@ func CreateControlMap(service *mango.Service) *ControllerMap {
 	return result
 }
 
-// AddControllerMap is used to specify the permissions required for a controller's actions.
+//Add is used to specify the permissions required for a controller's actions.
 func (m *ControllerMap) Add(path string, actionMap ActionMap) {
 	m.mapping[path] = actionMap
 }
 
-func (m *ControllerMap) GetRequiredRole(path, action string) enums.RoleType {
+//GetRequiredRole will return the RoleType required to access the 'path' and 'action'
+func (m *ControllerMap) GetRequiredRole(path, action string) roletype.Enum {
 	actionMap, hasCtrl := m.mapping[path]
 
 	if !hasCtrl {
-		return enums.Unknown
+		return roletype.Unknown
 	}
 
 	roleType, hasAction := actionMap[action]
 
 	if !hasAction {
-		return enums.Unknown
+		return roletype.Unknown
 	}
 
 	return roleType
 }
 
+//GetInstanceID returns the ID initially registered with the Service.
 func (m *ControllerMap) GetInstanceID() string {
 	return m.service.ID
 }
 
+//GetServiceName returns the Name initially registered with the Service
 func (m *ControllerMap) GetServiceName() string {
 	return m.service.Name
 }

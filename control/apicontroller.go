@@ -47,6 +47,7 @@ func (ctrl *APIController) ServeBinaryWithMIME(data []byte, filename, mimetype s
 	output.Body(data)
 }
 
+//Serve sends data as JSON response.
 func (ctrl *APIController) Serve(result interface{}, err error) {
 	resp := mango.NewRESTResult(err, result)
 
@@ -86,6 +87,7 @@ func getPageData(pageData string) (int, int) {
 	return page, pageSize
 }
 
+//GetKeyedRequest will return the Key and update the Target when Requests are sent for updates.
 func (ctrl *APIController) GetKeyedRequest(target interface{}) (husk.Key, error) {
 	result := struct {
 		Key  husk.Key

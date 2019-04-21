@@ -34,14 +34,10 @@ func UpdateTheme(instanceID string) error {
 
 func findTemplates(instanceID string) ([]string, error) {
 	result := []string{}
-	fail, err := DoGET(&result, instanceID, "Theme.API", "asset", "html")
+	err := DoGET(&result, instanceID, "Theme.API", "asset", "html")
 
 	if err != nil {
 		return result, err
-	}
-
-	if fail != nil {
-		return result, fail
 	}
 
 	return result, nil
