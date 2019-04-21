@@ -9,28 +9,26 @@ import (
 	"github.com/astaxie/beego/context"
 
 	"github.com/louisevanderlith/mango"
-	"github.com/louisevanderlith/mango/enums"
+	secure "github.com/louisevanderlith/secure/core"
+	"github.com/louisevanderlith/secure/core/roletype"
 )
-
-//ActionMap maps URL Actions [GET, POST, PUT, DELETE] to required RoleType
-type ActionMap map[string]enums.RoleType
 
 //ControllerMap is used to assign Priveliges to Actions
 type ControllerMap struct {
 	service *mango.Service
-	mapping map[string]ActionMap
+	mapping map[string]secure.ActionMap
 }
 
 func CreateControlMap(service *mango.Service) *ControllerMap {
 	result := &ControllerMap{}
 	result.service = service
-	result.mapping = make(map[string]ActionMap)
+	result.mapping = make(map[string]secure.ActionMap)
 
 	return result
 }
 
 //Add is used to specify the permissions required for a controller's actions.
-func (m *ControllerMap) Add(path string, actionMap ActionMap) {
+func (m *ControllerMap) Add(path string, actionMap secure.ActionMap) {
 	m.mapping[path] = actionMap
 }
 

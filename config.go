@@ -1,23 +1,13 @@
 package mango
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 )
 
-func GetFileContent(configPath string) []byte {
-	dat, err := ioutil.ReadFile(configPath)
-
-	if err != nil {
-		log.Print("GetFileContent: ", err)
-	}
-
-	return dat
-}
-
+//Returns the filepath within the current working directory.
 func FindFilePath(fileName, targetFolder string) string {
 	var result string
 	wp := getWorkingPath() + "/" + targetFolder
