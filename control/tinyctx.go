@@ -7,12 +7,12 @@ import (
 	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango"
-	"github.com/louisevanderlith/mango/enums"
+	secure "github.com/louisevanderlith/secure/core"
 )
 
 type TinyCtx struct {
 	ApplicationName string
-	RequiredRole    enums.RoleType
+	RequiredRole    roletype.Enum
 	URL             string
 	Method          string
 	SessionID       string
@@ -50,7 +50,7 @@ func NewTinyCtx(m *ControllerMap, ctx *context.Context) *TinyCtx {
 }
 
 func (ctx *TinyCtx) allowed() bool {
-	if ctx.RequiredRole == enums.Unknown {
+	if ctx.RequiredRole == roletype.Unknown {
 		return true
 	}
 
@@ -97,8 +97,8 @@ func (ctx *TinyCtx) getLocation() string {
 	return cookie.Location
 }
 
-func (ctx *TinyCtx) getRole() enums.RoleType {
-	result := enums.Unknown
+func (ctx *TinyCtx) getRole() roletype.Enum {
+	result := roletype.Unknown
 
 	cookie, err := ctx.getAvoCookie()
 
@@ -115,7 +115,7 @@ func (ctx *TinyCtx) getRole() enums.RoleType {
 	return result
 }
 
-func (ctx *TinyCtx) hasRole(required enums.RoleType) bool {
+func (ctx *TinyCtx) hasRole(required roletype.Enum) bool {
 	role := ctx.getRole()
 
 	return role <= required
@@ -128,15 +128,11 @@ func (ctx *TinyCtx) getAvoCookie() (*Cookies, error) {
 		return nil, errors.New("SessionID empty")
 	}
 
-	result := &Cookies{}
-	fail, err := mango.DoGET(result, ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
+	result := &secure.Cookies{}
+	err := mango.DoGET(result, ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
 
 	if err != nil {
 		return nil, err
-	}
-
-	if fail != nil {
-		return nil, fail
 	}
 
 	return result, nil

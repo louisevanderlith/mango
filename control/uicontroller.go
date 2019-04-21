@@ -37,12 +37,13 @@ func (ctrl *UIController) Setup(name, title string, hasScript bool) {
 }
 
 func (ctrl *UIController) applySettings(title string) {
-	ctrl.Data["Title"] = fmt.Sprintf("%s: %s", ctrl.settings.Name, title)
+	ctrl.Data["Title"] = fmt.Sprintf("%s %s", title, ctrl.settings.Name)
 	ctrl.Data["LogoKey"] = ctrl.settings.LogoKey
 	ctrl.Data["InstanceID"] = ctrl.settings.InstanceID
 	ctrl.Data["Host"] = ctrl.settings.Host
 }
 
+//Serve sends the response with 'Error' and 'Data' properties.
 func (ctrl *UIController) Serve(data interface{}, err error) {
 	if err != nil {
 		ctrl.Ctx.Output.SetStatus(500)
@@ -52,6 +53,7 @@ func (ctrl *UIController) Serve(data interface{}, err error) {
 	ctrl.Data["Data"] = data
 }
 
+//ServeJSON enables JSON Responses on UI Controllers
 func (ctrl *UIController) ServeJSON(data interface{}, err error) {
 	ctrl.EnableRender = false
 

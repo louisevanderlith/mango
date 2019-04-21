@@ -11,6 +11,7 @@ import (
 	"github.com/louisevanderlith/mango/enums"
 )
 
+//Service identifies the Registering APP or API
 type Service struct {
 	ID            string
 	Name          string
@@ -21,6 +22,7 @@ type Service struct {
 	Type          enums.ServiceType
 }
 
+//NewService returns a new instance of a Services' information
 func NewService(env, name string, serviceType enums.ServiceType) *Service {
 	result := &Service{
 		Environment: enums.GetEnvironment(env),
