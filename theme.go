@@ -5,7 +5,26 @@ import (
 	"io"
 	"net/http"
 	"os"
+
+	folio "github.com/louisevanderlith/folio/core"
 )
+
+func GetDefaultTheme(instanceID, siteName string) (ThemeSetting, error) {
+	prof := folio.Profile{}
+	err := DoGET(&prof, instanceID, "Folio.API", "profile", siteName)
+
+	if err != nil {
+		return ThemeSetting{}, err
+	}
+
+	result := ThemeSetting{
+		InstanceID: instanceID,
+		LogoKey:    prof.ImageKey,
+		Name:       prof.Title,
+	}
+
+	return result, nil
+}
 
 //UpdateTheme downloads the latest master templates from Theme.API
 func UpdateTheme(instanceID string) error {
