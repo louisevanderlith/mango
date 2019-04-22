@@ -17,11 +17,7 @@ func GetDefaultTheme(instanceID, siteName string) (ThemeSetting, error) {
 		return ThemeSetting{}, err
 	}
 
-	result := ThemeSetting{
-		InstanceID: instanceID,
-		LogoKey:    prof.ImageKey,
-		Name:       prof.Title,
-	}
+	result := NewThemeSetting(prof.Title, prof.ImageKey, instanceID)
 
 	return result, nil
 }
