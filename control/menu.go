@@ -51,7 +51,7 @@ type menuItem struct {
 	Class    string
 	Link     string
 	IsActive bool
-	Children *Menu
+	Children *Menu `json:",omitempty"`
 }
 
 func newItem(link, text, iconClass string, children *Menu) (shortName string, result *menuItem) {
