@@ -1,4 +1,4 @@
-package control
+package mango
 
 import (
 	"os"
