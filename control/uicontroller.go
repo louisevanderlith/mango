@@ -2,14 +2,16 @@ package control
 
 import (
 	"fmt"
+
+	"github.com/louisevanderlith/mango"
 )
 
 type UIController struct {
 	APIController
-	settings ThemeSetting
+	settings mango.ThemeSetting
 }
 
-func (ctrl *UIController) SetTheme(settings ThemeSetting) {
+func (ctrl *UIController) SetTheme(settings mango.ThemeSetting) {
 	ctrl.settings = settings
 }
 
