@@ -81,7 +81,8 @@ func marshalToResult(content []byte, dataObj interface{}) (*RESTResult, error) {
 	err := json.Unmarshal(content, result)
 
 	if err != nil {
-		return nil, err
+		fullerr := fmt.Errorf("marshal: %s\r%s", err.Error(), string(content))
+		return nil, fullerr
 	}
 
 	return result, nil
