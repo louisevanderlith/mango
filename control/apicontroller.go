@@ -28,7 +28,14 @@ func (ctrl *APIController) Prepare() {
 }
 
 func (ctrl *APIController) ServeBinary(data []byte, filename string) {
-	mimetype := http.DetectContentType(data[:512])
+	dataLen := len(data)
+	toTake := 512
+
+	if dataLen < 512 {
+		toTake = dataLen
+	}
+
+	mimetype := http.DetectContentType(data[:toTake])
 
 	ctrl.ServeBinaryWithMIME(data, filename, mimetype)
 }
