@@ -21,10 +21,6 @@ func NewRESTResult(reason error, data interface{}) *RESTResult {
 		result.Reason = reason.Error()
 	}
 
-	if data == nil {
-		data = "Nothing bad happened..."
-	}
-
 	result.Data = data
 
 	return result
