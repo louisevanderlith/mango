@@ -68,6 +68,12 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		return
 	}
 
+	m.FilterAPI(ctx)
+}
+
+// FilterAPI is used to secure API services.
+// When a user is not allowed to access a resource, they will get the Unauthorized Status.
+func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	tiny := NewTinyCtx(m, ctx)
 
 	if tiny.allowed() {
@@ -87,16 +93,6 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 
 	// Redirect to login if not allowed.
 	ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
-}
-
-// FilterAPI is used to secure API services.
-// When a user is not allowed to access a resource, they will get the Unauthorized Status.
-func (m *ControllerMap) FilterAPI(ctx *context.Context) {
-	tiny := NewTinyCtx(m, ctx)
-
-	if !tiny.allowed() {
-		ctx.Abort(http.StatusUnauthorized, "User not authorized to access this content.")
-	}
 }
 
 func buildLoginURL(securityURL, returnURL string) string {
