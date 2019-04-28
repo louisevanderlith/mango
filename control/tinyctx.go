@@ -134,11 +134,12 @@ func (ctx *TinyCtx) getAvoCookie() (*secure.Cookies, error) {
 
 func removeToken(url string) (cleanURL, token string) {
 	idx := strings.LastIndex(url, "?token")
-	tokenIdx := strings.LastIndex(url, "=") + 1
 
 	if idx == -1 {
-		return "/", ""
+		return url, ""
 	}
+
+	tokenIdx := strings.LastIndex(url, "=") + 1
 
 	cleanURL = url[:idx]
 	token = url[tokenIdx:]
