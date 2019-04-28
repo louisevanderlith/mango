@@ -37,7 +37,16 @@ func (m *ControllerMap) GetRequiredRole(path, action string) roletype.Enum {
 	actionMap, hasCtrl := m.mapping[path]
 
 	if !hasCtrl {
-		return roletype.Unknown
+		for actPath, actMap := range m.mapping {
+			if strings.Contains(path, actPath) {
+				actionMap = actMap
+				break
+			}
+		}
+	}
+
+	if actionMap == nil {
+		panic(fmt.Sprintf("missing mapping for %s on %s", action, path))
 	}
 
 	roleType, hasAction := actionMap[action]
@@ -74,9 +83,25 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 // FilterAPI is used to secure API services.
 // When a user is not allowed to access a resource, they will get the Unauthorized Status.
 func (m *ControllerMap) FilterAPI(ctx *context.Context) {
-	tiny := NewTinyCtx(m, ctx)
+	//url, token := findURLToken(fullUrl)
+	method := ctx.Request.Method
 
-	if tiny.allowed() {
+	url, token := removeToken(ctx.Request.RequestURI)
+	//not ideall ^^
+	if token == "" {
+		token = ctx.GetCookie(avosession)
+	}
+
+	tiny := NewTinyCtx(m, method, url, token)
+
+	allowed, err := tiny.allowed()
+
+	if err != nil {
+		ctx.Abort(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if allowed {
 		return
 	}
 
@@ -84,6 +109,7 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	securityURL, err := mango.GetServiceURL(instanceID, "Auth.APP", true)
 
 	if err != nil {
+		ctx.Abort(http.StatusInternalServerError, err.Error())
 		return
 	}
 

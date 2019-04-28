@@ -2,9 +2,9 @@ package control
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
-	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango"
 	secure "github.com/louisevanderlith/secure/core"
@@ -22,22 +22,10 @@ type TinyCtx struct {
 
 const avosession = "avosession"
 
-func findURLToken(ctx *context.Context) (string, string) {
-	url, token := removeToken(ctx.Request.RequestURI)
-
-	if token == "" {
-		token = ctx.GetCookie(avosession)
-	}
-
-	return url, token
-}
-
-func NewTinyCtx(m *ControllerMap, ctx *context.Context) *TinyCtx {
+func NewTinyCtx(m *ControllerMap, method, url, token string) *TinyCtx {
 	result := TinyCtx{}
 
-	url, token := findURLToken(ctx)
-
-	actMethod := strings.ToUpper(ctx.Request.Method)
+	actMethod := strings.ToUpper(method)
 	required := m.GetRequiredRole(url, actMethod)
 
 	result.RequiredRole = required
@@ -50,12 +38,41 @@ func NewTinyCtx(m *ControllerMap, ctx *context.Context) *TinyCtx {
 	return &result
 }
 
-func (ctx *TinyCtx) allowed() bool {
+func (ctx *TinyCtx) allowed() (bool, error) {
 	if ctx.RequiredRole == roletype.Unknown {
-		return true
+		return true, nil
 	}
 
 	return ctx.hasRole(ctx.RequiredRole)
+}
+
+func (ctx *TinyCtx) hasRole(required roletype.Enum) (bool, error) {
+	role, err := ctx.getRole()
+
+	if err != nil {
+		return false, err
+	}
+
+	return role <= required, nil
+}
+
+func (ctx *TinyCtx) getRole() (roletype.Enum, error) {
+	cookie, err := ctx.getAvoCookie()
+
+	if err != nil {
+		return roletype.Unknown, err
+	}
+
+	appName := ctx.ApplicationName
+
+	role, ok := cookie.UserRoles[appName]
+
+	if !ok {
+		msg := fmt.Errorf("application permission required. %s", appName)
+		return roletype.Unknown, msg
+	}
+
+	return role, nil
 }
 
 func (ctx *TinyCtx) getUserKey() husk.Key {
@@ -92,34 +109,10 @@ func (ctx *TinyCtx) getLocation() string {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
-		return "Uknown"
+		return "Unknown"
 	}
 
 	return cookie.Location
-}
-
-func (ctx *TinyCtx) getRole() roletype.Enum {
-	result := roletype.Unknown
-
-	cookie, err := ctx.getAvoCookie()
-
-	if err != nil {
-		return result
-	}
-
-	appName := ctx.ApplicationName
-
-	if role, ok := cookie.UserRoles[appName]; ok {
-		result = role
-	}
-
-	return result
-}
-
-func (ctx *TinyCtx) hasRole(required roletype.Enum) bool {
-	role := ctx.getRole()
-
-	return role <= required
 }
 
 //TODO: use channels
