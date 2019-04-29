@@ -65,6 +65,10 @@ func DoGET(container interface{}, instanceID, serviceName, controller string, pa
 		return http.StatusInternalServerError, msg
 	}
 
+	if len(rest.Reason) > 0 {
+		return rest.Code, rest
+	}
+
 	return rest.Code, nil
 }
 
