@@ -44,11 +44,11 @@ func (s *Service) Register(port string) error {
 	resp, err := sendRegistration(s)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 
-	if resp.Failed() {
-		return resp
+	if resp.Code != http.StatusOK && resp.Reason != nil {
+		return resp.Reason
 	}
 
 	s.ID = resp.Data.(string)

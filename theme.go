@@ -5,13 +5,14 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 
 	folio "github.com/louisevanderlith/folio/core"
 )
 
 func GetDefaultTheme(instanceID, siteName string) (ThemeSetting, error) {
 	prof := folio.Profile{}
-	err := DoGET(&prof, instanceID, "Folio.API", "profile", siteName)
+	_, err := DoGET(&prof, instanceID, "Folio.API", "profile", siteName)
 
 	if err != nil {
 		return ThemeSetting{}, err
@@ -49,10 +50,10 @@ func UpdateTheme(instanceID string) error {
 
 func findTemplates(instanceID string) ([]string, error) {
 	result := []string{}
-	err := DoGET(&result, instanceID, "Theme.API", "asset", "html")
+	code, err := DoGET(&result, instanceID, "Theme.API", "asset", "html")
 
 	if err != nil {
-		return result, err
+		return []string{strconv.Itoa(code)}, err
 	}
 
 	return result, nil

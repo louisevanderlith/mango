@@ -56,10 +56,10 @@ func (ctrl *UIController) Serve(data interface{}, err error) {
 }
 
 //ServeJSON enables JSON Responses on UI Controllers
-func (ctrl *UIController) ServeJSON(data interface{}, err error) {
+func (ctrl *UIController) ServeJSON(statuscode int, err error, data interface{}) {
 	ctrl.EnableRender = false
 
-	ctrl.APIController.Serve(data, err)
+	ctrl.APIController.Serve(statuscode, err, data)
 	ctrl.EnableRender = true
 }
 

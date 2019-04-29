@@ -3,6 +3,7 @@ package control
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/louisevanderlith/husk"
@@ -123,9 +124,9 @@ func (ctx *TinyCtx) getAvoCookie() (*secure.Cookies, error) {
 	}
 
 	result := &secure.Cookies{}
-	err := mango.DoGET(result, ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
+	code, err := mango.DoGET(result, ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
 
-	if err != nil {
+	if code == http.StatusNotFound {
 		return nil, err
 	}
 
