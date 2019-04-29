@@ -47,8 +47,8 @@ func (s *Service) Register(port string) error {
 		return err
 	}
 
-	if resp.Code != http.StatusOK && resp.Reason != nil {
-		return resp.Reason
+	if resp.Code != http.StatusOK && len(resp.Reason) != 0 {
+		return resp
 	}
 
 	s.ID = resp.Data.(string)
