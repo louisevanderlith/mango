@@ -25,10 +25,11 @@ func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error
 
 	if !ok {
 		result := ""
-		err := DoGET(&result, instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
+		code, err := DoGET(&result, instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
 
 		if err != nil {
-			return "", err
+			scode := strconv.Itoa(code)
+			return scode, err
 		}
 
 		serviceKeys[k{serviceName, cleanURL}] = result

@@ -55,12 +55,10 @@ func (ctrl *APIController) ServeBinaryWithMIME(data []byte, filename, mimetype s
 }
 
 //Serve sends data as JSON response.
-func (ctrl *APIController) Serve(result interface{}, err error) {
-	resp := mango.NewRESTResult(err, result)
+func (ctrl *APIController) Serve(statuscode int, err error, result interface{}) {
+	resp := mango.NewRESTResult(statuscode, err, result)
 
-	if resp.Failed() {
-		ctrl.Ctx.Output.SetStatus(500)
-	}
+	ctrl.Ctx.Output.SetStatus(resp.Code)
 
 	ctrl.Data["json"] = *resp
 	ctrl.ServeJSON()
