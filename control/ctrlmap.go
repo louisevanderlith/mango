@@ -96,15 +96,6 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 
 	allowed, err := tiny.allowed()
 
-	if err != nil {
-		ctx.Abort(http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	if allowed {
-		return
-	}
-
 	instanceID := m.GetInstanceID()
 	securityURL, err := mango.GetServiceURL(instanceID, "Auth.APP", true)
 
@@ -116,6 +107,16 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	req := ctx.Request
 	moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
 	loginURL := buildLoginURL(securityURL, moveURL)
+
+	if err != nil {
+		// Redirect to login if not allowed.
+		ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
+		return
+	}
+
+	if allowed {
+		return
+	}
 
 	// Redirect to login if not allowed.
 	ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
