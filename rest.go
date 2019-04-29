@@ -11,7 +11,7 @@ import (
 //RESTResult is the base object of every response.
 type RESTResult struct {
 	Code   int         `json:"Code"`
-	Reason error       `json:"Error"`
+	Reason string      `json:"Error"`
 	Data   interface{} `json:"Data"`
 }
 
@@ -22,17 +22,15 @@ func NewRESTResult(code int, reason error, data interface{}) *RESTResult {
 	}
 
 	if reason != nil {
-		result.Reason = reason
+		result.Reason = reason.Error()
 	}
 
 	return result
 }
 
-//Failed will return true if it's found a reason.
-/*func (r *RESTResult) Failed() bool {
-	hasReason := len(r.Reason) > 0
-	over
-}*/
+func (r RESTResult) Error() string {
+	return r.Reason
+}
 
 //DoGET does a GET request and will update the container with the reponse's values.
 //returns int : httpStatusCode
@@ -66,7 +64,7 @@ func DoGET(container interface{}, instanceID, serviceName, controller string, pa
 		return http.StatusInternalServerError, err
 	}
 
-	return rest.Code, rest.Reason
+	return rest.Code, rest
 }
 
 func marshalToResult(content []byte, dataObj interface{}) (*RESTResult, error) {
