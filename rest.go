@@ -61,10 +61,11 @@ func DoGET(container interface{}, instanceID, serviceName, controller string, pa
 	rest, err := marshalToResult(contents, container)
 
 	if err != nil {
-		return http.StatusInternalServerError, err
+		msg := fmt.Errorf("Invalid JSON; Body:\n%s\nError:\n%s", string(contents), err)
+		return http.StatusInternalServerError, msg
 	}
 
-	return rest.Code, rest
+	return rest.Code, nil
 }
 
 func marshalToResult(content []byte, dataObj interface{}) (*RESTResult, error) {
