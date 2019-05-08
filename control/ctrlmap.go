@@ -90,22 +90,18 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	/*url, token := removeToken(ctx.Request.RequestURI)
+	url, token := removeToken(path)
 
 	if token == "" {
-		token = ctx.GetCookie(avosession)
-	}*/
+		authHeader := ctx.Request.Header["Authorization"]
+		log.Println(authHeader)
 
-	//Auth
-	authHeader := ctx.Request.Header["Authorization"]
-	log.Println(authHeader)
-	token := ""
-
-	if len(authHeader) > 0 {
-		token = strings.Split(authHeader[0], " ")[0]
+		if len(authHeader) > 0 {
+			token = strings.Split(authHeader[0], " ")[0]
+		}
 	}
 
-	tiny := NewTinyCtx(m, ctx.Request.Method, path, token)
+	tiny := NewTinyCtx(m, ctx.Request.Method, url, token)
 
 	allowed, err := tiny.allowed()
 
