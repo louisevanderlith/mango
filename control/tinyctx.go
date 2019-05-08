@@ -65,7 +65,7 @@ func (ctx *TinyCtx) getRole() (roletype.Enum, error) {
 	cookie, err := ctx.getAvoCookie()
 
 	if err != nil {
-		return roletype.Unknown, nil
+		return roletype.Unknown, err
 	}
 
 	appName := ctx.ApplicationName
