@@ -1,6 +1,7 @@
 package control
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -74,11 +75,61 @@ func (m *ControllerMap) GetServiceName() string {
 func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	path := ctx.Input.URL()
 
-	if strings.HasPrefix(path, "/static") {
+	if strings.HasPrefix(path, "/static") || strings.HasPrefix(path, "/favicon") {
 		return
 	}
 
-	m.FilterAPI(ctx)
+	url, token := removeToken(path)
+
+	if token != "" {
+		//localhost.org should resolve for development
+		//TODO: write better function
+		secure := false
+		domain := ".localhost.org"
+
+		if !strings.Contains(ctx.Request.Host, "localhost") {
+			secure = true
+			domain = "." + ctx.Request.Host
+		}
+
+		ctx.SetCookie("avosession", token, 0, "/", domain, secure, true)
+	}
+
+	if token == "" {
+		authHeader := ctx.GetCookie("avosession")
+		log.Println(authHeader)
+
+		if len(authHeader) > 0 {
+			token = strings.Split(authHeader, " ")[0]
+		}
+	}
+
+	tiny, err := NewTinyCtx(m, ctx.Request.Method, url, token)
+	securityURL, err := mango.GetServiceURL(m.GetInstanceID(), "Auth.APP", true)
+
+	if err != nil {
+		ctx.RenderMethodResult(RenderUnauthorized(err))
+		return
+	}
+
+	req := ctx.Request
+	moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
+	loginURL := buildLoginURL(securityURL, moveURL)
+
+	allowed, err := tiny.allowed()
+
+	if err != nil {
+		ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
+		return
+	}
+
+	if err != nil || !allowed {
+		// Redirect to login if not allowed.
+		ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
+		return
+	}
+
+	return
 }
 
 // FilterAPI is used to secure API services.
@@ -107,7 +158,7 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	}
 
 	if token == "" {
-		authHeader := ctx.GetCookie("avosession") //ctx.Request.Header["Authorization"]
+		authHeader := ctx.GetCookie("avosession")
 		log.Println(authHeader)
 
 		if len(authHeader) > 0 {
@@ -118,28 +169,19 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	tiny, err := NewTinyCtx(m, ctx.Request.Method, url, token)
 
 	if err != nil {
-		ctx.Abort(http.StatusBadRequest, err.Error())
+		ctx.RenderMethodResult(RenderUnauthorized(err))
 		return
 	}
 
 	allowed, err := tiny.allowed()
 
 	if err != nil {
-		log.Println("allowed error:", err.Error())
-		ctx.Abort(http.StatusBadRequest, err.Error())
+		ctx.RenderMethodResult(RenderUnauthorized(err))
 		return
 	}
 
-	instanceID := m.GetInstanceID()
-	securityURL, err := mango.GetServiceURL(instanceID, "Auth.APP", true)
-
-	req := ctx.Request
-	moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
-	loginURL := buildLoginURL(securityURL, moveURL)
-
-	if err != nil || !allowed {
-		// Redirect to login if not allowed.
-		ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
+	if !allowed {
+		ctx.RenderMethodResult(RenderUnauthorized(errors.New("no access")))
 		return
 	}
 
