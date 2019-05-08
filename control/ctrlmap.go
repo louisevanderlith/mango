@@ -92,21 +92,41 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 
 	url, token := removeToken(path)
 
+	if token != "" {
+		//localhost.org should resolve for development
+		//TODO: write better function
+		secure := false
+		domain := ".localhost.org"
+
+		if !strings.Contains(ctx.Request.Host, "localhost") {
+			secure = true
+			domain = "." + ctx.Request.Host
+		}
+
+		ctx.SetCookie("avosession", token, 0, "/", domain, secure, true)
+	}
+
 	if token == "" {
-		authHeader := ctx.Request.Header["Authorization"]
+		authHeader := ctx.GetCookie("avosession") //ctx.Request.Header["Authorization"]
 		log.Println(authHeader)
 
 		if len(authHeader) > 0 {
-			token = strings.Split(authHeader[0], " ")[0]
+			token = strings.Split(authHeader, " ")[0]
 		}
 	}
 
-	tiny := NewTinyCtx(m, ctx.Request.Method, url, token)
+	tiny, err := NewTinyCtx(m, ctx.Request.Method, url, token)
+
+	if err != nil {
+		ctx.Abort(http.StatusBadRequest, err.Error())
+		return
+	}
 
 	allowed, err := tiny.allowed()
 
 	if err != nil {
-		ctx.Abort(http.StatusInternalServerError, err.Error())
+		log.Println("allowed error:", err.Error())
+		ctx.Abort(http.StatusBadRequest, err.Error())
 		return
 	}
 

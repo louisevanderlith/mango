@@ -27,7 +27,19 @@ type TinyCtx struct {
 
 const avosession = "avosession"
 
-func NewTinyCtx(m *ControllerMap, method, url, token string) *TinyCtx {
+func NewTinyCtx(m *ControllerMap, method, url, token string) (*TinyCtx, error) {
+	if len(method) < 3 {
+		return nil, errors.New("invalid method")
+	}
+
+	if len(url) < 5 {
+		return nil, errors.New("invalid url")
+	}
+
+	if len(token) < 10 {
+		return nil, errors.New("invalid token")
+	}
+
 	result := TinyCtx{}
 
 	actMethod := strings.ToUpper(method)
@@ -40,7 +52,7 @@ func NewTinyCtx(m *ControllerMap, method, url, token string) *TinyCtx {
 	result.SessionID = token
 	result.Service = m.service
 
-	return &result
+	return &result, nil
 }
 
 func (ctx *TinyCtx) allowed() (bool, error) {
