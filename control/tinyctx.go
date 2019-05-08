@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"os"
 	"strings"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -124,7 +127,23 @@ func (ctx *TinyCtx) getAvoCookie() (*secure.Cookies, error) {
 		return nil, errors.New("SessionID empty")
 	}
 
-	token, err := jwt.Parse(ctx.SessionID, nil)
+	token, err := jwt.Parse(ctx.SessionID, func(t *jwt.Token) (interface{}, error) {
+		var rdr io.Reader
+		if f, err := os.Open("/db/sign_rsa.pub"); err == nil {
+			rdr = f
+			defer f.Close()
+		} else {
+			return "", err
+		}
+
+		bits, err := ioutil.ReadAll(rdr)
+
+		if err != nil {
+			return "", err
+		}
+
+		return jwt.ParseRSAPublicKeyFromPEM(bits)
+	})
 
 	if err != nil {
 		return nil, err
