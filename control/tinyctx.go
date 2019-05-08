@@ -1,10 +1,12 @@
 package control
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/louisevanderlith/husk"
 	"github.com/louisevanderlith/mango"
 	secure "github.com/louisevanderlith/secure/core"
@@ -122,8 +124,24 @@ func (ctx *TinyCtx) getAvoCookie() (*secure.Cookies, error) {
 		return nil, errors.New("SessionID empty")
 	}
 
+	token, err := jwt.Parse(ctx.SessionID, nil)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !token.Valid {
+		return nil, errors.New("token invalid")
+	}
+
+	jClaim, err := json.Marshal(token.Claims)
+
+	if err != nil {
+		return nil, err
+	}
+
 	result := &secure.Cookies{}
-	_, err := mango.DoGET(result, ctx.Service.ID, "Secure.API", "login", "avo", ctx.SessionID)
+	err = json.Unmarshal(jClaim, result)
 
 	if err != nil {
 		return nil, err
