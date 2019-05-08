@@ -24,6 +24,7 @@ func (ctrl *APIController) Prepare() {
 	output := ctrl.Ctx.Output
 
 	output.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+	output.Header("Access-Control-Allow-Credentials", "true")
 	output.Header("Server", "kettle")
 }
 
