@@ -2,6 +2,7 @@ package control
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -73,7 +74,7 @@ func (m *ControllerMap) GetServiceName() string {
 func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	path := ctx.Input.URL()
 
-	if strings.HasPrefix(path, "/static") || strings.Contains(path, "favicon") {
+	if strings.HasPrefix(path, "/static") {
 		return
 	}
 
@@ -83,13 +84,28 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 // FilterAPI is used to secure API services.
 // When a user is not allowed to access a resource, they will get the Unauthorized Status.
 func (m *ControllerMap) FilterAPI(ctx *context.Context) {
-	url, token := removeToken(ctx.Request.RequestURI)
+	path := ctx.Input.URL()
+
+	if strings.HasPrefix(path, "/favicon") {
+		return
+	}
+
+	/*url, token := removeToken(ctx.Request.RequestURI)
 
 	if token == "" {
 		token = ctx.GetCookie(avosession)
+	}*/
+
+	//Auth
+	authHeader := ctx.Request.Header["Authorization"]
+	log.Println(authHeader)
+	token := ""
+
+	if len(authHeader) > 0 {
+		token = strings.Split(authHeader[0], " ")[0]
 	}
 
-	tiny := NewTinyCtx(m, ctx.Request.Method, url, token)
+	tiny := NewTinyCtx(m, ctx.Request.Method, path, token)
 
 	allowed, err := tiny.allowed()
 
