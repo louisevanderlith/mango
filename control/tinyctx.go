@@ -32,7 +32,7 @@ func NewTinyCtx(m *ControllerMap, method, url, token string) (*TinyCtx, error) {
 		return nil, errors.New("invalid method")
 	}
 
-	if len(url) < 5 {
+	if len(url) < 1 {
 		return nil, errors.New("invalid url")
 	}
 
