@@ -93,34 +93,22 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		if len(authHeader) > 0 {
 			token = strings.Split(authHeader[0], " ")[0]
 		} else {
-			err := errors.New("no Authorization Header provided")
-			ctx.RenderMethodResult(RenderUnauthorized(err))
+			sendToLogin(ctx, m.GetInstanceID())
 			return
 		}
 	}
 
 	tiny, err := NewTinyCtx(m.GetServiceName(), ctx.Request.Method, url, token, requiredRole)
-	securityURL, err := mango.GetServiceURL(m.GetInstanceID(), "Auth.APP", true)
 
 	if err != nil {
-		ctx.RenderMethodResult(RenderUnauthorized(err))
+		sendToLogin(ctx, m.GetInstanceID())
 		return
 	}
-
-	req := ctx.Request
-	moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
-	loginURL := buildLoginURL(securityURL, moveURL)
 
 	allowed, err := tiny.allowed()
 
-	if err != nil {
-		ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
-		return
-	}
-
 	if err != nil || !allowed {
-		// Redirect to login if not allowed.
-		ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
+		sendToLogin(ctx, m.GetInstanceID())
 		return
 	}
 
@@ -174,8 +162,19 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	return
 }
 
-func sendToLogin(ctx *context.Context) {
+func sendToLogin(ctx *context.Context, instanceID string) {
+	securityURL, err := mango.GetServiceURL(instanceID, "Auth.APP", true)
 
+	if err != nil {
+		ctx.RenderMethodResult(err)
+		return
+	}
+
+	req := ctx.Request
+	moveURL := fmt.Sprintf("%s://%s%s", ctx.Input.Scheme(), req.Host, req.RequestURI)
+	loginURL := buildLoginURL(securityURL, moveURL)
+
+	ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
 }
 
 func buildLoginURL(securityURL, returnURL string) string {
