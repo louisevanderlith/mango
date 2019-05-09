@@ -3,7 +3,6 @@ package control
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -51,7 +50,7 @@ func (m *ControllerMap) GetRequiredRole(path, action string) roletype.Enum {
 		panic(fmt.Sprintf("missing mapping for %s on %s", action, path))
 	}
 
-	roleType, hasAction := actionMap[action]
+	roleType, hasAction := actionMap[strings.ToUpper(action)]
 
 	if !hasAction {
 		return roletype.Unknown
@@ -74,37 +73,33 @@ func (m *ControllerMap) GetServiceName() string {
 // When a user is not allowed to access a Page, they are redirected to secure.login
 func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	path := ctx.Input.URL()
+	action := ctx.Request.Method
 
 	if strings.HasPrefix(path, "/static") || strings.HasPrefix(path, "/favicon") {
 		return
 	}
 
+	requiredRole := m.GetRequiredRole(path, action)
+
+	if requiredRole == roletype.Unknown {
+		return
+	}
+
 	url, token := removeToken(path)
 
-	if token != "" {
-		//localhost.org should resolve for development
-		//TODO: write better function
-		secure := false
-		domain := ".localhost.org"
-
-		if !strings.Contains(ctx.Request.Host, "localhost") {
-			secure = true
-			domain = "." + ctx.Request.Host
-		}
-
-		ctx.SetCookie("avosession", token, 0, "/", domain, secure, true)
-	}
-
 	if token == "" {
-		authHeader := ctx.GetCookie("avosession")
-		log.Println(authHeader)
+		authHeader := ctx.Request.Header["Authorization"]
 
 		if len(authHeader) > 0 {
-			token = strings.Split(authHeader, " ")[0]
+			token = strings.Split(authHeader[0], " ")[0]
+		} else {
+			err := errors.New("no Authorization Header provided")
+			ctx.RenderMethodResult(RenderUnauthorized(err))
+			return
 		}
 	}
 
-	tiny, err := NewTinyCtx(m, ctx.Request.Method, url, token)
+	tiny, err := NewTinyCtx(m.GetServiceName(), ctx.Request.Method, url, token, requiredRole)
 	securityURL, err := mango.GetServiceURL(m.GetInstanceID(), "Auth.APP", true)
 
 	if err != nil {
@@ -136,37 +131,28 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 // When a user is not allowed to access a resource, they will get the Unauthorized Status.
 func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	path := ctx.Input.URL()
+	action := ctx.Request.Method
 
 	if strings.HasPrefix(path, "/favicon") {
 		return
 	}
 
-	url, token := removeToken(path)
+	requiredRole := m.GetRequiredRole(path, action)
 
-	if token != "" {
-		//localhost.org should resolve for development
-		//TODO: write better function
-		secure := false
-		domain := ".localhost.org"
-
-		if !strings.Contains(ctx.Request.Host, "localhost") {
-			secure = true
-			domain = "." + ctx.Request.Host
-		}
-
-		ctx.SetCookie("avosession", token, 0, "/", domain, secure, true)
+	if requiredRole == roletype.Unknown {
+		return
 	}
 
-	if token == "" {
-		authHeader := ctx.GetCookie("avosession")
-		log.Println(authHeader)
+	authHeader := ctx.Request.Header["Authorization"]
 
-		if len(authHeader) > 0 {
-			token = strings.Split(authHeader, " ")[0]
-		}
+	if len(authHeader) == 0 {
+		err := errors.New("no Authorization Header provided")
+		ctx.RenderMethodResult(RenderUnauthorized(err))
+		return
 	}
 
-	tiny, err := NewTinyCtx(m, ctx.Request.Method, url, token)
+	token := strings.Split(authHeader[0], " ")[0]
+	tiny, err := NewTinyCtx(m.GetServiceName(), action, path, token, requiredRole)
 
 	if err != nil {
 		ctx.RenderMethodResult(RenderUnauthorized(err))
@@ -186,6 +172,10 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	}
 
 	return
+}
+
+func sendToLogin(ctx *context.Context) {
+
 }
 
 func buildLoginURL(securityURL, returnURL string) string {

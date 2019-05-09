@@ -52,7 +52,11 @@ func Test_tinyCtx_notoken_notAllowed_HasApplicationRole_Admin(t *testing.T) {
 
 	ctrlmap.Add("/abc", emptyMap)
 
-	tiny := NewTinyCtx(ctrlmap, "GET", "/abc", "")
+	tiny, err := NewTinyCtx(ctrlmap.GetServiceName(), "GET", "/abc", "", roletype.Admin)
+
+	if err != nil {
+		t.Error(err)
+	}
 
 	allowed, err := tiny.allowed()
 
@@ -80,7 +84,11 @@ func Test_tinyCtx_notoken_Allowed_HasApplicationRole_Admin(t *testing.T) {
 
 	ctrlmap.Add("/abc", emptyMap)
 
-	tiny := NewTinyCtx(ctrlmap, "GET", "/abc", "")
+	tiny, err := NewTinyCtx(ctrlmap.GetServiceName(), "GET", "/abc", "", roletype.Unknown)
+
+	if err != nil {
+		t.Error(err)
+	}
 
 	allowed, err := tiny.allowed()
 
