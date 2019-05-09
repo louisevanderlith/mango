@@ -20,14 +20,17 @@ type Service struct {
 	Environment   enums.Environment
 	AllowedCaller enums.ServiceType
 	Type          enums.ServiceType
+	PublicKey     string
 }
 
 //NewService returns a new instance of a Services' information
-func NewService(env, name string, serviceType enums.ServiceType) *Service {
+//publicKey refers to the location of the public key file (.pub)
+func NewService(env, name, publicKey string, serviceType enums.ServiceType) *Service {
 	result := &Service{
 		Environment: enums.GetEnvironment(env),
 		Name:        name,
 		Type:        serviceType,
+		PublicKey:   publicKey,
 	}
 
 	return result
