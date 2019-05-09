@@ -3,6 +3,7 @@ package control
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -80,6 +81,8 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	path := ctx.Request.URL.RequestURI()
 	action := ctx.Request.Method
 
+	log.Printf("FilterUI: %s | %s\n", path, action)
+
 	if strings.HasPrefix(path, "/static") || strings.HasPrefix(path, "/favicon") {
 		return
 	}
@@ -87,6 +90,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	requiredRole, err := m.GetRequiredRole(path, action)
 
 	if err != nil {
+		log.Println(err)
 		//Missing Mapping, the user doesn't have access to the application, and must request it.
 		sendToSubscription(ctx, m.GetInstanceID())
 		return
@@ -104,6 +108,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		if len(authHeader) > 0 {
 			token = strings.Split(authHeader[0], " ")[0]
 		} else {
+			log.Println("no authorization found")
 			sendToLogin(ctx, m.GetInstanceID())
 			return
 		}
@@ -112,6 +117,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	tiny, err := NewTinyCtx(m.GetServiceName(), ctx.Request.Method, url, token, requiredRole, m.GetPublicKeyPath())
 
 	if err != nil {
+		log.Println(err)
 		sendToLogin(ctx, m.GetInstanceID())
 		return
 	}
@@ -119,6 +125,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	allowed, err := tiny.allowed()
 
 	if err != nil || !allowed {
+		log.Println(err)
 		sendToLogin(ctx, m.GetInstanceID())
 	}
 }
