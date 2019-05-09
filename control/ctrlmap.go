@@ -103,10 +103,10 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	url, token := removeToken(path)
 
 	if token == "" {
-		authHeader := ctx.Request.Header["Authorization"]
+		authHeader := ctx.Input.Cookie("avosession") //ctx.Request.Header["Authorization"]
 
 		if len(authHeader) > 0 {
-			token = strings.Split(authHeader[0], " ")[0]
+			token = strings.Split(authHeader, " ")[0]
 		} else {
 			log.Println("no authorization found")
 			sendToLogin(ctx, m.GetInstanceID())
@@ -152,7 +152,7 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	authHeader := ctx.Request.Header["Authorization"]
+	authHeader := ctx.Input.Cookie("avosession") //ctx.Request.Header["Authorization"]
 
 	if len(authHeader) == 0 {
 		err := errors.New("no authorization header provided")
@@ -160,7 +160,7 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	token := strings.Split(authHeader[0], " ")[0]
+	token := strings.Split(authHeader, " ")[0]
 	tiny, err := NewTinyCtx(m.GetServiceName(), action, path, token, requiredRole, m.GetPublicKeyPath())
 
 	if err != nil {

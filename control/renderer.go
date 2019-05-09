@@ -14,8 +14,6 @@ func (f rendererFunc) Render(ctx *context.Context) {
 
 func RenderUnauthorized(err error) context.Renderer {
 	return rendererFunc(func(ctx *context.Context) {
-		ctx.Output.Header("WWW-Authenticate", "Bearer")
-
 		ctx.Output.SetStatus(http.StatusUnauthorized)
 		ctx.Output.Body([]byte(err.Error()))
 	})
