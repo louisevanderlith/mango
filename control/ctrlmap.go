@@ -77,7 +77,7 @@ func (m *ControllerMap) GetPublicKeyPath() string {
 // FilterUI is used to secure web pages.
 // When a user is not allowed to access a Page, they are redirected to secure.login
 func (m *ControllerMap) FilterUI(ctx *context.Context) {
-	path := ctx.Input.URL()
+	path := ctx.Request.URL.RequestURI()
 	action := ctx.Request.Method
 
 	if strings.HasPrefix(path, "/static") || strings.HasPrefix(path, "/favicon") {
@@ -126,7 +126,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 // FilterAPI is used to secure API services.
 // When a user is not allowed to access a resource, they will get the Unauthorized Status.
 func (m *ControllerMap) FilterAPI(ctx *context.Context) {
-	path := ctx.Input.URL()
+	path := ctx.Request.URL.RequestURI()
 	action := ctx.Request.Method
 
 	if strings.HasPrefix(path, "/favicon") {
