@@ -34,7 +34,7 @@ func (m *ControllerMap) Add(path string, actionMap secure.ActionMap) {
 }
 
 //GetRequiredRole will return the RoleType required to access the 'path' and 'action'
-func (m *ControllerMap) GetRequiredRole(path, action string) roletype.Enum {
+func (m *ControllerMap) GetRequiredRole(path, action string) (roletype.Enum, error) {
 	actionMap, hasCtrl := m.mapping[path]
 
 	if !hasCtrl {
@@ -47,16 +47,16 @@ func (m *ControllerMap) GetRequiredRole(path, action string) roletype.Enum {
 	}
 
 	if actionMap == nil {
-		panic(fmt.Sprintf("missing mapping for %s on %s", action, path))
+		return roletype.Unknown, fmt.Errorf("missing mapping for %s on %s", action, path)
 	}
 
 	roleType, hasAction := actionMap[strings.ToUpper(action)]
 
 	if !hasAction {
-		return roletype.Unknown
+		return roletype.Unknown, nil
 	}
 
-	return roleType
+	return roleType, nil
 }
 
 //GetInstanceID returns the ID initially registered with the Service.
@@ -69,6 +69,11 @@ func (m *ControllerMap) GetServiceName() string {
 	return m.service.Name
 }
 
+//GetPublicKeyPath return the Location of the public key file registered with the Service.
+func (m *ControllerMap) GetPublicKeyPath() string {
+	return m.service.PublicKey
+}
+
 // FilterUI is used to secure web pages.
 // When a user is not allowed to access a Page, they are redirected to secure.login
 func (m *ControllerMap) FilterUI(ctx *context.Context) {
@@ -79,7 +84,13 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		return
 	}
 
-	requiredRole := m.GetRequiredRole(path, action)
+	requiredRole, err := m.GetRequiredRole(path, action)
+
+	if err != nil {
+		//Missing Mapping, the user doesn't have access to the application, and must request it.
+		sendToSubscription(ctx, m.GetInstanceID())
+		return
+	}
 
 	if requiredRole == roletype.Unknown {
 		return
@@ -98,7 +109,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		}
 	}
 
-	tiny, err := NewTinyCtx(m.GetServiceName(), ctx.Request.Method, url, token, requiredRole)
+	tiny, err := NewTinyCtx(m.GetServiceName(), ctx.Request.Method, url, token, requiredRole, m.GetPublicKeyPath())
 
 	if err != nil {
 		sendToLogin(ctx, m.GetInstanceID())
@@ -109,10 +120,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 
 	if err != nil || !allowed {
 		sendToLogin(ctx, m.GetInstanceID())
-		return
 	}
-
-	return
 }
 
 // FilterAPI is used to secure API services.
@@ -125,7 +133,13 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	requiredRole := m.GetRequiredRole(path, action)
+	requiredRole, err := m.GetRequiredRole(path, action)
+
+	if err != nil {
+		//Missing Mapping, the user doesn't have access to the application
+		ctx.RenderMethodResult(RenderUnauthorized(err))
+		return
+	}
 
 	if requiredRole == roletype.Unknown {
 		return
@@ -134,13 +148,13 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 	authHeader := ctx.Request.Header["Authorization"]
 
 	if len(authHeader) == 0 {
-		err := errors.New("no Authorization Header provided")
+		err := errors.New("no authorization header provided")
 		ctx.RenderMethodResult(RenderUnauthorized(err))
 		return
 	}
 
 	token := strings.Split(authHeader[0], " ")[0]
-	tiny, err := NewTinyCtx(m.GetServiceName(), action, path, token, requiredRole)
+	tiny, err := NewTinyCtx(m.GetServiceName(), action, path, token, requiredRole, m.GetPublicKeyPath())
 
 	if err != nil {
 		ctx.RenderMethodResult(RenderUnauthorized(err))
@@ -156,10 +170,7 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 
 	if !allowed {
 		ctx.RenderMethodResult(RenderUnauthorized(errors.New("no access")))
-		return
 	}
-
-	return
 }
 
 func sendToLogin(ctx *context.Context, instanceID string) {
@@ -177,10 +188,27 @@ func sendToLogin(ctx *context.Context, instanceID string) {
 	ctx.Redirect(http.StatusTemporaryRedirect, loginURL)
 }
 
+func sendToSubscription(ctx *context.Context, instanceID string) {
+	securityURL, err := mango.GetServiceURL(instanceID, "Auth.APP", true)
+
+	if err != nil {
+		ctx.RenderMethodResult(err)
+		return
+	}
+
+	subcribeURL := buildSubscribeURL(securityURL)
+
+	ctx.Redirect(http.StatusTemporaryRedirect, subcribeURL)
+}
+
 func buildLoginURL(securityURL, returnURL string) string {
 	cleanReturn := removeQueries(returnURL)
 	escURL := url.QueryEscape(cleanReturn)
 	return fmt.Sprintf("%slogin?return=%s", securityURL, escURL)
+}
+
+func buildSubscribeURL(securityURL string) string {
+	return fmt.Sprintf("%ssubscribe", securityURL)
 }
 
 func removeQueries(url string) string {

@@ -21,11 +21,17 @@ type TinyCtx struct {
 	URL             string
 	Method          string
 	SessionID       string
+	PublicKey       string
 }
 
-const avosession = "avosession"
-
-func NewTinyCtx(applicationName, method, url, token string, requiredrole roletype.Enum) (*TinyCtx, error) {
+//NewTinyCtx returns a tiny context. This is used to authorise users
+//applicationName: Name of the Application
+//method: GET, POST, DELETE, ETC
+//url: The target path
+//token: The user's JWT Token
+//requiredRole: The minimum role required by the target.
+//publicKey: The fullpath to the actual .pub file.
+func NewTinyCtx(applicationName, method, url, token string, requiredrole roletype.Enum, publicKey string) (*TinyCtx, error) {
 	if len(method) < 3 {
 		return nil, errors.New("invalid method")
 	}
@@ -38,15 +44,20 @@ func NewTinyCtx(applicationName, method, url, token string, requiredrole roletyp
 		return nil, errors.New("invalid token")
 	}
 
-	result := TinyCtx{}
+	if !strings.Contains(publicKey, ".pub") {
+		return nil, errors.New("invalid public key path")
+	}
 
-	result.RequiredRole = requiredrole
-	result.ApplicationName = applicationName
-	result.URL = url
-	result.Method = method
-	result.SessionID = token
+	result := &TinyCtx{
+		RequiredRole:    requiredrole,
+		ApplicationName: applicationName,
+		URL:             url,
+		Method:          method,
+		SessionID:       token,
+		PublicKey:       publicKey,
+	}
 
-	return &result, nil
+	return result, nil
 }
 
 func (ctx *TinyCtx) allowed() (bool, error) {
@@ -135,7 +146,7 @@ func (ctx *TinyCtx) getAvoCookie() (*secure.Cookies, error) {
 
 	token, err := jwt.Parse(ctx.SessionID, func(t *jwt.Token) (interface{}, error) {
 		var rdr io.Reader
-		if f, err := os.Open("/db/sign_rsa.pub"); err == nil {
+		if f, err := os.Open(ctx.PublicKey); err == nil {
 			rdr = f
 			defer f.Close()
 		} else {
