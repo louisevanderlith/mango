@@ -11,7 +11,6 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/louisevanderlith/husk"
-	"github.com/louisevanderlith/mango"
 	secure "github.com/louisevanderlith/secure/core"
 	"github.com/louisevanderlith/secure/core/roletype"
 )
@@ -22,12 +21,11 @@ type TinyCtx struct {
 	URL             string
 	Method          string
 	SessionID       string
-	Service         *mango.Service
 }
 
 const avosession = "avosession"
 
-func NewTinyCtx(m *ControllerMap, method, url, token string) (*TinyCtx, error) {
+func NewTinyCtx(applicationName, method, url, token string, requiredrole roletype.Enum) (*TinyCtx, error) {
 	if len(method) < 3 {
 		return nil, errors.New("invalid method")
 	}
@@ -42,15 +40,11 @@ func NewTinyCtx(m *ControllerMap, method, url, token string) (*TinyCtx, error) {
 
 	result := TinyCtx{}
 
-	actMethod := strings.ToUpper(method)
-	required := m.GetRequiredRole(url, actMethod)
-
-	result.RequiredRole = required
-	result.ApplicationName = m.GetServiceName()
+	result.RequiredRole = requiredrole
+	result.ApplicationName = applicationName
 	result.URL = url
-	result.Method = actMethod
+	result.Method = method
 	result.SessionID = token
-	result.Service = m.service
 
 	return &result, nil
 }
@@ -181,8 +175,8 @@ func (ctx *TinyCtx) getAvoCookie() (*secure.Cookies, error) {
 	return result, nil
 }
 
-func removeToken(url string) (cleanURL, token string) {
-	idx := strings.LastIndex(url, "?token")
+func removeToken(url string) (string, string) {
+	idx := strings.LastIndex(url, "?access_token")
 
 	if idx == -1 {
 		return url, ""
@@ -190,8 +184,8 @@ func removeToken(url string) (cleanURL, token string) {
 
 	tokenIdx := strings.LastIndex(url, "=") + 1
 
-	cleanURL = url[:idx]
-	token = url[tokenIdx:]
+	cleanURL := url[:idx]
+	token := url[tokenIdx:]
 
 	return cleanURL, token
 }
