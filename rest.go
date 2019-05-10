@@ -2,6 +2,7 @@ package mango
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -75,6 +76,10 @@ func DoGET(token string, container interface{}, instanceID, serviceName, control
 
 	if err != nil {
 		return http.StatusInternalServerError, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return resp.StatusCode, errors.New(string(contents))
 	}
 
 	rest, err := marshalToResult(contents, container)
