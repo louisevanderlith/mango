@@ -12,7 +12,7 @@ import (
 
 func GetDefaultTheme(instanceID, siteName string) (ThemeSetting, error) {
 	prof := folio.Profile{}
-	_, err := DoGET(&prof, instanceID, "Folio.API", "profile", siteName)
+	_, err := DoGET("", &prof, instanceID, "Folio.API", "profile", siteName)
 
 	if err != nil {
 		return ThemeSetting{}, err
@@ -50,7 +50,7 @@ func UpdateTheme(instanceID string) error {
 
 func findTemplates(instanceID string) ([]string, error) {
 	result := []string{}
-	code, err := DoGET(&result, instanceID, "Theme.API", "asset", "html")
+	code, err := DoGET("", &result, instanceID, "Theme.API", "asset", "html")
 
 	if err != nil {
 		return []string{strconv.Itoa(code)}, err

@@ -25,7 +25,7 @@ func GetServiceURL(instanceID, serviceName string, cleanURL bool) (string, error
 
 	if !ok {
 		result := ""
-		code, err := DoGET(&result, instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
+		code, err := DoGET("", &result, instanceID, "Router.API", "discovery", instanceID, serviceName, strconv.FormatBool(cleanURL))
 
 		if err != nil {
 			scode := strconv.Itoa(code)

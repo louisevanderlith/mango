@@ -110,3 +110,14 @@ func (ctrl *APIController) GetKeyedRequest(target interface{}) (husk.Key, error)
 
 	return result.Key, nil
 }
+
+//GetMyToken
+func (ctrl *APIController) GetMyToken() string {
+	vals := ctrl.Ctx.Request.Header["Authorization"]
+
+	if len(vals) == 0 {
+		return ""
+	}
+
+	return vals[0]
+}
