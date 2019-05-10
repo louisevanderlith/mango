@@ -84,8 +84,8 @@ func Test_tinyCtx_ValidToken_Allowed_HasApplicationRole_Admin(t *testing.T) {
 		t.Error(err)
 	}
 
-	if allowed {
-		t.Errorf("Tiny was allowed. \n %v", tiny)
+	if !allowed {
+		t.Errorf("Tiny was not allowed. \n %v", tiny)
 	}
 }
 
@@ -146,10 +146,10 @@ func Test_tinyCtx_NoToken_NotAllowed_HasApplicationRole_Admin(t *testing.T) {
 	}
 }
 
-func Test_tinyCtx_notoken_Allowed_HasApplicationRole_Admin(t *testing.T) {
+func Test_tinyCtx_NoToken_Allowed_HasApplicationRole_Admin(t *testing.T) {
 	srvc := &mango.Service{
 		ID:            "X",
-		Name:          "Test.API",
+		Name:          "WWW.APP",
 		AllowedCaller: enums.APP,
 		Type:          enums.API,
 		Environment:   enums.DEV,

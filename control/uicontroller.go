@@ -74,3 +74,7 @@ func (ctrl *UIController) CreateSideMenu(menu *Menu) {
 func (ctrl *UIController) createMenu(name string, menu *Menu) {
 	ctrl.Data[name] = menu
 }
+
+func (ctrl *UIController) GetMyToken() string {
+	return ctrl.Ctx.GetCookie("Authorization")
+}

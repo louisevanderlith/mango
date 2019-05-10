@@ -15,6 +15,8 @@ type RESTResult struct {
 	Data   interface{} `json:"Data"`
 }
 
+var client = &http.Client{}
+
 func NewRESTResult(code int, reason error, data interface{}) *RESTResult {
 	result := &RESTResult{
 		Code: code,
@@ -33,9 +35,16 @@ func (r RESTResult) Error() string {
 }
 
 //DoGET does a GET request and will update the container with the reponse's values.
+//Mango only exposes GET, as other requests should be made from the Client's Browser
+//token: this is the access_token/avosession
+//container: the object that will be populated with the results
+//instanceID: instance of the application making the request
+//serviceName: the name of the service being requested
+//controller: the Controller to call
+//params: additional path variables
 //returns int : httpStatusCode
 //return error: error
-func DoGET(container interface{}, instanceID, serviceName, controller string, params ...string) (int, error) {
+func DoGET(token string, container interface{}, instanceID, serviceName, controller string, params ...string) (int, error) {
 	url, err := GetServiceURL(instanceID, serviceName, false)
 
 	if err != nil {
@@ -44,7 +53,17 @@ func DoGET(container interface{}, instanceID, serviceName, controller string, pa
 
 	fullURL := fmt.Sprintf("%sv1/%s/%s", url, controller, strings.Join(params, "/"))
 
-	resp, err := http.Get(fullURL)
+	req, err := http.NewRequest("GET", fullURL, nil)
+
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	if len(token) > 0 {
+		req.Header.Add("Authorization", "Bearer "+token)
+	}
+
+	resp, err := client.Do(req)
 
 	if err != nil {
 		return http.StatusInternalServerError, err
@@ -77,8 +96,7 @@ func marshalToResult(content []byte, dataObj interface{}) (*RESTResult, error) {
 	err := json.Unmarshal(content, result)
 
 	if err != nil {
-		fullerr := fmt.Errorf("marshal: %s\r%s", err.Error(), string(content))
-		return nil, fullerr
+		return nil, err
 	}
 
 	return result, nil

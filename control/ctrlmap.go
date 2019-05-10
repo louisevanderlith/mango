@@ -81,8 +81,6 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	path := ctx.Request.URL.RequestURI()
 	action := ctx.Request.Method
 
-	log.Printf("FilterUI: %s | %s\n", path, action)
-
 	if strings.HasPrefix(path, "/static") || strings.HasPrefix(path, "/favicon") {
 		return
 	}
@@ -152,7 +150,7 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	authHeader := ctx.Input.Cookie("avosession") //ctx.Request.Header["Authorization"]
+	authHeader := ctx.Request.Header["Authorization"]
 
 	if len(authHeader) == 0 {
 		err := errors.New("no authorization header provided")
@@ -160,7 +158,7 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	token := strings.Split(authHeader, " ")[0]
+	token := strings.Split(authHeader[0], " ")[0]
 	tiny, err := NewTinyCtx(m.GetServiceName(), action, path, token, requiredRole, m.GetPublicKeyPath())
 
 	if err != nil {
