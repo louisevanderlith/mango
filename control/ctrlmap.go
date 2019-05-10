@@ -158,7 +158,16 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	token := strings.Split(authHeader[0], " ")[0]
+	parts := strings.Split(authHeader[0], " ")
+	tokenType := parts[0]
+
+	if strings.Trim(tokenType, " ") != "Bearer" {
+		err := errors.New("Bearer Authentication only")
+		ctx.RenderMethodResult(RenderUnauthorized(err))
+		return
+	}
+
+	token := parts[1]
 	tiny, err := NewTinyCtx(m.GetServiceName(), action, path, token, requiredRole, m.GetPublicKeyPath())
 
 	if err != nil {
