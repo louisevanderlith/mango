@@ -76,5 +76,5 @@ func (ctrl *UIController) createMenu(name string, menu *Menu) {
 }
 
 func (ctrl *UIController) GetMyToken() string {
-	return ctrl.Ctx.GetCookie("Authorization")
+	return ctrl.Ctx.GetCookie("avosession")
 }
