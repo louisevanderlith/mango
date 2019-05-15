@@ -1,97 +1,41 @@
-# mango
-Mango monorepo for all of avosa's applications and services.
-Please note that this repo is currently maintained on Windows, and all scripts and settings are setup as such.
+# Mango
+Mango is the core module which allows us to easily connect applications and services.
+The services and applications built using this framework and Docker allow us to have a some control over a lot of moving parts.
+
+Every module can be individually edited, compiled and deployed, you don't even need Go or Dart installed, via Docker.   
+
+Applications are built using;
+* Dart for Front-end logic only.
+* Go for Back-end logic
+* Templates are rendered using Go's default HTML Template language.
+* Husk for Storage
+* Docker for Networking and scalability
+
+HTTPS is the only option for running these modules, as modern-day requirements don't allow for un-secure connections and dealing with security at deploy time is not fun.
 
 [![CodeFactor](https://www.codefactor.io/repository/github/louisevanderlith/mango/badge)](https://www.codefactor.io/repository/github/louisevanderlith/mango)
-[![Build Status](https://travis-ci.org/louisevanderlith/mango.svg?branch=master)](https://travis-ci.org/louisevanderlith/mango)
 
 ## Project Requirements
-* GO v1.11.2
-* Beego v1.10 and above
-
-## Fun Facts:
-1. Current target Hardware;
-  CPU: Intel(R) Xeon(R) X5675@3.07GHz (1 Socket, 1 Core)
-  RAM: 2GiB
-  HDD: 50GiB
-  NET: 1x10Gbit/s Physical Ethernet
-
-## Running the Project
-* $ npm install
-* $ gulp (Watchers have been setup for JS & CSS changes.)
-* $ docker-compose build
-* $ docker-compose up
+* Docker
+* docker-compose
 
 ## Project Layout
-* The API folder contains all micro-services and APIs.
-* The Web folder contains all websites and applications.
-* The Core folder contains all data models and their logic.
-* The Pkg folder contains logic used by most applications.
+This repository used to contain all of the APP and API modules, but they have since been moved to their own repositories.
+Now it contains shared logic for Controllers, Service Discovery, etc. As well as some information on how to setup and run everything in union.
 
-The 'Router' and 'Gate' applications are key to running any of the other products found within this repo.
+The 'Router' and 'Gate' applications are key to running any of the other products found within this profile.
 If you don't require fancy named URLs, then running 'Router' is all you need to get up and running.
 
-### Router (/API/router)
-The router API is used hold all versions of an application or API's URLs
-For example, we can use the same router for all of our environments like 'LIVE', 'UAT', and 'DEV'
-This means that we can ask the router API for our e-mail API (Comms.API) and depending on the environment of the caller
-the API, we will get the correct URL.
-The functionality provided by this API also ensures that we can't all anything from 'LIVE' when running on 'DEV',
-and may be seen as a way of keeping developers safe.
+After cloning the desired application, navigate to it and run using docker-compose.
+Specific details on running every module can be found in it's README.md
 
-In order for the router to know about a Database, API or Application, we have to register with the router API on start-up.
-We don't need to store URLs anywhere in our applications or JavaScript.
-We just need to know what application we want.
-This decreases effort when deploying our applications and also keeps the code free from URLs which could cause problems in the future.
-
-You will see 'srv.Register(port)' within the main.go of every application.
-This function is used to register an application.
-
-### Gate (/APP/gate)
-The Gate application acts as the main entry point for all applications, as we can assign names to every registered application.
-So, when debugging we can call 'https://comms.localhost(:80)/' instead of 'http://localhost:8085' for the 'Comms.API'.
-This avoids the need to remember the specific port for every application running and also removes the need to store URLs within every application.
-The front-end also relies on the Gate to determine the correct environment's URL when calling services.
-
-The gate application will try to load the default WWW website when a subdomain can't be found.
-We require 1(one) instance of Gate running for every environment we have.
-
-## API Folder
-- ### Artifact
-  Images, Audio, and other assets should be stored and retrieved using this API.
-- ### Comment
-  Any comments made on the system, should all be controlled by the Comment API.
-- ### Comms
-  Email, SMS and other Messages are all to handled by Comms.
-  ### Folio
-  The default website's (WWW's) data store.
-- ### Funds
-  Transaction and payment processing.
-- ### Router
-  See the description for Router above.
-- ### Secure
-  User authentication and session control is all done by the Secure API.
-
-## Web Folder
-- ### Admin
-  We should be able to control and monitor every application and it's data from this application.
-- ### Cars
-  Cars will act as the central platform for advertising vehicles.
-  ### Gate
-  See the description for Gate above.
-- ### Logbook
-  Logbook is an application that will be built to provide added value to the Auto application.
-- ### Shop
-  This application is our central e-commerce platform.
-- ### WWW
-  WWW is as the name suggests, the default website for this repo.
-
-# Feature Testing Users:
-* admin@mango.avo : Admin4v0
+Please see /secure repository for User login information.
 
 ## On Paged Data
-Every GET request, where the intention is to get many results, you have to specify the PAGE Data.
-/:pageData^[A-Z]+:[0-9]+$
-/:page/:size
-/A/6
-/<Page A>/<6 per Page>
+Mango API's support paging out of the box, as we use Husk which demands all results be requested by page.
+Every GET request, where the intention is to get many results, you have to specify the :pagesize Data.
+https://ads.localhost/advert/all/:pageSize
+https://ads.localhost/advert/all/A6
+
+Where `A6` is `Page A` & `6 items per Page` is requested.
+We support 26 pages (A-Z) and any positve amount of results per page. 
