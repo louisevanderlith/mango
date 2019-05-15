@@ -62,7 +62,7 @@ func Test_tinyCtx_ValidToken_Allowed_HasApplicationRole_Admin(t *testing.T) {
 		AllowedCaller: enums.APP,
 		Type:          enums.API,
 		Environment:   enums.DEV,
-		PublicKey:     "../../secure/db/sign_rsa.pub",
+		PublicKey:     "../../gate/certs/fullchain.pem",
 	}
 
 	ctrlmap := CreateControlMap(srvc)
@@ -96,7 +96,7 @@ func Test_tinyCtx_ValidToken_NotAllowedMapping_HasApplicationRole_Admin(t *testi
 		AllowedCaller: enums.APP,
 		Type:          enums.API,
 		Environment:   enums.DEV,
-		PublicKey:     "../../secure/db/sign_rsa.pub",
+		PublicKey:     "../../gate/certs/fullchain.pem",
 	}
 
 	ctrlmap := CreateControlMap(srvc)
@@ -130,7 +130,7 @@ func Test_tinyCtx_NoToken_NotAllowed_HasApplicationRole_Admin(t *testing.T) {
 		AllowedCaller: enums.APP,
 		Type:          enums.API,
 		Environment:   enums.DEV,
-		PublicKey:     "../../secure/db/sign_rsa.pub",
+		PublicKey:     "../../gate/certs/fullchain.pem",
 	}
 
 	ctrlmap := CreateControlMap(srvc)
@@ -153,7 +153,7 @@ func Test_tinyCtx_NoToken_Allowed_HasApplicationRole_Admin(t *testing.T) {
 		AllowedCaller: enums.APP,
 		Type:          enums.API,
 		Environment:   enums.DEV,
-		PublicKey:     "../../secure/db/sign_rsa.pub",
+		PublicKey:     "../../gate/certs/fullchain.pem",
 	}
 
 	ctrlmap := CreateControlMap(srvc)
