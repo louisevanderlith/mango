@@ -44,7 +44,7 @@ func NewTinyCtx(applicationName, method, url, token string, requiredrole roletyp
 		return nil, errors.New("invalid token")
 	}
 
-	if len(publicKey) > 3 {
+	if len(publicKey) < 3 {
 		return nil, errors.New("invalid public key path")
 	}
 
