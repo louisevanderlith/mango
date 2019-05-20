@@ -20,6 +20,8 @@ type APIController struct {
 	InstanceController
 }
 
+//Prepare is called before the Action on a Controller is executed.
+//The API Prepare adds some security Headers to every request.
 func (ctrl *APIController) Prepare() {
 	output := ctrl.Ctx.Output
 
@@ -28,7 +30,8 @@ func (ctrl *APIController) Prepare() {
 	output.Header("Server", "kettle")
 	output.Header("X-Content-Type-Options", "nosniff")
 }
- 
+
+//ServeBinary is used to serve files such as images and documents.
 func (ctrl *APIController) ServeBinary(data []byte, filename string) {
 	dataLen := len(data)
 	toTake := 512
@@ -42,6 +45,7 @@ func (ctrl *APIController) ServeBinary(data []byte, filename string) {
 	ctrl.ServeBinaryWithMIME(data, filename, mimetype)
 }
 
+//ServeBinaryWithMIME is used to serve files such as images and documents. You must specify the MIME Type
 func (ctrl *APIController) ServeBinaryWithMIME(data []byte, filename, mimetype string) {
 	output := ctrl.Ctx.Output
 
