@@ -26,8 +26,9 @@ func (ctrl *APIController) Prepare() {
 	output.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
 	output.Header("Access-Control-Allow-Credentials", "true")
 	output.Header("Server", "kettle")
+	output.Header("X-Content-Type-Options", "nosniff")
 }
-
+ 
 func (ctrl *APIController) ServeBinary(data []byte, filename string) {
 	dataLen := len(data)
 	toTake := 512
