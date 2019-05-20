@@ -101,10 +101,9 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	url, token := removeToken(path)
 
 	if token == "" {
-		token, err = getAuthorizationToken(ctx)
+		token = ctx.GetCookie("avosession")
 
-		if err != nil {
-			log.Println(err)
+		if len(token) == 0 {
 			sendToLogin(ctx, m.GetInstanceID())
 			return
 		}
