@@ -25,7 +25,6 @@ func (ctrl *UIController) Prepare() {
 	//output.Header("Content-Security-Policy", "script-src 'self' https:")
 	output.Header("X-Frame-Options", "SAMEORIGIN")
 	output.Header("X-XSS-Protection", "1; mode=block")
-	output.Header("X-Content-Type-Options", "nosniff")
 }
 
 func (ctrl *UIController) Setup(name, title string, hasScript bool) {
