@@ -101,12 +101,10 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 	url, token := removeToken(path)
 
 	if token == "" {
-		authHeader := ctx.Input.Cookie("avosession") //ctx.Request.Header["Authorization"]
+		token, err = getAuthorizationToken(ctx)
 
-		if len(authHeader) > 0 {
-			token = strings.Split(authHeader, " ")[0]
-		} else {
-			log.Println("no authorization found")
+		if err != nil {
+			log.Println(err)
 			sendToLogin(ctx, m.GetInstanceID())
 			return
 		}
@@ -150,24 +148,13 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	authHeader := ctx.Request.Header["Authorization"]
+	token, err := getAuthorizationToken(ctx)
 
-	if len(authHeader) == 0 {
-		err := errors.New("no authorization header provided")
+	if err != nil {
 		ctx.RenderMethodResult(RenderUnauthorized(err))
 		return
 	}
 
-	parts := strings.Split(authHeader[0], " ")
-	tokenType := parts[0]
-
-	if strings.Trim(tokenType, " ") != "Bearer" {
-		err := errors.New("Bearer Authentication only")
-		ctx.RenderMethodResult(RenderUnauthorized(err))
-		return
-	}
-
-	token := parts[1]
 	tiny, err := NewTinyCtx(m.GetServiceName(), action, path, token, requiredRole, m.GetPublicKeyPath())
 
 	if err != nil {
@@ -233,4 +220,22 @@ func removeQueries(url string) string {
 	}
 
 	return url
+}
+
+//Returns the [TOKEN] in 'Bearer [TOKEN]'
+func getAuthorizationToken(ctx *context.Context) (string, error) {
+	authHeader := ctx.Request.Header["Authorization"]
+
+	if len(authHeader) == 0 {
+		return "", errors.New("no authorization header provided")
+	}
+
+	parts := strings.Split(authHeader[0], " ")
+	tokenType := parts[0]
+
+	if strings.Trim(tokenType, " ") != "Bearer" {
+		return "", errors.New("Bearer Authentication only")
+	}
+
+	return parts[1], nil
 }
