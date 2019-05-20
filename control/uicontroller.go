@@ -31,8 +31,6 @@ func (ctrl *UIController) Setup(name, title string, hasScript bool) {
 	ctrl.TplName = fmt.Sprintf("%s.html", name)
 	ctrl.applySettings(title)
 
-	// By default we want to include scripts
-	// Set this to false in your controller, when scripts aren't needed
 	ctrl.Data["HasScript"] = hasScript
 	ctrl.Data["ScriptName"] = fmt.Sprintf("%s.entry.dart.js", name)
 }
