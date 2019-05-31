@@ -13,24 +13,25 @@ import (
 
 //Service identifies the Registering APP or API
 type Service struct {
-	ID            string
-	Name          string
-	URL           string
-	Version       int
-	Environment   enums.Environment
-	AllowedCaller enums.ServiceType
-	Type          enums.ServiceType
-	PublicKey     string
+	ID             string
+	Name           string
+	URL            string
+	Version        int
+	Environment    enums.Environment
+	AllowedCallers map[enums.ServiceType]struct{}
+	Type           enums.ServiceType
+	PublicKey      string
 }
 
 //NewService returns a new instance of a Services' information
 //publicKey refers to the location of the public key file (.pub)
 func NewService(env, name, publicKey string, serviceType enums.ServiceType) *Service {
 	result := &Service{
-		Environment: enums.GetEnvironment(env),
-		Name:        name,
-		Type:        serviceType,
-		PublicKey:   publicKey,
+		Environment:    enums.GetEnvironment(env),
+		Name:           name,
+		Type:           serviceType,
+		PublicKey:      publicKey,
+		AllowedCallers: make(map[enums.ServiceType]struct{}),
 	}
 
 	return result
