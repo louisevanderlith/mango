@@ -1,8 +1,6 @@
 package mango
 
 import (
-	"fmt"
-	"os"
 	"strconv"
 )
 
@@ -16,7 +14,7 @@ var serviceKeys map[k]string
 func init() {
 	serviceKeys = make(map[k]string)
 
-	serviceKeys[k{"Router.API", false}] = fmt.Sprintf("http://Router%s:8080/", os.Getenv("RUNMODE"))
+	serviceKeys[k{"Router.API", false}] = "http://RouterAPI:8080/"
 }
 
 //GetServiceURL returns the correct URL for a service according to the caller's environment.

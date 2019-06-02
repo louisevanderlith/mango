@@ -6,7 +6,6 @@ services:
     image: avosa/router:dev
     build: ../../router/
     environment:
-        - RUNMODE=${RUNMODE}
         - KEYPATH=${KEYPATH}
         - PUBLICKEY=${PUBLICKEY}
         - HOST=${HOST}
@@ -21,7 +20,6 @@ services:
     image: avosa/gate:dev
     build: ../../gate/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - PRIVATEKEY=${PRIVATEKEY}
@@ -45,7 +43,6 @@ services:
     image: avosa/secure:dev
     build: ../../secure/
     environment:
-        - RUNMODE=${RUNMODE}
         - KEYPATH=${KEYPATH}
         - PUBLICKEY=${PUBLICKEY}
         - PRIVATEKEY=${PRIVATEKEY}
@@ -66,7 +63,6 @@ services:
     image: avosa/artifact:dev
     build: ../../artifact/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
@@ -86,7 +82,6 @@ services:
     image: avosa/folio:dev
     build: ../../folio/
     environment:
-        - RUNMODE=${RUNMODE}
         - KEYPATH=${KEYPATH}
         - PUBLICKEY=${PUBLICKEY}
         - HOST=${HOST}
@@ -106,7 +101,6 @@ services:
     image: avosa/theme:dev
     build: ../../theme/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
@@ -125,7 +119,6 @@ services:
     image: avosa/auth:dev
     build: ../../auth/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
@@ -144,7 +137,6 @@ services:
     image: avosa/comms:dev
     build: ../../comms/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
@@ -164,7 +156,6 @@ services:
     image: avosa/www:dev
     build: ../../www/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
@@ -182,7 +173,6 @@ services:
     image: avosa/cars:dev
     build: ../../cars/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
@@ -200,7 +190,6 @@ services:
     image: avosa/admin:dev
     build: ../../admin/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
@@ -218,7 +207,6 @@ services:
     image: avosa/service:dev
     build: ../../service/
     environment:
-      - RUNMODE=${RUNMODE}
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
