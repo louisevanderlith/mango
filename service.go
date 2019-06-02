@@ -17,7 +17,6 @@ type Service struct {
 	Name           string
 	URL            string
 	Version        int
-	Environment    enums.Environment
 	AllowedCallers map[enums.ServiceType]struct{}
 	Type           enums.ServiceType
 	PublicKey      string
@@ -25,9 +24,8 @@ type Service struct {
 
 //NewService returns a new instance of a Services' information
 //publicKey refers to the location of the public key file (.pub)
-func NewService(env, name, publicKey string, serviceType enums.ServiceType) *Service {
+func NewService(name, publicKey string, serviceType enums.ServiceType) *Service {
 	result := &Service{
-		Environment:    enums.GetEnvironment(env),
 		Name:           name,
 		Type:           serviceType,
 		PublicKey:      publicKey,
@@ -94,7 +92,7 @@ func sendRegistration(s *Service) (*RESTResult, error) {
 }
 
 func (s *Service) setURL(port string) error {
-	url, err := getNetworkIP(s.Name, port, s.Environment)
+	url, err := getNetworkIP(s.Name, port)
 
 	if err != nil {
 		return err
@@ -105,9 +103,8 @@ func (s *Service) setURL(port string) error {
 	return nil
 }
 
-func getNetworkIP(name, port string, env enums.Environment) (string, error) {
-	keyName := strings.Split(name, ".")[0]
-	uniqueName := keyName + env.String()
+func getNetworkIP(name, port string) (string, error) {
+	uniqueName := strings.Replace(name, ".", "", 1)
 
 	return makeURL(uniqueName, port), nil
 }

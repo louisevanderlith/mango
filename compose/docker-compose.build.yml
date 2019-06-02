@@ -1,0 +1,238 @@
+version: "3.7"
+
+services:
+  # 1. Router API - Must be started first, as all services register with this API.
+  RouterAPI:
+    image: avosa/router:dev
+    build: ../../router/
+    environment:
+        - RUNMODE=${RUNMODE}
+        - KEYPATH=${KEYPATH}
+        - PUBLICKEY=${PUBLICKEY}
+        - HOST=${HOST}
+    ports:
+      - "8080:8080"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../gate/certs:${KEYPATH}:ro
+  # 2. Gate API (Proxy) - Will be the last application to start, it waits for it's dependants
+  GateAPI:
+    image: avosa/gate:dev
+    build: ../../gate/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - PRIVATEKEY=${PRIVATEKEY}
+      - HOST=${HOST}
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - mango_net
+    depends_on:
+      - WWWAPP
+      - CarsAPP
+      - ServiceAPP
+      - AdminAPP
+    volumes:
+      - ../../gate/certs:${KEYPATH}:ro
+  
+  # 3. Core APIs
+  # 3.1 Secure API - User Authentication
+  SecureAPI:
+    image: avosa/secure:dev
+    build: ../../secure/
+    environment:
+        - RUNMODE=${RUNMODE}
+        - KEYPATH=${KEYPATH}
+        - PUBLICKEY=${PUBLICKEY}
+        - PRIVATEKEY=${PRIVATEKEY}
+        - HOST=${HOST}
+    ports:
+      - "8086:8086"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../secure/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  # 3.2 Artifact API - BlobStorage
+  ArtifactAPI:
+    image: avosa/artifact:dev
+    build: ../../artifact/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8082:8082"
+    networks:
+      - "mango_net"
+    volumes: 
+      - ../../artifact/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+    - "RouterAPI"
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  # 4. Folio API - Profiles provide APP's with meta info.
+  FolioAPI:
+    image: avosa/folio:dev
+    build: ../../folio/
+    environment:
+        - RUNMODE=${RUNMODE}
+        - KEYPATH=${KEYPATH}
+        - PUBLICKEY=${PUBLICKEY}
+        - HOST=${HOST}
+    ports:
+      - "8090:8090"
+    volumes:
+      - ../../folio/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    networks:
+        - mango_net
+    depends_on:
+      - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  # 5. Theme API - Auth will require a template
+  ThemeAPI:
+    image: avosa/theme:dev
+    build: ../../theme/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    volumes: 
+      - ../../gate/certs:${KEYPATH}:ro
+    ports:
+      - "8093:8093"
+    networks:
+      - mango_net
+    depends_on:
+      - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  # 6. Auth APP - All applications require a login screen.
+  AuthAPP:
+    image: avosa/auth:dev
+    build: ../../auth/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    volumes: 
+      - ../../gate/certs:${KEYPATH}:ro
+    ports:
+      - "8094:8094"
+    networks:
+      - "mango_net"
+    depends_on:
+      - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  # 7. Comms API - Emails
+  CommsAPI:
+    image: avosa/comms:dev
+    build: ../../comms/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8085:8085"
+    networks:
+      - mango_net
+    volumes: 
+      - ../comms/db:/db
+      - ../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  # 8. Applications - Gate MUST depend on these.
+  WWWAPP:
+    image: avosa/www:dev
+    build: ../../www/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    volumes: 
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+      - ThemeAPI
+    networks:
+      - mango_net
+    ports:
+      - "8091:8091"
+    command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
+
+  CarsAPP:
+    image: avosa/cars:dev
+    build: ../../cars/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    depends_on:
+      - ThemeAPI
+    networks:
+      - mango_net
+    volumes: 
+      - ../../gate/certs:${KEYPATH}:ro
+    ports:
+      - "8081:8081"
+    command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
+
+  AdminAPP:
+    image: avosa/admin:dev
+    build: ../../admin/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    depends_on:
+      - ThemeAPI
+    networks:
+      - mango_net
+    volumes: 
+      - ../../gate/certs:${KEYPATH}:ro
+    ports:
+      - "8088:8088"
+    command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
+
+  ServiceAPP:
+    image: avosa/service:dev
+    build: ../../service/
+    environment:
+      - RUNMODE=${RUNMODE}
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    depends_on:
+      - ThemeAPI
+    networks:
+      - mango_net
+    ports:
+      - "8096:8096"
+    volumes: 
+      - ../../gate/certs:${KEYPATH}:ro
+    command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
+
+networks:
+  mango_net:
+    driver: bridge
+    name: mango_net
