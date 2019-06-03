@@ -34,6 +34,7 @@ services:
       - CarsAPP
       - ServiceAPP
       - AdminAPP
+      - ShopAPP
     volumes:
       - ../../gate/certs:${KEYPATH}:ro
   
@@ -145,12 +146,193 @@ services:
     networks:
       - mango_net
     volumes: 
-      - ../comms/db:/db
-      - ../gate/certs:${KEYPATH}:ro
+      - ../../comms/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+  
+  # 7.9 Backing Services
+  AdsAPI:
+    image: avosa/ads:dev
+    build: ../../ads/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8101:8101"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../ads/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
     depends_on:
         - RouterAPI
     command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
 
+  BlogAPI:
+    image: avosa/blog:dev
+    build: ../../blog/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8102:8102"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../blog/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  CommentAPI:
+    image: avosa/comment:dev
+    build: ../../comment/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8084:8084"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../comment/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  EntityAPI:
+    image: avosa/entity:dev
+    build: ../../entity/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8097:8097"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../entity/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  LogbookAPI:
+    image: avosa/logbook:dev
+    build: ../../logbook/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8089:8089"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../logbook/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  QuoteAPI:
+    image: avosa/quote:dev
+    build: ../../quote/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8099:8099"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../quote/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  NotifyAPI:
+    image: avosa/notify:dev
+    build: ../../notify/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8103:8103"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../notify/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  FundsAPI:
+    image: avosa/funds:dev
+    build: ../../funds/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8092:8092"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../funds/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  VINAPI:
+    image: avosa/vin:dev
+    build: ../../vin/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8095:8095"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../vin/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+
+  VehicleAPI:
+    image: avosa/vehicle:dev
+    build: ../../vehicle/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8098:8098"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../vehicle/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+  
   # 8. Applications - Gate MUST depend on these.
   WWWAPP:
     image: avosa/www:dev
@@ -216,6 +398,23 @@ services:
       - mango_net
     ports:
       - "8096:8096"
+    volumes: 
+      - ../../gate/certs:${KEYPATH}:ro
+    command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
+
+  ShopAPP:
+    image: avosa/shop:dev
+    build: ../../shop/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    depends_on:
+      - ThemeAPI
+    networks:
+      - mango_net
+    ports:
+      - "8083:8083"
     volumes: 
       - ../../gate/certs:${KEYPATH}:ro
     command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
