@@ -296,6 +296,24 @@ services:
     depends_on:
         - RouterAPI
     command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+  
+  GameAPI:
+    image: avosa/game:dev
+    build: ../../game/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8100:8100"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../game/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
 
   VINAPI:
     image: avosa/vin:dev

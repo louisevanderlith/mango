@@ -98,7 +98,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		return
 	}
 
-	url, token := removeToken(path)
+	_, token := removeToken(path)
 
 	if token == "" {
 		token = ctx.GetCookie("avosession")
@@ -109,7 +109,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		}
 	}
 
-	tiny, err := NewTinyCtx(m.GetServiceName(), ctx.Request.Method, url, token, requiredRole, m.GetPublicKeyPath())
+	avoc, err := GetAvoCookie(token, m.GetPublicKeyPath())
 
 	if err != nil {
 		log.Println(err)
@@ -117,7 +117,7 @@ func (m *ControllerMap) FilterUI(ctx *context.Context) {
 		return
 	}
 
-	allowed, err := tiny.allowed()
+	allowed, err := IsAllowed(m.GetServiceName(), avoc.UserRoles, requiredRole)
 
 	if err != nil || !allowed {
 		log.Println(err)
@@ -154,14 +154,14 @@ func (m *ControllerMap) FilterAPI(ctx *context.Context) {
 		return
 	}
 
-	tiny, err := NewTinyCtx(m.GetServiceName(), action, path, token, requiredRole, m.GetPublicKeyPath())
+	avoc, err := GetAvoCookie(token, m.GetPublicKeyPath())
 
 	if err != nil {
 		ctx.RenderMethodResult(RenderUnauthorized(err))
 		return
 	}
 
-	allowed, err := tiny.allowed()
+	allowed, err := IsAllowed(m.GetServiceName(), avoc.UserRoles, requiredRole)
 
 	if err != nil {
 		ctx.RenderMethodResult(RenderUnauthorized(err))
