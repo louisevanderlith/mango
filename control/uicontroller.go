@@ -43,9 +43,10 @@ func (ctrl *UIController) applySettings(title string) {
 
 	//User Details
 	avoc, err := GetAvoCookie(ctrl.GetMyToken(), ctrl.ctrlMap.GetPublicKeyPath())
-	ctrl.Data["LoggedIn"] = err != nil
+	loggedIn := err == nil
+	ctrl.Data["LoggedIn"] = loggedIn
 
-	if err == nil {
+	if loggedIn {
 		ctrl.Data["Username"] = avoc.Username
 	}
 }
