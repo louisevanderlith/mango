@@ -40,6 +40,14 @@ func (ctrl *UIController) applySettings(title string) {
 	ctrl.Data["LogoKey"] = ctrl.settings.LogoKey
 	ctrl.Data["InstanceID"] = ctrl.settings.InstanceID
 	ctrl.Data["Host"] = ctrl.settings.Host
+
+	//User Details
+	avoc, err := GetAvoCookie(ctrl.GetMyToken(), ctrl.ctrlMap.GetPublicKeyPath())
+	ctrl.Data["LoggedIn"] = err != nil
+
+	if err == nil {
+		ctrl.Data["Username"] = avoc.Username
+	}
 }
 
 //Serve sends the response with 'Error' and 'Data' properties.
