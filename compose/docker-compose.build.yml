@@ -153,9 +153,9 @@ services:
     command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
   
   # 7.9 Backing Services
-  AdsAPI:
-    image: avosa/ads:dev
-    build: ../../ads/
+  StockAPI:
+    image: avosa/stock:dev
+    build: ../../stock/
     environment:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
@@ -165,7 +165,7 @@ services:
     networks:
       - mango_net
     volumes: 
-      - ../../ads/db:/db
+      - ../../stock/db:/db
       - ../../gate/certs:${KEYPATH}:ro
     depends_on:
         - RouterAPI
@@ -346,6 +346,24 @@ services:
       - mango_net
     volumes: 
       - ../../vehicle/db:/db
+      - ../../gate/certs:${KEYPATH}:ro
+    depends_on:
+        - RouterAPI
+    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+  
+  XChangeAPI:
+    image: avosa/xchange:dev
+    build: ../../xchange/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=${HOST}
+    ports:
+      - "8104:8104"
+    networks:
+      - mango_net
+    volumes: 
+      - ../../xchange/db:/db
       - ../../gate/certs:${KEYPATH}:ro
     depends_on:
         - RouterAPI
