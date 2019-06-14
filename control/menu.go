@@ -58,6 +58,7 @@ type menuItem struct {
 func newItem(id, link, text, iconClass string, children *Menu) (shortName string, result *menuItem) {
 	shortName = getUniqueName(text)
 	result = &menuItem{
+		ID:       id,
 		Name:     text,
 		Link:     link,
 		Class:    iconClass,
