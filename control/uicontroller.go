@@ -33,6 +33,11 @@ func (ctrl *UIController) Setup(name, title string, hasScript bool) {
 
 	ctrl.Data["HasScript"] = hasScript
 	ctrl.Data["ScriptName"] = fmt.Sprintf("%s.entry.dart.js", name)
+	ctrl.Data["ShowSave"] = false
+}
+
+func (ctrl *UIController) EnableSave() {
+	ctrl.Data["ShowSave"] = true
 }
 
 func (ctrl *UIController) applySettings(title string) {
