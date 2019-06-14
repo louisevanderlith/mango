@@ -18,8 +18,8 @@ func NewMenu(activeLink string) *Menu {
 	return result
 }
 
-func (m *Menu) AddItem(link, text, iconClass string, children *Menu) {
-	shortName, item := newItem(link, text, iconClass, children)
+func (m *Menu) AddItem(id, link, text, iconClass string, children *Menu) {
+	shortName, item := newItem(id, link, text, iconClass, children)
 
 	menu := *m
 	menu[shortName] = item
@@ -47,6 +47,7 @@ func (m *Menu) SetActive(link string) bool {
 }
 
 type menuItem struct {
+	ID       string
 	Name     string
 	Class    string
 	Link     string
@@ -54,7 +55,7 @@ type menuItem struct {
 	Children *Menu `json:",omitempty"`
 }
 
-func newItem(link, text, iconClass string, children *Menu) (shortName string, result *menuItem) {
+func newItem(id, link, text, iconClass string, children *Menu) (shortName string, result *menuItem) {
 	shortName = getUniqueName(text)
 	result = &menuItem{
 		Name:     text,
