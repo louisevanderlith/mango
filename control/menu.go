@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-type Menu map[string]*menuItem
+type Menu map[string]menuItem
 
 var _activeLink string
 
@@ -18,7 +18,15 @@ func NewMenu(activeLink string) *Menu {
 	return result
 }
 
-func (m *Menu) AddItem(id, link, text, iconClass string, children *Menu) {
+func (m *Menu) AddItem(link, text, iconClass string, children *Menu) {
+	shortName, item := newItem("", link, text, iconClass, children)
+
+	menu := *m
+	menu[shortName] = item
+	m = &menu
+}
+
+func (m *Menu) AddItemWithID(id, link, text, iconClass string, children *Menu) {
 	shortName, item := newItem(id, link, text, iconClass, children)
 
 	menu := *m
@@ -55,14 +63,14 @@ type menuItem struct {
 	Children *Menu `json:",omitempty"`
 }
 
-func newItem(id, link, text, iconClass string, children *Menu) (shortName string, result *menuItem) {
+func newItem(id, link, text, iconClass string, children *Menu) (shortName string, result menuItem) {
 	shortName = getUniqueName(text)
-	result = &menuItem{
+	result = menuItem{
 		ID:       id,
 		Name:     text,
 		Link:     link,
 		Class:    iconClass,
-		IsActive: _activeLink == link,
+		IsActive: strings.HasPrefix(link, _activeLink),
 	}
 
 	if link == "#" {
