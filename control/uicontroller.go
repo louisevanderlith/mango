@@ -2,6 +2,7 @@ package control
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/louisevanderlith/mango"
 )
@@ -45,6 +46,7 @@ func (ctrl *UIController) applySettings(title string) {
 	ctrl.Data["LogoKey"] = ctrl.settings.LogoKey
 	ctrl.Data["InstanceID"] = ctrl.settings.InstanceID
 	ctrl.Data["Host"] = ctrl.settings.Host
+	ctrl.Data["Crumbs"] = decipherURL(ctrl.Ctx.Request.URL.RequestURI())
 
 	//User Details
 	avoc, err := GetAvoCookie(ctrl.GetMyToken(), ctrl.ctrlMap.GetPublicKeyPath())
@@ -88,4 +90,16 @@ func (ctrl *UIController) createMenu(name string, menu *Menu) {
 
 func (ctrl *UIController) GetMyToken() string {
 	return ctrl.Ctx.GetCookie("avosession")
+}
+
+func decipherURL(url string) []string {
+	var result []string
+
+	parts := strings.Split(url, "/")
+
+	for _, v := range parts {
+		result = append(result, v)
+	}
+
+	return result
 }

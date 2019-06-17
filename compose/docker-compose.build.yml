@@ -130,8 +130,8 @@ services:
     networks:
       - "mango_net"
     depends_on:
-      - RouterAPI
-    command: ["./wait-for-it.sh", "RouterAPI:8080", "--", "python", "app.py"]
+      - ThemeAPI
+    command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
 
   # 7. Comms API - Emails
   CommsAPI:
