@@ -47,6 +47,7 @@ func (ctrl *UIController) applySettings(title string) {
 	ctrl.Data["InstanceID"] = ctrl.settings.InstanceID
 	ctrl.Data["Host"] = ctrl.settings.Host
 	ctrl.Data["Crumbs"] = decipherURL(ctrl.Ctx.Request.URL.RequestURI())
+	ctrl.Data["GTag"] = ctrl.settings.GTag
 
 	//User Details
 	avoc, err := GetAvoCookie(ctrl.GetMyToken(), ctrl.ctrlMap.GetPublicKeyPath())
