@@ -95,11 +95,18 @@ func (ctrl *UIController) GetMyToken() string {
 
 func decipherURL(url string) []string {
 	var result []string
+	qryIndx := strings.Index(url, "?")
+
+	if qryIndx != -1 {
+		url = url[:qryIndx]
+	}
 
 	parts := strings.Split(url, "/")
 
 	for _, v := range parts {
-		result = append(result, v)
+		if len(v) > 0 {
+			result = append(result, v)
+		}
 	}
 
 	return result
