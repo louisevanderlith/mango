@@ -12,13 +12,15 @@ type ThemeSetting struct {
 	Name       string
 	Host       string
 	InstanceID string
+	GTag       string
 }
 
-func NewThemeSetting(name string, logoKey husk.Key, instanceID string) ThemeSetting {
+func NewThemeSetting(name string, logoKey husk.Key, instanceID, gtag string) ThemeSetting {
 	return ThemeSetting{
 		Name:       name,
 		LogoKey:    logoKey,
 		Host:       os.Getenv("HOST"),
 		InstanceID: instanceID,
+		GTag:       gtag,
 	}
 }
