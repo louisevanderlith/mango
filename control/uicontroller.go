@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/astaxie/beego/context"
 	"github.com/louisevanderlith/mango"
 )
 
@@ -14,6 +15,10 @@ type UIController struct {
 
 func (ctrl *UIController) SetTheme(settings mango.ThemeSetting) {
 	ctrl.settings = settings
+}
+
+func (ctrl *UIController) Init(ct *context.Context, controllerName, actionName string, app interface{}) {
+	ctrl.Controller.Init(ct, controllerName, actionName, app)
 }
 
 func (ctrl *UIController) Prepare() {
@@ -77,16 +82,12 @@ func (ctrl *UIController) ServeJSON(statuscode int, err error, data interface{})
 	ctrl.EnableRender = true
 }
 
-func (ctrl *UIController) CreateTopMenu(menu *Menu) {
-	ctrl.createMenu("TopMenu", menu)
+func (ctrl *UIController) CreateTopMenu(ctx *context.Context, menu *Menu) {
+	ctx.Input.SetData("TopMenu", menu)
 }
 
-func (ctrl *UIController) CreateSideMenu(menu *Menu) {
-	ctrl.createMenu("SideMenu", menu)
-}
-
-func (ctrl *UIController) createMenu(name string, menu *Menu) {
-	ctrl.Data[name] = menu
+func (ctrl *UIController) CreateSideMenu(ctx *context.Context, menu *Menu) {
+	ctx.Input.SetData("SideMenu", menu)
 }
 
 func (ctrl *UIController) GetMyToken() string {
