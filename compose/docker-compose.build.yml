@@ -141,6 +141,10 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - SMTPUsername=${SMTPUsername}
+      - SMTPPassword=${SMTPPassword}
+      - SMTPAddress=${SMTPAddress}
+      - SMTPPort=${SMTPPort}
     ports:
       - "8085:8085"
     networks:
