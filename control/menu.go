@@ -4,7 +4,7 @@ import (
 	"strings"
 )
 
-type Menu map[string]menuItem
+type Menu map[string][]menuItem
 
 var _activeLink string
 
@@ -22,7 +22,7 @@ func (m *Menu) AddItem(link, text, iconClass string, children *Menu) {
 	shortName, item := newItem("", link, text, iconClass, children)
 
 	menu := *m
-	menu[shortName] = item
+	menu[shortName] = append(menu[shortName], item)
 	m = &menu
 }
 
@@ -30,7 +30,7 @@ func (m *Menu) AddItemWithID(id, link, text, iconClass string, children *Menu) {
 	shortName, item := newItem(id, link, text, iconClass, children)
 
 	menu := *m
-	menu[shortName] = item
+	menu[shortName] = append(menu[shortName], item)
 	m = &menu
 }
 
@@ -38,16 +38,18 @@ func (m *Menu) SetActive(link string) bool {
 	foundActive := false
 
 	for _, v := range *m {
-		v.IsActive = v.Link == link
+		for _, item := range v {
+			item.IsActive = item.Link == link
 
-		if !foundActive && v.IsActive {
-			foundActive = true
-		}
+			if !foundActive && item.IsActive {
+				foundActive = true
+			}
 
-		foundActiveChild := v.Children.SetActive(link)
+			foundActiveChild := item.Children.SetActive(link)
 
-		if foundActiveChild {
-			v.IsActive = true
+			if foundActiveChild {
+				item.IsActive = true
+			}
 		}
 	}
 
@@ -70,7 +72,7 @@ func newItem(id, link, text, iconClass string, children *Menu) (shortName string
 		Name:     text,
 		Link:     link,
 		Class:    iconClass,
-		IsActive: strings.HasPrefix(link, _activeLink),
+		IsActive: false,
 	}
 
 	if link == "#" {
