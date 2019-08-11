@@ -24,6 +24,8 @@
     "cars": "git@github.com:louisevanderlith/cars.git",
     "admin": "git@github.com:louisevanderlith/admin.git",
     "service": "git@github.com:louisevanderlith/service.git",
-    "shop": "git@github.com:louisevanderlith/shop.git"
+    "shop": "git@github.com:louisevanderlith/shop.git",
+    "mango-ui": "git@github.com:louisevanderlith/mango-ui.git",
+    "droxolite": "git@github.com:louisevanderlith/droxolite.git"
   }
 }
