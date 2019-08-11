@@ -9,6 +9,7 @@ services:
         - KEYPATH=${KEYPATH}
         - PUBLICKEY=${PUBLICKEY}
         - HOST=${HOST}
+        - PROFILE=${PROFILE}
     ports:
       - "8080:8080"
     networks:
@@ -24,6 +25,7 @@ services:
       - PUBLICKEY=${PUBLICKEY}
       - PRIVATEKEY=${PRIVATEKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "80:80"
       - "443:443"
@@ -48,6 +50,7 @@ services:
         - PUBLICKEY=${PUBLICKEY}
         - PRIVATEKEY=${PRIVATEKEY}
         - HOST=${HOST}
+        - PROFILE=${PROFILE}
     ports:
       - "8086:8086"
     networks:
@@ -67,6 +70,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8082:8082"
     networks:
@@ -86,6 +90,7 @@ services:
         - KEYPATH=${KEYPATH}
         - PUBLICKEY=${PUBLICKEY}
         - HOST=${HOST}
+        - PROFILE=${PROFILE}
     ports:
       - "8090:8090"
     volumes:
@@ -105,6 +110,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     volumes: 
       - ../../gate/certs:${KEYPATH}:ro
     ports:
@@ -123,6 +129,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     volumes: 
       - ../../gate/certs:${KEYPATH}:ro
     ports:
@@ -141,6 +148,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
       - SMTPUsername=${SMTPUsername}
       - SMTPPassword=${SMTPPassword}
       - SMTPAddress=${SMTPAddress}
@@ -164,6 +172,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8101:8101"
     networks:
@@ -182,6 +191,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8102:8102"
     networks:
@@ -200,6 +210,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8084:8084"
     networks:
@@ -218,6 +229,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8097:8097"
     networks:
@@ -236,6 +248,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8089:8089"
     networks:
@@ -254,6 +267,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8099:8099"
     networks:
@@ -272,6 +286,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8103:8103"
     networks:
@@ -290,6 +305,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8092:8092"
     networks:
@@ -308,6 +324,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8100:8100"
     networks:
@@ -326,6 +343,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8095:8095"
     networks:
@@ -344,6 +362,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8098:8098"
     networks:
@@ -362,6 +381,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     ports:
       - "8104:8104"
     networks:
@@ -381,6 +401,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     volumes: 
       - ../../gate/certs:${KEYPATH}:ro
     depends_on:
@@ -398,6 +419,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     depends_on:
       - ThemeAPI
     networks:
@@ -415,6 +437,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     depends_on:
       - ThemeAPI
     networks:
@@ -432,6 +455,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     depends_on:
       - ThemeAPI
     networks:
@@ -449,6 +473,7 @@ services:
       - KEYPATH=${KEYPATH}
       - PUBLICKEY=${PUBLICKEY}
       - HOST=${HOST}
+      - PROFILE=${PROFILE}
     depends_on:
       - ThemeAPI
     networks:
