@@ -17,16 +17,31 @@
 bin/
 dist/
 
-# Swagger files
-swagger/
-swagger.zip
-lastupdate.tmp
-
 .idea/
 .vscode/
-node_modules/
 
-testData/
-
-# Husk db
-db/
+/router/
+/gate/
+/secure/
+/artifact/
+/folio/
+/theme/
+/auth/
+/comms/
+/stock/
+/blog/
+/comment/
+/entity/
+/logbook/
+/quote/
+/notify/
+/funds/
+/game/
+/vin/
+/vehicle/
+/xchange/
+/www/
+/cars/
+/admin/
+/service/
+/shop/
