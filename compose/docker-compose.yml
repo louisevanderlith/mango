@@ -483,7 +483,7 @@ services:
     volumes: 
       - ../../gate/certs:${KEYPATH}:ro
     command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
-
+    
 networks:
   mango_net:
     driver: bridge

@@ -1,3 +1,31 @@
 {
-  "projects": {}
+  "projects": {
+    "router": "git@github.com:louisevanderlith/router.git",
+    "gate": "git@github.com:louisevanderlith/gate.git",
+    "secure": "git@github.com:louisevanderlith/secure.git",
+    "artifact": "git@github.com:louisevanderlith/artifact.git",
+    "folio": "git@github.com:louisevanderlith/folio.git",
+    "theme": "git@github.com:louisevanderlith/theme.git",
+    "auth": "git@github.com:louisevanderlith/auth.git",
+    "comms": "git@github.com:louisevanderlith/comms.git",
+    "stock": "git@github.com:louisevanderlith/stock.git",
+    "blog": "git@github.com:louisevanderlith/blog.git",
+    "comment": "git@github.com:louisevanderlith/comment.git",
+    "entity": "git@github.com:louisevanderlith/entity.git",
+    "logbook": "git@github.com:louisevanderlith/logbook.git",
+    "quote": "git@github.com:louisevanderlith/quote.git",
+    "notify": "git@github.com:louisevanderlith/notify.git",
+    "funds": "git@github.com:louisevanderlith/funds.git",
+    "game": "git@github.com:louisevanderlith/game.git",
+    "vin": "git@github.com:louisevanderlith/vin.git",
+    "vehicle": "git@github.com:louisevanderlith/vehicle.git",
+    "xchange": "git@github.com:louisevanderlith/xchange.git",
+    "www": "git@github.com:louisevanderlith/www.git",
+    "cars": "git@github.com:louisevanderlith/cars.git",
+    "admin": "git@github.com:louisevanderlith/admin.git",
+    "service": "git@github.com:louisevanderlith/service.git",
+    "shop": "git@github.com:louisevanderlith/shop.git",
+    "mango-ui": "git@github.com:louisevanderlith/mango-ui.git",
+    "droxolite": "git@github.com:louisevanderlith/droxolite.git"
+  }
 }
