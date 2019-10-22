@@ -19,6 +19,13 @@ HTTPS is the only option for running these modules, as modern-day requirements d
 * Docker
 * docker-compose
 
+## Development Requirements
+* Go
+* Dart
+* NPM 
+* meta (npm i -g meta)
+* gulp
+
 ## Project Layout
 This repository used to contain all of the APP and API modules, but they have since been moved to their own repositories.
 Now it contains shared logic for Controllers, Service Discovery, etc. As well as some information on how to setup and run everything in union.
@@ -39,3 +46,23 @@ https://ads.localhost/advert/all/A6
 
 Where `A6` is `Page A` & `6 items per Page` is requested.
 We support 26 pages (A-Z) and any positve amount of results per page. 
+
+
+
+# Everything you need to know about the mango project.
+## Creating machines to run this project
+1. Create 'docker-machines'
+    We need to setup atleast 2 docker-machines to run a swarm stack.
+    * First create a machine for running the Gate and UI applications. (*-box) naming is used to identify 'Gate' machines.
+    ```docker-machine create --swarm --driver "virtualbox" --virtualbox-disk-size "5000" mango-box```
+    * Create a machine for running the Web services. (*-api) naming is used to identify 'Web service' machines
+    ```docker-machine create --swarm --driver "virtualbox" --virtualbox-disk-size "5000" mango-api```
+
+2. Setup Swarm
+3. Load Balancer 
+https://auth0.com/blog/load-balancing-nodejs-applications-with-nginx-and-docker/ 
+https://superuser.openstack.org/articles/run-load-balanced-service-docker-containers-openstack/
+
+## Deploying the project
+1. 
+1.5 Configure /etc/hosts

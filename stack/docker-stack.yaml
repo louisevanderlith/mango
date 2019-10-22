@@ -1,0 +1,140 @@
+version: "3.7"
+
+services:  
+  RouterAPI:
+    image: avosa/router:dev
+    networks: 
+      - default
+    environment:
+      - KEYPATH=/certs/
+      - PUBLICKEY=fullchain.pem
+      - HOST=.localhost/
+      - HTTPPORT=8080
+      - APPNAME=Router
+    deploy:
+      mode: global
+
+  GateAPI:
+    image: avosa/gate:dev
+    networks:
+      - proxy
+      - default
+    environment:
+      - KEYPATH=/certs/
+      - PUBLICKEY=fullchain.pem
+      - HOST=.localhost/
+      - PROFILE=avosa
+      - HTTPPORT=80
+      - HTTPSPORT=443
+      - APPNAME=Gate
+    
+
+networks:
+  default:
+    external: false 
+  proxy:
+    external: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  # Gate API (Proxy) - Will be the last application to start, it waits for it's dependants
+  GateAPI:
+    image: avosa/gate:dev
+    build: ../gate/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - PRIVATEKEY=${PRIVATEKEY}
+      - HOST=.${DOMAIN}/
+      - HTTPPORT=80
+      - HTTPSPORT=443
+      - APPNAME=Gate{{.Node.Labels.Profile}}
+      - PROFILE={{.Node.Labels.Profile}}
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - mango_net
+    depends_on:
+      - WWWAPP
+      - AdminAPP
+    deploy:
+      placement:
+        constraints:
+          - node.labels.priority == ui
+        preferences:
+          - spread: node.labels.profile
+    volumes:
+      - ${KEYPATH}/${DOMAIN}:/certs/:ro
+  
+  # 8. Applications - Gate MUST depend on these.
+  WWWAPP:
+    image: avosa/www:dev
+    build: ../www/
+    environment:
+      - KEYPATH=${KEYPATH}
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=.${DOMAIN}/
+      - PROFILE={{.Node.Labels.Profile}}
+      - HTTPPORT=8091
+      - APPNAME=WWW
+    volumes: 
+      - ../gate/certs:${KEYPATH}:ro
+    depends_on:
+      - ThemeAPI
+    deploy:
+      placement:
+        constraints:
+          - node.labels.priority == ui
+        preferences:
+          - spread: node.labels.zone
+    networks:
+      - mango_net
+    ports:
+      - "8091:8091"
+    command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
+  
+  AdminAPP:
+    image: avosa/admin:latest
+    environment:
+      - KEYPATH=/certs/
+      - PUBLICKEY=${PUBLICKEY}
+      - HOST=.${DOMAIN}/
+      - PROFILE={{.Node.Labels.Profile}}
+      - HTTPPORT=8088
+      - APPNAME=Admin{{.Node.Labels.Domain}}
+    depends_on:
+      - ThemeAPI
+    networks:
+      - mango_net
+    volumes: 
+      - ${KEYPATH}/${DOMAIN}:/certs/:ro
+    deploy:
+      placement:
+        constraints:
+          - node.labels.priority == ui
+        preferences:
+          - spread: node.labels.zone
+    ports:
+      - "8088:8088"
+    command: ["./wait-for-it.sh", "ThemeAPI:8093", "--", "python", "app.py"]
+
+# Swarm networks can't be created via the stack file.
+# docker network create --driver=overlay --attachable core-infra
+networks:
+  mango-infra:
+    external: true

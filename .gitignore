@@ -47,3 +47,5 @@ dist/
 /secure/
 /gate/
 /router/
+
+.env.live
