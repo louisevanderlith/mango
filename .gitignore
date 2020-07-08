@@ -48,4 +48,8 @@ dist/
 /gate/
 /router/
 
-.env.live
+.env.live/proof/
+/leads/
+/cms/
+/rtc/
+/wheelo/

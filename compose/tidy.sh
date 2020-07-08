@@ -1,1 +1,0 @@
-for dir in ${PWD}/*; do (cd "$dir" && go mod tidy); done

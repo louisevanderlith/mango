@@ -1,0 +1,136 @@
+version: "3.4"
+
+services:
+  secure:
+    image: avosa/secure:dev
+    build: ./secure/
+    network_mode: "host"
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./secure/db/:/db
+
+  theme:
+    image: avosa/theme:dev
+    build: ./theme/
+    network_mode: "host"
+    ports:
+      - "8093:8093"
+    depends_on:
+      - secure
+    volumes:
+      - ./theme/db/:/db
+
+  cms:
+    image: avosa/cms:dev
+    build: ./cms/
+    network_mode: "host"
+    ports:
+      - "8090:8090"
+    depends_on:
+      - secure
+    volumes:
+      - ./cms/db/:/db
+
+  blog:
+    image: avosa/blog:dev
+    build: ./blog/
+    network_mode: "host"
+    ports:
+      - "8102:8102"
+    depends_on:
+      - secure
+    volumes:
+      - ./blog/db/:/db
+
+  comment:
+    image: avosa/comment:dev
+    build: ./comment/
+    network_mode: "host"
+    ports:
+      - "8084:8084"
+    depends_on:
+      - secure
+    volumes:
+      - ./comment/db/:/db
+
+  comms:
+    image: avosa/comms:dev
+    build: ./comms/
+    network_mode: "host"
+    ports:
+      - "8085:8085"
+    depends_on:
+      - secure
+    volumes:
+      - ./comms/db/:/db
+
+  artifact:
+    image: avosa/artifact:dev
+    build: ./artifact/
+    network_mode: "host"
+    ports:
+      - "8082:8082"
+    depends_on:
+      - secure
+    volumes:
+      - ./artifact/db/:/db
+
+  stock:
+    image: avosa/stock:dev
+    build: ./stock/
+    network_mode: "host"
+    ports:
+      - "8101:8101"
+    depends_on:
+      - secure
+    volumes:
+      - ./stock/db/:/db
+
+  vin:
+    image: avosa/vin:dev
+    build: ./vin/
+    network_mode: "host"
+    ports:
+      - "8095:8095"
+    depends_on:
+      - secure
+
+  admin:
+    image: avosa/admin:dev
+    build: ./admin/
+    network_mode: "host"
+    depends_on:
+      - theme
+    ports:
+      - "8088:8088"
+
+  wheelo:
+    image: avosa/wheelo:dev
+    build: ./wheelo/
+    network_mode: "host"
+    depends_on:
+      - theme
+    ports:
+      - "8106:8106"
+
+  www:
+    image: avosa/www:dev
+    build: ./www/
+    network_mode: "host"
+    ports:
+      - "8091:8091"
+    depends_on:
+      - theme
+    command:
+      - --client=mango.www
+
+  auth:
+    image: avosa/auth:dev
+    build: ./auth/
+    network_mode: "host"
+    ports:
+      - "8094:8094"
+    depends_on:
+      - theme
+

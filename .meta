@@ -1,6 +1,5 @@
 {
   "projects": {
-    "droxolite": "git@github.com:louisevanderlith/droxolite.git",
     "mango-ui": "git@github.com:louisevanderlith/mango-ui.git",
     "shop": "git@github.com:louisevanderlith/shop.git",
     "service": "git@github.com:louisevanderlith/service.git",
@@ -22,10 +21,11 @@
     "comms": "git@github.com:louisevanderlith/comms.git",
     "auth": "git@github.com:louisevanderlith/auth.git",
     "theme": "git@github.com:louisevanderlith/theme.git",
-    "folio": "git@github.com:louisevanderlith/folio.git",
     "artifact": "git@github.com:louisevanderlith/artifact.git",
     "secure": "git@github.com:louisevanderlith/secure.git",
-    "gate": "git@github.com:louisevanderlith/gate.git",
-    "router": "git@github.com:louisevanderlith/router.git"
+    "leads": "git@github.com:louisevanderlith/leads.git",
+    "cms": "git@github.com:louisevanderlith/cms.git",
+    "rtc": "git@github.com:louisevanderlith/rtc.git",
+    "wheelo": "git@github.com:dirklensley/wheelo.git"
   }
 }
