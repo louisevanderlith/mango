@@ -95,6 +95,8 @@ services:
       - "8095:8095"
     depends_on:
       - secure
+    volumes:
+      - ./vin/db/:/db
 
   admin:
     image: avosa/admin:dev
