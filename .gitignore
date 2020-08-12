@@ -19,6 +19,9 @@ dist/
 
 .idea/
 .vscode/
+.DS_Store
+
+package-lock.json
 
 /droxolite/
 /mango-ui/
