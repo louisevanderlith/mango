@@ -1,0 +1,197 @@
+version: "3.4"
+
+services:
+  traefik:
+    image: traefik:v2.2
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  secure:
+    image: avosa/secure:dev
+    build: ./secure/
+    labels:
+      - "traefik.http.routers.secure.rule=Host(`secure.docker.localhost`)"
+      - "traefik.http.services.secure.loadbalancer.server.port=8086"
+    #network_mode: "host"
+    #ports:
+    #  - "8086:8086"
+    volumes:
+      - ./secure/db/:/db
+
+  theme:
+    image: avosa/theme:dev
+    build: ./theme/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.theme.rule=Host(`theme.docker.localhost`)"
+      - "traefik.http.services.theme.loadbalancer.server.port=8093"
+    #network_mode: "host"
+    #ports:
+    #  - "8093:8093"
+    depends_on:
+      - secure
+    volumes:
+      - ./theme/db/:/db
+
+  cms:
+    image: avosa/cms:dev
+    build: ./cms/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.cms.rule=Host(`cms.docker.localhost`)"
+      - "traefik.http.services.cms.loadbalancer.server.port=8090"
+    #network_mode: "host"
+    #ports:
+    #  - "8090:8090"
+    depends_on:
+      - secure
+    volumes:
+      - ./cms/db/:/db
+
+  blog:
+    image: avosa/blog:dev
+    build: ./blog/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.blog.rule=Host(`blog.docker.localhost`)"
+      - "traefik.http.services.blog.loadbalancer.server.port=8102"
+    #network_mode: "host"
+    #ports:
+    #  - "8102:8102"
+    depends_on:
+      - secure
+    volumes:
+      - ./blog/db/:/db
+
+  comment:
+    image: avosa/comment:dev
+    build: ./comment/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.comment.rule=Host(`comment.docker.localhost`)"
+      - "traefik.http.services.comment.loadbalancer.server.port=8084"
+    #network_mode: "host"
+    #ports:
+    #  - "8084:8084"
+    depends_on:
+      - secure
+    volumes:
+      - ./comment/db/:/db
+
+  comms:
+    image: avosa/comms:dev
+    build: ./comms/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.comms.rule=Host(`comms.docker.localhost`)"
+      - "traefik.http.services.comms.loadbalancer.server.port=8085"
+    #network_mode: "host"
+    #ports:
+    #  - "8085:8085"
+    depends_on:
+      - secure
+    volumes:
+      - ./comms/db/:/db
+
+  artifact:
+    image: avosa/artifact:dev
+    build: ./artifact/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.artifact.rule=Host(`artifact.docker.localhost`)"
+      - "traefik.http.services.artifact.loadbalancer.server.port=8082"
+    #network_mode: "host"
+    #ports:
+    #  - "8082:8082"
+    depends_on:
+      - secure
+    volumes:
+      - ./artifact/db/:/db
+
+  stock:
+    image: avosa/stock:dev
+    build: ./stock/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.stock.rule=Host(`stock.docker.localhost`)"
+      - "traefik.http.services.stock.loadbalancer.server.port=8101"
+    #network_mode: "host"
+    #ports:
+    #  - "8101:8101"
+    depends_on:
+      - secure
+    volumes:
+      - ./stock/db/:/db
+
+  vin:
+    image: avosa/vin:dev
+    build: ./vin/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.vin.rule=Host(`vin.docker.localhost`)"
+      - "traefik.http.services.vin.loadbalancer.server.port=8095"
+    #network_mode: "host"
+    #ports:
+    #  - "8095:8095"
+    depends_on:
+      - secure
+    volumes:
+      - ./vin/db/:/db
+
+  admin:
+    image: avosa/admin:dev
+    build: ./admin/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.admin.rule=Host(`admin.docker.localhost`)"
+      - "traefik.http.services.admin.loadbalancer.server.port=8088"
+    #network_mode: "host"
+    depends_on:
+      - theme
+    #ports:
+    #  - "8088:8088"
+
+  wheelo:
+    image: avosa/wheelo:dev
+    build: ./wheelo/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.wheelo.rule=Host(`wheelo.docker.localhost`)"
+      - "traefik.http.services.wheelo.loadbalancer.server.port=8106"
+    #network_mode: "host"
+    #depends_on:
+    #  - theme
+    #ports:
+    #  - "8106:8106"
+
+  www:
+    image: avosa/www:dev
+    build: ./www/
+    labels:
+      - "traefik.http.routers.www.rule=Host(`www.docker.localhost`)"
+      - "traefik.http.services.www.loadbalancer.server.port=8091"
+    #network_mode: "host"
+    #ports:
+    #  - "8091:8091"
+    depends_on:
+      - theme
+    command:
+      - --client=mango.www
+      - --security=http://secure:8086
+
+  auth:
+    image: avosa/auth:dev
+    build: ./auth/
+    command: --security=http://secure:8086
+    labels:
+      - "traefik.http.routers.auth.rule=Host(`auth.docker.localhost`)"
+      - "traefik.http.services.auth.loadbalancer.server.port=8094"
+    #network_mode: "host"
+    #ports:
+    #  - "8094:8094"
+    depends_on:
+      - theme
+

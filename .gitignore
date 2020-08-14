@@ -23,7 +23,6 @@ dist/
 
 package-lock.json
 
-/droxolite/
 /mango-ui/
 /shop/
 /service/
@@ -48,8 +47,6 @@ package-lock.json
 /folio/
 /artifact/
 /secure/
-/gate/
-/router/
 
 .env.live/proof/
 /leads/
