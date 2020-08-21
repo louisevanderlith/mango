@@ -1,0 +1,55 @@
+version: "3.4"
+
+services:
+  secure:
+    image: avosa/secure:latest
+    build: ./secure/
+
+  theme:
+    image: avosa/theme:latest
+    build: ./theme/
+
+  cms:
+    image: avosa/cms:latest
+    build: ./cms/
+
+  blog:
+    image: avosa/blog:latest
+    build: ./blog/
+
+  comment:
+    image: avosa/comment:latest
+    build: ./comment/
+
+  comms:
+    image: avosa/comms:latest
+    build: ./comms/
+
+  artifact:
+    image: avosa/artifact:latest
+    build: ./artifact/
+
+  stock:
+    image: avosa/stock:latest
+    build: ./stock/
+
+  vin:
+    image: avosa/vin:latest
+    build: ./vin/
+
+  admin:
+    image: avosa/admin:latest
+    build: ./admin/
+
+  wheelo:
+    image: avosa/wheelo:latest
+    build: ./wheelo/
+
+  www:
+    image: avosa/www:latest
+    build: ./www/
+
+  auth:
+    image: avosa/auth:latest
+    build: ./auth/
+
