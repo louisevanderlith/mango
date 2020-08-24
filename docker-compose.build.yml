@@ -1,55 +1,104 @@
 version: "3.4"
 
 services:
-  secure:
-    image: avosa/secure:latest
-    build: ./secure/
+  admin:
+    image: avosa/admin:dev
+    build: ./admin/
 
-  theme:
-    image: avosa/theme:latest
-    build: ./theme/
+  artifact:
+    image: avosa/artifact:dev
+    build: ./artifact/
 
-  cms:
-    image: avosa/cms:latest
-    build: ./cms/
+  auth:
+    image: avosa/auth:dev
+    build: ./auth/
 
   blog:
-    image: avosa/blog:latest
+    image: avosa/blog:dev
     build: ./blog/
 
+  cars:
+    image: avosa/cars:dev
+    build: ./cars/
+
+  cms:
+    image: avosa/cms:dev
+    build: ./cms/
+
   comment:
-    image: avosa/comment:latest
+    image: avosa/comment:dev
     build: ./comment/
 
   comms:
-    image: avosa/comms:latest
+    image: avosa/comms:dev
     build: ./comms/
 
-  artifact:
-    image: avosa/artifact:latest
-    build: ./artifact/
+  entity:
+    image: avosa/entity:dev
+    build: ./entity/
+
+  funds:
+    image: avosa/funds:dev
+    build: ./funds/
+
+  game:
+    image: avosa/game:dev
+    build: ./game/
+
+  leads:
+    image: avosa/leads:dev
+    build: ./leads/
+
+  logbook:
+    image: avosa/logbook:dev
+    build: ./logbook/
+
+  notify:
+    image: avosa/notify:dev
+    build: ./notify/
+
+  quote:
+    image: avosa/quote:dev
+    build: ./quote/
+
+  secure:
+    image: avosa/secure:dev
+    build: ./secure/
+
+  service:
+    image: avosa/service:dev
+    build: ./service/
+
+  shop:
+    image: avosa/shop:dev
+    build: ./shop/
 
   stock:
-    image: avosa/stock:latest
+    image: avosa/stock:dev
     build: ./stock/
 
+  theme:
+    image: avosa/theme:dev
+    build: ./theme/
+
+  vehicle:
+    image: avosa/vehicle:dev
+    build: ./vehicle/
+
   vin:
-    image: avosa/vin:latest
+    image: avosa/vin:dev
     build: ./vin/
 
-  admin:
-    image: avosa/admin:latest
-    build: ./admin/
-
   wheelo:
-    image: avosa/wheelo:latest
+    image: avosa/wheelo:dev
     build: ./wheelo/
 
   www:
-    image: avosa/www:latest
+    image: avosa/www:dev
     build: ./www/
 
-  auth:
-    image: avosa/auth:latest
-    build: ./auth/
+  xchange:
+    image: avosa/xchange:dev
+    build: ./xchange/
+
 
