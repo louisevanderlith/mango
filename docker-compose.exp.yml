@@ -130,6 +130,17 @@ services:
     ports:
       - "8105:8105"
 
+  cars:
+    image: avosa/cars:dev
+    build: ./cars/
+    ports:
+      - "8081:8081"
+    depends_on:
+      - theme
+    command:
+      - --client=tango.cars
+      - --security=http://secure:8086
+
   www:
     image: avosa/www:dev
     build: ./www/
