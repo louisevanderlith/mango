@@ -26,6 +26,7 @@
     "leads": "git@github.com:louisevanderlith/leads.git",
     "cms": "git@github.com:louisevanderlith/cms.git",
     "rtc": "git@github.com:louisevanderlith/rtc.git",
-    "wheelo": "git@github.com:dirklensley/wheelo.git"
+    "wheelo": "git@github.com:dirklensley/wheelo.git",
+    "folio": "git@github.com:louisevanderlith/folio.git"
   }
 }
