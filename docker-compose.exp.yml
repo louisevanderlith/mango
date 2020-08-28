@@ -141,6 +141,28 @@ services:
       - --client=tango.cars
       - --security=http://secure:8086
 
+  service:
+    image: avosa/service:dev
+    build: ./service/
+    ports:
+      - "8096:8096"
+    depends_on:
+      - theme
+    command:
+      - --client=tango.service
+      - --security=http://secure:8086
+
+  shop:
+    image: avosa/shop:dev
+    build: ./shop/
+    ports:
+      - "8083:8083"
+    depends_on:
+      - theme
+    command:
+      - --client=tango.shop
+      - --security=http://secure:8086
+
   www:
     image: avosa/www:dev
     build: ./www/
