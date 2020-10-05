@@ -123,6 +123,7 @@ services:
     image: avosa/admin:dev
     command:
       - --security=http://secure:8086
+      - --manager=http://entity:8097
       - --client=tango.admin
     build: ./admin/
     depends_on:
@@ -134,6 +135,7 @@ services:
     image: avosa/wheelo:dev
     command:
       - --security=http://secure:8086
+      - --manager=http://entity:8097
       - --client=tango.wheelo
     build: ./wheelo/
     depends_on:
@@ -150,6 +152,7 @@ services:
       - theme
     command:
       - --client=tango.cars
+      - --manager=http://entity:8097
       - --security=http://secure:8086
 
   service:
@@ -161,6 +164,7 @@ services:
       - theme
     command:
       - --client=tango.service
+      - --manager=http://entity:8097
       - --security=http://secure:8086
 
   shop:
@@ -172,6 +176,7 @@ services:
       - theme
     command:
       - --client=tango.shop
+      - --manager=http://entity:8097
       - --security=http://secure:8086
 
   www:
@@ -183,6 +188,7 @@ services:
       - theme
     command:
       - --client=tango.www
+      - --manager=http://entity:8097
       - --security=http://secure:8086
 
   folio:
@@ -194,6 +200,7 @@ services:
       - theme
     command:
       - --client=tango.folio
+      - --manager=http://entity:8097
       - --security=http://secure:8086
 
   auth:
