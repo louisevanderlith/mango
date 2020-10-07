@@ -16,7 +16,7 @@ services:
     ports:
       - "8093:8093"
     depends_on:
-      - secure
+      - cms
     volumes:
       - ./theme/db/:/db
 
