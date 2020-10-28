@@ -178,6 +178,7 @@ services:
     depends_on:
       - theme
     command:
+      - --host=${IP}:8091
       - --client=www
       - --secret=1a9d2f3f-2090-4c6f-a17b-e7a28236fe25
       - --issuer=http://${IP}:8080/auth/realms/mango
