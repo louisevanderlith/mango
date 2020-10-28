@@ -1,142 +1,136 @@
 version: "3.4"
 
 services:
-  secure:
-    image: avosa/secure:dev
-    build: ./secure/
+  cloak:
+    image: quay.io/keycloak/keycloak:11.0.2
+    environment:
+      - KEYCLOAK_USER=admin       #${KEYCLOAK_USER}
+      - KEYCLOAK_PASSWORD=admin   #${KEYCLOAK_PASSWORD}
     ports:
-      - "8086:8086"
-    volumes:
-      - ./secure/db/:/db
+      - 8080:8080
 
   theme:
     image: avosa/theme:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
     build: ./theme/
     ports:
       - "8093:8093"
     depends_on:
-      - cms
+      - folio
     volumes:
       - ./theme/db/:/db
 
-  entity:
-    image: avosa/entity:dev
-    command: --security=http://secure:8086
-    build: ./entity/
+  folio:
+    image: avosa/folio:dev
+    build: ./folio/
     ports:
-      - "8097:8097"
-    depends_on:
-      - secure
+      - "8090:8090"
     volumes:
-      - ./entity/db/:/db
+      - ./folio/db/:/db
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
 
   cms:
     image: avosa/cms:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
+      - --client=cms
     build: ./cms/
     ports:
-      - "8090:8090"
+      - "8107:8107"
     depends_on:
-      - secure
-    volumes:
-      - ./cms/db/:/db
+      - folio
 
   blog:
     image: avosa/blog:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
     build: ./blog/
     ports:
       - "8102:8102"
     depends_on:
-      - secure
+      - cloak
     volumes:
       - ./blog/db/:/db
 
   vehicle:
     image: avosa/vehicle:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
     build: ./vehicle/
     ports:
       - "8098:8098"
     depends_on:
-      - secure
+      - cloak
     volumes:
       - ./vehicle/db/:/db
 
   comment:
     image: avosa/comment:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
     build: ./comment/
     ports:
       - "8084:8084"
     depends_on:
-      - secure
+      - cloak
     volumes:
       - ./comment/db/:/db
 
   comms:
     image: avosa/comms:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
     build: ./comms/
     ports:
       - "8085:8085"
     depends_on:
-      - secure
+      - cloak
     volumes:
       - ./comms/db/:/db
 
   artifact:
     image: avosa/artifact:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
     build: ./artifact/
     ports:
       - "8082:8082"
     depends_on:
-      - secure
+      - cloak
     volumes:
       - ./artifact/db/:/db
 
   stock:
     image: avosa/stock:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
     build: ./stock/
     ports:
       - "8101:8101"
     depends_on:
-      - secure
+      - cloak
     volumes:
       - ./stock/db/:/db
 
   vin:
     image: avosa/vin:dev
-    command: --security=http://secure:8086
+    command:
+      - --issuer=http://${IP}:8080/auth/realms/mango
     build: ./vin/
     ports:
       - "8095:8095"
     depends_on:
-      - secure
+      - cloak
     volumes:
       - ./vin/db/:/db
-
-  admin:
-    image: avosa/admin:dev
-    command:
-      - --security=http://secure:8086
-      - --manager=http://entity:8097
-      - --client=tango.admin
-    build: ./admin/
-    depends_on:
-      - theme
-    ports:
-      - "8088:8088"
 
   wheelo:
     image: avosa/wheelo:dev
     command:
-      - --security=http://secure:8086
-      - --manager=http://entity:8097
-      - --client=tango.wheelo
+      - --issuer=http://${IP}:8080/auth/realms/mango
+      - --client=wheelo
     build: ./wheelo/
     depends_on:
       - theme
@@ -151,9 +145,8 @@ services:
     depends_on:
       - theme
     command:
-      - --client=tango.cars
-      - --manager=http://entity:8097
-      - --security=http://secure:8086
+      - --client=cars
+      - --issuer=http://${IP}:8080/auth/realms/mango
 
   service:
     image: avosa/service:dev
@@ -163,9 +156,8 @@ services:
     depends_on:
       - theme
     command:
-      - --client=tango.service
-      - --manager=http://entity:8097
-      - --security=http://secure:8086
+      - --client=service
+      - --issuer=http://${IP}:8080/auth/realms/mango
 
   shop:
     image: avosa/shop:dev
@@ -175,9 +167,8 @@ services:
     depends_on:
       - theme
     command:
-      - --client=tango.shop
-      - --manager=http://entity:8097
-      - --security=http://secure:8086
+      - --client=shop
+      - --issuer=http://${IP}:8080/auth/realms/mango
 
   www:
     image: avosa/www:dev
@@ -187,30 +178,11 @@ services:
     depends_on:
       - theme
     command:
-      - --client=tango.www
-      - --manager=http://entity:8097
-      - --security=http://secure:8086
-
-  folio:
-    image: avosa/folio:dev
-    build: ./folio/
-    ports:
-      - "8107:8107"
-    depends_on:
-      - theme
-    command:
-      - --client=tango.folio
-      - --manager=http://entity:8097
-      - --security=http://secure:8086
-
-  auth:
-    image: avosa/auth:dev
-    build: ./auth/
-    command:
-      - --client=tango.auth
-      - --security=http://secure:8086
-      - --manager=http://entity:8097
-    ports:
-      - "8094:8094"
-    depends_on:
-      - theme
+      - --client=www
+      - --secret=1a9d2f3f-2090-4c6f-a17b-e7a28236fe25
+      - --issuer=http://${IP}:8080/auth/realms/mango
+      - --theme=http://${IP}:8093
+      - --folio=http://${IP}:8090
+      - --blog=http://${IP}:8102
+      - --stock=http://${IP}:8101
+      - --comms=http://${IP}:8085
