@@ -3,7 +3,6 @@
     "mango-ui": "git@github.com:louisevanderlith/mango-ui.git",
     "shop": "git@github.com:louisevanderlith/shop.git",
     "service": "git@github.com:louisevanderlith/service.git",
-    "admin": "git@github.com:louisevanderlith/admin.git",
     "cars": "git@github.com:louisevanderlith/cars.git",
     "www": "git@github.com:louisevanderlith/www.git",
     "xchange": "git@github.com:louisevanderlith/xchange.git",
@@ -11,7 +10,6 @@
     "vin": "git@github.com:louisevanderlith/vin.git",
     "game": "git@github.com:louisevanderlith/game.git",
     "funds": "git@github.com:louisevanderlith/funds.git",
-    "notify": "git@github.com:louisevanderlith/notify.git",
     "quote": "git@github.com:louisevanderlith/quote.git",
     "logbook": "git@github.com:louisevanderlith/logbook.git",
     "comment": "git@github.com:louisevanderlith/comment.git",
@@ -22,8 +20,6 @@
     "artifact": "git@github.com:louisevanderlith/artifact.git",
     "leads": "git@github.com:louisevanderlith/leads.git",
     "cms": "git@github.com:louisevanderlith/cms.git",
-    "rtc": "git@github.com:louisevanderlith/rtc.git",
-    "wheelo": "git@github.com:dirklensley/wheelo.git",
     "folio": "git@github.com:louisevanderlith/folio.git"
   }
 }

@@ -34,8 +34,14 @@ services:
   cms:
     image: avosa/cms:dev
     command:
+      - --host=http://${IP}:8107
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --client=cms
+      - --secret=06ceb2fb-c321-4996-9717-2536cf60b463
+      - --theme=http://${IP}:8093
+      - --folio=http://${IP}:8090
+      - --artifact=http://${IP}:8082
+      - --blog=http://${IP}:8102
     build: ./cms/
     ports:
       - "8107:8107"
@@ -126,17 +132,6 @@ services:
     volumes:
       - ./vin/db/:/db
 
-  wheelo:
-    image: avosa/wheelo:dev
-    command:
-      - --issuer=http://${IP}:8080/auth/realms/mango
-      - --client=wheelo
-    build: ./wheelo/
-    depends_on:
-      - theme
-    ports:
-      - "8105:8105"
-
   cars:
     image: avosa/cars:dev
     build: ./cars/
@@ -145,8 +140,14 @@ services:
     depends_on:
       - theme
     command:
-      - --client=cars
+      - --host=http://${IP}:8081
+      - --secret=07fafe59-fd6b-4f77-aa6b-a15768714f77
       - --issuer=http://${IP}:8080/auth/realms/mango
+      - --theme=http://${IP}:8093
+      - --folio=http://${IP}:8090
+      - --artifact=http://${IP}:8082
+      - --stock=http://${IP}:8093
+      - --vin=http://${IP}:8095
 
   service:
     image: avosa/service:dev
@@ -156,8 +157,13 @@ services:
     depends_on:
       - theme
     command:
-      - --client=service
+      - --host=http://${IP}:8096
+      - --secret=441251a7-f584-4a0c-bdfb-501d0e59e1c2
       - --issuer=http://${IP}:8080/auth/realms/mango
+      - --theme=http://${IP}:8093
+      - --folio=http://${IP}:8090
+      - --artifact=http://${IP}:8082
+      - --stock=http://${IP}:8101
 
   shop:
     image: avosa/shop:dev
@@ -167,8 +173,13 @@ services:
     depends_on:
       - theme
     command:
-      - --client=shop
+      - --host=http://${IP}:8083
+      - --secret=d8fc27f3-d16c-421d-baa1-6b3f4e04e6cb
       - --issuer=http://${IP}:8080/auth/realms/mango
+      - --theme=http://${IP}:8093
+      - --folio=http://${IP}:8090
+      - --artifact=http://${IP}:8082
+      - --stock=http://${IP}:8093
 
   www:
     image: avosa/www:dev
@@ -178,8 +189,7 @@ services:
     depends_on:
       - theme
     command:
-      - --host=${IP}:8091
-      - --client=www
+      - --host=http://${IP}:8091
       - --secret=1a9d2f3f-2090-4c6f-a17b-e7a28236fe25
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --theme=http://${IP}:8093
