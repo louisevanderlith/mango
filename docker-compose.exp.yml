@@ -146,7 +146,7 @@ services:
       - --theme=http://${IP}:8093
       - --folio=http://${IP}:8090
       - --artifact=http://${IP}:8082
-      - --stock=http://${IP}:8093
+      - --stock=http://${IP}:8101
       - --vin=http://${IP}:8095
 
   service:
