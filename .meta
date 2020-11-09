@@ -20,6 +20,11 @@
     "artifact": "git@github.com:louisevanderlith/artifact.git",
     "leads": "git@github.com:louisevanderlith/leads.git",
     "cms": "git@github.com:louisevanderlith/cms.git",
-    "folio": "git@github.com:louisevanderlith/folio.git"
+    "folio": "git@github.com:louisevanderlith/folio.git",
+    "house": "git@github.com:louisevanderlith/house.git",
+    "parts": "git@github.com:louisevanderlith/parts.git",
+    "wear": "git@github.com:louisevanderlith/wear.git",
+    "utility": "git@github.com:louisevanderlith/utility.git",
+    "admin": "git@github.com:louisevanderlith/admin.git"
   }
 }
