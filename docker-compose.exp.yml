@@ -57,14 +57,18 @@ services:
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --client=admin
       - --secret=44bdb2fb-3591-4de7-8ddb-9fec6c3ec017
-      - --theme=http://${IP}:8093
-      - --stock=http://${IP}:8101
       - --folio=http://${IP}:8090
       - --artifact=http://${IP}:8082
       - --funds=http://${IP}:8092
-      - --vehicle=http://${IP}:8084
       - --game=http://${IP}:8100
+      - --stock=http://${IP}:8101
+      - --theme=http://${IP}:8093
+      - --utility=http://${IP}:8105
+      - --vehicle=http://${IP}:8098
+      - --wear=http://${IP}:8086
       - --xchange=http://${IP}:8104
+      - --house=http://${IP}:8888
+      - --parts=http://${IP}:9999
     build: ./admin/
     ports:
       - "8088:8088"
@@ -218,6 +222,24 @@ services:
       - --stock=http://${IP}:8101
       - --folio=http://${IP}:8090
       - --artifact=http://${IP}:8082
+
+  cars:
+    image: avosa/cars:dev
+    build: ./cars/
+    ports:
+      - "8081:8081"
+    depends_on:
+      - theme
+    command:
+      - --host=http://${IP}:8081
+      - --secret=07fafe59-fd6b-4f77-aa6b-a15768714f77
+      - --issuer=http://${IP}:8080/auth/realms/mango
+      - --theme=http://${IP}:8093
+      - --folio=http://${IP}:8090
+      - --artifact=http://${IP}:8082
+      - --stock=http://${IP}:8093
+      - --vehicle=http://${IP}:8098
+      - --vin=http://${IP}:8095
 
   shop:
     image: avosa/shop:dev
