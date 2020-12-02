@@ -39,7 +39,7 @@ services:
       - --host=http://${IP}:8107
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --client=cms
-      - --secret=06ceb2fb-c321-4996-9717-2536cf60b463
+      - --secret=54e8f43e-da72-4907-8aac-dba7a773af3c
       - --theme=http://${IP}:8093
       - --folio=http://${IP}:8090
       - --artifact=http://${IP}:8082
@@ -58,7 +58,7 @@ services:
       - --host=http://${IP}:8088
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --client=admin
-      - --secret=44bdb2fb-3591-4de7-8ddb-9fec6c3ec017
+      - --secret=a9ab17bd-50f5-4cf5-8a08-7f7799173686
       - --folio=http://${IP}:8090
       - --artifact=http://${IP}:8082
       - --funds=http://${IP}:8092
@@ -218,7 +218,7 @@ services:
       - theme
     command:
       - --host=http://${IP}:8096
-      - --secret=441251a7-f584-4a0c-bdfb-501d0e59e1c2
+      - --secret=dda189bb-5f76-45ce-bc2d-9e9ef5d5c465
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --theme=http://${IP}:8093
       - --stock=http://${IP}:8101
@@ -234,7 +234,7 @@ services:
       - theme
     command:
       - --host=http://${IP}:8081
-      - --secret=07fafe59-fd6b-4f77-aa6b-a15768714f77
+      - --secret=b8ff3b99-d53d-43bb-a73a-7af5cc5d4f89
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --theme=http://${IP}:8093
       - --folio=http://${IP}:8090
@@ -252,7 +252,7 @@ services:
       - theme
     command:
       - --host=http://${IP}:8083
-      - --secret=d8fc27f3-d16c-421d-baa1-6b3f4e04e6cb
+      - --secret=b3ffd44b-6024-42bd-924f-35d77c5c08fd
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --theme=http://${IP}:8093
       - --folio=http://${IP}:8090
@@ -272,7 +272,7 @@ services:
       - theme
     command:
       - --host=http://${IP}:8091
-      - --secret=1a9d2f3f-2090-4c6f-a17b-e7a28236fe25
+      - --secret=652d8794-4c64-47ed-b641-4b886632a519
       - --issuer=http://${IP}:8080/auth/realms/mango
       - --theme=http://${IP}:8093
       - --folio=http://${IP}:8090
