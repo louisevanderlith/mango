@@ -279,4 +279,4 @@ services:
       - --blog=http://${IP}:8102
       - --stock=http://${IP}:8101
       - --comms=http://${IP}:8085
-      - --shop=http://${IP}:8083
+      - --comment=http://${IP}:8084
