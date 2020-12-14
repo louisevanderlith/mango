@@ -19,7 +19,7 @@ services:
     ports:
       - "8093:8093"
     depends_on:
-      - folio
+      - cloak
     volumes:
       - ./theme/db/:/db
 
@@ -258,10 +258,6 @@ services:
       - --folio=http://${IP}:8090
       - --artifact=http://${IP}:8082
       - --stock=http://${IP}:8093
-      #- --cars=
-      #- --properties=
-      #- --tokens=
-      #- --etc=
 
   www:
     image: avosa/www:dev
